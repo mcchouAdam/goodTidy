@@ -1,0 +1,11 @@
+# ignore all files in any directory named noed_modules
+node_modules/
+
+# ignore .env
+*.env
+
+# ignore the user upload files
+public/assets/*
+
+# ignore the test files
+test/*
