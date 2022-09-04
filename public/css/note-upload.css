@@ -1,0 +1,45 @@
+.main-block {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: space-between; */
+  /* margin: auto; */
+  width: 1200px;
+  height: 800px;
+  max-width: 1200px;
+}
+
+.OCR-block,
+.update-note-block,
+.note-preview-block {
+  flex-basis: 50%;
+  width: 600px;
+  height: 670px;
+}
+
+#note-preview-content {
+  border: 1px solid;
+  width: 600px;
+  height: 504px;
+}
+
+.OCR-preview {
+  border: 1px solid;
+}
+
+.update-note-content {
+  border: 1px solid;
+  width: 600px;
+  height: 500px;
+}
+
+.OCR_fonts,
+.add_fonts {
+  width: 50px;
+  height: 50px;
+}
+
+.highlight {
+  background: #00ff00;
+  padding: 1px;
+  border: #00cc00 dotted 1px;
+}
