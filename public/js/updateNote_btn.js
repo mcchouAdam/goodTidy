@@ -37,7 +37,7 @@ $('#search-notename-btn').click(async function () {
 $('#addfont').click(async function () {
   const item = $('<div class="add_fonts"><p>新增文字方塊</p></div>')
     .attr('contenteditable', 'true')
-    .draggable();
+    .draggable({ containment: '#update-note-content' });
   $('.update-note-content').append(item);
 });
 
@@ -78,7 +78,8 @@ $('#storeNote').click(async function () {
   alert(`${note_name} 儲存成功!`);
 
   // 更新版本選擇的內容
-  show_version(await load_version());
+  ver_info = await load_version();
+  show_version(ver_info);
 });
 
 // 查找筆記內容 -------------------------------
@@ -112,9 +113,11 @@ $('#newest-version-btn').click(function () {
   $('#update-note-content').html('');
   let elements = $.parseHTML(newest_version);
   elements.map((s) => {
-    $('.contour-pick').draggable();
-    $('.add_fonts').draggable();
-    $('.OCR_fonts').draggable();
+    $('.contour-pic.ui-draggable.ui-draggable-handle').draggable({
+      containment: '#update-note-content',
+    });
+    $('.add_fonts').draggable({ containment: '#update-note-content' });
+    $('.OCR_fonts').draggable({ containment: '#update-note-content' });
     $('#update-note-content').append(s);
   });
 });

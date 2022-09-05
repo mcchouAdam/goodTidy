@@ -1,23 +1,50 @@
 let alldragObject = [];
 
 // 圖形圈選 ---------------------------
+
+// 魔術
 $('#magicContour').click(async function () {
   initCanvasListener(canvas);
+});
+
+// 方形
+$('#rectContour').click(async function () {
+  initRectContourListener(canvas);
 });
 
 // 擷取鍵 ------------------------------
 $('#shapeView').click(function () {
   removeCanvasListener(canvas);
+  removeRectContourRemoveListener(canvas);
   clearContext(canvas, context);
   canvasBackground();
 
+  console.log(rectContour_params);
+  let item_x1 = rectContour_params[0];
+  let item_y1 = rectContour_params[1];
+  let item_width = rectContour_params[2];
+  let item_height = rectContour_params[3];
+
   // TODO: 目前寫死width, height
-  const item = $('<div class="contour-pick"></div')
-    .css('background-image', `url('${previewBlah.src}')`)
+  // const item = $('<div class="contour-pick"></div')
+  //   .css('background-image', `url('${previewBlah.src}')`)
+  //   .css('width', '600px')
+  //   .css('height', '300px')
+  //   .css('clip-path', `polygon(${Screen_percent_arr.join(',')})`)
+  //   .draggable();
+
+  const item_img = $(`<img src="${previewBlah.src}" />`)
     .css('width', '600px')
     .css('height', '300px')
-    .css('clip-path', `polygon(${Screen_percent_arr.join(',')})`)
-    .draggable();
+    .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`);
+
+  const item = $(`<div class="contour-pic"></div>`)
+    .css('width', `${item_width}px`)
+    .css('height', `${item_height}px`)
+    .css('overflow', 'hidden')
+    .draggable({ containment: '#note-preview-content' });
+
+  item.append(item_img);
 
   $('#note-preview-content').append(item);
 
@@ -80,14 +107,6 @@ $('#submit_note').click(async function () {
   alert(`${note_name} 上傳成功!`);
 });
 
-// 新增文字方塊鍵 ---------------------------------
-$('#addfont').click(async function () {
-  const item = $('<div class="add_fonts"><p>新增文字方塊</p></div>')
-    .attr('contenteditable', 'true')
-    .draggable();
-  $('.note-edit-block').append(item);
-});
-
 // 去除非文字鍵 ------------------------------------
 $('#removeNotWant').click(function () {
   initRectListener(canvas);
@@ -147,7 +166,7 @@ $('#OCR').click(async function () {
         position: 'relative',
       })
       .attr('contenteditable', 'true')
-      .draggable();
+      .draggable({ containment: '#note-preview-content' });
 
     $('#note-preview-content').append(item);
   }

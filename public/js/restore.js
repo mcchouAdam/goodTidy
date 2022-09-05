@@ -8,6 +8,7 @@ let stepObject = []; // 需復原的物件
 let stepDrag = function () {
   stepAppend($(this), 'drag', $(this).css('top'), $(this).css('left'));
 };
+
 let stepInput = function () {
   stepAppend(
     $(this),
