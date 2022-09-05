@@ -1,15 +1,16 @@
 const vision = require('@google-cloud/vision');
 require('dotenv').config();
-const { S3_HOST } = process.env;
+const { S3_HOST, GOOGLE_API_KEY } = process.env;
 
 // Creates a client
-const client = new vision.ImageAnnotatorClient();
+const client = new vision.ImageAnnotatorClient({
+  keyFilename: GOOGLE_API_KEY,
+});
 
 const OCR_google = async (req, res) => {
   // filename
   const filename = req.params.filename;
   const [result] = await client.textDetection(`${S3_HOST}/${filename}`);
-  // const [result] = await client.textDetection(`${S3_HOST}/aaa.png}`);
   const detections = result.textAnnotations;
   detections.forEach((text) => {
     console.log(text);
