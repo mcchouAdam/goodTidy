@@ -11,9 +11,17 @@ function drag_elements_init(div_append, note_elements) {
     $(s).contents().attr('src', `${img_background}`);
     div_append.append(s);
   });
-  $('.contour-pic.ui-draggable.ui-draggable-handle').draggable({
-    containment: '#update-note-content',
-  });
-  $('.add_fonts').draggable({ containment: '#update-note-content' });
-  $('.OCR_fonts').draggable({ containment: '#update-note-content' });
+  $('.contour-pic.ui-draggable.ui-draggable-handle')
+    .draggable({
+      containment: '#update-note-content',
+    })
+    .on('drag', stepDrag);
+  $('.add_fonts')
+    .draggable({ containment: '#update-note-content' })
+    .on('drag', stepDrag)
+    .on('input', stepInput);
+  $('.OCR_fonts')
+    .draggable({ containment: '#update-note-content' })
+    .on('drag', stepDrag)
+    .on('input', stepInput);
 }

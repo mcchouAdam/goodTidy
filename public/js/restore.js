@@ -2,6 +2,7 @@
 // TODO: 第一步會記不到
 
 let step = 0; // 步驟變數
+let initialObject = [];
 let stepObject = []; // 需復原的物件
 
 // 復原的object要input的參數
@@ -22,7 +23,6 @@ let stepInput = function () {
 function stepAppend(item, event, top, left, val) {
   step++;
   let obj;
-  console.log(val);
   if (event === 'drag') {
     obj = {
       'item': item,
@@ -42,7 +42,7 @@ function stepAppend(item, event, top, left, val) {
 
 // 上一步 -------------------------------------
 prev.onclick = function () {
-  if (step < 2) {
+  if (step < 1) {
     alert('沒有上一步');
   } else {
     step--;

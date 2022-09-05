@@ -10,6 +10,8 @@ const API_VERSION = process.env.API_VERSION;
 multer = require('multer');
 const upload = require('./server/models/s3');
 
+// TODO: change the pug path
+app.set('view engine', 'pug');
 app.use(express.static('public'));
 app.use(express.json());
 
@@ -17,6 +19,10 @@ app.use('/api/' + API_VERSION, [require('./server/routes/note_route')]);
 
 app.get('/createNote.html', (req, res) => {
   res.send(path.join(public, 'createNote.html'));
+});
+
+app.get('/createNote', (req, res) => {
+  res.render('createNote');
 });
 
 // TODO: upload 抽成中間鍵

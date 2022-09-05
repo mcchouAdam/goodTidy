@@ -25,8 +25,8 @@
         <div class="update-note-nav">
           <input type="text" id="note-id-search" />
           <button id="search-notename-btn">筆記名稱</button>
-          <!-- <input type="text" id="notename-search" />
-          <button id="searchText">查找筆記內容</button> -->
+          <input type="text" id="notename-search" />
+          <button id="searchText">查找筆記內容</button>
           <br />
           <button id="prev">上一步</button>
           <button id="next">下一步</button>
@@ -43,49 +43,14 @@
           <!-- <button id="screenShot">螢幕截圖</button> -->
           <div id="version-btn" class="dropdown">
             版本選擇
-            <div class="dropdown-content">
-              <!-- <div>
-                  <input type="radio" id="ver_1" name="version" value="1">版本一<img class="version-img" src="https://goodtidy.s3.amazonaws.com/123_coolthing_ver1.png"></img>
-                </div>
-                <div>
-                  <input type="radio" id="ver_2" name="version" value="2" >版本二<img class="version-img" src="https://goodtidy.s3.amazonaws.com/123_coolthing_ver2.png"></img>
-                </div>
-                <div>
-                  <input type="radio" id="ver_3" name="version" value="3">版本三<img class="version-img" src="https://goodtidy.s3.amazonaws.com/123_coolthing_ver3.png"></img>
-                </div>
-                <button id="recovery-btn">復原版本</button>
-              </div> -->
-            </div>
+            <div class="dropdown-content"></div>
             <button id="recovery-btn">復原版本</button>
           </div>
         </div>
         <span id="auto-save-time"></span>
         <div id="update-note-content" class="update-note-content"></div>
-        <!-- <canvas id="screenshot-canvas" width="600px" height="500px"></canvas> -->
       </div>
     </div>
-
-    <!-- <div id="capture" style="padding: 10px; background: #f5da55">
-      <h4 style="color: #000">Hello world!</h4>
-    </div> -->
-
-    <!-- <div id="capture" class="contour-pick ui-draggable ui-draggable-handle">
-      123
-    </div> -->
-    <!-- <div
-      id="capture"
-      class="OCR_fonts ui-draggable ui-draggable-handle"
-      contenteditable="true"
-      style="top: -855px; left: 177px; position: relative"
-    >
-      <p>帥哥</p>
-    </div>
-
-    <script>
-      html2canvas(document.querySelector('#capture')).then((canvas) => {
-        document.body.appendChild(canvas);
-      });
-    </script> -->
 
     <!-- 自動儲存鍵 -->
     <script type="text/javascript"></script>
@@ -97,7 +62,8 @@
     <script src="./js/search.js"></script>
     <script src="./js/autoSave.js"></script>
     <script src="./js/updateNote_btn.js"></script>
-    <script src="./js/canvas_updateNote.js"></script>
+    <script src="./js/checkElement.js"></script>
+    <!-- <script src="./js/canvas_updateNote.js"></script> -->
 
     <!-- <script src="./js/canvas.js"></script> -->
     <!-- <script src="./js/OCR.js"></script> -->
