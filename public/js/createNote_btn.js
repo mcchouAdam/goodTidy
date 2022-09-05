@@ -1,11 +1,5 @@
 let alldragObject = [];
 
-// TODO: 目前user_id, note_id, s3_HOST寫死
-let user_id = 123;
-let note_id = 1;
-let note_name = '酷東西';
-let s3_HOST = 'https://goodtidy.s3.amazonaws.com/';
-
 // 圖形圈選 ---------------------------
 $('#magicContour').click(async function () {
   initCanvasListener(canvas);
@@ -33,6 +27,13 @@ $('#shapeView').click(function () {
 
 // 上傳檔案 ----------------------------
 $('#submit_note').click(async function () {
+  let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
+
+  // 檢查版本名
+  if (ver_name == null || ver_name == '') {
+    alert('版本名不能為空');
+    return;
+  }
   // // blob url to file
   let blob = await fetch(previewBlah.src).then((r) => r.blob());
   // let filename = $('input[type=file]').val().split('\\').pop();
@@ -65,6 +66,9 @@ $('#submit_note').click(async function () {
     'timestamp': timestamp,
     'file_name': filename,
     'elements': $('#note-preview-content').html(),
+    'url': '',
+    'ver_img': '123_coolthing_ver3.png', // 先寫死
+    'ver_name': ver_name,
   };
 
   await axios({
@@ -95,9 +99,9 @@ $('#OCR').click(async function () {
   const base64Response = await fetch(image);
   const blob = await base64Response.blob();
 
-  let filename = `OCR_${user_id}_${note_id}.jpg`;
+  let file_name = `OCR_${user_id}_${note_id}_${Date.now()}.jpg`;
   let form = new FormData();
-  form.append('upload_file', blob, filename);
+  form.append('upload_file', blob, file_name);
 
   // TODO: 統一改成axios
   let upload_setting = {
@@ -120,7 +124,7 @@ $('#OCR').click(async function () {
   removeRectRemoveListener(canvas);
 
   // 文字辨識
-  const OCR_result = await OCR(filename);
+  const OCR_result = await OCR(file_name);
 
   // append進預覽框裡
   // OCR_result[0] 是全部辨識的字串

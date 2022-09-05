@@ -24,7 +24,7 @@
         <div class="OCR-nav">
           <!-- <button id="pre">上一步</button>
           <button id="next">下一步</button> -->
-          <button id="shapeRemoveBG">圖形去背</button>
+          <button id="shapeRemoveBG" disabled>圖形去背</button>
           <button id="removeNotWant">去除非文字區塊</button>
           <button id="OCR">文字辨識</button>
           <button id="magicContour">圖形圈選</button>
@@ -56,10 +56,11 @@
       var prev = document.getElementById('prev');
       var next = document.getElementById('next');
     </script>
+    <script src="./js/variables.js"></script>
     <script src="./js/createNote_btn.js"></script>
     <script src="./js/canvas.js"></script>
     <script src="./js/OCR.js"></script>
     <script src="./js/preview.js"></script>
-    <script src="./js/restore.js"></script>
+    <!-- <script src="./js/restore.js"></script>  -->
   </body>
 </html>

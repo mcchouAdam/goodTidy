@@ -1,10 +1,4 @@
-// TODO: 目前user_id, note_id, s3_HOST寫死
-
 let alldragObject = [];
-let user_id = 123;
-let note_id = 1;
-let note_name = '酷東西';
-let s3_HOST = 'https://goodtidy.s3.amazonaws.com/';
 let file_name;
 
 // 上一版筆記的內容
@@ -26,30 +20,10 @@ $('#search-notename-btn').click(async function () {
     prev_version_note = note_elements;
     let $note_content = $('#update-note-content');
 
-    // editPageElements 初始化 --------------------
-    // note_elements.length-1: 最後一個元素為最新版
-    let elements = $.parseHTML(
-      note_elements[note_elements.length - 1].elements
-    );
+    // elements初始化
+    drag_elements_init($note_content, note_elements);
 
-    file_name = note_elements[note_elements.length - 1].file_name;
-
-    elements.map((s) => {
-      // 有圖形的需置換掉background blob的url
-      if (s.style['background-image']) {
-        s.style['background-image'] = `url('${s3_HOST}${
-          note_elements[note_elements.length - 1].file_name
-        }')`;
-      }
-
-      $('.contour-pick').draggable();
-      $('.add_fonts').draggable();
-      $('.OCR_fonts').draggable();
-
-      $note_content.append(s);
-    });
-
-    // // 上一步/下一步
+    // 上一步/下一步
     $('.contour-pick').on('drag', stepDrag);
     $('.add_fonts').on('drag', stepDrag).on('input', stepInput);
     $('.OCR_fonts').on('drag', stepDrag).on('input', stepInput);
@@ -72,12 +46,27 @@ $('#storeNote').click(async function () {
   // TODO: 比較這次與前一次element的差別
   // diff(prev_version_note, $('#update-note-content').html())
 
+  // 確認儲存 & 輸入版本名稱
+  let ver_name = prompt(
+    '請輸入此版本名稱:',
+    `${note_name}_第${ver_info.length + 1}版`
+  );
+
+  if (ver_name === null || ver_name === '') {
+    alert('版本名不能為空');
+    return;
+  }
   // 新增資料庫資料
+  // TODO: 目前ver_img先寫死，可以用puppeteer截圖
   let note = {
     'user_id': user_id,
+    'timestamp': Date.now(),
     'note_name': note_name,
     'file_name': file_name,
     'elements': $('#update-note-content').html(),
+    'url': '',
+    'ver_img': '123_coolthing_ver3.png',
+    'ver_name': ver_name,
   };
 
   await axios({
@@ -87,10 +76,87 @@ $('#storeNote').click(async function () {
   });
 
   alert(`${note_name} 儲存成功!`);
+
+  // 更新版本選擇的內容
+  show_version(await load_version());
 });
 
-// 查找筆記內容 ---------------------------------------------------------
+// 查找筆記內容 -------------------------------
 $('#searchText').click(function () {
   // $('body').find('.highlight').removeClass('highlight');
   replaceText();
+});
+
+// 復原版本鍵 --------------------------------------
+$('#recovery-btn').click(function () {
+  // 清空原div上的物件
+  $('#update-note-content').html('');
+  // 初始化drag elements
+  const version_chosen = +$('input[name=version]:checked').val();
+  let $note_content = $('#update-note-content');
+  drag_elements_init($note_content, [ver_info[version_chosen]]);
+});
+
+// 自動儲存鍵 ---------------------------------------------
+$('#autoSave_box').change(function () {
+  if (this.checked) {
+    AutoSave.start();
+  } else {
+    AutoSave.stop();
+  }
+});
+
+// 回復自動儲存最新版鍵 ------------------------------
+$('#newest-version-btn').click(function () {
+  const newest_version = AutoSave.restore();
+  $('#update-note-content').html('');
+  let elements = $.parseHTML(newest_version);
+  elements.map((s) => {
+    $('.contour-pick').draggable();
+    $('.add_fonts').draggable();
+    $('.OCR_fonts').draggable();
+    $('#update-note-content').append(s);
+  });
+});
+
+// TODO: 未完成
+// 螢幕截圖 -----------------------------------
+$('#screenShot').click(function () {
+  var data =
+    'data:image/svg+xml,' +
+    "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='500'>" +
+    "<foreignObject width='100%' height='100%'>" +
+    "<div xmlns='http://www.w3.org/1999/xhtml' style='font-size:12px'>" +
+    `<div class="contour-pick" style="background-image: url('https://goodtidy.s3.amazonaws.com/123_1662255937942.png'); width: 600px; height: 300px; clip-path: polygon(19% 20%, 12% 42%, 25% 43%); position: relative; left: 20px; top: 54px;"></div>` +
+    // `<div style="background-image: url('https://goodtidy.s3.amazonaws.com/123_1662255937942.png');"></div>` +
+    // `<div>aaa</div>` +
+    `<div class="add_fonts ui-draggable ui-draggable-handle" contenteditable="true" style="position: relative; left: 93px; top: -1026px;">第三版</div>` +
+    '</div>' +
+    '</foreignObject>' +
+    '</svg>';
+
+  var img = new Image();
+
+  img.src = data;
+
+  img.onload = function () {
+    console.log('aaa');
+    ctx.drawImage(img, 0, 0);
+  };
+
+  // const one = new Image();
+  // one.src = '../assets/no-bg_small.png';
+  // const two = new Image();
+  // two.src = '../assets/no-bg_test1.png';
+
+  // function imgs(ctx) {
+  //   one.onload = function () {
+  //     ctx.drawImage(one, 50, 50);
+  //   };
+  //   two.onload = function () {
+  //     ctx.drawImage(two, 100, 100);
+  //   };
+  // }
+
+  // imgs(ctx);
 });
