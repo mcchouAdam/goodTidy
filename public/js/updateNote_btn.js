@@ -1,5 +1,6 @@
 let alldragObject = [];
 let file_name;
+let note_name;
 
 // 上一版筆記的內容
 let prev_version_note;
@@ -7,7 +8,8 @@ let prev_version_note;
 // 筆記名稱鍵 ---------------------------------------------------------
 $('#search-notename-btn').click(async function () {
   try {
-    // let note_name = $('#notename-search').val();
+    $('#update-note-content').html('');
+    note_name = $('#note-name-search').val();
 
     // 查詢note-name ----------------------
     const query_note_result = await axios({
@@ -26,6 +28,10 @@ $('#search-notename-btn').click(async function () {
     console.log(err);
     return;
   }
+
+  // 更新版本選擇的內容
+  ver_info = await load_version();
+  show_version(ver_info);
 });
 
 // 新增文字方塊鍵 ---------------------------------

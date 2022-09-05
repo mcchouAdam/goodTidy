@@ -89,7 +89,7 @@ $('#submit_note').click(async function () {
   // 儲存資料庫
   let note = {
     'user_id': user_id,
-    'note_name': note_name,
+    'note_name': $('#note-name').val(),
     'timestamp': timestamp,
     'file_name': filename,
     'elements': $('#note-preview-content').html(),

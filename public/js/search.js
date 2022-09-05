@@ -1,4 +1,3 @@
-// TODO: 目前查找完會draggablec會壞掉
 function replaceText() {
   $('body').find('.highlight').removeClass('highlight');
   var searchword = $('#notename-search').val();
