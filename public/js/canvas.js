@@ -12,6 +12,7 @@ previewBlah.onload = () => canvasBackground();
 
 // Draw the upload image to canvas
 function canvasBackground() {
+  clearContext(c, ctx);
   ctx.drawImage(previewBlah, 0, 0);
   canvas = $('#fontOCRCanvas')[0];
   context = canvas.getContext('2d');

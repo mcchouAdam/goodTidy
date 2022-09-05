@@ -4,13 +4,14 @@ const { S3_HOST, GOOGLE_API_KEY } = process.env;
 
 // Creates a client
 const client = new vision.ImageAnnotatorClient({
-  keyFilename: GOOGLE_API_KEY,
+  keyFilename: 'C:/Users/adamp/appworkssideproject-b9d30923d7e4.json',
 });
 
 const OCR_google = async (req, res) => {
   // filename
   const filename = req.params.filename;
   const [result] = await client.textDetection(`${S3_HOST}/${filename}`);
+  // const [result] = await client.textDetection(`${S3_HOST}/aaa.png}`);
   const detections = result.textAnnotations;
   detections.forEach((text) => {
     console.log(text);
