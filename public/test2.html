@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="./css/note-upload.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <style></style>
+  </head>
+  <body>
+    <canvas
+      id="image"
+      width="800"
+      height="600"
+      style="background-color: orange"
+    ></canvas>
+    <script>
+      var mousedown = false;
+      var x1;
+      var y1;
+      var x2;
+      var y2;
+      var canvas = document.getElementById('image');
+      var context = canvas.getContext('2d');
+      document.getElementById('image').onmousedown = function (e) {
+        mousedown = true;
+        x1 = e.offsetX;
+        y1 = e.offsetY;
+      };
+      document.getElementById('image').onmouseup = function (e) {
+        mousedown = false;
+      };
+      document.getElementById('image').onmousemove = function (e) {
+        if (mousedown) {
+          x2 = e.offsetX;
+          y2 = e.offsetY;
+          redraw();
+        }
+      };
+      function redraw() {
+        context.clearRect(0, 0, 800, 600);
+        context.beginPath();
+        context.rect(x1, y1, x2 - x1, y2 - y1);
+        context.stroke();
+
+        console.log(x1, y1, x2 - x1, y2 - y1);
+      }
+    </script>
+  </body>
+</html>

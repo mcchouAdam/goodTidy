@@ -19,14 +19,74 @@
     ></script>
   </head>
   <body>
+    <header>
+      <div class="header">
+        <!-- <div class="logo"></div> -->
+        <div class="user_page_nav">
+          <div id="signup">
+            <button id="signup-btn">註冊</button>
+          </div>
+          <div id="signin">
+            <button id="signin-btn">登入</button>
+          </div>
+          <div id="profile">
+            <button id="profile-btn">會員</button>
+          </div>
+          <div id="social_page">
+            <button id="social-btn">社群</button>
+          </div>
+
+          <div id="signup-dialog">
+            Email:<br />
+            <input id="signup_useremail" /><br />
+            Password:<br />
+            <input id="signup_password" /><br />
+            UserName:<br />
+            <input id="signup_username" /><br />
+            Photo:<br />
+            <input type="file" id="user_picture" /><br /><br/>
+            <button id="signup-form-btn">註冊</button>
+          </div>
+          <div id="signin-dialog">
+            Email:<br />
+            <input id="signin_useremail" /><br />
+            Password:<br />
+            <input id="signin_password" /><br /><br/>
+            <button id="signin-form-btn">登入</button>
+          </div>
+          <div id="profile-dialog">
+            <div id="user_picture"><img id="user_pic"></img></div>
+            <div id="user_email"></div>
+            <div id="user_name"></div>
+            <button id="logout">登出</button>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="main-block">
+      <div class="note-sidebar">
+
+        <div>搜尋</div>
+        <div>版控</div>
+        <div>
+          <ul>美食
+            <li>挖饋</li>
+            <li>冷樂冰</li>
+          </ul>
+          <ul>上課
+            <li>Docker</li>
+            <li>Http</li>
+          </ul>
+        </div>
+        <div class="nav-notes"></div>
+      </div>
       <div class="update-note-block">
         <h1>筆記編輯頁面</h1>
         <div class="update-note-nav">
-          <input type="text" id="note-id-search" />
+          <input type="text" id="note-name-search" />
           <button id="search-notename-btn">筆記名稱</button>
-          <!-- <input type="text" id="notename-search" />
-          <button id="searchText">查找筆記內容</button> -->
+          <input type="text" id="notename-search" />
+          <button id="searchText">查找筆記內容</button>
           <br />
           <button id="prev">上一步</button>
           <button id="next">下一步</button>
@@ -43,64 +103,26 @@
           <!-- <button id="screenShot">螢幕截圖</button> -->
           <div id="version-btn" class="dropdown">
             版本選擇
-            <div class="dropdown-content">
-              <!-- <div>
-                  <input type="radio" id="ver_1" name="version" value="1">版本一<img class="version-img" src="https://goodtidy.s3.amazonaws.com/123_coolthing_ver1.png"></img>
-                </div>
-                <div>
-                  <input type="radio" id="ver_2" name="version" value="2" >版本二<img class="version-img" src="https://goodtidy.s3.amazonaws.com/123_coolthing_ver2.png"></img>
-                </div>
-                <div>
-                  <input type="radio" id="ver_3" name="version" value="3">版本三<img class="version-img" src="https://goodtidy.s3.amazonaws.com/123_coolthing_ver3.png"></img>
-                </div>
-                <button id="recovery-btn">復原版本</button>
-              </div> -->
-            </div>
+            <div class="dropdown-content"></div>
             <button id="recovery-btn">復原版本</button>
           </div>
         </div>
         <span id="auto-save-time"></span>
         <div id="update-note-content" class="update-note-content"></div>
-        <canvas id="screenshot-canvas" width="600px" height="500px"></canvas>
       </div>
     </div>
-
-    <!-- <div id="capture" style="padding: 10px; background: #f5da55">
-      <h4 style="color: #000">Hello world!</h4>
-    </div> -->
-
-    <!-- <div id="capture" class="contour-pick ui-draggable ui-draggable-handle">
-      123
-    </div> -->
-    <!-- <div
-      id="capture"
-      class="OCR_fonts ui-draggable ui-draggable-handle"
-      contenteditable="true"
-      style="top: -855px; left: 177px; position: relative"
-    >
-      <p>帥哥</p>
-    </div>
-
-    <script>
-      html2canvas(document.querySelector('#capture')).then((canvas) => {
-        document.body.appendChild(canvas);
-      });
-    </script> -->
 
     <!-- 自動儲存鍵 -->
     <script type="text/javascript"></script>
 
-    <script src="./js/variables.js"></script>
+    <script src="./js/windowLoad.js"></script>
+    <script src="./js/user.js"></script>
     <script src="./js/init.js"></script>
     <script src="./js/version.js"></script>
     <script src="./js/restore.js"></script>
     <script src="./js/search.js"></script>
     <script src="./js/autoSave.js"></script>
     <script src="./js/updateNote_btn.js"></script>
-    <script src="./js/canvas_updateNote.js"></script>
-
-    <!-- <script src="./js/canvas.js"></script> -->
-    <!-- <script src="./js/OCR.js"></script> -->
-    <!-- <script src="./js/preview.js"></script> -->
+    <script src="./js/checkElement.js"></script>
   </body>
 </html>

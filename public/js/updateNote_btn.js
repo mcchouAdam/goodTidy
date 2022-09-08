@@ -7,7 +7,8 @@ let prev_version_note;
 // 筆記名稱鍵 ---------------------------------------------------------
 $('#search-notename-btn').click(async function () {
   try {
-    // let note_name = $('#notename-search').val();
+    $('#update-note-content').html('');
+    note_name = $('#note-name-search').val();
 
     // 查詢note-name ----------------------
     const query_note_result = await axios({
@@ -22,23 +23,25 @@ $('#search-notename-btn').click(async function () {
 
     // elements初始化
     drag_elements_init($note_content, note_elements);
-
-    // 上一步/下一步
-    $('.contour-pick').on('drag', stepDrag);
-    $('.add_fonts').on('drag', stepDrag).on('input', stepInput);
-    $('.OCR_fonts').on('drag', stepDrag).on('input', stepInput);
   } catch (err) {
     console.log(err);
     return;
   }
+
+  // 更新版本選擇的內容
+  ver_info = await load_version();
+  show_version(ver_info);
 });
 
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
   const item = $('<div class="add_fonts"><p>新增文字方塊</p></div>')
     .attr('contenteditable', 'true')
-    .draggable();
-  $('.update-note-content').append(item);
+    .draggable({ containment: '#update-note-content' })
+    .on('drag', stepDrag)
+    .on('input', stepInput)
+    .on('input', checkTextNull);
+  $('#update-note-content').append(item);
 });
 
 // 儲存鍵 --------------------------------------
@@ -78,12 +81,12 @@ $('#storeNote').click(async function () {
   alert(`${note_name} 儲存成功!`);
 
   // 更新版本選擇的內容
-  show_version(await load_version());
+  ver_info = await load_version();
+  show_version(ver_info);
 });
 
 // 查找筆記內容 -------------------------------
 $('#searchText').click(function () {
-  // $('body').find('.highlight').removeClass('highlight');
   replaceText();
 });
 
@@ -110,53 +113,15 @@ $('#autoSave_box').change(function () {
 $('#newest-version-btn').click(function () {
   const newest_version = AutoSave.restore();
   $('#update-note-content').html('');
+
+  //TODO: 待重構
   let elements = $.parseHTML(newest_version);
   elements.map((s) => {
-    $('.contour-pick').draggable();
-    $('.add_fonts').draggable();
-    $('.OCR_fonts').draggable();
+    $('.contour-pic.ui-draggable.ui-draggable-handle').draggable({
+      containment: '#update-note-content',
+    });
+    $('.add_fonts').draggable({ containment: '#update-note-content' });
+    $('.OCR_fonts').draggable({ containment: '#update-note-content' });
     $('#update-note-content').append(s);
   });
-});
-
-// TODO: 未完成
-// 螢幕截圖 -----------------------------------
-$('#screenShot').click(function () {
-  var data =
-    'data:image/svg+xml,' +
-    "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='500'>" +
-    "<foreignObject width='100%' height='100%'>" +
-    "<div xmlns='http://www.w3.org/1999/xhtml' style='font-size:12px'>" +
-    `<div class="contour-pick" style="background-image: url('https://goodtidy.s3.amazonaws.com/123_1662255937942.png'); width: 600px; height: 300px; clip-path: polygon(19% 20%, 12% 42%, 25% 43%); position: relative; left: 20px; top: 54px;"></div>` +
-    // `<div style="background-image: url('https://goodtidy.s3.amazonaws.com/123_1662255937942.png');"></div>` +
-    // `<div>aaa</div>` +
-    `<div class="add_fonts ui-draggable ui-draggable-handle" contenteditable="true" style="position: relative; left: 93px; top: -1026px;">第三版</div>` +
-    '</div>' +
-    '</foreignObject>' +
-    '</svg>';
-
-  var img = new Image();
-
-  img.src = data;
-
-  img.onload = function () {
-    console.log('aaa');
-    ctx.drawImage(img, 0, 0);
-  };
-
-  // const one = new Image();
-  // one.src = '../assets/no-bg_small.png';
-  // const two = new Image();
-  // two.src = '../assets/no-bg_test1.png';
-
-  // function imgs(ctx) {
-  //   one.onload = function () {
-  //     ctx.drawImage(one, 50, 50);
-  //   };
-  //   two.onload = function () {
-  //     ctx.drawImage(two, 100, 100);
-  //   };
-  // }
-
-  // imgs(ctx);
 });

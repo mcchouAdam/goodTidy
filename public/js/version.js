@@ -22,7 +22,7 @@ async function show_version(ver_info) {
     let item = $(
       `<div>
         <input type="radio" name="version" value="${i}">${ver_info[i].ver_name}
-            <img class="version-img" src="${s3_HOST}${ver_info[i].ver_img}"></img>
+            <img class="version-img" src="${S3_HOST}${ver_info[i].ver_img}"></img>
         </div>`
     );
     $('.dropdown-content').append(item);
