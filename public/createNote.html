@@ -12,6 +12,50 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
   </head>
   <body>
+    <header>
+      <div class="header">
+        <!-- <div class="logo"></div> -->
+        <div class="user_page_nav">
+          <div id="signup">
+            <button id="signup-btn">註冊</button>
+          </div>
+          <div id="signin">
+            <button id="signin-btn">登入</button>
+          </div>
+          <div id="profile">
+            <button id="profile-btn">會員</button>
+          </div>
+          <div id="social_page">
+            <button id="social-btn">社群</button>
+          </div>
+
+          <div id="signup-dialog">
+            Email:<br />
+            <input id="signup_useremail" /><br />
+            Password:<br />
+            <input id="signup_password" /><br />
+            UserName:<br />
+            <input id="signup_username" /><br />
+            Photo:<br />
+            <input type="file" id="user_picture" /><br /><br/>
+            <button id="signup-form-btn">註冊</button>
+          </div>
+          <div id="signin-dialog">
+            Email:<br />
+            <input id="signin_useremail" /><br />
+            Password:<br />
+            <input id="signin_password" /><br /><br/>
+            <button id="signin-form-btn">登入</button>
+          </div>
+          <div id="profile-dialog">
+            <div id="user_picture"><img id="user_pic"></img></div>
+            <div id="user_email"></div>
+            <div id="user_name"></div>
+            <button id="logout">登出</button>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="main-block">
       <div class="OCR-block">
         <h1>文字辨識 & 圖形圈選</h1>
@@ -47,21 +91,20 @@
           <button id="addfont">新增文字</button> -->
           <br /><br />
           <input type="text" id="note-name" placeholder="筆記名稱" />
+          <input type="text" id="note-classification" placeholder="筆記分類" />
           <button id="submit_note">確認上傳</button>
         </div>
         <div id="note-preview-content" class="note-edit-block"></div>
       </div>
     </div>
-
-    <script>
-      var prev = document.getElementById('prev');
-      var next = document.getElementById('next');
-    </script>
-    <script src="./js/variables.js"></script>
+    <script src="./js/windowLoad.js"></script>
+    <script src="./js/user.js"></script>
+    <script src="./js/note.js"></script>
     <script src="./js/createNote_btn.js"></script>
     <script src="./js/canvas.js"></script>
     <script src="./js/OCR.js"></script>
     <script src="./js/preview.js"></script>
+
     <!-- <script src="./js/restore.js"></script>  -->
   </body>
 </html>

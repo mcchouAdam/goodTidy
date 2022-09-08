@@ -1,70 +1,51 @@
 const { Mongo } = require('./mongocon');
 require('dotenv').config();
 const { MONGO_DB } = process.env;
+const ObjectId = require('mongodb').ObjectId;
 
 const writeNote = async (note) => {
+  // transaction ------------------------------------------
+  // Step 1: Start a Client Session
+  await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  const session = Mongo.startSession();
   try {
-    await Mongo.connect();
-    const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-    console.log('note:', note);
-    // let note = {
-    //   'note_id': 1,
-    //   'user_id': 123,
-    //   'note_name': '無敵炫砲筆記',
-    //   'shapes': [
-    //     `<div id="font-pick-0" class="font-pick" style="background-image: url('https://goodtidy.s3.amazonaws.com/no-bg_small.png'); width: 600px; height: 300px; clip-path: polygon(54% 26%, 54% 37%, 61% 37%, 62% 28%); position: absolute; top: 536px; left: 153px;"></div>`,
-    //     `<div id="magic-pick-2" class="magic-pick" style="background-image: url('https://goodtidy.s3.amazonaws.com/no-bg_small.png'); width: 600px; height: 300px; clip-path: polygon(47% 25%, 46% 46%, 54% 48%, 55% 26%); position: absolute; top: 436px; left: -121px;"></div>`,
-    //     `<div id="magic-pick-1" class="magic-pick" style="background-image: url('https://goodtidy.s3.amazonaws.com/no-bg_small.png'); width: 600px; height: 300px; clip-path: polygon(30% 23%, 30% 44%, 40% 44%, 39% 24%); position: absolute; top: 473px; left: -81px;"></div>`,
-    //     `<div id="magic-pick-0" class="magic-pick" style="background-image: url('https://goodtidy.s3.amazonaws.com/no-bg_small.png'); width: 600px; height: 300px; clip-path: polygon(19% 23%, 11% 43%, 24% 45%); position: absolute; top: 415px; left: 15px;"></div>`,
-    //   ],
-    //   'fonts': [
-    //     {
-    //       'description': 'O\nAdam',
-    //       'coordinate': [
-    //         { x: 276, y: 78 },
-    //         { x: 326, y: 76 },
-    //         { x: 328, y: 122 },
-    //         { x: 278, y: 125 },
-    //       ],
-    //     },
-    //     {
-    //       'description': 'O',
-    //       'coordinate': [
-    //         { x: 276, y: 78 },
-    //         { x: 326, y: 76 },
-    //         { x: 328, y: 122 },
-    //         { x: 278, y: 125 },
-    //       ],
-    //     },
-    //     {
-    //       'description': 'Adam',
-    //       'coordinate': [
-    //         { x: 332, y: 78 },
-    //         { x: 369, y: 79 },
-    //         { x: 368, y: 100 },
-    //         { x: 331, y: 99 },
-    //       ],
-    //     },
-    //   ],
-    // };
-    const result = await NotesCollection.insertOne(note);
+    console.log('上傳筆記 writeNote');
+    // console.log('note:', note);
+    // const result = await NotesCollection.insertOne(note);
+
+    // Step 2: Optional. Define options to use for the transaction
+    const transactionOptions = {
+      readPreference: 'primary',
+      readConcern: { level: 'local' },
+      writeConcern: { w: 'majority' },
+    };
+
+    // Step 3: Use withTransaction to start a transaction, execute the callback, and commit (or abort on error)
+    // Note: The callback for withTransaction MUST be async and/or return a Promise.
+    await session.withTransaction(async () => {
+      const result = await NotesCollection.insertOne(note);
+    }, transactionOptions);
+
+    //  ------------------------------------------
 
     return result;
   } catch (error) {
     return { error };
   } finally {
+    await session.endSession();
     await Mongo.close();
   }
 };
 
-const readNote = async (user_id, note_name) => {
+const readNote = async (user_id, note_id) => {
+  await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
-    await Mongo.connect();
-    const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-
+    const id = new ObjectId(note_id);
     const result = await NotesCollection.find({
+      '_id': id,
       'user_id': user_id,
-      'note_name': note_name,
     }).toArray();
 
     // console.log(result);

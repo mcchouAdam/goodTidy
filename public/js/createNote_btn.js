@@ -26,13 +26,6 @@ $('#shapeView').click(function () {
   let item_height = rectContour_params[3];
 
   // TODO: 目前寫死width, height
-  // const item = $('<div class="contour-pick"></div')
-  //   .css('background-image', `url('${previewBlah.src}')`)
-  //   .css('width', '600px')
-  //   .css('height', '300px')
-  //   .css('clip-path', `polygon(${Screen_percent_arr.join(',')})`)
-  //   .draggable();
-
   const item_img = $(`<img src="${previewBlah.src}" />`)
     .css('width', '600px')
     .css('height', '300px')
@@ -54,57 +47,32 @@ $('#shapeView').click(function () {
 
 // 上傳檔案 ----------------------------
 $('#submit_note').click(async function () {
+  note_name = $('#note-name').val();
+  note_classification = $('#note-classification').val();
   let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
 
-  // 檢查版本名
+  // // 檢查版本名
   if (ver_name == null || ver_name == '') {
     alert('版本名不能為空');
     return;
   }
+
   // // blob url to file
   let blob = await fetch(previewBlah.src).then((r) => r.blob());
-  // let filename = $('input[type=file]').val().split('\\').pop();
   let filetype = $('input[type=file]').val().split('.').pop();
-
-  // TODO: UserID到時能要換信箱
   let timestamp = Date.now();
   let filename = `${user_id}_${timestamp}.${filetype}`;
+  let elements = $('#note-preview-content').html();
 
-  // // 檔案上傳s3
-  let form = new FormData();
-  form.append('upload_file', blob, filename);
-  let upload_setting = {
-    'url': '/upload/file',
-    'method': 'POST',
-    'timeout': 0,
-    'processData': false,
-    'mimeType': 'multipart/form-data',
-    'contentType': false,
-    'data': form,
-  };
-  $.ajax(upload_setting).done(function (response) {
-    console.log(response);
-  });
-
-  // 儲存資料庫
-  let note = {
-    'user_id': user_id,
-    'note_name': $('#note-name').val(),
-    'timestamp': timestamp,
-    'file_name': filename,
-    'elements': $('#note-preview-content').html(),
-    'url': '',
-    'ver_img': '123_coolthing_ver3.png', // 先寫死
-    'ver_name': ver_name,
-  };
-
-  await axios({
-    method: 'POST',
-    url: '/api/1.0/note',
-    data: note,
-  });
-
-  alert(`${note_name} 上傳成功!`);
+  await noteUpload(
+    blob,
+    filename,
+    user_id,
+    note_name,
+    timestamp,
+    elements,
+    note_classification
+  );
 });
 
 // 去除非文字鍵 ------------------------------------

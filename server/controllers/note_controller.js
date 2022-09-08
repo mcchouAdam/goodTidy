@@ -11,10 +11,10 @@ const readNote = async (req, res) => {
   console.log(req.params);
 
   // TODO: 註冊還沒寫，user_id 先寫死
-  user_id = 123;
-  const { note_name } = req.params;
+  const user_id = '6319835b38dbe8b04a223aaf';
+  const { note_id } = req.params;
 
-  const result = await Notes.readNote(user_id, note_name);
+  const result = await Notes.readNote(user_id, note_id);
 
   return res.status(200).json(result);
 };

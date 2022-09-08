@@ -19,7 +19,67 @@
     ></script>
   </head>
   <body>
+    <header>
+      <div class="header">
+        <!-- <div class="logo"></div> -->
+        <div class="user_page_nav">
+          <div id="signup">
+            <button id="signup-btn">註冊</button>
+          </div>
+          <div id="signin">
+            <button id="signin-btn">登入</button>
+          </div>
+          <div id="profile">
+            <button id="profile-btn">會員</button>
+          </div>
+          <div id="social_page">
+            <button id="social-btn">社群</button>
+          </div>
+
+          <div id="signup-dialog">
+            Email:<br />
+            <input id="signup_useremail" /><br />
+            Password:<br />
+            <input id="signup_password" /><br />
+            UserName:<br />
+            <input id="signup_username" /><br />
+            Photo:<br />
+            <input type="file" id="user_picture" /><br /><br/>
+            <button id="signup-form-btn">註冊</button>
+          </div>
+          <div id="signin-dialog">
+            Email:<br />
+            <input id="signin_useremail" /><br />
+            Password:<br />
+            <input id="signin_password" /><br /><br/>
+            <button id="signin-form-btn">登入</button>
+          </div>
+          <div id="profile-dialog">
+            <div id="user_picture"><img id="user_pic"></img></div>
+            <div id="user_email"></div>
+            <div id="user_name"></div>
+            <button id="logout">登出</button>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="main-block">
+      <div class="note-sidebar">
+
+        <div>搜尋</div>
+        <div>版控</div>
+        <div>
+          <ul>美食
+            <li>挖饋</li>
+            <li>冷樂冰</li>
+          </ul>
+          <ul>上課
+            <li>Docker</li>
+            <li>Http</li>
+          </ul>
+        </div>
+        <div class="nav-notes"></div>
+      </div>
       <div class="update-note-block">
         <h1>筆記編輯頁面</h1>
         <div class="update-note-nav">
@@ -55,7 +115,8 @@
     <!-- 自動儲存鍵 -->
     <script type="text/javascript"></script>
 
-    <script src="./js/variables.js"></script>
+    <script src="./js/windowLoad.js"></script>
+    <script src="./js/user.js"></script>
     <script src="./js/init.js"></script>
     <script src="./js/version.js"></script>
     <script src="./js/restore.js"></script>
@@ -63,10 +124,5 @@
     <script src="./js/autoSave.js"></script>
     <script src="./js/updateNote_btn.js"></script>
     <script src="./js/checkElement.js"></script>
-    <!-- <script src="./js/canvas_updateNote.js"></script> -->
-
-    <!-- <script src="./js/canvas.js"></script> -->
-    <!-- <script src="./js/OCR.js"></script> -->
-    <!-- <script src="./js/preview.js"></script> -->
   </body>
 </html>

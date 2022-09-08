@@ -16,6 +16,13 @@
   height: 670px;
 }
 
+.note-sidebar {
+  flex-basis: 10%;
+  /* width: 200px; */
+  height: 670px;
+  /* border: 1px solid; */
+}
+
 #note-preview-content {
   border: 1px solid;
   width: 600px;
@@ -87,4 +94,33 @@
 .add_fonts {
   top: 0px;
   left: 0px;
+}
+
+.note-sidebar {
+  /* border: 1px solid; */
+  width: 150px;
+  height: 655px;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: space-between; */
+  /* margin: auto; */
+  width: 720px;
+  height: 50px;
+  /* border: 1px solid; */
+}
+
+.user_page_nav {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 400px;
+  float: right;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  background-image: url('../icon/goodTidy_icon.png');
 }

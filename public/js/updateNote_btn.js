@@ -1,6 +1,5 @@
 let alldragObject = [];
 let file_name;
-let note_name;
 
 // 上一版筆記的內容
 let prev_version_note;
