@@ -4,7 +4,7 @@ async function profile() {
   if (bearer_token) {
     var config = {
       method: 'get',
-      url: `${S3_HOST}/api/1.0/user/profile`,
+      url: `${server}/api/1.0/user/profile`,
       headers: {
         'Authorization': bearer_token,
       },
@@ -13,11 +13,12 @@ async function profile() {
 
     await axios(config)
       .then((response) => {
+        // console.log(response);
         user_id = response.data.data.id;
         user_picture = response.data.data.picture;
         user_name = response.data.data.name;
         user_email = response.data.data.email;
-        console.log(user_picture, user_name, user_email);
+        console.log(user_id, user_picture, user_name, user_email);
       })
       .catch((error) => {
         console.log(error);
@@ -169,8 +170,5 @@ $('#signin-form-btn').click(async function () {
 // 登出鍵
 $('#logout').click(function () {
   localStorage.setItem('Authorization', '');
-  // user_email = '';
-  // user_name = '';
-  // user_picture = '';
   location.reload(true);
 });

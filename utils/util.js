@@ -29,19 +29,19 @@ const authentication = () => {
     try {
       console.log(accessToken);
       const user = await promisify(jwt.verify)(accessToken, TOKEN_SECRET);
-      // console.log(user);
+
       console.log('user in util authentication: ', user);
       req.user = user;
 
       let userDetail;
 
       userDetail = await User.getUserDetail(user.email);
+      console.log('userDetail:', userDetail);
 
       if (!userDetail) {
         res.status(403).send({ error: 'Forbidden' });
       } else {
-        req.user.id = userDetail.id;
-        // console.log(req.user.id)
+        req.user.id = userDetail._id.toString();
         next();
       }
 

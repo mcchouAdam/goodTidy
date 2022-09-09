@@ -1,0 +1,101 @@
+doctype html
+html
+  head
+    link(href='/css/note-upload.css', rel='stylesheet')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js')
+    script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
+    link(rel='stylesheet', href='//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css')
+    script(src='https://code.jquery.com/jquery-3.6.0.js')
+    script(src='https://code.jquery.com/ui/1.13.2/jquery-ui.js')
+  body
+    header
+      .header
+        // <div class="logo"></div>
+        .user_page_nav
+          #signup
+            button#signup-btn &#x8A3B;&#x518A;
+          #signin
+            button#signin-btn &#x767B;&#x5165;
+          #profile
+            button#profile-btn &#x6703;&#x54E1;
+          #social_page
+            button#social-btn &#x793E;&#x7FA4;
+          #signup-dialog
+            | Email:
+            br
+            input#signup_useremail
+            br
+            | Password:
+            br
+            input#signup_password
+            br
+            | UserName:
+            br
+            input#signup_username
+            br
+            | Photo:
+            br
+            input#user_picture(type='file')
+            br
+            br
+            button#signup-form-btn &#x8A3B;&#x518A;
+          #signin-dialog
+            | Email:
+            br
+            input#signin_useremail
+            br
+            | Password:
+            br
+            input#signin_password
+            br
+            br
+            button#signin-form-btn &#x767B;&#x5165;
+          #profile-dialog
+            #user_picture
+              img#user_pic
+            #user_email
+            #user_name
+            button#logout &#x767B;&#x51FA;
+    .main-block
+      .OCR-block
+        h1 &#x6587;&#x5B57;&#x8FA8;&#x8B58; &amp; &#x5716;&#x5F62;&#x5708;&#x9078;
+        // 檔案上傳/預覽區塊
+        form(runat='server')
+          input#imgInp(accept='image/*', type='file')
+          img#blah(src='#', alt='your image', hidden='')
+        br
+        .OCR-nav
+          //
+            <button id="pre">上一步</button>
+            <button id="next">下一步</button>
+          button#shapeRemoveBG(disabled='') &#x5716;&#x5F62;&#x53BB;&#x80CC;
+          button#removeNotWant &#x53BB;&#x9664;&#x975E;&#x6587;&#x5B57;&#x5340;&#x584A;
+          button#OCR &#x6587;&#x5B57;&#x8FA8;&#x8B58;
+          // <button id="magicContour">圖形圈選</button>
+          button#rectContour &#x65B9;&#x5F62;&#x5708;&#x9078;
+          button#shapeView &#x64F7;&#x53D6;
+          button#reDraw &#x56DE;&#x5FA9;
+        // Canvas
+        .OCR-preview
+          canvas#fontOCRCanvas(width='600px', height='500px')
+      .note-preview-block
+        h1 &#x7B46;&#x8A18;&#x9810;&#x89BD;
+        .processed-content-nav
+          button For&#x6392;&#x7248;
+          //
+            <button id="prev">上一步</button>
+            <button id="next">下一步</button>
+            <button id="addfont">新增文字</button>
+          br
+          br
+          input#note-name(type='text', placeholder='筆記名稱')
+          input#note-classification(type='text', placeholder='筆記分類')
+          button#submit_note &#x78BA;&#x8A8D;&#x4E0A;&#x50B3;
+        #note-preview-content.note-edit-block
+    script(src='/js/windowLoad.js')
+    script(src='/js/user.js')
+    script(src='/js/note.js')
+    script(src='/js/createNote_btn.js')
+    script(src='/js/canvas.js')
+    script(src='/js/OCR.js')
+    script(src='/js/preview.js')

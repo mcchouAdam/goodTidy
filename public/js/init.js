@@ -1,10 +1,37 @@
-function drag_elements_init(div_append, note_elements) {
+// TODO: 簡化成下方
+function elements_init(div_append, note_elements) {
   // note_elements.length-1: 最後一個為最新版
   let elements = $.parseHTML(note_elements[note_elements.length - 1].elements);
   file_name = note_elements[note_elements.length - 1].file_name;
   let img_background = `${S3_HOST}${
     note_elements[note_elements.length - 1].file_name
   }`;
+
+  elements.map((s) => {
+    // 置換掉blob網址
+    $(s).contents().attr('src', `${img_background}`);
+    div_append.append(s);
+  });
+  $('.contour-pic.ui-draggable.ui-draggable-handle')
+    .draggable({
+      containment: '#update-note-content',
+    })
+    .on('drag', stepDrag);
+  $('.add_fonts')
+    .draggable({ containment: '#update-note-content' })
+    .on('drag', stepDrag)
+    .on('input', stepInput);
+  $('.OCR_fonts')
+    .draggable({ containment: '#update-note-content' })
+    .on('drag', stepDrag)
+    .on('input', stepInput);
+}
+
+function elements_init(div_append, note_elements) {
+  // note_elements.length-1: 最後一個為最新版
+  console.log(note_elements);
+  let elements = $.parseHTML(note_elements);
+  let img_background = `${S3_HOST}notes/${note_bg}`;
 
   elements.map((s) => {
     // 置換掉blob網址

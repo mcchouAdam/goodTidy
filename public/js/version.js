@@ -29,7 +29,8 @@ async function show_version(ver_info) {
   }
 }
 
-window.onload = async function () {
-  ver_info = await load_version();
-  show_version(ver_info);
-};
+// TODO: show version;
+// window.onload = async function () {
+//   ver_info = await load_version();
+//   show_version(ver_info);
+// };
