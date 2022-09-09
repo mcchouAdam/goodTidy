@@ -1,3 +1,4 @@
+const { ConditionFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const Notes = require('../models/note_model');
 
 const createNote = async (req, res) => {
@@ -9,12 +10,12 @@ const createNote = async (req, res) => {
   return res.status(200).json('upload note successfully.');
 };
 
-const readNote = async (req, res) => {
-  // console.log(req.params);
-  // const user_id = '6319835b38dbe8b04a223aaf';
-  // const { note_id } = req.params;
-  // const result = await Notes.readNote(user_id, note_id);
-  // return res.status(200).json(result);
+const createNoteVersion = async (req, res) => {
+  console.log(req.body);
+  const version_info = req.body;
+  const result = await Notes.createNoteVersion(version_info);
+
+  return res.status(200).json(result);
 };
 
 const editNotePage = async (req, res) => {
@@ -44,7 +45,7 @@ const getUserNotes = async (req, res) => {
 
 module.exports = {
   createNote,
-  readNote,
+  createNoteVersion,
   editNotePage,
   createNotePage,
   getUserNotes,

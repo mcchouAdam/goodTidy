@@ -53,7 +53,6 @@ function markSearchText(match) {
       $(this).html($(this).html().replace(custfilter, repstr));
     });
   } else {
-    console.log('aaaggg');
     $('#modal-main').find('.highlight').removeClass('highlight');
   }
 }

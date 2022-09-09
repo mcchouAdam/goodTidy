@@ -11,7 +11,7 @@ let user_email;
 
 // note info --------------------------------------
 let ver_info; // 筆記版本資料
-let note_id = 1;
+let current_note_id;
 let note_name;
 let note_bg;
 let note_names = [];
@@ -21,6 +21,7 @@ let note_ids = [];
 let note_list_obj;
 let search_note_list_obj;
 let showNote_note_obj;
+let current_version_obj;
 
 // OCR info ----------------------------------------
 let OCR_elements = [];
@@ -28,5 +29,5 @@ let OCR_elements = [];
 $(window).on('load', async function () {
   await profile();
   await getUserNotes();
-  console.log(user_id);
+  console.log('current_user_id: ', user_id);
 });

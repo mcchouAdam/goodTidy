@@ -6,6 +6,7 @@ const API_VERSION = process.env.API_VERSION;
 const { wrapAsync, authentication } = require('../../utils/util');
 const {
   createNote,
+  createNoteVersion,
   editNotePage,
   createNotePage,
   getUserNotes,
@@ -24,14 +25,19 @@ router
   .route(`/api/${API_VERSION}/note`)
   .post(userNoteUpload, wrapAsync(createNote));
 
+// 儲存筆記
+router
+  .route(`/api/${API_VERSION}/noteVersion`)
+  .post(wrapAsync(createNoteVersion));
+
 // 使用者全部的Notes
 router
   .route(`/api/${API_VERSION}/notes`)
   .get(authentication(), wrapAsync(getUserNotes));
 
-router
-  .route(`/updateNote/:note_id`)
-  .get(authentication(), wrapAsync(editNotePage));
+// router
+//   .route(`/updateNote/:note_id`)
+//   .get(authentication(), wrapAsync(editNotePage));
 
 // TODO: 兩個都要加Auth
 router.route(`/updateNote`).get(wrapAsync(editNotePage));

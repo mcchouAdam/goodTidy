@@ -39,8 +39,10 @@ async function noteUpload(
 }
 
 async function noteShow(note_id) {
-  //   console.log(showNote_note_obj[note_id]);
-  // 重畫
+  // console.log(showNote_note_obj[note_id]);
+  // Assign Global Variable
+  current_note_id = note_id;
+
   let note_content = showNote_note_obj[note_id].note_elements;
   let note_filename = showNote_note_obj[note_id].note_file_name;
   let $note_div = $('#update-note-content');
@@ -66,7 +68,8 @@ async function getUserNotes() {
   await axios(config)
     .then((response) => {
       const data = response.data;
-      console.log(data);
+      version_obj = data;
+      console.log('version', version_obj);
       let note_obj = {};
       let search_list_obj = {};
       let showNote_obj = {};
@@ -122,6 +125,8 @@ async function getUserNotes() {
       showNote_note_obj = $.extend(true, [], showNote_obj);
       console.log(search_note_list_obj);
       console.log(showNote_note_obj);
+
+      // Show the NoteListNav
       showNoteList(note_obj, $('#search-list'));
     })
     .catch((error) => {
@@ -187,4 +192,35 @@ async function showSearchList(note_obj, div_append) {
   mb1_html.append(name_html);
   div_append.append(mb1_html);
   //   $('.list-unstyled').append(mb1_html);
+}
+
+async function getVersionList(version_obj, div_append) {
+  div_append.html('');
+  if (!current_note_id) {
+    div_append.text('請先選擇一個筆記');
+    return;
+  } else {
+    let showVerObj = {};
+    let name_html = '';
+
+    version_obj.map((o) => {
+      if (o.note_id == current_note_id) {
+        const version_info = o.version_info;
+        version_info.map((v) => {
+          showVerObj[v.version_name] = v.elements;
+          name_html += `<input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
+                    <label class="btn btn-secondary" for="${v.version_name}">${v.version_name}</label>`;
+        });
+        div_append.append(name_html);
+      }
+    });
+    return showVerObj;
+  }
+}
+
+// TODO: 跟noteShow一起重構
+async function noteShowFromVer(version_name, showVerObj) {
+  console.log(showVerObj[version_name]);
+  $('#update-note-content').html('');
+  elements_init($('#update-note-content'), showVerObj[version_name]);
 }
