@@ -22,4 +22,5 @@ let note_ids = [];
 $(window).on('load', async function () {
   await profile();
   await getUserNotes();
+  console.log(user_id);
 });

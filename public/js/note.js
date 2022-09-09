@@ -111,7 +111,6 @@ async function getUserNotes() {
 }
 
 async function showNoteList(note_obj) {
-  //   console.log(note_obj);
   const classification = Object.keys(note_obj);
   let mb1_html = $('<li class="mb-1"></li>');
   let name_html = '';
@@ -139,7 +138,7 @@ async function showNoteList(note_obj) {
 
     classification_html += name_html;
     classification_html += `</ul></div>`;
-    console.log(classification_html);
+
     name_html = '';
   });
 

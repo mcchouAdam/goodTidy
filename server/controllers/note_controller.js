@@ -22,8 +22,6 @@ const readNote = async (req, res) => {
 };
 
 const editNotePage = async (req, res) => {
-  // console.log(req.params);
-
   if (!req.params.note_id) {
     res.render('updateNote');
   } else {
@@ -37,6 +35,10 @@ const editNotePage = async (req, res) => {
   }
 };
 
+const createNotePage = async (req, res) => {
+  res.render('createNote');
+};
+
 const getUserNotes = async (req, res) => {
   const user_id = req.user.id;
   const result = await Notes.getUserNotes(user_id);
@@ -48,5 +50,6 @@ module.exports = {
   writeNote,
   readNote,
   editNotePage,
+  createNotePage,
   getUserNotes,
 };

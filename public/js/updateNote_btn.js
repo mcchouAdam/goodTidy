@@ -50,10 +50,7 @@ $('#storeNote').click(async function () {
   // diff(prev_version_note, $('#update-note-content').html())
 
   // 確認儲存 & 輸入版本名稱
-  let ver_name = prompt(
-    '請輸入此版本名稱:',
-    `${note_name}_第${ver_info.length + 1}版`
-  );
+  let ver_name = prompt('請輸入此版本名稱:', '');
 
   if (ver_name === null || ver_name === '') {
     alert('版本名不能為空');
