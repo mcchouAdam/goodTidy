@@ -119,11 +119,12 @@ html(lang='en')
           a.d-flex.align-items-center.pb-3.mb-3.link-dark.text-decoration-none.border-bottom(href='/')
             img(src='/icon/goodTidy_icon.png' width='63', height='115')
             //- p.fs-5.fw-semibold GoodTidy
-          ul.list-unstyled.ps-0
-            button#search_note_list-btn.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#exampleModal')
+            //- modal window -------------------------------
+          ul#search-list.list-unstyled.ps-0
+            button#search_note_list-btn.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#searchModal')
               | Search
             // Modal
-            #exampleModal.modal.fade(tabindex='-1', aria-labelledby='exampleModalLabel', aria-hidden='true')
+            #searchModal.modal.fade(tabindex='-1', aria-labelledby='searchModalLabel', aria-hidden='true')
               .modal-dialog
                 .modal-content
                   .modal-header
@@ -155,10 +156,27 @@ html(lang='en')
           input#autoSave_box(type='checkbox', name='autoSave', value='autoSave')
           | AutoSave
           button#newest-version-btn RestoreToNewest
-          #version-btn.dropdown
-            | Version
-            .dropdown-content
-            button#recovery-btn Recovery
+
+          ul.list-unstyled.ps-0
+            button#version_list-btn.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#versionModal')
+              | Version
+            // Modal
+            #versionModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+              .modal-dialog
+                .modal-content
+                  .modal-header
+                    .input-group
+                      .form-outline
+                      h5.modal-title Version
+                      //- button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
+                      button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                  #modal-version-main.modal-body
+                  .modal-footer
+                    button.btn.btn-primary(type='button') Change
+          //- #version-btn.dropdown
+          //-   | Version
+          //-   .dropdown-content
+          //-   button#recovery-btn Recovery
         span#auto-save-time
         #update-note-content.update-note-content
     script(type='text/javascript').

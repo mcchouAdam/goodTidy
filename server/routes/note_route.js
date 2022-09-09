@@ -5,8 +5,7 @@ const API_VERSION = process.env.API_VERSION;
 
 const { wrapAsync, authentication } = require('../../utils/util');
 const {
-  writeNote,
-  readNote,
+  createNote,
   editNotePage,
   createNotePage,
   getUserNotes,
@@ -20,10 +19,10 @@ const userNoteUpload = noteUpload.fields([
 
 const OCRImgupload = OCRupload.fields([{ name: 'OCR_upload', maxCount: 1 }]);
 
-// 新增/修改筆記資料
+// 新增筆記
 router
   .route(`/api/${API_VERSION}/note`)
-  .post(userNoteUpload, wrapAsync(writeNote));
+  .post(userNoteUpload, wrapAsync(createNote));
 
 // 使用者全部的Notes
 router

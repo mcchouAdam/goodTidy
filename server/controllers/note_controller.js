@@ -1,24 +1,20 @@
 const Notes = require('../models/note_model');
 
-const writeNote = async (req, res) => {
+const createNote = async (req, res) => {
   const note = req.body;
   note.file_name = req.filename;
   const result = await Notes.writeNote(note);
-  const { note_id } = req.params;
+  // const { note_id } = req.params;
 
   return res.status(200).json('upload note successfully.');
 };
 
 const readNote = async (req, res) => {
-  console.log(req.params);
-
-  // TODO: 註冊還沒寫，user_id 先寫死
-  const user_id = '6319835b38dbe8b04a223aaf';
-  const { note_id } = req.params;
-
-  const result = await Notes.readNote(user_id, note_id);
-
-  return res.status(200).json(result);
+  // console.log(req.params);
+  // const user_id = '6319835b38dbe8b04a223aaf';
+  // const { note_id } = req.params;
+  // const result = await Notes.readNote(user_id, note_id);
+  // return res.status(200).json(result);
 };
 
 const editNotePage = async (req, res) => {
@@ -47,7 +43,7 @@ const getUserNotes = async (req, res) => {
 };
 
 module.exports = {
-  writeNote,
+  createNote,
   readNote,
   editNotePage,
   createNotePage,

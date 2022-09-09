@@ -63,6 +63,7 @@ $('#submit_note').click(async function () {
   let timestamp = Date.now();
   let filename = `${user_id}_${timestamp}.${filetype}`;
   let elements = $('#note-preview-content').html();
+  let keywords = OCR_elements.join();
 
   await noteUpload(
     blob,
@@ -71,7 +72,9 @@ $('#submit_note').click(async function () {
     note_name,
     timestamp,
     elements,
-    note_classification
+    note_classification,
+    ver_name,
+    keywords
   );
 });
 
@@ -113,6 +116,7 @@ $('#OCR').click(async function () {
         let font = OCR_result[i].description;
         let fontTop = OCR_result[i].boundingPoly.vertices[0].y;
         let fontLeft = OCR_result[i].boundingPoly.vertices[0].x;
+        OCR_elements.push(font);
 
         // TODO: 預覽頁面 - 使用relative會跑掉，但存檔後不會跑掉
         const item = $(`<div class="OCR_fonts"><p>${font}</p></div>`)

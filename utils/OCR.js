@@ -10,7 +10,7 @@ const client = new vision.ImageAnnotatorClient({
 const OCR_google = async (req, res) => {
   // filename
   const filename = req.filename;
-  console.log(filename);
+  // console.log(filename);
   const [result] = await client.textDetection(`${S3_HOST}/OCR/${filename}`);
   const detections = result.textAnnotations;
   detections.forEach((text) => {

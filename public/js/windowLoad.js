@@ -20,6 +20,10 @@ let note_all_elements = [];
 let note_ids = [];
 let note_list_obj;
 let search_note_list_obj;
+let showNote_note_obj;
+
+// OCR info ----------------------------------------
+let OCR_elements = [];
 
 $(window).on('load', async function () {
   await profile();

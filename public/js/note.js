@@ -5,7 +5,9 @@ async function noteUpload(
   note_name,
   timestamp,
   elements,
-  note_classification
+  note_classification,
+  version_name,
+  keywords
 ) {
   // 檔案上傳s3
   let data = new FormData();
@@ -16,6 +18,8 @@ async function noteUpload(
   data.append('file_name', filename);
   data.append('elements', elements);
   data.append('note_classification', note_classification);
+  data.append('version_name', version_name);
+  data.append('keywords', keywords);
 
   let config = {
     method: 'post',
@@ -35,34 +39,14 @@ async function noteUpload(
 }
 
 async function noteShow(note_id) {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (bearer_token) {
-    var config = {
-      method: 'get',
-      url: `${server}/updateNote/${note_id}`,
-      headers: {
-        'Authorization': bearer_token,
-      },
-      data: '',
-    };
-  }
-
-  // 抓取筆記資料
-  await axios(config)
-    .then((response) => {
-      console.log(response);
-      // 重畫
-      let note_content = response.data[0].elements;
-      let note_filename = response.data[0].file_name;
-      let $note_div = $('#update-note-content');
-      note_bg = note_filename;
-      $note_div.html('');
-      elements_init($note_div, note_content);
-    })
-    .catch((error) => {
-      console.log(error);
-      alert('登入失敗，請重新登入');
-    });
+  //   console.log(showNote_note_obj[note_id]);
+  // 重畫
+  let note_content = showNote_note_obj[note_id].note_elements;
+  let note_filename = showNote_note_obj[note_id].note_file_name;
+  let $note_div = $('#update-note-content');
+  note_bg = note_filename;
+  $note_div.html('');
+  elements_init($note_div, note_content);
 }
 
 async function getUserNotes() {
@@ -82,46 +66,63 @@ async function getUserNotes() {
   await axios(config)
     .then((response) => {
       const data = response.data;
+      console.log(data);
       let note_obj = {};
       let search_list_obj = {};
+      let showNote_obj = {};
       data.map((s) => {
-        console.log(s);
+        // console.log(s);
         const note_classification = s.note_classification;
+        const note_file_name = s.file_name;
         const note_name = s.note_name;
-        const note_all_elements = s.elements;
-        const id = s._id;
-        const time = s.timestamp;
+        const note_lastVersion = s.lastVersion;
+        const note_verInfo = s.version_info[s.version_info.length - 1];
+        const note_elements = note_verInfo.elements;
+        const note_keywords = note_verInfo.keywords;
+        const note_id = s._id;
+        const lastEdit_time = s.lastEdit_time;
 
         if (!note_obj[note_classification]) {
           note_obj[note_classification] = {
-            'names': [note_name],
-            'elements': [note_all_elements],
-            'id': [id],
-            'time': [time],
+            'note_name': [note_name],
+            'note_elements': [note_elements],
+            'note_keywords': [note_keywords],
+            'note_id': [note_id],
+            'lastEdit_time': [lastEdit_time],
           };
         } else {
-          note_obj[note_classification].names.push(note_name);
-          note_obj[note_classification].elements.push(note_all_elements);
-          note_obj[note_classification].id.push(id);
+          note_obj[note_classification].note_name.push(note_name);
+          note_obj[note_classification].note_elements.push(note_elements);
+          note_obj[note_classification].note_keywords.push(note_keywords);
+          note_obj[note_classification].note_lastVersion.push(note_lastVersion);
+          note_obj[note_classification].note_id.push(id);
           note_obj[note_classification].time.push(time);
         }
 
         if (!search_list_obj[note_name]) {
           search_list_obj[
             note_name
-          ] = `${note_name}${note_all_elements}${note_classification}`;
+          ] = `${note_name}${note_keywords}${note_classification}`;
         } else {
           search_list_obj[
             note_name
-          ] += `${note_name}${note_all_elements}${note_classification}`;
+          ] += `${note_name}${note_keywords}${note_classification}`;
+        }
+
+        if (!showNote_obj[note_id]) {
+          showNote_obj[note_id] = {
+            'note_elements': note_elements,
+            'note_file_name': note_file_name,
+          };
         }
       });
       // Deep copy the note_obj
       note_list_obj = $.extend(true, [], note_obj);
       search_note_list_obj = $.extend(true, [], search_list_obj);
-      //   console.log(note_list_obj);
+      showNote_note_obj = $.extend(true, [], showNote_obj);
       console.log(search_note_list_obj);
-      showNoteList(note_obj, $('.list-unstyled'));
+      console.log(showNote_note_obj);
+      showNoteList(note_obj, $('#search-list'));
     })
     .catch((error) => {
       console.log(error);
@@ -136,8 +137,8 @@ async function showNoteList(note_obj, div_append) {
   let classification_html = '';
 
   classification.map((c) => {
-    let ids = note_obj[c].id;
-    let names = note_obj[c].names;
+    let ids = note_obj[c].note_id;
+    let names = note_obj[c].note_name;
 
     classification_html += `<button
             class="btn btn-toggle align-items-center rounded collapsed"
@@ -173,8 +174,8 @@ async function showSearchList(note_obj, div_append) {
   let name_html = '';
 
   classification.map((c) => {
-    let ids = note_obj[c].id;
-    let names = note_obj[c].names;
+    let ids = note_obj[c].note_id;
+    let names = note_obj[c].note_name;
 
     for (let i = 0; i < names.length; i++) {
       name_html += `<li><a href="javascript:noteShow(
