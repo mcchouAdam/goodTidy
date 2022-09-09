@@ -19,6 +19,11 @@ html(lang='en')
     script(src='https://code.jquery.com/ui/1.13.2/jquery-ui.js')
     link(rel='stylesheet', href='//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css')
     link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css')
+    link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.2/css/fontawesome.min.css', crossorigin='anonymous')
+    script(type='text/javascript', src='//cdn.jsdelivr.net/momentjs/latest/moment.min.js')
+    //- Include Date Range Picker
+    script(type='text/javascript', src='//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js')
+    link(rel='stylesheet', type='text/css', href='//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css')
   body
     header
       .header
@@ -115,20 +120,22 @@ html(lang='en')
             img(src='/icon/goodTidy_icon.png' width='63', height='115')
             //- p.fs-5.fw-semibold GoodTidy
           ul.list-unstyled.ps-0
-            button.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#exampleModal', value="search")
+            button#search_note_list-btn.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#exampleModal')
+              | Search
             // Modal
             #exampleModal.modal.fade(tabindex='-1', aria-labelledby='exampleModalLabel', aria-hidden='true')
               .modal-dialog
                 .modal-content
                   .modal-header
-                    //- h5#exampleModalLabel.modal-title search
-                    .input-group.rounded
-                      input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
-                      span#search-addon.input-group-text.border-0
+                    .input-group
+                      .form-outline
+                        input#search_note_list.form-control(type='search', placeholder='search...')
+                      button.btn.btn-primary(type='button')
                         i.fas.fa-search
-                    button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
-                  .modal-body
-                    | ...
+                      input#daterange(type="text", name="daterange")
+                      button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
+                      button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                  #modal-main.modal-body
                   .modal-footer
                     //- button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Close
                     //- button.btn.btn-primary(type='button') Save changes
@@ -137,9 +144,9 @@ html(lang='en')
       .update-note-block
         h1 Note Edit Page
         .update-note-nav
-          input#notename-search(type='text')
-          button#searchText Search
-          br
+          //- input#notename-search(type='text')
+          //- button#searchText Search
+          //- br
           button#prev prev
           button#next next
           button#addfont Text

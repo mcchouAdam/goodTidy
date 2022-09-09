@@ -42,7 +42,6 @@ const readNote = async (user_id, note_id) => {
   await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
-    // console.log('id');
     const id = new ObjectId(note_id);
     const result = await NotesCollection.find({
       '_id': id,
@@ -57,7 +56,7 @@ const readNote = async (user_id, note_id) => {
   }
 };
 
-// TODO: 改成只取自己要的
+// TODO: 改成MongoDB只取自己要的
 const getUserNotes = async (user_id) => {
   await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
@@ -65,7 +64,7 @@ const getUserNotes = async (user_id) => {
     const result = await NotesCollection.find({
       'user_id': user_id,
     }).toArray();
-    
+
     return result;
   } catch (error) {
     return { error };

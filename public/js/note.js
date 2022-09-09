@@ -83,26 +83,45 @@ async function getUserNotes() {
     .then((response) => {
       const data = response.data;
       let note_obj = {};
+      let search_list_obj = {};
       data.map((s) => {
+        console.log(s);
         const note_classification = s.note_classification;
         const note_name = s.note_name;
         const note_all_elements = s.elements;
         const id = s._id;
+        const time = s.timestamp;
 
         if (!note_obj[note_classification]) {
           note_obj[note_classification] = {
             'names': [note_name],
             'elements': [note_all_elements],
             'id': [id],
+            'time': [time],
           };
         } else {
           note_obj[note_classification].names.push(note_name);
           note_obj[note_classification].elements.push(note_all_elements);
           note_obj[note_classification].id.push(id);
+          note_obj[note_classification].time.push(time);
+        }
+
+        if (!search_list_obj[note_name]) {
+          search_list_obj[
+            note_name
+          ] = `${note_name}${note_all_elements}${note_classification}`;
+        } else {
+          search_list_obj[
+            note_name
+          ] += `${note_name}${note_all_elements}${note_classification}`;
         }
       });
-      //   console.log(note_obj);
-      showNoteList(note_obj);
+      // Deep copy the note_obj
+      note_list_obj = $.extend(true, [], note_obj);
+      search_note_list_obj = $.extend(true, [], search_list_obj);
+      //   console.log(note_list_obj);
+      console.log(search_note_list_obj);
+      showNoteList(note_obj, $('.list-unstyled'));
     })
     .catch((error) => {
       console.log(error);
@@ -110,7 +129,7 @@ async function getUserNotes() {
     });
 }
 
-async function showNoteList(note_obj) {
+async function showNoteList(note_obj, div_append) {
   const classification = Object.keys(note_obj);
   let mb1_html = $('<li class="mb-1"></li>');
   let name_html = '';
@@ -143,5 +162,28 @@ async function showNoteList(note_obj) {
   });
 
   mb1_html.append(classification_html);
-  $('.list-unstyled').append(mb1_html);
+  div_append.append(mb1_html);
+  //   $('.list-unstyled').append(mb1_html);
+}
+
+async function showSearchList(note_obj, div_append) {
+  div_append.html('');
+  const classification = Object.keys(note_obj);
+  let mb1_html = $('<li class="mb-1"></li>');
+  let name_html = '';
+
+  classification.map((c) => {
+    let ids = note_obj[c].id;
+    let names = note_obj[c].names;
+
+    for (let i = 0; i < names.length; i++) {
+      name_html += `<li><a href="javascript:noteShow(
+        '${ids[i]}'
+      )" class="link-dark rounded">${names[i]}</a></li>`;
+    }
+  });
+
+  mb1_html.append(name_html);
+  div_append.append(mb1_html);
+  //   $('.list-unstyled').append(mb1_html);
 }

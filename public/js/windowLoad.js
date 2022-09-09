@@ -18,6 +18,8 @@ let note_names = [];
 let note_classifications = [];
 let note_all_elements = [];
 let note_ids = [];
+let note_list_obj;
+let search_note_list_obj;
 
 $(window).on('load', async function () {
   await profile();

@@ -5,33 +5,33 @@ let file_name;
 let prev_version_note;
 
 // 筆記名稱鍵 ---------------------------------------------------------
-$('#search-notename-btn').click(async function () {
-  try {
-    $('#update-note-content').html('');
-    note_name = $('#note-name-search').val();
+// $('#search-notename-btn').click(async function () {
+//   try {
+//     $('#update-note-content').html('');
+//     note_name = $('#note-name-search').val();
 
-    // 查詢note-name ----------------------
-    const query_note_result = await axios({
-      method: 'GET',
-      url: `api/1.0/note/${note_name}`,
-      responseType: 'json',
-    });
+//     // 查詢note-name ----------------------
+//     const query_note_result = await axios({
+//       method: 'GET',
+//       url: `api/1.0/note/${note_name}`,
+//       responseType: 'json',
+//     });
 
-    const note_elements = query_note_result.data;
-    prev_version_note = note_elements;
-    let $note_content = $('#update-note-content');
+//     const note_elements = query_note_result.data;
+//     prev_version_note = note_elements;
+//     let $note_content = $('#update-note-content');
 
-    // elements初始化
-    drag_elements_init($note_content, note_elements);
-  } catch (err) {
-    console.log(err);
-    return;
-  }
+//     // elements初始化
+//     drag_elements_init($note_content, note_elements);
+//   } catch (err) {
+//     console.log(err);
+//     return;
+//   }
 
-  // 更新版本選擇的內容
-  ver_info = await load_version();
-  show_version(ver_info);
-});
+//   // 更新版本選擇的內容
+//   ver_info = await load_version();
+//   show_version(ver_info);
+// });
 
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
@@ -83,9 +83,9 @@ $('#storeNote').click(async function () {
 });
 
 // 查找筆記內容 -------------------------------
-$('#searchText').click(function () {
-  replaceText();
-});
+// $('#notename-search').keydown(function () {
+//   replaceText();
+// });
 
 // 復原版本鍵 --------------------------------------
 $('#recovery-btn').click(function () {
