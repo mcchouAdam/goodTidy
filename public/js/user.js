@@ -109,6 +109,7 @@ async function showProfile() {
 $('#signup-dialog').dialog({ title: 'signup', autoOpen: false });
 $('#signin-dialog').dialog({ title: 'signin', autoOpen: false });
 $('#profile-dialog').dialog({ title: 'profile', autoOpen: false });
+$('#share-dialog').dialog({ title: 'share', autoOpen: false });
 
 // signIn頁面 ---------------------------------
 $('#signin-btn').click(function () {
@@ -139,6 +140,14 @@ $('#profile-btn').click(async function () {
   } else {
     await showProfile();
   }
+});
+
+// share頁面 ---------------------------------
+$('#share-btn').click(function () {
+  $('#signin-dialog').dialog('close');
+  $('#signup-dialog').dialog('close');
+  $('#profile-dialog').dialog('close');
+  $('#share-dialog').dialog('open');
 });
 
 // 註冊鍵 -------------------------------------

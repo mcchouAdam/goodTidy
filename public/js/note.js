@@ -90,6 +90,7 @@ async function getUserNotes() {
             'note_name': [note_name],
             'note_elements': [note_elements],
             'note_keywords': [note_keywords],
+            'note_lastVersion': [note_lastVersion],
             'note_id': [note_id],
             'lastEdit_time': [lastEdit_time],
           };
@@ -98,8 +99,8 @@ async function getUserNotes() {
           note_obj[note_classification].note_elements.push(note_elements);
           note_obj[note_classification].note_keywords.push(note_keywords);
           note_obj[note_classification].note_lastVersion.push(note_lastVersion);
-          note_obj[note_classification].note_id.push(id);
-          note_obj[note_classification].time.push(time);
+          note_obj[note_classification].note_id.push(note_id);
+          note_obj[note_classification].lastEdit_time.push(lastEdit_time);
         }
 
         if (!search_list_obj[note_name]) {
