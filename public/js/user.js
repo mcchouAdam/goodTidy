@@ -4,7 +4,7 @@ async function profile() {
   if (bearer_token) {
     var config = {
       method: 'get',
-      url: `${S3_HOST}/api/1.0/user/profile`,
+      url: `${server}/api/1.0/user/profile`,
       headers: {
         'Authorization': bearer_token,
       },
@@ -13,11 +13,12 @@ async function profile() {
 
     await axios(config)
       .then((response) => {
+        // console.log(response);
         user_id = response.data.data.id;
         user_picture = response.data.data.picture;
         user_name = response.data.data.name;
         user_email = response.data.data.email;
-        console.log(user_picture, user_name, user_email);
+        console.log(user_id, user_picture, user_name, user_email);
       })
       .catch((error) => {
         console.log(error);
@@ -108,6 +109,7 @@ async function showProfile() {
 $('#signup-dialog').dialog({ title: 'signup', autoOpen: false });
 $('#signin-dialog').dialog({ title: 'signin', autoOpen: false });
 $('#profile-dialog').dialog({ title: 'profile', autoOpen: false });
+$('#share-dialog').dialog({ title: 'share', autoOpen: false });
 
 // signIn頁面 ---------------------------------
 $('#signin-btn').click(function () {
@@ -140,6 +142,14 @@ $('#profile-btn').click(async function () {
   }
 });
 
+// share頁面 ---------------------------------
+$('#share-btn').click(function () {
+  $('#signin-dialog').dialog('close');
+  $('#signup-dialog').dialog('close');
+  $('#profile-dialog').dialog('close');
+  $('#share-dialog').dialog('open');
+});
+
 // 註冊鍵 -------------------------------------
 $('#signup-form-btn').click(async function () {
   if (!user_email) {
@@ -169,8 +179,5 @@ $('#signin-form-btn').click(async function () {
 // 登出鍵
 $('#logout').click(function () {
   localStorage.setItem('Authorization', '');
-  // user_email = '';
-  // user_name = '';
-  // user_picture = '';
   location.reload(true);
 });

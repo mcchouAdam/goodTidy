@@ -16,7 +16,7 @@ const s3 = new S3Client({
   region: 'us-east-1',
 });
 
-const upload = multer({
+const OCRupload = multer({
   storage: multerS3({
     s3: s3,
     bucket: AWS_BUCKETNAME,
@@ -24,7 +24,15 @@ const upload = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: function (req, file, cb) {
-      cb(null, file.originalname);
+      const customFileName = crypto
+        .randomBytes(18)
+        .toString('hex')
+        .substr(0, 8);
+      const fileExtension = file.mimetype.split('/')[1]; // get file extension from original file name
+      const fullName = customFileName + '.' + fileExtension;
+      const picPath = 'OCR/' + fullName;
+      cb(null, picPath);
+      req.filename = fullName;
     },
   }),
 });
@@ -71,4 +79,4 @@ const userPicUpload = multer({
   }),
 });
 
-module.exports = { upload, userPicUpload, noteUpload };
+module.exports = { OCRupload, userPicUpload, noteUpload };

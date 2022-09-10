@@ -7,6 +7,7 @@ const {
   signUp,
   signIn,
   getUserProfile,
+  shareToAll,
 } = require('../controllers/user_controller');
 
 const userPictureUpload = userPicUpload.fields([
@@ -16,5 +17,7 @@ const userPictureUpload = userPicUpload.fields([
 router.route('/user/signup').post(userPictureUpload, wrapAsync(signUp));
 router.route('/user/signin').post(wrapAsync(signIn));
 router.route('/user/profile').get(authentication(), wrapAsync(getUserProfile));
+
+router.route('/user/shareToAll').get(authentication(), wrapAsync(shareToAll));
 
 module.exports = router;

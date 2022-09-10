@@ -98,6 +98,7 @@ const signIn = async (req, res) => {
 const getUserProfile = async (req, res) => {
   res.status(200).send({
     data: {
+      id: req.user.user_id,
       provider: req.user.provider,
       name: req.user.name,
       email: req.user.email,
@@ -107,8 +108,14 @@ const getUserProfile = async (req, res) => {
   return;
 };
 
+const shareToAll = async (req, res) => {
+  res.status(200).send('aaabbb');
+  return;
+};
+
 module.exports = {
   signUp,
   signIn,
   getUserProfile,
+  shareToAll,
 };

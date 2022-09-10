@@ -1,38 +1,3 @@
-let alldragObject = [];
-let file_name;
-
-// 上一版筆記的內容
-let prev_version_note;
-
-// 筆記名稱鍵 ---------------------------------------------------------
-$('#search-notename-btn').click(async function () {
-  try {
-    $('#update-note-content').html('');
-    note_name = $('#note-name-search').val();
-
-    // 查詢note-name ----------------------
-    const query_note_result = await axios({
-      method: 'GET',
-      url: `api/1.0/note/${note_name}`,
-      responseType: 'json',
-    });
-
-    const note_elements = query_note_result.data;
-    prev_version_note = note_elements;
-    let $note_content = $('#update-note-content');
-
-    // elements初始化
-    drag_elements_init($note_content, note_elements);
-  } catch (err) {
-    console.log(err);
-    return;
-  }
-
-  // 更新版本選擇的內容
-  ver_info = await load_version();
-  show_version(ver_info);
-});
-
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
   const item = $('<div class="add_fonts"><p>新增文字方塊</p></div>')
@@ -50,44 +15,37 @@ $('#storeNote').click(async function () {
   // diff(prev_version_note, $('#update-note-content').html())
 
   // 確認儲存 & 輸入版本名稱
-  let ver_name = prompt(
-    '請輸入此版本名稱:',
-    `${note_name}_第${ver_info.length + 1}版`
-  );
+  let version_name = prompt('請輸入此版本名稱:', '');
 
-  if (ver_name === null || ver_name === '') {
+  if (version_name === null || version_name === '') {
     alert('版本名不能為空');
     return;
   }
-  // 新增資料庫資料
-  // TODO: 目前ver_img先寫死，可以用puppeteer截圖
-  let note = {
-    'user_id': user_id,
-    'timestamp': Date.now(),
-    'note_name': note_name,
-    'file_name': file_name,
+
+  // console.log('file_name: ', file_name);
+  console.log('version_name: ', version_name);
+
+  // TODO: 目前version_img先寫死，可以用puppeteer截圖
+  let data = {
+    'note_id': current_note_id,
+    'created_time': Date.now(),
+    'version_img': '123_coolthing_ver3.png',
+    'version_name': version_name,
     'elements': $('#update-note-content').html(),
-    'url': '',
-    'ver_img': '123_coolthing_ver3.png',
-    'ver_name': ver_name,
+    'keywords': $('.OCR_fonts p').text() + $('.add_fonts p').text(),
   };
 
   await axios({
     method: 'POST',
-    url: '/api/1.0/note',
-    data: note,
+    url: '/api/1.0/noteVersion',
+    data: data,
   });
 
-  alert(`${note_name} 儲存成功!`);
+  alert(`${version_name} 儲存成功!`);
 
   // 更新版本選擇的內容
-  ver_info = await load_version();
-  show_version(ver_info);
-});
-
-// 查找筆記內容 -------------------------------
-$('#searchText').click(function () {
-  replaceText();
+  // ver_info = await load_version();
+  // show_version(ver_info);
 });
 
 // 復原版本鍵 --------------------------------------
@@ -124,4 +82,18 @@ $('#newest-version-btn').click(function () {
     $('.OCR_fonts').draggable({ containment: '#update-note-content' });
     $('#update-note-content').append(s);
   });
+});
+
+// version-btn -------------------------------------------
+$('#version_list-btn').click(async function () {
+  current_version_obj = await getVersionList(
+    version_obj,
+    $('#modal-version-main')
+  );
+});
+
+$('#version-change').click(function () {
+  const version_chosen = $('input[name="version_options"]:checked').val();
+  noteShowFromVer(version_chosen, current_version_obj);
+  // console.log(version_chosen);
 });

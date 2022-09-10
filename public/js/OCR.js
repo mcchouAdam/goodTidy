@@ -1,8 +1,8 @@
-async function OCR(filename) {
+async function OCR() {
   try {
     const OCR_result = await axios({
-      method: 'GET',
-      url: `api/1.0/OCR/${filename}`,
+      method: 'POST',
+      url: `api/1.0/OCR`,
       responseType: 'json',
     });
     return OCR_result.data;

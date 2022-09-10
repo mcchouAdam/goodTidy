@@ -1,5 +1,3 @@
-let alldragObject = [];
-
 // 圖形圈選 ---------------------------
 
 // 魔術
@@ -63,6 +61,7 @@ $('#submit_note').click(async function () {
   let timestamp = Date.now();
   let filename = `${user_id}_${timestamp}.${filetype}`;
   let elements = $('#note-preview-content').html();
+  let keywords = OCR_elements.join();
 
   await noteUpload(
     blob,
@@ -71,7 +70,9 @@ $('#submit_note').click(async function () {
     note_name,
     timestamp,
     elements,
-    note_classification
+    note_classification,
+    ver_name,
+    keywords
   );
 });
 
@@ -87,57 +88,57 @@ $('#OCR').click(async function () {
   const blob = await base64Response.blob();
 
   let file_name = `OCR_${user_id}_${note_id}_${Date.now()}.jpg`;
-  let form = new FormData();
-  form.append('upload_file', blob, file_name);
+  let data = new FormData();
+  data.append('OCR_upload', blob, file_name);
 
-  // TODO: 統一改成axios
-  let upload_setting = {
-    'url': '/upload/file',
-    'method': 'POST',
-    'timeout': 0,
-    'processData': false,
-    'mimeType': 'multipart/form-data',
-    'contentType': false,
-    'data': form,
+  let config = {
+    method: 'post',
+    url: `${server}/api/1.0/OCR`,
+    data: data,
   };
 
-  $.ajax(upload_setting).done(function (response) {
-    console.log(response);
-  });
+  await axios(config)
+    .then(function (response) {
+      alert('OCR成功');
 
-  // Canvas重畫
-  clearContext(canvas, context);
-  canvasBackground();
-  removeRectRemoveListener(canvas);
+      // Canvas重畫
+      clearContext(canvas, context);
+      canvasBackground();
+      removeRectRemoveListener(canvas);
 
-  // 文字辨識
-  const OCR_result = await OCR(file_name);
+      const OCR_result = response.data;
 
-  // append進預覽框裡
-  // OCR_result[0] 是全部辨識的字串
-  for (let i = 1; i < OCR_result.length; i++) {
-    let font = OCR_result[i].description;
-    let fontTop = OCR_result[i].boundingPoly.vertices[0].y;
-    let fontLeft = OCR_result[i].boundingPoly.vertices[0].x;
+      // append進預覽框裡
+      // OCR_result[0] 是全部辨識的字串
+      for (let i = 1; i < OCR_result.length; i++) {
+        let font = OCR_result[i].description;
+        let fontTop = OCR_result[i].boundingPoly.vertices[0].y;
+        let fontLeft = OCR_result[i].boundingPoly.vertices[0].x;
+        OCR_elements.push(font);
 
-    // TODO: 預覽頁面 - 使用relative會跑掉，但存檔後不會跑掉
-    const item = $(`<div class="OCR_fonts"><p>${font}</p></div>`)
-      // TODO: left的座標調整數字不隻從哪兒來
-      // .css({
-      //   top: fontTop + 200,
-      //   left: fontLeft + $('#fontOCRCanvas').width(),
-      //   position: 'absolute',
-      // })
-      .css({
-        top: fontTop,
-        left: fontLeft,
-        position: 'relative',
-      })
-      .attr('contenteditable', 'true')
-      .draggable({ containment: '#note-preview-content' });
+        // TODO: 預覽頁面 - 使用relative會跑掉，但存檔後不會跑掉
+        const item = $(`<div class="OCR_fonts"><p>${font}</p></div>`)
+          // TODO: left的座標調整數字不隻從哪兒來
+          // .css({
+          //   top: fontTop + 200,
+          //   left: fontLeft + $('#fontOCRCanvas').width(),
+          //   position: 'absolute',
+          // })
+          .css({
+            top: fontTop,
+            left: fontLeft,
+            position: 'relative',
+          })
+          .attr('contenteditable', 'true')
+          .draggable({ containment: '#note-preview-content' });
 
-    $('#note-preview-content').append(item);
-  }
+        $('#note-preview-content').append(item);
+      }
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log('OCR失敗');
+    });
 });
 
 // 回復鍵 ------------------------------------
