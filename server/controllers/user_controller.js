@@ -108,14 +108,8 @@ const getUserProfile = async (req, res) => {
   return;
 };
 
-const shareToAll = async (req, res) => {
-  res.status(200).send('aaabbb');
-  return;
-};
-
 module.exports = {
   signUp,
   signIn,
   getUserProfile,
-  shareToAll,
 };

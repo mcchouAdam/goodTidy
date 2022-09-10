@@ -10,6 +10,7 @@ const {
   editNotePage,
   createNotePage,
   getUserNotes,
+  shareToAll,
 } = require('../controllers/note_controller');
 const { OCRupload, noteUpload } = require('../models/s3');
 const { OCR_google } = require('../../utils/OCR');
@@ -47,5 +48,10 @@ router.route(`/createNote`).get(wrapAsync(createNotePage));
 router
   .route(`/api/${API_VERSION}/OCR`)
   .post(OCRImgupload, wrapAsync(OCR_google));
+
+// share
+router
+  .route(`/api/${API_VERSION}/note/shareToAll`)
+  .post(authentication(), wrapAsync(shareToAll));
 
 module.exports = router;

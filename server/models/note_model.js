@@ -1,12 +1,12 @@
 const { Mongo } = require('./mongocon');
 require('dotenv').config();
-const { MONGO_DB } = process.env;
+const { MONGO_DB, SERVER_HOST } = process.env;
 const ObjectId = require('mongodb').ObjectId;
 
 const writeNote = async (note) => {
   // transaction ------------------------------------------
   // Step 1: Start a Client Session
-  await Mongo.connect();
+  // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   const NoteVerCollection = Mongo.db(MONGO_DB).collection('note_version');
   const session = Mongo.startSession();
@@ -56,12 +56,12 @@ const writeNote = async (note) => {
     return { error };
   } finally {
     await session.endSession();
-    await Mongo.close();
+    // await Mongo.close();
   }
 };
 
 const createNoteVersion = async (version_info) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const versionCollection = Mongo.db(MONGO_DB).collection('note_version');
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
@@ -79,7 +79,7 @@ const createNoteVersion = async (version_info) => {
   } catch (error) {
     return { error };
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
   }
 };
 
@@ -108,7 +108,7 @@ const createNoteVersion = async (version_info) => {
 
 // TODO: MongoDB改成只取自己要的
 const getUserNotes = async (user_id) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
     const result = await NotesCollection.aggregate([
@@ -124,13 +124,112 @@ const getUserNotes = async (user_id) => {
       },
     ]).toArray();
 
-    console.log(result);
+    // console.log(result);
 
     return result;
   } catch (error) {
     return { error };
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
+  }
+};
+
+const shareToAll = async (data) => {
+  // await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+
+  const note_id = data.note_id;
+  const isSharing = data.isSharing;
+  const url_permission = data.url_permission;
+  const sharing_descrition = data.sharing_descrition;
+  const sharing_image = data.sharing_image;
+  const sharing_url = `${SERVER_HOST}/othersNote/${note_id}`;
+
+  try {
+    const result = await NotesCollection.updateOne(
+      {
+        '_id': ObjectId(note_id),
+      },
+      {
+        $set: {
+          'isSharing': isSharing,
+          'url_permission': url_permission,
+          'sharing_url': sharing_url,
+          'sharing_descrition': sharing_descrition,
+          'sharing_image': sharing_image,
+        },
+      }
+    );
+    console.log(result);
+    return result;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+const getShareNotes = async (paging) => {
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+
+  try {
+    const skip = (paging - 1) * 6;
+    const limit = 6;
+
+    const result = await NotesCollection.aggregate([
+      {
+        '$match': { 'isSharing': 1 },
+      },
+      { '$addFields': { 'foreign_user_id': { '$toObjectId': '$user_id' } } },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'foreign_user_id',
+          foreignField: '_id',
+          as: 'user_info',
+        },
+      },
+    ])
+      .sort({ 'created_time': -1 })
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    // console.log(result);
+
+    return result;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+const getNoteById = async (note_id) => {
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const result = await NotesCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+        },
+      },
+      { '$addFields': { 'note_id': { '$toString': '$_id' } } },
+      {
+        $lookup: {
+          from: 'note_version',
+          localField: 'note_id',
+          foreignField: 'note_id',
+          as: 'version_info',
+        },
+      },
+    ]).toArray();
+    // console.log(result);
+    return result;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
   }
 };
 
@@ -138,4 +237,7 @@ module.exports = {
   writeNote,
   createNoteVersion,
   getUserNotes,
+  shareToAll,
+  getShareNotes,
+  getNoteById,
 };

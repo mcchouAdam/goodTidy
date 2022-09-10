@@ -38,12 +38,11 @@
 
 /* Style the button that is used to open the sidepanel */
 .openbtn {
-  font-size: 20px;
+  font-size: 16px;
   cursor: pointer;
-  background-color: #111;
-  color: white;
-  padding: 10px 15px;
-  border: none;
+  /* background-color: #111; */
+  /* color: white; */
+  /* padding: 10px 15px; */
 }
 
 .openbtn:hover {

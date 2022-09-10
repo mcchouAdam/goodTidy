@@ -43,10 +43,22 @@ const getUserNotes = async (req, res) => {
   return res.status(200).json(result);
 };
 
+const shareToAll = async (req, res) => {
+  console.log(req.user.user_id);
+  console.log(req.body);
+
+  req.body.user_id = req.user.user_id;
+  const data = req.body;
+
+  const share = await Notes.shareToAll(data);
+  return res.status(200).send(share);
+};
+
 module.exports = {
   createNote,
   createNoteVersion,
   editNotePage,
   createNotePage,
   getUserNotes,
+  shareToAll,
 };

@@ -1,0 +1,52 @@
+extends layout.pug
+
+block content
+    div#showShareDetail.showShareDetail
+        #mySidepanel.sidepanel
+            a.closebtn(href='javascript:void(0)', onclick='closeNav()') &times;
+            h3 留言板
+            .input-group.rounded
+                input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
+                span#search-addon.input-group-text.border-0
+                    i.fa.fa-search
+            .card.border-dark.mb-3(style='max-width: 18rem;')
+                .card-header Adam
+                    p.card-text
+                        small.text-muted 2022.09.10 17:30
+                .card-body.text-dark
+                    p.card-text
+                        | 原PO好帥
+
+            .card.border-dark.mb-3(style='max-width: 18rem;')
+                .card-header CC
+                .card-body.text-dark
+                    p.card-text
+                        | 50收
+            .card.border-dark.mb-3(style='max-width: 18rem;')
+                .card-header CC
+                .card-body.text-dark
+                    p.card-text
+                        | 50收
+            .card.border-dark.mb-3(style='max-width: 18rem;')
+                .card-header CC
+                .card-body.text-dark
+                    p.card-text
+                        | 50收
+            .card.border-dark.mb-3(style='max-width: 18rem;')
+                .card-header CC
+                .card-body.text-dark
+                    p.card-text
+                        | 50收
+            .card.border-dark.mb-3(style='max-width: 18rem;')
+                .card-header CC
+                .card-body.text-dark
+                    p.card-text
+                        | 50收
+            hr.mt-0.mb-2
+            button#createMsg 留言
+        button#Msg-btn.openbtn(onclick='openNav()')
+          i.fa.fa-solid.fa-comments
+    script.
+        elements = !{elements};
+        const elements_html = $.parseHTML(elements);
+        $('#showShareDetail').append(elements_html);

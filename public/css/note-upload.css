@@ -103,21 +103,15 @@
 }
 
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  /* justify-content: space-between; */
-  /* margin: auto; */
-  width: 720px;
-  height: 50px;
-  /* border: 1px solid; */
+  height: 25px;
 }
 
-.user_page_nav {
+/* .user_page_nav {
   display: flex;
   flex-wrap: wrap;
   margin-left: 400px;
   float: right;
-}
+} */
 
 .logo {
   width: 50px;

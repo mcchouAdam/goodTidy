@@ -10,7 +10,7 @@ const { TOKEN_EXPIRE, TOKEN_SECRET, MONGO_DB, S3_HOST } = process.env; // 30 day
 const jwt = require('jsonwebtoken');
 
 const signUp = async (name, email, password, picture) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
@@ -72,12 +72,12 @@ const signUp = async (name, email, password, picture) => {
       status: 403,
     };
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
   }
 };
 
 const nativeSignIn = async (email, password) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
@@ -87,7 +87,7 @@ const nativeSignIn = async (email, password) => {
     const user_id = user._id.toString();
     user.id = user_id;
     // console.log(user_id);
-    console.log('user_id in user_model:', user);
+    // console.log('user_id in user_model:', user);
 
     if (!bcrypt.compare(password.toString(), user.password)) {
       return { error: 'Your email or password is wrong' };
@@ -114,12 +114,12 @@ const nativeSignIn = async (email, password) => {
   } catch (error) {
     return { error };
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
   }
 };
 
 const getUserDetail = async (email) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
   try {
     const [user] = await userCollection.find({ 'email': email }).toArray();
@@ -127,7 +127,20 @@ const getUserDetail = async (email) => {
   } catch (e) {
     return null;
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
+  }
+};
+
+const shareToAll = async (data) => {
+  // await Mongo.connect();
+  const userCollection = Mongo.db(MONGO_DB).collection('user');
+  try {
+    const [user] = await userCollection.find({ 'email': email }).toArray();
+    return user;
+  } catch (e) {
+    return null;
+  } finally {
+    // await Mongo.close();
   }
 };
 
@@ -135,4 +148,5 @@ module.exports = {
   signUp,
   nativeSignIn,
   getUserDetail,
+  shareToAll,
 };

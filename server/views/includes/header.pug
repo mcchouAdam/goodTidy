@@ -1,8 +1,81 @@
-head
-    title GoodTidy
-    link(href='./css/note-upload.css', rel='stylesheet')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js')
-    script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
-    script(src='https://code.jquery.com/jquery-3.6.0.js')
-    script(src='https://code.jquery.com/ui/1.13.2/jquery-ui.js')
-    link(rel='stylesheet', href='//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css')
+nav.py-2.bg-light.border-bottom
+    .container.d-flex.flex-wrap
+      ul.nav.me-auto
+        img(src='/icon/goodTidy_icon.png' width='25', height='45')
+        //- svg.bi.me-2(width='40', height='32', role='img', aria-label='Bootstrap')
+        //-   use(xlink:href='#bootstrap')
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='/updateNote', aria-current='page') Note
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='/socialPage?paging=1') Social
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='#') Product
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='#') About
+      ul.nav
+        li.nav-item
+          a#signin-btn.nav-link.link-dark.px-2(href='#') Login
+        li.nav-item
+          a#signup-btn.nav-link.link-dark.px-2(href='#') Sign up
+        //- li.nav-item
+        //-   a#share-btn.nav-link.link-dark.px-2(href='#') share
+
+header
+    .header
+      //- Dialog block
+      #signup-dialog
+        | Email:
+        br
+        input#signup_useremail
+        br
+        | Password:
+        br
+        input#signup_password
+        br
+        | UserName:
+        br
+        input#signup_username
+        br
+        | Photo:
+        br
+        input#user_picture(type='file')
+        br
+        br
+        button#signup-form-btn SignUp
+      #signin-dialog
+        | Email:
+        br
+        input#signin_useremail
+        br
+        | Password:
+        br
+        input#signin_password
+        br
+        br
+        button#signin-form-btn SignIn
+      #profile-dialog
+        #user_picture
+          img#user_pic
+        #user_email
+        #user_name
+        button#logout LogOut
+      #share-dialog
+        #share_note_name
+        input#isShare(type='checkbox', name='note_share', value='isShare')
+        span 分享
+        br
+        br
+        input#share_url(type='text', placeholder='share_url')
+        button#copy_shareUrl copy
+        br
+        br
+        input#share_write(type='checkbox', name='share_write', value='write')
+        label(for='share_write') Allow write
+        br
+        input#share_comment(type='checkbox', name='share_comment', value='comment')
+        label(for='share_comment')  Allow comment
+        br
+        input#share_read(type='checkbox', name='share_comment', value='read')
+        label(for='share_read')  Allow read
+        br
+        button#share_confirm share

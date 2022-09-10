@@ -12,6 +12,7 @@ app.use(express.json());
 
 app.use('/api/' + API_VERSION, [require('./server/routes/user_route')]);
 app.use([require('./server/routes/note_route')]);
+app.use([require('./server/routes/social_route')]);
 
 app.listen(port, () => {
   console.log(`listen ${port} sucessfully!`);
