@@ -48,3 +48,78 @@
 .openbtn:hover {
   background-color: #444;
 }
+
+/* -------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------------------- */
+/* 這是留言板的CSS */
+
+/* your CSS goes here*/
+
+.card {
+  border-radius: 10px;
+  width: 500px;
+  padding: 20px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+textarea {
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: #616161;
+  border: 1px solid #f5f5f5;
+  font-size: 16px;
+  letter-spacing: 1px;
+  height: 120px !important;
+  width: 100%;
+}
+
+textarea:focus {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid #00c853 !important;
+  outline-width: 0 !important;
+}
+
+select {
+  border: none;
+  font-size: 15px;
+  background-color: #fff !important;
+}
+
+select:focus {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  outline-width: 0 !important;
+}
+
+::placeholder {
+  color: #bdbdbd;
+}
+
+:-ms-input-placeholder {
+  color: #bdbdbd;
+}
+
+::-ms-input-placeholder {
+  color: #bdbdbd;
+}
+
+.btn-success {
+  border-radius: 50px;
+  padding: 4px 40px;
+}
+
+.options {
+  font-size: 23px;
+  color: #757575;
+  cursor: pointer;
+}
+
+.options:hover {
+  color: #000;
+}

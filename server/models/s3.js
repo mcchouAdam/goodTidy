@@ -79,4 +79,25 @@ const userPicUpload = multer({
   }),
 });
 
-module.exports = { OCRupload, userPicUpload, noteUpload };
+const shareImgUpload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: AWS_BUCKETNAME,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      const customFileName = crypto
+        .randomBytes(18)
+        .toString('hex')
+        .substr(0, 8);
+      const fileExtension = file.mimetype.split('/')[1]; // get file extension from original file name
+      const fullName = customFileName + '.' + fileExtension;
+      const picPath = 'sharing_image/' + fullName;
+      cb(null, picPath);
+      req.filename = fullName;
+    },
+  }),
+});
+
+module.exports = { OCRupload, userPicUpload, noteUpload, shareImgUpload };

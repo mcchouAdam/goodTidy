@@ -1,8 +1,14 @@
-const { getShareNotes, getNoteById } = require('../models/note_model');
+const {
+  getShareNotes,
+  getNoteById,
+  createComment,
+  getComments,
+} = require('../models/note_model');
 const {
   showShareDetail,
   showSocialCards,
   showPagination,
+  showCommentsDetail,
 } = require('../../utils/showPage');
 
 const socialPage = async (req, res) => {
@@ -20,14 +26,32 @@ const socialPage = async (req, res) => {
 const shareDetailPage = async (req, res) => {
   const note_id = req.query.id;
   const result = await getNoteById(note_id);
-  const elements_html = await showShareDetail(result);
+  const noteDetails = await showShareDetail(result);
+  const comments = await getComments(note_id);
+  const comments_html = await showCommentsDetail(comments);
+
+  // console.log(result);
 
   return res.render('shareDetailPage', {
-    elements: JSON.stringify(elements_html),
+    elements: JSON.stringify(noteDetails),
+    comments: JSON.stringify(comments_html),
   });
+};
+
+const createComments = async (req, res) => {
+  if (req.permission < 3) {
+    return res.status(403).json({ 'data': '您沒有權限留言' });
+  }
+
+  req.body.user_id = req.user.id;
+  const data = req.body;
+  const result = await createComment(data);
+
+  return res.status(200).json(`comment_id ${result} created successfully!`);
 };
 
 module.exports = {
   socialPage,
   shareDetailPage,
+  createComments,
 };

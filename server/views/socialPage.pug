@@ -5,73 +5,25 @@ block content
         input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
         span#search-addon.input-group-text.border-0
             i.fa.fa-search
-    button 收藏顯示
+    //- 排序搜尋法
+    button#heart_sorting-btn.btn
+        i.fa.fa-heart(aria-hidden='true', style='color:grey')
+    button#time_sorting-btn.btn
+        i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
+    button#comments_sorting-btn.btn 
+        i.fa.fa-fire(aria-hidden='true', style='color:grey')
+    //- 分享筆記卡片
     #sharing-cards
-        //- .card-group
-        //-     .card
-        //-         .card-header
-        //-             img.profile-pic.mr-3(src='https://i.imgur.com/6tPhTUn.jpg')
-        //-             span Adam
-        //-         img.card-img-top(src='https://goodtidy.s3.amazonaws.com/sharing_image/social_image_test.jpg', alt='Card image cap')
-        //-         .card-body
-        //-         h5.card-title 七八九
-        //-         p.card-text
-        //-             | 我是一篇壞筆記.
-        //-         p.card-text
-        //-             small.text-muted Last updated 3 mins ago
-        //-             button 留言
-        //-             button 收藏
-        //-             button 
-        //-                 a(href="http://localhost:3000/shareDetailPage?id=631b119302f966983cf32c97") 點選進入
-        //-     .card
-        //-         img.card-img-top(src='https://goodtidy.s3.amazonaws.com/sharing_image/social_image_test.jpg', alt='Card image cap')
-        //-         .card-body
-        //-         h5.card-title Card title
-        //-         p.card-text This card has supporting text below as a natural lead-in to additional content.
-        //-         p.card-text
-        //-             small.text-muted Last updated 3 mins ago
-        //-     .card
-        //-         img.card-img-top(src='https://goodtidy.s3.amazonaws.com/sharing_image/social_image_test.jpg', alt='Card image cap')
-        //-         .card-body
-        //-         h5.card-title Card title
-        //-         p.card-text
-        //-             | This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.
-        //-         p.card-text
-        //-             small.text-muted Last updated 3 mins ago
-    //- .card-group
-    //-   .card
-    //-     img.card-img-top(src='https://goodtidy.s3.amazonaws.com/sharing_image/social_image_test.jpg', alt='Card image cap')
-    //-     .card-body
-    //-       h5.card-title Card title
-    //-       p.card-text
-    //-         | This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-    //-       p.card-text
-    //-         small.text-muted Last updated 3 mins ago
-    //-   .card
-    //-     img.card-img-top(src='https://goodtidy.s3.amazonaws.com/sharing_image/social_image_test.jpg', alt='Card image cap')
-    //-     .card-body
-    //-       h5.card-title Card title
-    //-       p.card-text This card has supporting text below as a natural lead-in to additional content.
-    //-       p.card-text
-    //-         small.text-muted Last updated 3 mins ago
-    //-   .card
-    //-     img.card-img-top(src='https://goodtidy.s3.amazonaws.com/sharing_image/social_image_test.jpg', alt='Card image cap')
-    //-     .card-body
-    //-       h5.card-title Card title
-    //-       p.card-text
-    //-         | This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.
-    //-       p.card-text
-    //-         small.text-muted Last updated 3 mins ago
-    
     br
     //- 分頁
     #paging-block
 
+    //- 留言
     script.
         cards_html = !{cards_html};
         paging_html = !{paging_html};
         
-        console.log(cards_html);
+        //- console.log(cards_html);
         
         const elements_html = $.parseHTML(cards_html);
         $('#sharing-cards').append(elements_html);

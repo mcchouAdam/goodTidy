@@ -7,12 +7,18 @@
   margin: 20px 10px;
 }
 
-.profile-pic {
+.profile-pic,
+.note-pic {
   width: 60px;
   height: 60px;
   border-radius: 50%;
   object-fit: contain;
   background-color: #e0e0e0;
+}
+
+.modal-content {
+  width: 80%;
+  margin: 0 auto;
 }
 
 /* .showShareDetail {

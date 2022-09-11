@@ -1,5 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const ObjectId = require('mongodb').ObjectId;
 // TODO: 換argon比較快
 
 const { Mongo } = require('./mongocon');
@@ -10,7 +11,6 @@ const { TOKEN_EXPIRE, TOKEN_SECRET, MONGO_DB, S3_HOST } = process.env; // 30 day
 const jwt = require('jsonwebtoken');
 
 const signUp = async (name, email, password, picture) => {
-  // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
@@ -48,8 +48,14 @@ const signUp = async (name, email, password, picture) => {
       TOKEN_SECRET
     );
     // console.log(accessToken);
+
+    // 存Token → for shareToOther驗證用
+    await userCollection.updateOne(
+      { '_id': ObjectId(user.id) },
+      { '$set': { 'access_token': accessToken } }
+    );
+
     user.access_token = accessToken;
-    user.picture = `${S3_HOST}/user_picture/${user.picture}`;
 
     const response = {
       'data': {
@@ -100,15 +106,21 @@ const nativeSignIn = async (email, password) => {
         provider: user.provider,
         name: user.name,
         email: user.email,
-        picture: `${S3_HOST}/user_picture/${user.picture}`,
+        picture: user.picture,
       },
       TOKEN_SECRET
+    );
+
+    // 存Token → for shareToOther驗證用
+    await userCollection.updateOne(
+      { '_id': ObjectId(user.id) },
+      { '$set': { 'access_token': accessToken } }
     );
 
     user.access_token = accessToken;
     user.login_at = loginAt;
     user.access_expired = TOKEN_EXPIRE;
-    user.picture = `${S3_HOST}/user_picture/${user.picture}`;
+    // user.picture = `${S3_HOST}/user_picture/${user.picture}`;
 
     return { user };
   } catch (error) {

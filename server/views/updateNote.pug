@@ -14,16 +14,18 @@ block content
           .modal-dialog
             .modal-content
               .modal-header
-                .input-group
-                  .form-outline
-                    input#search_note_list.form-control(type='search', placeholder='search...')
-                  button.btn.btn-primary(type='button')
-                    i.fas.fa-search
-                  input#daterange(type="text", name="daterange")
-                  button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
-                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                h5.modal-title 搜尋
+                button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position='right')
               #modal-main.modal-body
+                //- 筆記名稱
               .modal-footer
+                //- .input-group
+                input#search_note_list.form-control(type='search', placeholder='search...')
+                //- button.btn(type='button')
+                //-   i.fa.fa-search
+                button.btn(type='button')
+                  i.fa.fa-calendar
+                input#daterange(type="text", name="daterange")
       
         //- Version ----------------------------------------
         button#version_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#versionModal', style="font-size:16px")
@@ -35,12 +37,12 @@ block content
               .modal-header
                 .input-group
                   .form-outline
-                  h5.modal-title Version
+                  h5.modal-title 版本回復
                   //- button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
                   button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
               #modal-version-main.modal-body
               .modal-footer
-                button#version-change.btn.btn-primary(type='button') Change
+                button#version-change.btn.btn-primary(type='button') 回復
     
     //- 筆記編輯區塊 -------------------------------------------
     .update-note-block
@@ -85,7 +87,8 @@ block content
                     .processed-content-nav
                       input#note-name(type='text', placeholder='筆記名稱')
                       input#note-classification(type='text', placeholder='筆記分類')
-                      button#submit_note Upload      
+                      button#submit_note Upload  
+                    #note-preview-content.note-edit-block    
         
         //- prev step
         button#prev(style='font-size:16px')
@@ -110,6 +113,7 @@ block content
         //- Share
         button#share-btn(style="font-size:16px")
           i.fa.fa-solid.fa-share
+    
 
         //- Message sidePanel
         #mySidepanel.sidepanel

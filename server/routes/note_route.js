@@ -11,12 +11,18 @@ const {
   createNotePage,
   getUserNotes,
   shareToAll,
+  shareToOther,
+  getShareToOther,
 } = require('../controllers/note_controller');
-const { OCRupload, noteUpload } = require('../models/s3');
+const { OCRupload, noteUpload, shareImgUpload } = require('../models/s3');
 const { OCR_google } = require('../../utils/OCR');
 
 const userNoteUpload = noteUpload.fields([
   { name: 'user_note_upload', maxCount: 1 },
+]);
+
+const shareImageUpload = shareImgUpload.fields([
+  { name: 'share_ImgUpload', maxCount: 1 },
 ]);
 
 const OCRImgupload = OCRupload.fields([{ name: 'OCR_upload', maxCount: 1 }]);
@@ -44,14 +50,26 @@ router
 router.route(`/updateNote`).get(wrapAsync(editNotePage));
 router.route(`/createNote`).get(wrapAsync(createNotePage));
 
-// OCR
+// OCR ------------------------------------------------
 router
   .route(`/api/${API_VERSION}/OCR`)
   .post(OCRImgupload, wrapAsync(OCR_google));
 
-// share
+// share -----------------------------------------------
+
+// 筆記分享給所有人
 router
   .route(`/api/${API_VERSION}/note/shareToAll`)
-  .post(authentication(), wrapAsync(shareToAll));
+  .post(authentication(), shareImageUpload, wrapAsync(shareToAll));
+
+// 筆記分享給特定人
+router
+  .route(`/api/${API_VERSION}/note/shareToOther`)
+  .post(authentication(), wrapAsync(shareToOther));
+
+// 拿取分享特定人權限
+router
+  .route(`/api/${API_VERSION}/note/shareToOther/:note_id`)
+  .get(authentication(), wrapAsync(getShareToOther));
 
 module.exports = router;
