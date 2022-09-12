@@ -53,17 +53,11 @@ async function noteShow(note_id) {
 }
 
 async function getUserNotes() {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (bearer_token) {
-    var config = {
-      method: 'get',
-      url: `${server}/api/${API_VERSION}/notes`,
-      headers: {
-        'Authorization': bearer_token,
-      },
-      data: '',
-    };
-  }
+  let config = {
+    method: 'get',
+    url: `${server}/api/${API_VERSION}/notes`,
+    data: '',
+  };
 
   // 抓取筆記資料
   await axios(config)

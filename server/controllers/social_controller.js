@@ -12,9 +12,12 @@ const {
 } = require('../../utils/showPage');
 
 const socialPage = async (req, res) => {
+  console.log('social page session', req.session);
+  const user_id = req.session.user.id;
+
   const paging = +req.query.paging;
   const result = await getShareNotes(paging);
-  const cards_html = await showSocialCards(result);
+  const cards_html = await showSocialCards(result, user_id);
   const paging_html = await showPagination(paging);
 
   return res.render('socialPage', {
@@ -40,11 +43,10 @@ const shareDetailPage = async (req, res) => {
 };
 
 const createComments = async (req, res) => {
-  if (req.permission < 3) {
-    return res.status(403).json({ 'data': '您沒有權限留言' });
-  }
-
-  req.body.user_id = req.user.id;
+  // if (req.permission < 3) {
+  //   return res.status(403).json({ 'data': '您沒有權限留言' });
+  // }
+  req.body.user_id = req.session.user.id;
   const data = req.body;
   const result = await createComment(data);
 

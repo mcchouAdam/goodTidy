@@ -8,9 +8,9 @@ const {
   createNote,
   createNoteVersion,
   editNotePage,
-  createNotePage,
   getUserNotes,
   shareToAll,
+  getShareToAll,
   shareToOther,
   getShareToOther,
   saveNote,
@@ -47,9 +47,7 @@ router
 //   .route(`/updateNote/:note_id`)
 //   .get(authentication(), wrapAsync(editNotePage));
 
-// TODO: 兩個都要加Auth
-router.route(`/updateNote`).get(wrapAsync(editNotePage));
-router.route(`/createNote`).get(wrapAsync(createNotePage));
+router.route(`/updateNote`).get(authentication(), wrapAsync(editNotePage));
 
 // OCR ------------------------------------------------
 router
@@ -62,6 +60,10 @@ router
 router
   .route(`/api/${API_VERSION}/note/shareToAll`)
   .post(authentication(), shareImageUpload, wrapAsync(shareToAll));
+
+router
+  .route(`/api/${API_VERSION}/note/shareToAll/:note_id`)
+  .get(authentication(), wrapAsync(getShareToAll));
 
 // 筆記分享給特定人
 router

@@ -102,8 +102,8 @@ function finishedPosition(e) {
 
 // 去除文字方塊遮蔽 ----------------------------------------
 function mouseDown(e) {
-  rect.startX = e.pageX - this.offsetLeft;
-  rect.startY = e.pageY - this.offsetTop;
+  rect.startX = e.offsetX;
+  rect.startY = e.offsetY;
   drag = true;
 }
 
@@ -113,8 +113,8 @@ function mouseUp() {
 
 function mouseMove(e) {
   if (drag) {
-    rect.w = e.pageX - this.offsetLeft - rect.startX;
-    rect.h = e.pageY - this.offsetTop - rect.startY;
+    rect.w = e.offsetX - rect.startX;
+    rect.h = e.offsetY - rect.startY;
     context.fillStyle = 'rgba(0,0,0)';
     drawMarker();
   }

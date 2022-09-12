@@ -1,6 +1,43 @@
 extends layout.pug
 
 block content
+  .header
+    #signup-dialog
+      | Email:
+      br
+      input#signup_useremail
+      br
+      | Password:
+      br
+      input#signup_password
+      br
+      | UserName:
+      br
+      input#signup_username
+      br
+      | Photo:
+      br
+      input#user_picture(type='file')
+      br
+      br
+      button#signup-form-btn SignUp
+    #signin-dialog
+      | Email:
+      br
+      input#signin_useremail
+      br
+      | Password:
+      br
+      input#signin_password
+      br
+      br
+      button#signin-form-btn SignIn
+    #profile-dialog
+      #user_picture
+        img#user_pic
+      #user_email
+      #user_name
+      button#logout LogOut
   .main-block
     main      
       //- modal window -------------------------------
@@ -72,13 +109,13 @@ block content
                       //
                         <button id="pre">上一步</button>
                         <button id="next">下一步</button>
-                      button#shapeRemoveBG(disabled='') RemoveBG
-                      button#removeNotWant RemoveNotFont
-                      button#OCR OCR
+                      button#shapeRemoveBG(disabled='') 圖形去背
+                      button#removeNotWant OCR去除圖形
+                      button#OCR OCR 
                       // <button id="magicContour">圖形圈選</button>
-                      button#rectContour rectContour
-                      button#shapeView shapeView
-                      button#reDraw reDraw
+                      button#rectContour 圖形圈選
+                      button#shapeView 擷取
+                      button#reDraw 回復
                     // Canvas
                     .OCR-preview
                       canvas#fontOCRCanvas(width='600px', height='500px')
@@ -87,7 +124,7 @@ block content
                     .processed-content-nav
                       input#note-name(type='text', placeholder='筆記名稱')
                       input#note-classification(type='text', placeholder='筆記分類')
-                      button#submit_note Upload  
+                      button#submit_note 上傳  
                     #note-preview-content.note-edit-block    
         
         //- prev step
@@ -122,7 +159,7 @@ block content
           a(href='#') Services
           a(href='#') Clients
           a(href='#') Contact
-        button.openbtn(onclick='openNav()')
+        button.openbtn(onclick='openNav()')(disabled='')
           i.fa.fa-solid.fa-comments
 
         //- AutoSave

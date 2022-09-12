@@ -207,9 +207,9 @@ const shareToOther = async (data) => {
 };
 
 // TODO: 看可不可以一次查完
+//
 const getShareToOther = async (note_id) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-  const UserCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
     const result = await NotesCollection.find({
@@ -227,25 +227,15 @@ const getShareToOther = async (note_id) => {
       shareUser_permission.push(s.permission);
     });
 
-    // console.log(shareUser_emails);
-    // const UserCollection = Mongo.db(MONGO_DB).collection('user');
-    const shareUser_access_token = await UserCollection.find({
-      email: { $in: shareUser_emails },
-    })
-      .project({ 'access_token': 1 })
-      .toArray();
-
     let result_json = [];
     for (let i = 0; i < shareUser_emails.length; i++) {
       let data = {
         'user_email': shareUser_emails[i],
         'permission': shareUser_permission[i],
-        'access_token': shareUser_access_token[i].access_token,
       };
       result_json.push(data);
     }
     console.log(result_json);
-    // console.log(result);
 
     return result_json;
   } catch (error) {
@@ -346,7 +336,33 @@ const getNoteAuth = async (user_email, note_id) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
 
   try {
-    const result = await NotesCollection.aggregate([
+    const isOwnNote_result = await NotesCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+        },
+      },
+      { '$addFields': { 'foreign_user_id': { '$toObjectId': '$user_id' } } },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'foreign_user_id',
+          foreignField: '_id',
+          as: 'user_info',
+        },
+      },
+    ])
+      .project({ 'user_info': 1 })
+      .toArray();
+
+    let note_owner = isOwnNote_result[0].user_info[0].email;
+    if (note_owner == user_email) {
+      // TODO: 建立permission表
+      // note_owner permission 8
+      return 8;
+    }
+
+    const user_permission_result = await NotesCollection.aggregate([
       {
         '$match': {
           '_id': ObjectId(note_id),
@@ -362,14 +378,29 @@ const getNoteAuth = async (user_email, note_id) => {
       .project({ 'sharing_user.permission': 1 })
       .toArray();
 
-    let permission;
-    if (result.length === 0) {
-      permission = 0;
-    } else {
-      permission = result[0].sharing_user.permission;
-    }
+    const url_permission_result = await NotesCollection.find({
+      '_id': ObjectId(note_id),
+    })
+      .project({ 'url_permission': 1 })
+      .toArray();
 
-    return permission;
+    // 檢查 url_permission & user_permission
+    // 皆以 user_permission 為主，0 代表 沒有開特定人的權限
+    let final_permission;
+    let user_permission;
+    let url_permission = url_permission_result[0].url_permission;
+    if (user_permission_result.length === 0) {
+      // 沒有user_permission
+      user_permission = 0;
+      final_permission = url_permission;
+    } else {
+      // 有user_permission
+      user_permission = user_permission_result[0].sharing_user.permission;
+      final_permission = user_permission;
+    }
+    console.log(user_permission, url_permission);
+
+    return final_permission;
   } catch (error) {
     return { error };
   } finally {
@@ -400,7 +431,6 @@ const createSave = async (note_id, user_id) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   const UserCollection = Mongo.db(MONGO_DB).collection('user');
   try {
-
     // 檢查User是否已經點過這個
 
     // Update the Note saved_user_id ----------------------------
@@ -455,9 +485,35 @@ const createSave = async (note_id, user_id) => {
       ]
     );
 
-    
-
     return 'save successfully!';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+const getShareToAll = async (note_id) => {
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const result = await NotesCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+        },
+      },
+    ])
+      .project({
+        'isSharing': 1,
+        'url_permission': 1,
+        'sharing_descrition': 1,
+        'sharing_image': 1,
+        'sharing_url': 1,
+      })
+      .toArray();
+
+    console.log('getShareAll', result);
+    return result;
   } catch (error) {
     return { error };
   } finally {
@@ -470,6 +526,7 @@ module.exports = {
   createNoteVersion,
   getUserNotes,
   shareToAll,
+  getShareToAll,
   shareToOther,
   getShareToOther,
   getShareNotes,

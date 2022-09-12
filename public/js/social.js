@@ -1,9 +1,5 @@
 // 發出留言
 async function createComments(note_id) {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (!bearer_token) {
-    alert('請先登入');
-  }
   let data = {
     'user_id': user_id,
     'note_id': note_id,
@@ -16,9 +12,6 @@ async function createComments(note_id) {
   var config = {
     method: 'POST',
     url: `${server}/api/1.0/comments`,
-    headers: {
-      'Authorization': bearer_token,
-    },
     data: data,
   };
 
@@ -34,23 +27,16 @@ async function createComments(note_id) {
     });
 }
 
-// 發出留言
+// 發出收藏
 async function createSave(note_id) {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (!bearer_token) {
-    alert('請先登入');
-  }
   let data = {
     'user_id': user_id,
     'note_id': note_id,
   };
 
-  var config = {
+  let config = {
     method: 'POST',
     url: `${server}/api/1.0/note/save`,
-    headers: {
-      'Authorization': bearer_token,
-    },
     data: data,
   };
 
@@ -68,18 +54,9 @@ async function createSave(note_id) {
 
 // 分享給所有人 -------------------------------------------------------------
 async function shareToAlluser(data) {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (!bearer_token) {
-    alert('請先登入');
-  }
-
-  // console.log(data);
-  var config = {
+  let config = {
     method: 'POST',
     url: `${server}/api/${API_VERSION}/note/shareToAll`,
-    headers: {
-      'Authorization': bearer_token,
-    },
     data: data,
   };
 
@@ -97,17 +74,9 @@ async function shareToAlluser(data) {
 
 // 分享給特定的人 -------------------------------------------------------------
 async function shareToOther(data) {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (!bearer_token) {
-    alert('請先登入');
-  }
-
-  var config = {
+  let config = {
     method: 'POST',
     url: `${server}/api/${API_VERSION}/note/shareToOther`,
-    headers: {
-      'Authorization': bearer_token,
-    },
     data: data,
   };
 
@@ -125,23 +94,14 @@ async function shareToOther(data) {
 
 // 拿取特定人士權限 -------------------------------------------------------------
 async function getShareToOther(note_id) {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (!bearer_token) {
-    alert('請先登入');
-  }
-
-  var config = {
+  let config = {
     method: 'GET',
     url: `${server}/api/${API_VERSION}/note/ShareToOther/${note_id}`,
-    headers: {
-      'Authorization': bearer_token,
-    },
     data: '',
   };
 
   await axios(config)
     .then((response) => {
-      // console.log(response);
       $('#shareOtherList').html('');
       $('#shareOtherList').append($.parseHTML(response.data));
     })
@@ -151,6 +111,32 @@ async function getShareToOther(note_id) {
     });
 }
 
+// 拿取所有人士權限 -------------------------------------------------------------
+async function getShareAll(note_id) {
+  let config = {
+    method: 'GET',
+    url: `${server}/api/${API_VERSION}/note/shareToAll/${note_id}`,
+    data: '',
+  };
+
+  await axios(config)
+    .then((response) => {
+      console.log(response);
+      note_isSharing = response.data[0].isSharing;
+      note_url_permission = response.data[0].url_permission;
+      sharing_descrition = response.data[0].sharing_descrition;
+      sharing_image = response.data[0].sharing_image;
+      sharing_url = response.data[0].sharing_url;
+      // $('#shareOtherList').html('');
+      // $('#shareOtherList').append($.parseHTML(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+      alert('拿取特定人士權限失敗');
+    });
+}
+
+// 愛心、留言、時間、留言數 圖形特效 --------------------------------------
 // save_note -------
 $('.btn-heart').click(function (e) {
   let heart_color = e.target.style.color;

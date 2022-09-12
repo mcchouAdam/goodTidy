@@ -74,6 +74,8 @@ $('#submit_note').click(async function () {
     ver_name,
     keywords
   );
+
+  location.reload();
 });
 
 // 去除非文字鍵 ------------------------------------
@@ -87,7 +89,7 @@ $('#OCR').click(async function () {
   const base64Response = await fetch(image);
   const blob = await base64Response.blob();
 
-  let file_name = `OCR_${user_id}_${note_id}_${Date.now()}.jpg`;
+  let file_name = `OCR_${user_id}_${current_note_id}_${Date.now()}.jpg`;
   let data = new FormData();
   data.append('OCR_upload', blob, file_name);
 
