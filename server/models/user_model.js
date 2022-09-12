@@ -1,5 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const ObjectId = require('mongodb').ObjectId;
 // TODO: 換argon比較快
 
 const { Mongo } = require('./mongocon');
@@ -10,7 +11,6 @@ const { TOKEN_EXPIRE, TOKEN_SECRET, MONGO_DB, S3_HOST } = process.env; // 30 day
 const jwt = require('jsonwebtoken');
 
 const signUp = async (name, email, password, picture) => {
-  await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
@@ -30,6 +30,7 @@ const signUp = async (name, email, password, picture) => {
       picture: picture,
       access_expired: TOKEN_EXPIRE,
       login_at: loginAt,
+      saved_note_id: [],
     };
 
     const insert_result = await userCollection.insertOne(user);
@@ -48,8 +49,14 @@ const signUp = async (name, email, password, picture) => {
       TOKEN_SECRET
     );
     // console.log(accessToken);
+
+    // 存Token → for shareToOther驗證用
+    await userCollection.updateOne(
+      { '_id': ObjectId(user.id) },
+      { '$set': { 'access_token': accessToken } }
+    );
+
     user.access_token = accessToken;
-    user.picture = `${S3_HOST}/user_picture/${user.picture}`;
 
     const response = {
       'data': {
@@ -72,12 +79,12 @@ const signUp = async (name, email, password, picture) => {
       status: 403,
     };
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
   }
 };
 
 const nativeSignIn = async (email, password) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
@@ -87,7 +94,7 @@ const nativeSignIn = async (email, password) => {
     const user_id = user._id.toString();
     user.id = user_id;
     // console.log(user_id);
-    console.log('user_id in user_model:', user);
+    // console.log('user_id in user_model:', user);
 
     if (!bcrypt.compare(password.toString(), user.password)) {
       return { error: 'Your email or password is wrong' };
@@ -100,26 +107,32 @@ const nativeSignIn = async (email, password) => {
         provider: user.provider,
         name: user.name,
         email: user.email,
-        picture: `${S3_HOST}/user_picture/${user.picture}`,
+        picture: user.picture,
       },
       TOKEN_SECRET
+    );
+
+    // 存Token → for shareToOther驗證用
+    await userCollection.updateOne(
+      { '_id': ObjectId(user.id) },
+      { '$set': { 'access_token': accessToken } }
     );
 
     user.access_token = accessToken;
     user.login_at = loginAt;
     user.access_expired = TOKEN_EXPIRE;
-    user.picture = `${S3_HOST}/user_picture/${user.picture}`;
+    // user.picture = `${S3_HOST}/user_picture/${user.picture}`;
 
     return { user };
   } catch (error) {
     return { error };
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
   }
 };
 
 const getUserDetail = async (email) => {
-  await Mongo.connect();
+  // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
   try {
     const [user] = await userCollection.find({ 'email': email }).toArray();
@@ -127,7 +140,20 @@ const getUserDetail = async (email) => {
   } catch (e) {
     return null;
   } finally {
-    await Mongo.close();
+    // await Mongo.close();
+  }
+};
+
+const shareToAll = async (data) => {
+  // await Mongo.connect();
+  const userCollection = Mongo.db(MONGO_DB).collection('user');
+  try {
+    const [user] = await userCollection.find({ 'email': email }).toArray();
+    return user;
+  } catch (e) {
+    return null;
+  } finally {
+    // await Mongo.close();
   }
 };
 
@@ -135,4 +161,5 @@ module.exports = {
   signUp,
   nativeSignIn,
   getUserDetail,
+  shareToAll,
 };

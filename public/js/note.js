@@ -42,6 +42,7 @@ async function noteShow(note_id) {
   // console.log(showNote_note_obj[note_id]);
   // Assign Global Variable
   current_note_id = note_id;
+  console.log(current_note_id);
 
   let note_content = showNote_note_obj[note_id].note_elements;
   let note_filename = showNote_note_obj[note_id].note_file_name;
@@ -132,7 +133,7 @@ async function getUserNotes() {
     })
     .catch((error) => {
       console.log(error);
-      alert('筆記抓取資料失敗');
+      alert('請先登入');
     });
 }
 

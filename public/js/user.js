@@ -18,7 +18,7 @@ async function profile() {
         user_picture = response.data.data.picture;
         user_name = response.data.data.name;
         user_email = response.data.data.email;
-        console.log(user_id, user_picture, user_name, user_email);
+        // console.log('aaaaa: ', user_id, user_picture, user_name, user_email);
       })
       .catch((error) => {
         console.log(error);
@@ -100,7 +100,9 @@ async function showProfile() {
   $('#signin-dialog').dialog('close');
   $('#signup-dialog').dialog('close');
   $('#profile-dialog').dialog('open');
-  $('#user_picture > img').attr('src', user_picture);
+  $('#user_picture > img')
+    .attr('src', `${S3_HOST}user_picture/${user_picture}`)
+    .addClass('profile-pic');
   $('#user_email').text(user_email);
   $('#user_name').text(user_name);
 }
@@ -143,7 +145,15 @@ $('#profile-btn').click(async function () {
 });
 
 // share頁面 ---------------------------------
-$('#share-btn').click(function () {
+$('#share-btn').click(async function () {
+  if (!current_note_id) {
+    alert('請先選擇筆記');
+    return;
+  }
+
+  // PreLoad the 特定人士清單
+  const result = await getShareToOther(current_note_id);
+
   $('#signin-dialog').dialog('close');
   $('#signup-dialog').dialog('close');
   $('#profile-dialog').dialog('close');

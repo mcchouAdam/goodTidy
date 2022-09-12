@@ -26,34 +26,16 @@ let current_version_obj;
 // OCR info ----------------------------------------
 let OCR_elements = [];
 
+// Sharing Permission ------------------------------
+const sharePermission = {
+  'write': 4,
+  'comment': 2,
+  'read': 1,
+};
+
 // For preload
 $(window).on('load', async function () {
   await profile();
   await getUserNotes();
   console.log('current_user_id: ', user_id);
 });
-
-// For dropdown be covered inside a div with overflow:hidden
-// $('.dropdown-menu').on('show.bs.dropdown', function () {
-//   $('body').append(
-//     $('.dropdown-menu')
-//       .css({
-//         position: 'absolute',
-//         left: $('.dropdown-menu').offset().left,
-//         top: $('.dropdown-menu').offset().top,
-//       })
-//       .detach()
-//   );
-// });
-
-// $('.dropdown-menu').on('hidden.bs.dropdown', function () {
-//   $('.dropdown').append(
-//     $('.dropdown-menu')
-//       .css({
-//         position: false,
-//         left: false,
-//         top: false,
-//       })
-//       .detach()
-//   );
-// });

@@ -1,0 +1,31 @@
+extends layout.pug
+
+block content
+    .input-group.rounded
+        input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
+        span#search-addon.input-group-text.border-0
+            i.fa.fa-search
+    //- 排序搜尋法
+    button#heart_sorting-btn.btn
+        i.fa.fa-heart(aria-hidden='true', style='color:grey')
+    button#time_sorting-btn.btn
+        i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
+    button#comments_sorting-btn.btn 
+        i.fa.fa-fire(aria-hidden='true', style='color:grey')
+    //- 分享筆記卡片
+    #sharing-cards
+    br
+    //- 分頁
+    #paging-block
+
+    //- 留言
+    script.
+        cards_html = !{cards_html};
+        paging_html = !{paging_html};
+        
+        //- console.log(cards_html);
+        
+        const elements_html = $.parseHTML(cards_html);
+        $('#sharing-cards').append(elements_html);
+        const pagings_html = $.parseHTML(paging_html);
+        $('#paging-block').append(pagings_html);

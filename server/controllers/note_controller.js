@@ -1,5 +1,6 @@
 const { ConditionFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const Notes = require('../models/note_model');
+const { showShareToOtherList } = require('../../utils/showPage');
 
 const createNote = async (req, res) => {
   const note = req.body;
@@ -32,9 +33,9 @@ const editNotePage = async (req, res) => {
   }
 };
 
-const createNotePage = async (req, res) => {
-  res.render('createNote');
-};
+// const createNotePage = async (req, res) => {
+//   res.render('createNote');
+// };
 
 const getUserNotes = async (req, res) => {
   const user_id = req.user.id;
@@ -43,10 +44,49 @@ const getUserNotes = async (req, res) => {
   return res.status(200).json(result);
 };
 
+const shareToAll = async (req, res) => {
+  req.body.user_id = req.user.user_id;
+  const data = req.body;
+  data.file_name = req.filename;
+
+  const share = await Notes.shareToAll(data);
+  return res.status(200).send(share);
+};
+
+const shareToOther = async (req, res) => {
+  req.body.user_id = req.user.user_id;
+  const data = req.body;
+
+  const share = await Notes.shareToOther(data);
+  return res.json(share);
+};
+
+const getShareToOther = async (req, res) => {
+  const user_id = req.user.user_id;
+  const note_id = req.params.note_id;
+
+  const shareList = await Notes.getShareToOther(note_id);
+  const shareList_html = await showShareToOtherList(shareList, note_id);
+  return res.json(shareList_html);
+};
+
+const saveNote = async (req, res) => {
+  const note_id = req.body.note_id;
+  const user_id = req.body.user_id;
+
+  const saveResult = await Notes.createSave(note_id, user_id);
+  // const shareList_html = await showShareToOtherList(shareList, note_id);
+  return res.status(200).json(saveResult);
+};
+
 module.exports = {
   createNote,
   createNoteVersion,
   editNotePage,
-  createNotePage,
+  // createNotePage,
   getUserNotes,
+  shareToAll,
+  shareToOther,
+  getShareToOther,
+  saveNote,
 };

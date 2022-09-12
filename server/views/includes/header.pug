@@ -1,8 +1,209 @@
-head
-    title GoodTidy
-    link(href='./css/note-upload.css', rel='stylesheet')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js')
-    script(src='https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js')
-    script(src='https://code.jquery.com/jquery-3.6.0.js')
-    script(src='https://code.jquery.com/ui/1.13.2/jquery-ui.js')
-    link(rel='stylesheet', href='//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css')
+nav.py-2.bg-light.border-bottom
+    .container.d-flex.flex-wrap
+      ul.nav.me-auto
+        img(src='/icon/goodTidy_icon.png' width='25', height='45')
+        //- svg.bi.me-2(width='40', height='32', role='img', aria-label='Bootstrap')
+        //-   use(xlink:href='#bootstrap')
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='/updateNote', aria-current='page') Note
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='/socialPage?paging=1') Social
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='#') Product
+        li.nav-item
+          a.nav-link.link-dark.px-2(href='#') About
+      ul.nav
+        li.nav-item
+          a#signin-btn.nav-link.link-dark.px-2(href='#') Login
+        li.nav-item
+          a#signup-btn.nav-link.link-dark.px-2(href='#') Sign up
+
+header
+    .header
+      //- Dialog block
+      #signup-dialog
+        | Email:
+        br
+        input#signup_useremail
+        br
+        | Password:
+        br
+        input#signup_password
+        br
+        | UserName:
+        br
+        input#signup_username
+        br
+        | Photo:
+        br
+        input#user_picture(type='file')
+        br
+        br
+        button#signup-form-btn SignUp
+      #signin-dialog
+        | Email:
+        br
+        input#signin_useremail
+        br
+        | Password:
+        br
+        input#signin_password
+        br
+        br
+        button#signin-form-btn SignIn
+      #profile-dialog
+        #user_picture
+          img#user_pic
+        #user_email
+        #user_name
+        button#logout LogOut
+      #share-dialog 
+        #share_note_name
+        .form-check.form-switch
+          label.form-check-label(for='flexSwitchCheckDefault') 特定人分享
+          input#shareToOther-toggle.form-check-input(type='checkbox', role='switch')
+        #shareToOhterDetail(style="visibility: hidden")
+          br
+          .container
+            .row.justify-center
+              .col-12
+                header
+                .input-group.mb-3
+                  button.btn.btn-outline-secondary.dropdown-toggle#shareToOtherMethod-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 允許觀看
+                  ul#shareToOtherMenu.dropdown-menu.dropdown-menu-end
+                    li
+                      a.dropdown-item.disabled(href='#') 允許編輯
+                    li
+                      a.dropdown-item(href='#') 允許留言
+                    li
+                      a.dropdown-item(href='#') 允許觀看
+                  input#addShareOther-input.form-control(type='text', placeholder='欲分享者的email...', aria-label='欲分享者的email', aria-describedby='basic-addon2')
+                  .input-group-append
+                    button#addShareOther-btn.btn.btn-outline-info(type='button') 加入
+                ul#shareOtherList.list-group
+                  //- li.list-group-item.d-flex.justify-content-between.align-items-center
+                  //-   | Adam
+                  //-   span.badge.bg-primary.rounded-pill 允許觀看
+        br
+        br
+        .form-check.form-switch
+          label.form-check-label(for='flexSwitchCheckDefault') 所有人分享
+          input#shareToAll-toggle.form-check-input(type='checkbox', role='switch')
+        br
+        #shareToAllDetail(style="visibility: hidden")
+          input#share_url(type='text', placeholder='share_url')
+          button.btn#copy_shareUrl
+            i.fa.fa-clipboard(aria-hidden="true")
+          br
+          br
+          .form-check.form-switch
+            label.form-check-label(for='flexSwitchCheckDefault') 開放編輯
+            input#allowWrite-toggle.form-check-input(type='checkbox', role='switch', disabled='')
+          .form-check.form-switch
+            label.form-check-label(for='flexSwitchCheckDefault') 開放留言
+            input#allowComment-toggle.form-check-input(type='checkbox', role='switch')
+          .form-check.form-switch
+            label.form-check-label(for='flexSwitchCheckDefault') 開放觀看
+            input#allowWatch-toggle.form-check-input(type='checkbox', role='switch')
+          br
+          .form-floating
+            textarea#share_description.form-control(placeholder='你會向大家怎麼介紹你的筆記?')
+            label(for='floatingTextarea') 你會向大家怎麼介紹你的筆記?
+          br
+          .mb-3
+            label.form-label(for='formFile') 封面照片
+            input#shareNote_image.form-control(type='file')
+          br
+          button.btn.btn-primary#shareToAll_confirm-btn 分享
+
+        script.
+
+          // 打開分享給特定人隱藏內容
+          $('#shareToOther-toggle').click(function(){
+            const checked = $(this).is(':checked');
+            if(checked){
+              $('#shareToOhterDetail').css('visibility','visible');
+            }else{
+              $('#shareToOhterDetail').css('visibility','hidden');;
+            }
+          })
+
+          // 打開分享給所有人隱藏內容
+          $('#shareToAll-toggle').click(function(){
+            const checked = $(this).is(':checked');
+            if(checked){
+              $('#shareToAllDetail').css('visibility','visible');
+              $('#share_url').val(`${server}/shareDetailPage?id=${current_note_id}`);
+            }else{
+              $('#shareToAllDetail').css('visibility','hidden');;
+            }
+          })
+
+          // 分享給特定人的權限設定
+          $('#shareToOtherMenu li').on('click', function() {
+            console.log($(this).text());
+            console.log($('#shareToOtherMethod-btn').text());
+           $('#shareToOtherMethod-btn').text($(this).text());
+          });
+
+
+          // 分享鍵 ----------------------------------
+          $('#shareToAll_confirm-btn').click(function(){
+            const isComment = $('#allowComment-toggle').is(':checked');
+            const isWatch = $('#allowWatch-toggle').is(':checked');
+
+            const share_description = $('#share_description').val();
+            const file = $('#shareNote_image')[0].files[0];
+            const share_image = file.name;
+            let url_permission = 0;
+
+            if(isComment){
+              url_permission += sharePermission['comment'];
+            }
+            if(isWatch){
+              url_permission += sharePermission['read'];
+            }
+
+            let data = new FormData();
+            data.append('isSharing', 1);
+            data.append('url_permission', url_permission);
+            data.append('note_id', current_note_id);
+            data.append('sharing_descrition', share_description);
+            data.append('share_ImgUpload', file);
+            data.append('sharing_url',`/shareDetailPage?id=${current_note_id}`)
+
+            shareToAlluser(data);
+
+          })
+
+          // 加入分享特定的人按鍵
+          $('#addShareOther-btn').click(async function(){
+            let permission = $('#shareToOtherMethod-btn').text();
+            let addOther = $('#addShareOther-input').val();
+            let permission_num = 0;
+
+            switch(permission){
+              case '允許留言':
+                permission_num = 3;
+                break;
+              case '允許觀看':
+                permission_num = 1;
+                break;
+            }
+
+            const data = {
+              "permission": permission_num,
+              "addPerson": addOther,
+              "note_id" : current_note_id,
+            };
+
+            const result = await shareToOther(data);
+            console.log(result);
+
+            let list_html = `
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                  ${addOther}
+                  <span class="badge bg-primary rounded-pill">${permission}</span>
+              </li>`;
+            $('#shareOtherList').append(list_html);
+          })
