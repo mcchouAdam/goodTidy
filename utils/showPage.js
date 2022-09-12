@@ -100,7 +100,10 @@ const showCommentsDetail = async function (comments, note_id) {
 };
 
 // 分享筆記卡片
-const showSocialCards = async function (data) {
+const showSocialCards = async function (data, user_id) {
+  // console.log('req.session.user.id', req.session.user.id);
+  console.log('showSocialCards: ', data);
+
   let sharingNote_cards_html = '';
   let comment_modal_html = '';
   let comment_cards_html = '';
@@ -118,6 +121,17 @@ const showSocialCards = async function (data) {
     const show_time = timeConverter(+lastEdit_time);
     const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
+
+    // 檢查此篇筆記是否有被收藏過，畫紅色愛心
+    const current_user = user_id;
+    const red_heart = data[i].saved_user_id.indexOf(current_user);
+    let heart_color;
+
+    if (red_heart === -1) {
+      heart_color = 'grey';
+    } else {
+      heart_color = 'red';
+    }
 
     let saved_num = 0;
     // TODO: 更新收藏數字
@@ -149,7 +163,7 @@ const showSocialCards = async function (data) {
             </i>
         </button>
         <button class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
-            <i class="fa fa-heart" aria-hidden="true" style="color:grey"></i>
+            <i class="fa fa-heart" aria-hidden="true" style="color:${heart_color}"></i>
             <span class="saved_num">${saved_num}</span>
         </button>
         <button class="btn">
@@ -266,7 +280,7 @@ const showShareToOtherList = async function (shareList, note_id) {
       shareList_html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                             ${p.user_email}
                           <span class="badge bg-primary rounded-pill">${permission}</span>
-                          <a href="${SERVER_HOST}/shareDetailPage?id=${note_id}&access_token=${p.access_token}">
+                          <a href="${SERVER_HOST}/shareDetailPage?id=${note_id}">
                               <i class="fa fa-share-alt" aria-hidden="true">
                               </i>
                           </a>

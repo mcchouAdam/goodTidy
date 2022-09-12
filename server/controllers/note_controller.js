@@ -38,14 +38,14 @@ const editNotePage = async (req, res) => {
 // };
 
 const getUserNotes = async (req, res) => {
-  const user_id = req.user.id;
+  const user_id = req.session.user.id;
   const result = await Notes.getUserNotes(user_id);
 
   return res.status(200).json(result);
 };
 
 const shareToAll = async (req, res) => {
-  req.body.user_id = req.user.user_id;
+  req.body.user_id = req.session.user.user_id;
   const data = req.body;
   data.file_name = req.filename;
 
@@ -53,8 +53,14 @@ const shareToAll = async (req, res) => {
   return res.status(200).send(share);
 };
 
+const getShareToAll = async (req, res) => {
+  const note_id = req.params.note_id;
+  const share = await Notes.getShareToAll(note_id);
+  return res.status(200).send(share);
+};
+
 const shareToOther = async (req, res) => {
-  req.body.user_id = req.user.user_id;
+  req.body.user_id = req.session.user.id;
   const data = req.body;
 
   const share = await Notes.shareToOther(data);
@@ -62,10 +68,11 @@ const shareToOther = async (req, res) => {
 };
 
 const getShareToOther = async (req, res) => {
-  const user_id = req.user.user_id;
+  // const user_id = req.session.user.id;
   const note_id = req.params.note_id;
+  const current_user_id = req.session.user.id;
 
-  const shareList = await Notes.getShareToOther(note_id);
+  const shareList = await Notes.getShareToOther(note_id, current_user_id);
   const shareList_html = await showShareToOtherList(shareList, note_id);
   return res.json(shareList_html);
 };
@@ -86,6 +93,7 @@ module.exports = {
   // createNotePage,
   getUserNotes,
   shareToAll,
+  getShareToAll,
   shareToOther,
   getShareToOther,
   saveNote,

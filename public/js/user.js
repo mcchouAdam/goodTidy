@@ -1,30 +1,24 @@
 // axios profile API
 async function profile() {
-  const bearer_token = localStorage.getItem('Authorization');
-  if (bearer_token) {
-    var config = {
-      method: 'get',
-      url: `${server}/api/1.0/user/profile`,
-      headers: {
-        'Authorization': bearer_token,
-      },
-      data: '',
-    };
+  let config = {
+    method: 'get',
+    url: `${server}/api/1.0/user/profile`,
+    data: '',
+  };
 
-    await axios(config)
-      .then((response) => {
-        // console.log(response);
-        user_id = response.data.data.id;
-        user_picture = response.data.data.picture;
-        user_name = response.data.data.name;
-        user_email = response.data.data.email;
-        // console.log('aaaaa: ', user_id, user_picture, user_name, user_email);
-      })
-      .catch((error) => {
-        console.log(error);
-        console.log('登入失敗');
-      });
-  }
+  await axios(config)
+    .then((response) => {
+      console.log('profile:', response);
+      user_id = response.data.data.id;
+      user_picture = response.data.data.picture;
+      user_name = response.data.data.name;
+      user_email = response.data.data.email;
+      // console.log('aaaaa: ', user_id, user_picture, user_name, user_email);
+    })
+    .catch((error) => {
+      console.log(error);
+      console.log('登入失敗');
+    });
 }
 
 // axios signUp API
@@ -37,7 +31,7 @@ async function signUp(picture, username, email, password, filename) {
   data.append('filename', filename);
 
   let config = {
-    method: 'post',
+    method: 'POST',
     url: `${server}/api/1.0/user/signup`,
     data: data,
   };
@@ -49,10 +43,6 @@ async function signUp(picture, username, email, password, filename) {
       user_picture = response.data.data.user.picture;
       user_name = response.data.data.user.name;
       user_email = response.data.data.user.email;
-      localStorage.setItem(
-        'Authorization',
-        'Bearer ' + response.data.data.access_token
-      );
     })
     .catch(function (error) {
       console.log(error);
@@ -69,7 +59,7 @@ async function signIn(email, password) {
   };
 
   let config = {
-    method: 'post',
+    method: 'POST',
     url: `${server}/api/1.0/user/signIn`,
     headers: {
       'Content-Type': 'application/json',
@@ -80,15 +70,12 @@ async function signIn(email, password) {
   // 登入
   await axios(config)
     .then((response) => {
-      console.log(response);
-      localStorage.setItem(
-        'Authorization',
-        'Bearer ' + response.data.data.access_token
-      );
+      console.log('signIn response:', response);
       user_id = response.data.data.user.id;
       user_picture = response.data.data.user.picture;
       user_name = response.data.data.user.name;
       user_email = response.data.data.user.email;
+      alert(`${user_name}您好！登入成功`);
     })
     .catch((error) => {
       console.log(error);
@@ -152,8 +139,42 @@ $('#share-btn').click(async function () {
   }
 
   // PreLoad the 特定人士清單
-  const result = await getShareToOther(current_note_id);
+  await getShareToOther(current_note_id);
+  await getShareAll(current_note_id);
+  const shareOtherList_content = $('#shareOtherList li').text();
 
+  // 向特定人士分享
+  if (shareOtherList_content) {
+    $('#shareToOther-toggle').prop('checked', true);
+    $('#shareToOhterDetail').css('visibility', 'visible');
+  }
+
+  // 分享社群頁面
+  if (note_isSharing === 1) {
+    $('#shareToAll-toggle').prop('checked', true);
+    $('#shareToAllDetail').css('visibility', 'visible');
+  }
+
+  switch (note_url_permission) {
+    case 1:
+      $('#allowWatch-toggle').prop('checked', true);
+      break;
+    case 3:
+      $('#allowWatch-toggle').prop('checked', true);
+      $('#allowComment-toggle').prop('checked', true);
+      break;
+  }
+
+  // share_description
+  $('#share_description').html(sharing_descrition);
+
+  // sharing_url 輸入Bar
+  $('#share_url').val(`${server}${sharing_url}`);
+
+  // TODO: 上傳照片預覽
+  // sharing_image
+
+  // dialog開關
   $('#signin-dialog').dialog('close');
   $('#signup-dialog').dialog('close');
   $('#profile-dialog').dialog('close');
@@ -181,13 +202,29 @@ $('#signin-form-btn').click(async function () {
     const password = $('#signin_password').val();
 
     await signIn(email, password);
+    location.reload(true);
   }
-
-  await showProfile();
 });
 
 // 登出鍵
-$('#logout').click(function () {
-  localStorage.setItem('Authorization', '');
-  location.reload(true);
+$('#logout').click(async function () {
+  // TODO: 刪除cookie
+  let data = '';
+
+  let config = {
+    method: 'GET',
+    url: `${server}/api/1.0/user/logout`,
+    data: data,
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(response);
+      console.log('登出成功');
+      window.location.assign('/');
+    })
+    .catch(function (error) {
+      console.log(error);
+      console.log('登出失敗');
+    });
 });

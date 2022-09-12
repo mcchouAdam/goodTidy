@@ -14,54 +14,49 @@ const wrapAsync = (fn) => {
 
 const authentication = () => {
   return async function (req, res, next) {
-    let accessToken = req.get('Authorization') || req.query.access_token;
-    if (!accessToken) {
-      res.status(401).send({ error: 'Unauthorized' });
-      return;
-    }
-
-    accessToken = accessToken.replace('Bearer ', '');
-    if (accessToken == 'null') {
-      res.status(401).send({ error: 'Unauthorized' });
-      return;
-    }
-
-    try {
-      // console.log(accessToken);
-      const user = await promisify(jwt.verify)(accessToken, TOKEN_SECRET);
-
-      // console.log('user in util authentication: ', user);
-      req.user = user;
-
-      let userDetail;
-
-      userDetail = await User.getUserDetail(user.email);
-      // console.log('userDetail:', userDetail);
-
-      if (!userDetail) {
-        res.status(403).send({ error: 'Forbidden' });
-      } else {
-        req.user.id = userDetail._id.toString();
-        next();
-      }
-
-      return;
-    } catch (err) {
-      res.status(403).send({ error: 'Forbidden' });
-      return;
+    if (req.session.user) {
+      console.log('authenticated');
+      console.log('req.session.user: ', req.session.user);
+      next();
+    } else {
+      console.log('not authenticated');
+      return res.status(403).render('homePage');
     }
   };
 };
 
-const authorization = () => {
+// const authorization = () => {
+//   return async function (req, res, next) {
+//     try {
+//       const user_email = req.user.email;
+//       const note_id = req.query.id || req.body.note_id;
+//       const permission_result = await Note.getNoteAuth(user_email, note_id);
+
+//       if (permission_result === 0) {
+//         res.status(403).send({ 'msg': '您目前沒有權限' });
+//       }
+
+//       req.permission = permission_result;
+//       next();
+
+//       return;
+//     } catch (err) {
+//       res.status(403).send({ error: 'Forbidden' });
+//       return;
+//     }
+//   };
+// };
+
+const socialComment_auth = () => {
   return async function (req, res, next) {
     try {
-      const user_email = req.user.email;
+      const user_email = req.session.user.email;
       const note_id = req.query.id || req.body.note_id;
       const permission_result = await Note.getNoteAuth(user_email, note_id);
 
-      if (permission_result === 0) {
-        res.status(403).send({ 'msg': '您目前沒有權限' });
+      console.log('permission_result', user_email, permission_result);
+      if (permission_result < 3) {
+        return res.status(403).json({ 'msg': '您無權限留言' });
       }
 
       req.permission = permission_result;
@@ -95,5 +90,5 @@ module.exports = {
   wrapAsync,
   authentication,
   timeConverter,
-  authorization,
+  socialComment_auth,
 };

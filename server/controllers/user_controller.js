@@ -73,13 +73,16 @@ const signIn = async (req, res) => {
     return;
   }
 
+  // 紀錄Session登入
   const user = result.user;
+  req.session.user = user;
+
   if (!user) {
     res.status(500).send({ error: 'Database Query Error' });
     return;
   }
 
-  res.status(200).send({
+  res.status(200).json({
     data: {
       access_token: user.access_token,
       access_expired: user.access_expired,
@@ -96,20 +99,27 @@ const signIn = async (req, res) => {
 };
 
 const getUserProfile = async (req, res) => {
-  res.status(200).send({
-    data: {
-      id: req.user.user_id,
-      provider: req.user.provider,
-      name: req.user.name,
-      email: req.user.email,
-      picture: req.user.picture,
-    },
-  });
+  const data = {
+    id: req.session.user.id,
+    provider: req.session.user.provider,
+    name: req.session.user.name,
+    email: req.session.user.email,
+    picture: req.session.user.picture,
+  };
+
+  // console.log('profile:', data);
+  res.status(200).json({ 'data': data });
   return;
+};
+
+const logOut = async (req, res) => {
+  req.session.destroy();
+  return res.status(200).send({ 'msg': '登出成功' });
 };
 
 module.exports = {
   signUp,
   signIn,
+  logOut,
   getUserProfile,
 };

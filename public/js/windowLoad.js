@@ -33,9 +33,17 @@ const sharePermission = {
   'read': 1,
 };
 
+// 筆記公開資訊
+let note_isSharing;
+let note_url_permission;
+let sharing_descrition;
+let sharing_image;
+let sharing_url;
+
 // For preload
 $(window).on('load', async function () {
   await profile();
   await getUserNotes();
+
   console.log('current_user_id: ', user_id);
 });

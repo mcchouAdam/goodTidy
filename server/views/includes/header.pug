@@ -20,47 +20,47 @@ nav.py-2.bg-light.border-bottom
 
 header
     .header
-      //- Dialog block
-      #signup-dialog
-        | Email:
-        br
-        input#signup_useremail
-        br
-        | Password:
-        br
-        input#signup_password
-        br
-        | UserName:
-        br
-        input#signup_username
-        br
-        | Photo:
-        br
-        input#user_picture(type='file')
-        br
-        br
-        button#signup-form-btn SignUp
-      #signin-dialog
-        | Email:
-        br
-        input#signin_useremail
-        br
-        | Password:
-        br
-        input#signin_password
-        br
-        br
-        button#signin-form-btn SignIn
-      #profile-dialog
-        #user_picture
-          img#user_pic
-        #user_email
-        #user_name
-        button#logout LogOut
+      //- //- Dialog block
+      //- #signup-dialog
+      //-   | Email:
+      //-   br
+      //-   input#signup_useremail
+      //-   br
+      //-   | Password:
+      //-   br
+      //-   input#signup_password
+      //-   br
+      //-   | UserName:
+      //-   br
+      //-   input#signup_username
+      //-   br
+      //-   | Photo:
+      //-   br
+      //-   input#user_picture(type='file')
+      //-   br
+      //-   br
+      //-   button#signup-form-btn SignUp
+      //- #signin-dialog
+      //-   | Email:
+      //-   br
+      //-   input#signin_useremail
+      //-   br
+      //-   | Password:
+      //-   br
+      //-   input#signin_password
+      //-   br
+      //-   br
+      //-   button#signin-form-btn SignIn
+      //- #profile-dialog
+      //-   #user_picture
+      //-     img#user_pic
+      //-   #user_email
+      //-   #user_name
+      //-   button#logout LogOut
       #share-dialog 
         #share_note_name
         .form-check.form-switch
-          label.form-check-label(for='flexSwitchCheckDefault') 特定人分享
+          label.form-check-label(for='flexSwitchCheckDefault') 向特定人分享
           input#shareToOther-toggle.form-check-input(type='checkbox', role='switch')
         #shareToOhterDetail(style="visibility: hidden")
           br
@@ -81,13 +81,10 @@ header
                   .input-group-append
                     button#addShareOther-btn.btn.btn-outline-info(type='button') 加入
                 ul#shareOtherList.list-group
-                  //- li.list-group-item.d-flex.justify-content-between.align-items-center
-                  //-   | Adam
-                  //-   span.badge.bg-primary.rounded-pill 允許觀看
         br
         br
         .form-check.form-switch
-          label.form-check-label(for='flexSwitchCheckDefault') 所有人分享
+          label.form-check-label(for='flexSwitchCheckDefault') 分享社群頁面
           input#shareToAll-toggle.form-check-input(type='checkbox', role='switch')
         br
         #shareToAllDetail(style="visibility: hidden")
