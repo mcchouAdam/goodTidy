@@ -13,6 +13,7 @@ const {
   shareToAll,
   shareToOther,
   getShareToOther,
+  saveNote,
 } = require('../controllers/note_controller');
 const { OCRupload, noteUpload, shareImgUpload } = require('../models/s3');
 const { OCR_google } = require('../../utils/OCR');
@@ -71,5 +72,8 @@ router
 router
   .route(`/api/${API_VERSION}/note/shareToOther/:note_id`)
   .get(authentication(), wrapAsync(getShareToOther));
+
+// 收藏 -----------------------------------------------------------------
+router.route(`/api/${API_VERSION}/note/save`).post(wrapAsync(saveNote));
 
 module.exports = router;

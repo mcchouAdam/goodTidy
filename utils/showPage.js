@@ -11,12 +11,14 @@ const showShareDetail = async function (data) {
     note_version_info[note_version_info.length - 1].version_name;
   const note_name = data[0].note_name;
   const note_pic = data[0].sharing_image;
+  const file_name = data[0].file_name;
   console.log(data);
 
   const result = {
     'note_name': note_name,
     'note_pic': `${S3_HOST}/sharing_image/${note_pic}`,
     'version_name': newest_version_name,
+    'file_name': file_name,
     'elements': newest_version_elements,
   };
 
@@ -24,9 +26,9 @@ const showShareDetail = async function (data) {
 };
 
 // TODO: showCommentsDetail 與 showSocialCards 留言板部分重複
-const showCommentsDetail = async function (comments) {
+const showCommentsDetail = async function (comments, note_id) {
   // console.log(comments);
-  const note_id = comments[0].note_id;
+  // const note_id = comments[0].note_id;
   const comments_num = comments.length;
   let comment_cards_html = '';
   let comment_btn_html = `<button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
@@ -116,6 +118,14 @@ const showSocialCards = async function (data) {
     const show_time = timeConverter(+lastEdit_time);
     const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
+
+    let saved_num = 0;
+    // TODO: 更新收藏數字
+    if (data[i].saved_user_id) {
+      const saved_info = data[i].saved_user_id;
+      saved_num = saved_info.length;
+    }
+
     comment_cards_html = '';
 
     // 好看照片 https://i.imgur.com/6tPhTUn.jpg
@@ -138,8 +148,9 @@ const showSocialCards = async function (data) {
                 <span id="comments_num">${comments_num}</span>
             </i>
         </button>
-        <button class="btn btn-heart">
+        <button class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
             <i class="fa fa-heart" aria-hidden="true" style="color:grey"></i>
+            <span class="saved_num">${saved_num}</span>
         </button>
         <button class="btn">
             <a href="${SERVER_HOST}/shareDetailPage?id=${note_id}">

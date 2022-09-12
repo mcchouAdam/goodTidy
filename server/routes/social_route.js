@@ -15,11 +15,19 @@ const {
 
 router.route('/socialPage').get(wrapAsync(socialPage));
 
-router
-  .route('/shareDetailPage')
-  .get(authentication(), authorization(), wrapAsync(shareDetailPage));
+// router
+//   .route('/shareDetailPage')
+//   .get(authentication(), authorization(), wrapAsync(shareDetailPage));
+
+// router
+//   .route(`/api/${API_VERSION}/comments`)
+//   .post(authentication(), authorization(), wrapAsync(createComments));
+
+router.route('/shareDetailPage').get(wrapAsync(shareDetailPage));
+
 router
   .route(`/api/${API_VERSION}/comments`)
-  .post(authentication(), authorization(), wrapAsync(createComments));
+  .post(authentication(), wrapAsync(createComments));
+
 
 module.exports = router;

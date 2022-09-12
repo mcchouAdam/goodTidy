@@ -31,6 +31,7 @@ const writeNote = async (note) => {
         'created_time': note.timestamp,
         'lastEdit_time': note.timestamp,
         'lastVersion': note.version_name,
+        'saved_user_id': [],
       };
 
       const note_result = await NotesCollection.insertOne(note_obj);
@@ -289,7 +290,7 @@ const getShareNotes = async (paging) => {
       .limit(limit)
       .toArray();
 
-    console.log(result);
+    console.log('看這裡', result);
 
     return result;
   } catch (error) {
@@ -394,6 +395,76 @@ const getComments = async (note_id) => {
   }
 };
 
+// 收藏功能 - 更新資料庫
+const createSave = async (note_id, user_id) => {
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  const UserCollection = Mongo.db(MONGO_DB).collection('user');
+  try {
+
+    // 檢查User是否已經點過這個
+
+    // Update the Note saved_user_id ----------------------------
+    await NotesCollection.updateOne(
+      {
+        _id: ObjectId(note_id),
+      },
+      [
+        {
+          $set: {
+            saved_user_id: {
+              $cond: [
+                {
+                  $in: [user_id, '$saved_user_id'],
+                },
+                {
+                  $setDifference: ['$saved_user_id', [user_id]],
+                },
+                {
+                  $concatArrays: ['$saved_user_id', [user_id]],
+                },
+              ],
+            },
+          },
+        },
+      ]
+    );
+
+    // Update the User saved_note_id ----------------------------
+    await UserCollection.updateOne(
+      {
+        _id: ObjectId(user_id),
+      },
+      [
+        {
+          $set: {
+            saved_note_id: {
+              $cond: [
+                {
+                  $in: [note_id, '$saved_note_id'],
+                },
+                {
+                  $setDifference: ['$saved_note_id', [note_id]],
+                },
+                {
+                  $concatArrays: ['$saved_note_id', [note_id]],
+                },
+              ],
+            },
+          },
+        },
+      ]
+    );
+
+    
+
+    return 'save successfully!';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
 module.exports = {
   writeNote,
   createNoteVersion,
@@ -406,4 +477,5 @@ module.exports = {
   createComment,
   getNoteAuth,
   getComments,
+  createSave,
 };

@@ -30,6 +30,7 @@ const signUp = async (name, email, password, picture) => {
       picture: picture,
       access_expired: TOKEN_EXPIRE,
       login_at: loginAt,
+      saved_note_id: [],
     };
 
     const insert_result = await userCollection.insertOne(user);

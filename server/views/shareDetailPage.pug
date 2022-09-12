@@ -11,14 +11,31 @@ block content
     #showShareDetail.showShareDetail
 
     script.
+        S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
         elements = !{elements};
         comments = !{comments};
         console.log(elements);
-        const elements_html = $.parseHTML(elements.elements);
-        $('#showShareDetail').append(elements_html);
+        elements_init($('#showShareDetail'),elements);
+        //- const elements_html = $.parseHTML(elements.elements);
+        //- $('#showShareDetail').append(elements_html);
+        //- console.log(elements_html);
+
         const comments_html = $.parseHTML(comments);
         $('#showShareDetail').append(comments_html);
         $('#note_name').text(elements.note_name);
         $('#note_version').text(elements.version_name);
         const note_pic_url = elements.note_pic;
         $('#note_pic').append($(`<img class="note-pic" src="${note_pic_url}"></img>`));
+
+        function elements_init(div_append, note_elements) {
+            // note_elements.length-1: 最後一個為最新版
+            // console.log(note_elements);
+            let elements = $.parseHTML(note_elements.elements);
+            let img_background = `${S3_HOST}notes/${note_elements.file_name}`;
+
+            elements.map((s) => {
+                // 置換掉blob網址
+                $(s).contents().attr('src', `${img_background}`);
+                div_append.append(s);
+            });
+         }

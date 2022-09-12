@@ -25,12 +25,13 @@ const socialPage = async (req, res) => {
 
 const shareDetailPage = async (req, res) => {
   const note_id = req.query.id;
+  console.log(req.query);
   const result = await getNoteById(note_id);
   const noteDetails = await showShareDetail(result);
   const comments = await getComments(note_id);
-  const comments_html = await showCommentsDetail(comments);
+  const comments_html = await showCommentsDetail(comments, note_id);
 
-  // console.log(result);
+  console.log(noteDetails);
 
   return res.render('shareDetailPage', {
     elements: JSON.stringify(noteDetails),

@@ -1,4 +1,4 @@
-// axios createComments API
+// 發出留言
 async function createComments(note_id) {
   const bearer_token = localStorage.getItem('Authorization');
   if (!bearer_token) {
@@ -26,6 +26,38 @@ async function createComments(note_id) {
     .then((response) => {
       console.log(response);
       alert('留言成功');
+      location.reload();
+    })
+    .catch((error) => {
+      console.log(error);
+      alert(error.response.data.msg);
+    });
+}
+
+// 發出留言
+async function createSave(note_id) {
+  const bearer_token = localStorage.getItem('Authorization');
+  if (!bearer_token) {
+    alert('請先登入');
+  }
+  let data = {
+    'user_id': user_id,
+    'note_id': note_id,
+  };
+
+  var config = {
+    method: 'POST',
+    url: `${server}/api/1.0/note/save`,
+    headers: {
+      'Authorization': bearer_token,
+    },
+    data: data,
+  };
+
+  await axios(config)
+    .then((response) => {
+      console.log(response);
+      alert('收藏成功');
       location.reload();
     })
     .catch((error) => {

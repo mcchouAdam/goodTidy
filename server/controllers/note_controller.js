@@ -70,6 +70,15 @@ const getShareToOther = async (req, res) => {
   return res.json(shareList_html);
 };
 
+const saveNote = async (req, res) => {
+  const note_id = req.body.note_id;
+  const user_id = req.body.user_id;
+
+  const saveResult = await Notes.createSave(note_id, user_id);
+  // const shareList_html = await showShareToOtherList(shareList, note_id);
+  return res.status(200).json(saveResult);
+};
+
 module.exports = {
   createNote,
   createNoteVersion,
@@ -79,4 +88,5 @@ module.exports = {
   shareToAll,
   shareToOther,
   getShareToOther,
+  saveNote,
 };
