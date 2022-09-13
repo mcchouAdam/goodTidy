@@ -1,43 +1,6 @@
 extends layout.pug
 
 block content
-  .header
-    #signup-dialog
-      | Email:
-      br
-      input#signup_useremail
-      br
-      | Password:
-      br
-      input#signup_password
-      br
-      | UserName:
-      br
-      input#signup_username
-      br
-      | Photo:
-      br
-      input#user_picture(type='file')
-      br
-      br
-      button#signup-form-btn SignUp
-    #signin-dialog
-      | Email:
-      br
-      input#signin_useremail
-      br
-      | Password:
-      br
-      input#signin_password
-      br
-      br
-      button#signin-form-btn SignIn
-    #profile-dialog
-      #user_picture
-        img#user_pic
-      #user_email
-      #user_name
-      button#logout LogOut
   .main-block
     main      
       //- modal window -------------------------------
@@ -150,16 +113,31 @@ block content
         //- Share
         button#share-btn(style="font-size:16px")
           i.fa.fa-solid.fa-share
-    
 
+        //- comments ON/OFF
+        .card
+          .card-body.p-2.d-flex.align-items-center
+            h6.text-primary.fw-bold.small.mb-0.me-1 Comments OFF/ON
+            .form-check.form-switch
+              input#commentSwitch.form-check-input(type='checkbox', checked='')
+              label.form-check-label(for='commentSwitch')
+        
         //- Message sidePanel
         #mySidepanel.sidepanel
           a.closebtn(href='javascript:void(0)', onclick='closeNav()') &times;
-          a(href='#') About
-          a(href='#') Services
-          a(href='#') Clients
-          a(href='#') Contact
-        button.openbtn(onclick='openNav()')(disabled='')
+          .card.mb-4
+            .card-body
+              p 請認真作筆記好嗎?
+              .d-flex.justify-content-between
+                .d-flex.flex-row.align-items-center
+                  img(src='https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp', alt='avatar', width='25', height='25')
+                  p.small.mb-0.ms-2 Martha
+                .d-flex.flex-row.align-items-center
+                  p.small.text-muted.mb-0 Upvote?
+                  i.far.fa-thumbs-up.mx-2.fa-xs.text-black(style='margin-top: -0.16rem;')
+                  p.small.text-muted.mb-0 3
+        //- button.openbtn(onclick='openNav()')
+        button.openbtn#comment-btn
           i.fa.fa-solid.fa-comments
 
         //- AutoSave

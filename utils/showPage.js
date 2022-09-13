@@ -280,12 +280,13 @@ const showShareToOtherList = async function (shareList, note_id) {
       shareList_html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                             ${p.user_email}
                           <span class="badge bg-primary rounded-pill">${permission}</span>
-                          <a href="${SERVER_HOST}/shareDetailPage?id=${note_id}">
-                              <i class="fa fa-share-alt" aria-hidden="true">
-                              </i>
-                          </a>
                         </li>`;
     });
+
+    // href icon
+    // <a href="${SERVER_HOST}/shareDetailPage?id=${current_note_id}">
+    //   <i class="fa fa-share-alt" aria-hidden="true"></i>
+    // </a>;
   } catch (error) {
     console.log(error);
   }

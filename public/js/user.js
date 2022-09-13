@@ -138,6 +138,7 @@ $('#share-btn').click(async function () {
     return;
   }
 
+
   // PreLoad the 特定人士清單
   await getShareToOther(current_note_id);
   await getShareAll(current_note_id);

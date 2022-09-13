@@ -97,3 +97,26 @@ $('#version-change').click(function () {
   noteShowFromVer(version_chosen, current_version_obj);
   // console.log(version_chosen);
 });
+
+// 留言button
+$('#comment-btn').click(function (e) {
+  // console.log('aa');
+  // $(this).css('cursor', 'url("/icon/goodTidy_icon.png")');
+  const item = $(
+    '<i class="fa fa-solid fa-comments" ondblclick="openNav()"></i>'
+  )
+    // .attr('contenteditable', 'true')
+    .draggable({ containment: '#update-note-content' })
+    .on('drag', stepDrag);
+  $('#update-note-content').append(item);
+});
+
+$('#commentSwitch').change(function () {
+  let isChecked = $('#commentSwitch')[0].checked;
+  if (isChecked) {
+    console.log('aaaa');
+    $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').show();
+  } else {
+    $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').hide();
+  }
+});

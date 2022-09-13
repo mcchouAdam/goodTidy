@@ -113,6 +113,7 @@ $('#OCR').click(async function () {
       // append進預覽框裡
       // OCR_result[0] 是全部辨識的字串
       for (let i = 1; i < OCR_result.length; i++) {
+        // for (let i = 0; i < 1; i++) {
         let font = OCR_result[i].description;
         let fontTop = OCR_result[i].boundingPoly.vertices[0].y;
         let fontLeft = OCR_result[i].boundingPoly.vertices[0].x;
