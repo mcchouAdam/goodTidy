@@ -83,7 +83,7 @@ const showCommentsDetail = async function (comments, note_id) {
                   <p class="card-text"><small class="text-muted">留言小板板</small><br/> 向原作者留言吧！</p>
                   </div>
                   <div class="row px-3 form-group">
-                  <textarea id="textarea_${note_id}" class="text-muted bg-light mt-4 mb-3" placeholder="你的筆記超棒！"></textarea>
+                  <textarea id="textarea_${note_id}" class="msgTextarea text-muted bg-light mt-4 mb-3" placeholder="你的筆記超棒！"></textarea>
                   </div>
                   <div class="row px-3">
                   <div class="btn btn-success ml-auto" onclick="javascript:createComments('${note_id}')">留言</div>
@@ -102,7 +102,7 @@ const showCommentsDetail = async function (comments, note_id) {
 // 分享筆記卡片
 const showSocialCards = async function (data, user_id) {
   // console.log('req.session.user.id', req.session.user.id);
-  console.log('showSocialCards: ', data);
+  // console.log('showSocialCards: ', data);
 
   let sharingNote_cards_html = '';
   let comment_modal_html = '';
@@ -134,7 +134,6 @@ const showSocialCards = async function (data, user_id) {
     }
 
     let saved_num = 0;
-    // TODO: 更新收藏數字
     if (data[i].saved_user_id) {
       const saved_info = data[i].saved_user_id;
       saved_num = saved_info.length;
@@ -181,12 +180,25 @@ const showSocialCards = async function (data, user_id) {
       sharingNote_cards_html += '</div>';
     }
 
+    // TODO: 重構把 comments_info 拉成獨立的function
     comments_info.map((comment) => {
       comment_cards_html += `
         <div class="card border-dark mb-3" style="max-width: 18rem;">
-            <div class="card-header"><img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${
+          <div class="card-header">
+            <img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${
         comment.user_picture
-      }"/><span>${comment.user_name}</span>
+      }"/>
+            <span>${comment.user_name}</span>
+            <a href="javascript:updateComment('${comment._id}', '${
+        comment.note_id
+      }')">
+              <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:deleteComment('${comment._id}', '${
+        comment.note_id
+      }')">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
             <p class="card-text"><small class="text-muted">留言時間: ${timeConverter(
               +comment.created_time
             )}</small></p>

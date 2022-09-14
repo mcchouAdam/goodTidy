@@ -131,6 +131,7 @@ async function getUserNotes() {
     });
 }
 
+// 筆記導覽列
 async function showNoteList(note_obj, div_append) {
   const classification = Object.keys(note_obj);
   let mb1_html = $('<li class="mb-1"></li>');
@@ -141,20 +142,24 @@ async function showNoteList(note_obj, div_append) {
     let ids = note_obj[c].note_id;
     let names = note_obj[c].note_name;
 
-    classification_html += `<button
+    classification_html += `
+          <button
             class="btn btn-toggle align-items-center rounded collapsed"
             data-bs-toggle="collapse"
             data-bs-target="#${c}-collapse"
             aria-expanded="true"
-          >
-            ${c}
+          >${c}
           </button><div class="collapse show" id="${c}-collapse">
+            <a href="javascript:renameclassification('${user_id}','${c}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+            <a href="javascript:deleteclassification('${user_id}','${c}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a></li>
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">`;
 
     for (let i = 0; i < names.length; i++) {
-      name_html += `<li><a href="javascript:noteShow(
-        '${ids[i]}'
-      )" class="link-dark rounded">${names[i]}</a></li>`;
+      name_html += `<li><a href="javascript:noteShow('${ids[i]}')" class="link-dark rounded">${names[i]}</a>
+      <a href="javascript:renameNote('${ids[i]}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+      <a href="javascript:deleteNote('${ids[i]}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+      <a href="javascript:moveNote('${ids[i]}')"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
+      </li>`;
     }
 
     classification_html += name_html;
@@ -219,4 +224,154 @@ async function noteShowFromVer(version_name, showVerObj) {
   console.log(showVerObj[version_name]);
   $('#update-note-content').html('');
   elements_init($('#update-note-content'), showVerObj[version_name]);
+}
+
+// 改名筆記
+async function renameNote(note_id) {
+  const new_noteName = window.prompt('請問您的筆記要改什麼名字?');
+  if (!new_noteName) {
+    alert('名字不能為空');
+    return;
+  }
+  data = {
+    'note_id': note_id,
+    'new_noteName': new_noteName,
+  };
+
+  let config = {
+    method: 'PATCH',
+    url: `${server}/api/1.0/note`,
+    data: data,
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(response);
+      alert('改名筆記成功');
+      location.reload();
+    })
+    .catch(function (error) {
+      console.log(error);
+      alert('改名筆記失敗');
+    });
+}
+
+// 刪除筆記
+async function deleteNote(note_id) {
+  const isdeleted = window.confirm(`確定修改刪除?`);
+  if (isdeleted) {
+    data = {
+      'note_id': note_id,
+    };
+
+    let config = {
+      method: 'DELETE',
+      url: `${server}/api/1.0/note`,
+      data: data,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        console.log(response);
+        alert('刪除筆記成功');
+        location.reload();
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert('刪除筆記失敗');
+      });
+  }
+}
+
+// 搬移筆記
+async function moveNote(note_id) {
+  const MoveToClass = window.prompt('您要搬移到哪個分類?');
+  if (!MoveToClass) {
+    alert('分類不能為空');
+    return;
+  } else {
+    data = {
+      'note_id': note_id,
+      'MoveToClass': MoveToClass,
+    };
+
+    let config = {
+      method: 'PATCH',
+      url: `${server}/api/1.0/noteClass`,
+      data: data,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        console.log(response);
+        alert('搬移筆記成功');
+        location.reload();
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert('搬移筆記失敗');
+      });
+  }
+}
+
+// 改名分類
+async function renameclassification(user_id, old_classificationName) {
+  const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
+  if (!new_classificationName) {
+    alert('分類名字不能為空');
+    return;
+  }
+
+  data = {
+    'user_id': user_id,
+    'old_classificationName': old_classificationName,
+    'new_classificationName': new_classificationName,
+  };
+
+  let config = {
+    method: 'PATCH',
+    url: `${server}/api/1.0/noteClass`,
+    data: data,
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(response);
+      alert('改名分類成功');
+      location.reload();
+    })
+    .catch(function (error) {
+      console.log(error);
+      alert('改名分類失敗');
+    });
+}
+
+// 刪除分類
+async function deleteclassification(user_id, classificationName) {
+  const isdeleted = window.confirm(
+    '確定刪除此分類?(會連同一分類裡的筆記一同刪除)'
+  );
+  if (isdeleted) {
+    data = {
+      'user_id': user_id,
+      'classificationName': classificationName,
+    };
+
+    let config = {
+      method: 'DELETE',
+      url: `${server}/api/1.0/noteClass`,
+      data: data,
+    };
+
+    await axios(config)
+      .then(function (response) {
+        console.log(response);
+        alert('刪除分類成功');
+        location.reload();
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert('刪除分類失敗');
+      });
+  }
 }

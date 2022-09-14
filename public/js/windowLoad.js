@@ -44,6 +44,7 @@ let sharing_url;
 $(window).on('load', async function () {
   await profile();
   await getUserNotes();
+  await getSocialSortingColor();
 
   console.log('current_user_id: ', user_id);
 });

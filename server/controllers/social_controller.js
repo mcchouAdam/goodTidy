@@ -2,8 +2,11 @@ const {
   getShareNotes,
   getNoteById,
   createComment,
+  updateComment,
+  deleteComment,
   getComments,
 } = require('../models/note_model');
+Notes = require('../models/note_model');
 const {
   showShareDetail,
   showSocialCards,
@@ -12,11 +15,22 @@ const {
 } = require('../../utils/showPage');
 
 const socialPage = async (req, res) => {
-  console.log('social page session', req.session);
+  // console.log('social page session', req.session);
   const user_id = req.session.user.id;
-
   const paging = +req.query.paging;
-  const result = await getShareNotes(paging);
+  const sorting = req.query.sorting;
+  const search_text = req.query.search_text;
+  const search_method = req.query.search_method;
+
+  console.log('search_text', search_text, 'search_method', search_method);
+
+  const result = await getShareNotes(
+    paging,
+    sorting,
+    search_text,
+    search_method,
+    user_id
+  );
   const cards_html = await showSocialCards(result, user_id);
   const paging_html = await showPagination(paging);
 
@@ -53,8 +67,28 @@ const createComments = async (req, res) => {
   return res.status(200).json(`comment_id ${result} created successfully!`);
 };
 
+const updateComments = async (req, res) => {
+  req.body.user_id = req.session.user.id;
+  const data = req.body;
+  const result = await updateComment(data);
+
+  return res
+    .status(200)
+    .json(`comment_id ${result} update contents successfully!`);
+};
+
+const deleteComments = async (req, res) => {
+  req.body.user_id = req.session.user.id;
+  const data = req.body;
+  const result = await deleteComment(data);
+
+  return res.status(200).json(result);
+};
+
 module.exports = {
   socialPage,
   shareDetailPage,
   createComments,
+  updateComments,
+  deleteComments,
 };

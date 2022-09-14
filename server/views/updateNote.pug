@@ -64,10 +64,13 @@ block content
                 #modal-noteUpload-main.modal-body
                   .OCR-block
                     h1 文字辨識 & 圖形圈選
-                    // 檔案上傳/預覽區塊
-                    form(runat='server')
-                      input#imgInp(accept='image/*', type='file')
-                      img#blah(src='#', alt='your image', hidden='')
+                    //- form(runat='server')
+                    //-   input#imgInp(accept='image/*', type='file')
+                    //-   img#blah(src='#', alt='your image', hidden='', width='600px', height='500px')
+                    form#my-form(action='', method='post', r='')
+                      input(type='file', name='photo', accept='image/*', required='')
+                      button(type='submit') 圖形預覽
+                    img#img-preview(hidden='')
                     .OCR-nav
                       //
                         <button id="pre">上一步</button>
@@ -107,7 +110,7 @@ block content
           i.fa.fa-floppy-o
 
         //- Delete
-        button#deleteNote(disabled='', style='font-size:16px')
+        button#deleteNote(style='font-size:16px')
           i.fa.fa-solid.fa-trash
 
         //- Share

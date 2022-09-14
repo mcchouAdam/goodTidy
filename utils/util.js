@@ -16,7 +16,7 @@ const authentication = () => {
   return async function (req, res, next) {
     if (req.session.user) {
       console.log('authenticated');
-      console.log('req.session.user: ', req.session.user);
+      // console.log('req.session.user: ', req.session.user);
       next();
     } else {
       console.log('not authenticated');

@@ -7,7 +7,7 @@ let c = $('#fontOCRCanvas')[0];
 let ctx = c.getContext('2d');
 
 // hidden& previewBlash
-let previewBlah = document.getElementById('blah');
+let previewBlah = document.getElementById('img-preview');
 previewBlah.onload = () => canvasBackground();
 
 // Draw the upload image to canvas

@@ -7,7 +7,7 @@ nav.py-2.bg-light.border-bottom
         li.nav-item
           a.nav-link.link-dark.px-2(href='/updateNote', aria-current='page') Note
         li.nav-item
-          a.nav-link.link-dark.px-2(href='/socialPage?paging=1') Social
+          a.nav-link.link-dark.px-2(href='/socialPage?paging=1&sorting=created_time') Social
         li.nav-item
           a.nav-link.link-dark.px-2(href='#') Product
         li.nav-item
@@ -136,7 +136,7 @@ header
             }
           })
 
-          // 分享給特定人的權限設定
+          // 分享給特定人的權限設定的按鈕
           $('#shareToOtherMenu li').on('click', function() {
             console.log($(this).text());
             console.log($('#shareToOtherMethod-btn').text());

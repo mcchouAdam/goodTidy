@@ -1,12 +1,6 @@
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
-  const item = $('<div class="add_fonts"><p>新增文字方塊</p></div>')
-    .attr('contenteditable', 'true')
-    .draggable({ containment: '#update-note-content' })
-    .on('drag', stepDrag)
-    .on('input', stepInput)
-    .on('input', checkTextNull);
-  $('#update-note-content').append(item);
+  addDragTextarea('#update-note-content', '新增文字方塊');
 });
 
 // 儲存鍵 --------------------------------------
@@ -100,8 +94,7 @@ $('#version-change').click(function () {
 
 // 留言button
 $('#comment-btn').click(function (e) {
-  // console.log('aa');
-  // $(this).css('cursor', 'url("/icon/goodTidy_icon.png")');
+
   const item = $(
     '<i class="fa fa-solid fa-comments" ondblclick="openNav()"></i>'
   )
@@ -114,9 +107,13 @@ $('#comment-btn').click(function (e) {
 $('#commentSwitch').change(function () {
   let isChecked = $('#commentSwitch')[0].checked;
   if (isChecked) {
-    console.log('aaaa');
     $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').show();
   } else {
     $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').hide();
   }
+});
+
+// 刪除鍵 --------------------------------------------------
+$('#deleteNote').click(function () {
+  console.log($(':focus'));
 });

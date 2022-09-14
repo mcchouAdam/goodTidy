@@ -64,7 +64,7 @@
   margin-bottom: 50px;
 }
 
-textarea {
+.msgTextarea {
   padding: 15px 20px;
   border-radius: 10px;
   box-sizing: border-box;
@@ -76,7 +76,7 @@ textarea {
   width: 100%;
 }
 
-textarea:focus {
+.msgTextarea:focus {
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;

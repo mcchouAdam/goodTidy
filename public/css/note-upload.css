@@ -39,10 +39,14 @@
   height: 500px;
 }
 
-.OCR_fonts,
-.add_fonts {
+.OCR_fonts {
   width: 50px;
   height: 50px;
+}
+
+.add_fonts {
+  width: 100px;
+  height: 100px;
 }
 
 .highlight {
@@ -118,3 +122,25 @@
   height: 50px;
   background-image: url('../icon/goodTidy_icon.png');
 }
+
+/* 新增修改字串 */
+.addtextarea {
+  height: 100%;
+  width: 100%;
+  resize: none;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.addtextarea:focus {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid #00c853 !important;
+  outline-width: 0 !important;
+}
+
+/* div {
+  padding: 0px;
+} */

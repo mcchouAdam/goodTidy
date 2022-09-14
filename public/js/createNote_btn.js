@@ -23,10 +23,9 @@ $('#shapeView').click(function () {
   let item_width = rectContour_params[2];
   let item_height = rectContour_params[3];
 
-  // TODO: 目前寫死width, height
   const item_img = $(`<img src="${previewBlah.src}" />`)
-    .css('width', '600px')
-    .css('height', '300px')
+    .css('width', previewBlah.width)
+    .css('height', previewBlah.height)
     .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`);
 
   const item = $(`<div class="contour-pic"></div>`)
@@ -55,13 +54,16 @@ $('#submit_note').click(async function () {
     return;
   }
 
-  // // blob url to file
+  // blob url to file
   let blob = await fetch(previewBlah.src).then((r) => r.blob());
   let filetype = $('input[type=file]').val().split('.').pop();
   let timestamp = Date.now();
   let filename = `${user_id}_${timestamp}.${filetype}`;
   let elements = $('#note-preview-content').html();
-  let keywords = OCR_elements.join();
+  let removeSrc_element = elements.replaceAll(previewBlah.src, '');
+  // console.log(removeSrc_element);
+
+  let keywords = $('#note-preview-content').text().replaceAll('\n', '');
 
   await noteUpload(
     blob,
@@ -69,13 +71,13 @@ $('#submit_note').click(async function () {
     user_id,
     note_name,
     timestamp,
-    elements,
+    removeSrc_element,
     note_classification,
     ver_name,
     keywords
   );
 
-  location.reload();
+  // location.reload();
 });
 
 // 去除非文字鍵 ------------------------------------
@@ -112,31 +114,11 @@ $('#OCR').click(async function () {
 
       // append進預覽框裡
       // OCR_result[0] 是全部辨識的字串
-      for (let i = 1; i < OCR_result.length; i++) {
-        // for (let i = 0; i < 1; i++) {
-        let font = OCR_result[i].description;
-        let fontTop = OCR_result[i].boundingPoly.vertices[0].y;
-        let fontLeft = OCR_result[i].boundingPoly.vertices[0].x;
-        OCR_elements.push(font);
+      let font = OCR_result[0].description;
+      let fontTop = OCR_result[0].boundingPoly.vertices[0].y;
+      let fontLeft = OCR_result[0].boundingPoly.vertices[0].x;
 
-        // TODO: 預覽頁面 - 使用relative會跑掉，但存檔後不會跑掉
-        const item = $(`<div class="OCR_fonts"><p>${font}</p></div>`)
-          // TODO: left的座標調整數字不隻從哪兒來
-          // .css({
-          //   top: fontTop + 200,
-          //   left: fontLeft + $('#fontOCRCanvas').width(),
-          //   position: 'absolute',
-          // })
-          .css({
-            top: fontTop,
-            left: fontLeft,
-            position: 'relative',
-          })
-          .attr('contenteditable', 'true')
-          .draggable({ containment: '#note-preview-content' });
-
-        $('#note-preview-content').append(item);
-      }
+      addDragTextarea('#note-preview-content', font);
     })
     .catch(function (error) {
       console.log(error);
