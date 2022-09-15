@@ -47,6 +47,11 @@ app.get('/', async (req, res) => {
   return res.render('homePage');
 });
 
+// Index
+app.get('/index', async (req, res) => {
+  return res.render('index');
+});
+
 app.listen(port, () => {
   console.log(`listen ${port} sucessfully!`);
 });
