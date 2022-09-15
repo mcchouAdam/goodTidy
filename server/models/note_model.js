@@ -31,7 +31,10 @@ const writeNote = async (note) => {
         'created_time': note.timestamp,
         'lastEdit_time': note.timestamp,
         'lastVersion': note.version_name,
+        'comment_count': 0,
+        'saved_count': 0,
         'saved_user_id': [],
+        'tags': [],
       };
 
       const note_result = await NotesCollection.insertOne(note_obj);
@@ -45,6 +48,7 @@ const writeNote = async (note) => {
         'version_name': note.version_name,
         'elements': note.elements,
         'keywords': note.keywords,
+        'text_elements': JSON.parse(note.text_elements),
       };
 
       const version_result = await NoteVerCollection.insertOne(version_obj);
@@ -67,6 +71,7 @@ const createNoteVersion = async (version_info) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
     // add new version_info to the collection [note_version]
+    version_info.text_elements = JSON.parse(version_info.text_elements);
     await versionCollection.insertOne(version_info);
     const note_id = version_info.note_id;
     const version_name = version_info.version_name;
@@ -134,6 +139,132 @@ const getUserNotes = async (user_id) => {
   }
 };
 
+// 刪除筆記
+const deleteNote = async (note_id) => {
+  // await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  const NoteVerCollection = Mongo.db(MONGO_DB).collection('note_version');
+  const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
+  try {
+    await NotesCollection.deleteOne({
+      '_id': ObjectId(note_id),
+    });
+    await NoteVerCollection.deleteOne({
+      'note_id': note_id,
+    });
+    await CommentsCollection.deleteOne({
+      'note_id': note_id,
+    });
+    return 'delete successfully';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 改名筆記
+const renameNote = async (note_id, new_noteName) => {
+  // await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const a = await NotesCollection.updateOne(
+      {
+        '_id': ObjectId(note_id),
+      },
+      { $set: { 'note_name': new_noteName } }
+    );
+    return 'rename successfully';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 搬移筆記
+const moveNote = async (note_id, MoveToClass) => {
+  // await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const result = await NotesCollection.updateOne(
+      {
+        '_id': ObjectId(note_id),
+      },
+      { $set: { 'note_classification': MoveToClass } }
+    );
+    return 'move note_classification successfully';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 改名分類
+const renameNoteClass = async (
+  user_id,
+  old_classificationName,
+  new_classificationName
+) => {
+  // await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const a = await NotesCollection.updateMany(
+      {
+        'note_classification': old_classificationName,
+        'user_id': user_id,
+      },
+      { $set: { 'note_classification': new_classificationName } }
+    );
+    return 'rename successfully';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 刪除分類
+const deleteNoteClass = async (user_id, old_classificationName) => {
+  // await Mongo.connect();
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  const NoteVerCollection = Mongo.db(MONGO_DB).collection('note_version');
+  const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
+  try {
+    const note_id = await NotesCollection.aggregate([
+      {
+        '$match': {
+          'user_id': user_id,
+          'note_classification': old_classificationName,
+        },
+      },
+      { '$addFields': { 'note_id_toString': { '$toString': '$_id' } } },
+    ])
+      .project({ 'note_id_toString': 1 })
+      .toArray();
+
+    const note_id_objectId = note_id.map((n) => n._id);
+    const note_id_toString = note_id.map((n) => n.note_id_toString);
+
+    // console.log('note_id_toString', note_id_toString);
+    await NotesCollection.deleteMany({
+      '_id': { $in: note_id_objectId },
+    });
+    await NoteVerCollection.deleteMany({
+      'note_id': { $in: note_id_toString },
+    });
+    await CommentsCollection.deleteMany({
+      'note_id': { $in: note_id_toString },
+    });
+    return 'delete note_class successfully';
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
 const shareToAll = async (data) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
@@ -144,6 +275,8 @@ const shareToAll = async (data) => {
   const sharing_descrition = data.sharing_descrition;
   const sharing_image = data.file_name;
   const sharing_url = data.sharing_url;
+  const tags = JSON.parse(data.tags);
+  const sharing_time = Date.now();
 
   try {
     const result = await NotesCollection.updateOne(
@@ -157,6 +290,8 @@ const shareToAll = async (data) => {
           'sharing_url': sharing_url,
           'sharing_descrition': sharing_descrition,
           'sharing_image': sharing_image,
+          'tags': tags,
+          'sharing_time': sharing_time,
         },
       }
     );
@@ -245,16 +380,75 @@ const getShareToOther = async (note_id) => {
   }
 };
 
-const getShareNotes = async (paging) => {
+const getShareNotes = async (
+  paging,
+  sorting,
+  search_text,
+  search_method,
+  user_id
+) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
 
   try {
     const skip = (paging - 1) * 6;
     const limit = 6;
 
+    // sorting -----------------------------
+    let sortObj = {};
+    sortObj[sorting] = -1;
+
+    // search_method -----------------------------
+    let matchObj = { 'isSharing': 1 };
+    let matchAterLookup;
+
+    console.log('user_id: ', user_id);
+
+    const re = new RegExp(search_text);
+    switch (search_method) {
+      case '筆記標題':
+        matchObj = { 'isSharing': 1, 'note_name': { $regex: re } };
+        matchAterLookup = {};
+        break;
+      case '發文者':
+        matchObj = { 'isSharing': 1 };
+        matchAterLookup = { 'user_info.name': { $regex: re } };
+        break;
+      case '發文時間':
+        search_index = 'created_time';
+        break;
+      case '筆記簡介':
+        matchObj = { 'isSharing': 1, 'sharing_descrition': { $regex: re } };
+        matchAterLookup = {};
+        break;
+      case '筆記內容':
+        matchObj = { 'isSharing': 1 };
+        matchAterLookup = { 'note_version_info.keywords': { $regex: re } };
+        break;
+      case 'tag':
+        matchObj = {
+          // 'isSharing': 1,
+          // 'tags': { $elemMatch: search_text },
+        };
+        matchAterLookup = {};
+        break;
+      case '收藏文章':
+        matchObj = {
+          'isSharing': 1,
+          'saved_user_id': user_id,
+        };
+        matchAterLookup = {};
+        break;
+      default:
+        matchObj = { 'isSharing': 1 };
+        matchAterLookup = {};
+        break;
+    }
+
+    console.log('matchObj', matchObj);
+
     const result = await NotesCollection.aggregate([
       {
-        '$match': { 'isSharing': 1 },
+        '$match': matchObj,
       },
       { '$addFields': { 'foreign_user_id': { '$toObjectId': '$user_id' } } },
       { '$addFields': { 'foreign_note_id': { '$toString': '$_id' } } },
@@ -274,13 +468,22 @@ const getShareNotes = async (paging) => {
           as: 'comments_info',
         },
       },
+      {
+        $lookup: {
+          from: 'note_version',
+          localField: 'foreign_note_id',
+          foreignField: 'note_id',
+          as: 'note_version_info',
+        },
+      },
+      { $match: matchAterLookup },
+      { $sort: sortObj },
     ])
-      .sort({ 'created_time': -1 })
       .skip(skip)
       .limit(limit)
       .toArray();
 
-    console.log('看這裡', result);
+    console.log('aaaaaaa: ', result[0].note_version_info);
 
     return result;
   } catch (error) {
@@ -311,20 +514,6 @@ const getNoteById = async (note_id) => {
     ]).toArray();
     // console.log(result);
     return result;
-  } catch (error) {
-    return { error };
-  } finally {
-    // await Mongo.close();
-  }
-};
-
-const createComment = async (data) => {
-  const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
-  try {
-    const result = await CommentsCollection.insertOne(data).toArray();
-    const comment_id = result.insertedId.toString();
-
-    return comment_id;
   } catch (error) {
     return { error };
   } finally {
@@ -433,6 +622,7 @@ const createSave = async (note_id, user_id) => {
   try {
     // 檢查User是否已經點過這個
 
+    // 更新saved_user_id
     // Update the Note saved_user_id ----------------------------
     await NotesCollection.updateOne(
       {
@@ -459,28 +649,25 @@ const createSave = async (note_id, user_id) => {
       ]
     );
 
-    // Update the User saved_note_id ----------------------------
-    await UserCollection.updateOne(
+    // 更新收藏數字
+    const saved_count = await NotesCollection.aggregate([
       {
-        _id: ObjectId(user_id),
+        '$match': { _id: ObjectId(note_id) },
+      },
+      { $project: { saved_count: { $size: '$saved_user_id' } } },
+    ]).toArray();
+
+    const note_saved_conut = saved_count[0].saved_count;
+    console.log('saved_count', saved_count);
+
+    // Update the User saved_note_id ----------------------------
+    await NotesCollection.updateOne(
+      {
+        _id: ObjectId(note_id),
       },
       [
         {
-          $set: {
-            saved_note_id: {
-              $cond: [
-                {
-                  $in: [note_id, '$saved_note_id'],
-                },
-                {
-                  $setDifference: ['$saved_note_id', [note_id]],
-                },
-                {
-                  $concatArrays: ['$saved_note_id', [note_id]],
-                },
-              ],
-            },
-          },
+          $set: { 'saved_count': note_saved_conut },
         },
       ]
     );
@@ -509,6 +696,8 @@ const getShareToAll = async (note_id) => {
         'sharing_descrition': 1,
         'sharing_image': 1,
         'sharing_url': 1,
+        'sharing_time': 1,
+        'tags': 1,
       })
       .toArray();
 
@@ -521,8 +710,110 @@ const getShareToAll = async (note_id) => {
   }
 };
 
+// 新創留言
+const createComment = async (data) => {
+  const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+
+  try {
+    const result = await CommentsCollection.insertOne(data);
+    const comment_id = result.insertedId.toString();
+    const note_id = data.note_id;
+
+    const comment_count = await CommentsCollection.countDocuments({
+      'note_id': note_id,
+    });
+
+    console.log('comment_count: ', comment_count);
+
+    const update_result = await NotesCollection.findOneAndUpdate(
+      { '_id': ObjectId(note_id) },
+      { $set: { 'comment_count': comment_count } }
+    );
+
+    console.log('update_result', update_result);
+    return comment_id;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 更新留言
+const updateComment = async (data) => {
+  const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
+  try {
+    const comment_id = data.comment_id;
+    const user_id = data.user_id;
+    const new_content = data.new_content;
+
+    const result = await CommentsCollection.findOneAndUpdate(
+      {
+        '_id': ObjectId(comment_id),
+        'user_id': user_id,
+      },
+      {
+        $set: { 'contents': new_content },
+      }
+    );
+
+    console.log('result: ', result);
+    return result;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 刪除留言
+const deleteComment = async (data) => {
+  const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const comment_id = data.comment_id;
+    const user_id = data.user_id;
+    const note_id = data.note_id;
+
+    const result = await CommentsCollection.deleteOne({
+      '_id': ObjectId(comment_id),
+      'user_id': user_id,
+    });
+
+    const comment_count = await CommentsCollection.countDocuments({
+      'note_id': note_id,
+    });
+
+    console.log('delete_comment_count', comment_count);
+    console.log('note_id', note_id);
+
+    const updateResult = await NotesCollection.findOneAndUpdate(
+      { '_id': ObjectId(note_id) },
+      { $set: { 'comment_count': comment_count } }
+    );
+
+    console.log('updateResult:', updateResult);
+
+    if (result.deletedCount === 0) {
+      return '您無權限刪除他人留言';
+    } else {
+      return '成功刪除留言';
+    }
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
 module.exports = {
   writeNote,
+  deleteNote,
+  renameNote,
+  moveNote,
+  renameNoteClass,
+  deleteNoteClass,
   createNoteVersion,
   getUserNotes,
   shareToAll,
@@ -532,7 +823,9 @@ module.exports = {
   getShareNotes,
   getNoteById,
   createComment,
+  updateComment,
   getNoteAuth,
   getComments,
+  deleteComment,
   createSave,
 };

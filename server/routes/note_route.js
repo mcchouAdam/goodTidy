@@ -6,6 +6,11 @@ const API_VERSION = process.env.API_VERSION;
 const { wrapAsync, authentication } = require('../../utils/util');
 const {
   createNote,
+  deleteNote,
+  renameNote,
+  moveNote,
+  renameNoteClass,
+  deleteNoteClass,
   createNoteVersion,
   editNotePage,
   getUserNotes,
@@ -32,6 +37,33 @@ const OCRImgupload = OCRupload.fields([{ name: 'OCR_upload', maxCount: 1 }]);
 router
   .route(`/api/${API_VERSION}/note`)
   .post(userNoteUpload, wrapAsync(createNote));
+
+// 改名筆記
+router
+  .route(`/api/${API_VERSION}/note`)
+  .patch(authentication(), wrapAsync(renameNote));
+
+// 搬移筆記
+router
+  .route(`/api/${API_VERSION}/noteClass`)
+  .patch(authentication(), wrapAsync(moveNote));
+
+// 刪除筆記
+// TODO: 刪除需要auth
+router
+  .route(`/api/${API_VERSION}/note`)
+  .delete(authentication(), wrapAsync(deleteNote));
+
+// 改名分類
+router
+  .route(`/api/${API_VERSION}/noteClass`)
+  .patch(authentication(), wrapAsync(renameNoteClass));
+
+// 刪除分類
+// TODO: 刪除需要auth
+router
+  .route(`/api/${API_VERSION}/noteClass`)
+  .delete(authentication(), wrapAsync(deleteNoteClass));
 
 // 儲存筆記
 router

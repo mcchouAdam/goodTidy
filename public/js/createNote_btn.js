@@ -23,20 +23,19 @@ $('#shapeView').click(function () {
   let item_width = rectContour_params[2];
   let item_height = rectContour_params[3];
 
-  // TODO: 目前寫死width, height
   const item_img = $(`<img src="${previewBlah.src}" />`)
-    .css('width', '600px')
-    .css('height', '300px')
+    .css('width', previewBlah.width)
+    .css('height', previewBlah.height)
     .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`);
 
-  const item = $(`<div class="contour-pic"></div>`)
+  const item_id = `${Date.now()}_contour-pic`;
+  const item = $(`<div class="contour-pic" id="${item_id}"></div>`)
     .css('width', `${item_width}px`)
     .css('height', `${item_height}px`)
     .css('overflow', 'hidden')
     .draggable({ containment: '#note-preview-content' });
 
   item.append(item_img);
-
   $('#note-preview-content').append(item);
 
   // for next element clear
@@ -55,13 +54,39 @@ $('#submit_note').click(async function () {
     return;
   }
 
-  // // blob url to file
+  // blob url to file
   let blob = await fetch(previewBlah.src).then((r) => r.blob());
   let filetype = $('input[type=file]').val().split('.').pop();
   let timestamp = Date.now();
   let filename = `${user_id}_${timestamp}.${filetype}`;
-  let elements = $('#note-preview-content').html();
-  let keywords = OCR_elements.join();
+
+  // 圖形擷取資訊
+  let contourImg_count = $('.contour-pic').length;
+  let element_html = '';
+  for (let i = 0; i < contourImg_count; i++) {
+    element_html += $('.contour-pic').get(i).outerHTML;
+  }
+  let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
+
+  // 儲存時需要按照順序append
+  // OCR的draggable文字方塊資訊
+  OCR_ids.map((id) => {
+    const OCR_top = $(`#${id}`).parent().get(0).style.top;
+    const OCR_left = $(`#${id}`).parent().get(0).style.left;
+    const OCR_width = $(`#${id}`).parent().get(0).style.width;
+    const OCR_height = $(`#${id}`).parent().get(0).style.height;
+    const OCR_text = $(`#${id}`).val();
+    const OCR_obj = {
+      'text': OCR_text,
+      'textTop': OCR_top,
+      'textLeft': OCR_left,
+      'height': OCR_height,
+      'width': OCR_width,
+    };
+    OCR_elements.push(OCR_obj);
+  });
+
+  let keywords = $('#note-preview-content').text().replaceAll('\n', '');
 
   await noteUpload(
     blob,
@@ -69,10 +94,11 @@ $('#submit_note').click(async function () {
     user_id,
     note_name,
     timestamp,
-    elements,
+    removeSrc_element,
     note_classification,
     ver_name,
-    keywords
+    keywords,
+    OCR_elements
   );
 
   location.reload();
@@ -112,30 +138,11 @@ $('#OCR').click(async function () {
 
       // append進預覽框裡
       // OCR_result[0] 是全部辨識的字串
-      for (let i = 1; i < OCR_result.length; i++) {
-        let font = OCR_result[i].description;
-        let fontTop = OCR_result[i].boundingPoly.vertices[0].y;
-        let fontLeft = OCR_result[i].boundingPoly.vertices[0].x;
-        OCR_elements.push(font);
+      let text = OCR_result[0].description;
+      let textTop = OCR_result[0].boundingPoly.vertices[0].y;
+      let textLeft = OCR_result[0].boundingPoly.vertices[0].x;
 
-        // TODO: 預覽頁面 - 使用relative會跑掉，但存檔後不會跑掉
-        const item = $(`<div class="OCR_fonts"><p>${font}</p></div>`)
-          // TODO: left的座標調整數字不隻從哪兒來
-          // .css({
-          //   top: fontTop + 200,
-          //   left: fontLeft + $('#fontOCRCanvas').width(),
-          //   position: 'absolute',
-          // })
-          .css({
-            top: fontTop,
-            left: fontLeft,
-            position: 'relative',
-          })
-          .attr('contenteditable', 'true')
-          .draggable({ containment: '#note-preview-content' });
-
-        $('#note-preview-content').append(item);
-      }
+      addDragTextarea('#note-preview-content', text, textTop, textLeft);
     })
     .catch(function (error) {
       console.log(error);

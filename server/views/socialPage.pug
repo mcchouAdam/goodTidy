@@ -1,17 +1,42 @@
 extends layout.pug
 
 block content
-    .input-group.rounded
-        input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
-        span#search-addon.input-group-text.border-0
-            i.fa.fa-search
+    .container
+        .row.justify-center
+            .col-12
+                header
+                .input-group.mb-3
+                    button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 筆記標題
+                    ul#socialPageSearchMenu.dropdown-menu.dropdown-menu-end
+                        li
+                            a.dropdown-item 發文者
+                        li
+                            a.dropdown-item 發文時間
+                        li
+                            a.dropdown-item 筆記標題
+                        li
+                            a.dropdown-item 筆記簡介
+                        li
+                            a.dropdown-item 筆記內容
+                        li
+                            a.dropdown-item tag
+                        li
+                            a.dropdown-item 收藏文章
+                    input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2')
+                    button#socialSearchBar
+                        i.fa.fa-search
+
+    //- .input-group.rounded
+    //-     input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
+    //-     span#search-addon.input-group-text.border-0
+    //-         i.fa.fa-search
     //- 排序搜尋法
-    button#heart_sorting-btn.btn
-        i.fa.fa-heart(aria-hidden='true', style='color:grey')
     button#time_sorting-btn.btn
         i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
+    button#heart_sorting-btn.btn
+        i.fa.fa-heart(aria-hidden='true', style='color:grey')
     button#comments_sorting-btn.btn 
-        i.fa.fa-fire(aria-hidden='true', style='color:grey')
+        i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
     //- 分享筆記卡片
     #sharing-cards
     br

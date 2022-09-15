@@ -11,27 +11,30 @@ const {
   socialPage,
   shareDetailPage,
   createComments,
+  updateComments,
+  deleteComments,
 } = require('../controllers/social_controller');
 
 router.route('/socialPage').get(authentication(), wrapAsync(socialPage));
 
-// s%3A0kJDwVS7N5VW0XILokTxarxwzcVO9RB6.4%2FhiyWc13F2D4mgvYXSYNf7aoCAOkLVVHkPESh6FYwg
-// s%3Ab1VQMIqwOJmK9gwCHH31ZQGKjjNt9w7F.9mJxle42Q5VBHpcATPW90UidzKQ6FK2q7UzQzaT%2BpoE
-
-// router
-//   .route('/shareDetailPage')
-//   .get(authentication(), authorization(), wrapAsync(shareDetailPage));
-
-// router
-//   .route(`/api/${API_VERSION}/comments`)
-//   .post(authentication(), authorization(), wrapAsync(createComments));
-
+// 分享Detail頁面
 router
   .route('/shareDetailPage')
   .get(authentication(), wrapAsync(shareDetailPage));
 
+// 新增留言
 router
-  .route(`/api/${API_VERSION}/comments`)
+  .route(`/api/${API_VERSION}/comment`)
   .post(authentication(), socialComment_auth(), wrapAsync(createComments));
+
+// 修改留言
+router
+  .route(`/api/${API_VERSION}/comment`)
+  .patch(authentication(), socialComment_auth(), wrapAsync(updateComments));
+
+// 刪除留言
+router
+  .route(`/api/${API_VERSION}/comment`)
+  .delete(authentication(), socialComment_auth(), wrapAsync(deleteComments));
 
 module.exports = router;

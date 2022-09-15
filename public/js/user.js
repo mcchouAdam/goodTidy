@@ -131,7 +131,7 @@ $('#profile-btn').click(async function () {
   }
 });
 
-// share頁面 ---------------------------------
+// [分享頁面] 分享toggle元件 ---------------------------------
 $('#share-btn').click(async function () {
   if (!current_note_id) {
     alert('請先選擇筆記');
@@ -140,6 +140,8 @@ $('#share-btn').click(async function () {
 
   // PreLoad the 特定人士清單
   await getShareToOther(current_note_id);
+
+  // 全域變數
   await getShareAll(current_note_id);
   const shareOtherList_content = $('#shareOtherList li').text();
 
@@ -170,6 +172,13 @@ $('#share-btn').click(async function () {
 
   // sharing_url 輸入Bar
   $('#share_url').val(`${server}${sharing_url}`);
+
+  // tags
+  tags.map((t) => {
+    $('.note_tags').append(
+      `<span class="badge bg-success rounded-pill">${t}</span>`
+    );
+  });
 
   // TODO: 上傳照片預覽
   // sharing_image

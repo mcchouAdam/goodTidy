@@ -7,7 +7,7 @@ nav.py-2.bg-light.border-bottom
         li.nav-item
           a.nav-link.link-dark.px-2(href='/updateNote', aria-current='page') Note
         li.nav-item
-          a.nav-link.link-dark.px-2(href='/socialPage?paging=1') Social
+          a.nav-link.link-dark.px-2(href='/socialPage?paging=1&sorting=created_time') Social
         li.nav-item
           a.nav-link.link-dark.px-2(href='#') Product
         li.nav-item
@@ -20,44 +20,44 @@ nav.py-2.bg-light.border-bottom
 
 header
     .header
-      //- //- Dialog block
-      //- #signup-dialog
-      //-   | Email:
-      //-   br
-      //-   input#signup_useremail
-      //-   br
-      //-   | Password:
-      //-   br
-      //-   input#signup_password
-      //-   br
-      //-   | UserName:
-      //-   br
-      //-   input#signup_username
-      //-   br
-      //-   | Photo:
-      //-   br
-      //-   input#user_picture(type='file')
-      //-   br
-      //-   br
-      //-   button#signup-form-btn SignUp
-      //- #signin-dialog
-      //-   | Email:
-      //-   br
-      //-   input#signin_useremail
-      //-   br
-      //-   | Password:
-      //-   br
-      //-   input#signin_password
-      //-   br
-      //-   br
-      //-   button#signin-form-btn SignIn
-      //- #profile-dialog
-      //-   #user_picture
-      //-     img#user_pic
-      //-   #user_email
-      //-   #user_name
-      //-   button#logout LogOut
-      #share-dialog 
+      //- Dialog block
+      #signup-dialog
+        | Email:
+        br
+        input#signup_useremail
+        br
+        | Password:
+        br
+        input#signup_password
+        br
+        | UserName:
+        br
+        input#signup_username
+        br
+        | Photo:
+        br
+        input#user_picture(type='file')
+        br
+        br
+        button#signup-form-btn SignUp
+      #signin-dialog
+        | Email:
+        br
+        input#signin_useremail
+        br
+        | Password:
+        br
+        input#signin_password
+        br
+        br
+        button#signin-form-btn SignIn
+      #profile-dialog
+        #user_picture
+          img#user_pic
+        #user_email
+        #user_name
+        button#logout LogOut
+      #share-dialog
         #share_note_name
         .form-check.form-switch
           label.form-check-label(for='flexSwitchCheckDefault') 向特定人分享
@@ -111,6 +111,11 @@ header
             label.form-label(for='formFile') 封面照片
             input#shareNote_image.form-control(type='file')
           br
+          .note_tags
+            input#tag_input.form-control(type='text')
+            button.btn#add_note_tag-btn
+              i.fa.fa-plus(aria-hidden='true')
+          br
           button.btn.btn-primary#shareToAll_confirm-btn 分享
 
         script.
@@ -136,7 +141,7 @@ header
             }
           })
 
-          // 分享給特定人的權限設定
+          // 分享給特定人的權限設定的按鈕
           $('#shareToOtherMenu li').on('click', function() {
             console.log($(this).text());
             console.log($('#shareToOtherMethod-btn').text());
@@ -148,6 +153,11 @@ header
           $('#shareToAll_confirm-btn').click(function(){
             const isComment = $('#allowComment-toggle').is(':checked');
             const isWatch = $('#allowWatch-toggle').is(':checked');
+
+            let tags = $('.badge').map((i, e) => e.outerText).get();
+            tags = $.grep(tags, n => n == 0 || n);
+            
+            console.log(tags);
 
             const share_description = $('#share_description').val();
             const file = $('#shareNote_image')[0].files[0];
@@ -168,6 +178,7 @@ header
             data.append('sharing_descrition', share_description);
             data.append('share_ImgUpload', file);
             data.append('sharing_url',`/shareDetailPage?id=${current_note_id}`)
+            data.append('tags', JSON.stringify(tags));
 
             shareToAlluser(data);
 
@@ -204,3 +215,19 @@ header
               </li>`;
             $('#shareOtherList').append(list_html);
           })
+
+          // [筆記分享] 加入筆記tag鍵
+          $('#add_note_tag-btn').click(function(){
+            const tag_name = $('#tag_input').val();
+            let tag_html = 
+            `<span class="badge bg-success rounded-pill">${tag_name}</span>`
+            $('.note_tags').append(tag_html);
+            $('#tag_input').val('');
+          });
+
+          // [筆記分享] 刪除筆記tag鍵
+          $(document).on("click","#share-dialog .badge.bg-success.rounded-pill", function () {
+            $(this).remove();
+          });
+
+

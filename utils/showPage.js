@@ -9,10 +9,12 @@ const showShareDetail = async function (data) {
     note_version_info[note_version_info.length - 1].elements;
   const newest_version_name =
     note_version_info[note_version_info.length - 1].version_name;
+  const newest_version_text_elements =
+    note_version_info[note_version_info.length - 1].text_elements;
   const note_name = data[0].note_name;
   const note_pic = data[0].sharing_image;
   const file_name = data[0].file_name;
-  console.log(data);
+  // console.log('newest_version_text_elements', newest_version_text_elements);
 
   const result = {
     'note_name': note_name,
@@ -20,6 +22,7 @@ const showShareDetail = async function (data) {
     'version_name': newest_version_name,
     'file_name': file_name,
     'elements': newest_version_elements,
+    'newest_version_text_elements': newest_version_text_elements,
   };
 
   return result;
@@ -83,7 +86,7 @@ const showCommentsDetail = async function (comments, note_id) {
                   <p class="card-text"><small class="text-muted">留言小板板</small><br/> 向原作者留言吧！</p>
                   </div>
                   <div class="row px-3 form-group">
-                  <textarea id="textarea_${note_id}" class="text-muted bg-light mt-4 mb-3" placeholder="你的筆記超棒！"></textarea>
+                  <textarea id="textarea_${note_id}" class="msgTextarea text-muted bg-light mt-4 mb-3" placeholder="你的筆記超棒！"></textarea>
                   </div>
                   <div class="row px-3">
                   <div class="btn btn-success ml-auto" onclick="javascript:createComments('${note_id}')">留言</div>
@@ -102,7 +105,7 @@ const showCommentsDetail = async function (comments, note_id) {
 // 分享筆記卡片
 const showSocialCards = async function (data, user_id) {
   // console.log('req.session.user.id', req.session.user.id);
-  console.log('showSocialCards: ', data);
+  // console.log('showSocialCards: ', data);
 
   let sharingNote_cards_html = '';
   let comment_modal_html = '';
@@ -116,11 +119,20 @@ const showSocialCards = async function (data, user_id) {
     const sharing_image = data[i].sharing_image;
     const note_name = data[i].note_name;
     const sharing_descrition = data[i].sharing_descrition;
-    const lastEdit_time = data[i].lastEdit_time;
+    const sharing_time = data[i].sharing_time;
     const note_id = data[i]._id.toString();
-    const show_time = timeConverter(+lastEdit_time);
+    const show_time = timeConverter(+sharing_time);
+    const tags = data[i].tags;
     const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
+
+    // 畫tags
+    let tags_html = '';
+    if (tags) {
+      tags.map((t) => {
+        tags_html += `<span class="badge bg-success rounded-pill">${t}</span>`;
+      });
+    }
 
     // 檢查此篇筆記是否有被收藏過，畫紅色愛心
     const current_user = user_id;
@@ -134,7 +146,6 @@ const showSocialCards = async function (data, user_id) {
     }
 
     let saved_num = 0;
-    // TODO: 更新收藏數字
     if (data[i].saved_user_id) {
       const saved_info = data[i].saved_user_id;
       saved_num = saved_info.length;
@@ -155,7 +166,7 @@ const showSocialCards = async function (data, user_id) {
         <div class="card-body">
         <h5 class="card-title">${note_name}</h5>
         <p class="card-text">${sharing_descrition}</p>
-        <p class="card-text"><small class="text-muted">最後修改時間: ${show_time}</small>
+        <p class="card-text"><small class="text-muted">發文時間: ${show_time}</small>
         <br />
         <button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
             <i class="fa fa-solid fa-comments" style="color:green">
@@ -172,6 +183,7 @@ const showSocialCards = async function (data, user_id) {
             </a>
         </button>
         </p>
+        ${tags_html}
         </div>
     </div>`;
 
@@ -181,12 +193,25 @@ const showSocialCards = async function (data, user_id) {
       sharingNote_cards_html += '</div>';
     }
 
+    // TODO: 重構把 comments_info 拉成獨立的function
     comments_info.map((comment) => {
       comment_cards_html += `
         <div class="card border-dark mb-3" style="max-width: 18rem;">
-            <div class="card-header"><img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${
+          <div class="card-header">
+            <img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${
         comment.user_picture
-      }"/><span>${comment.user_name}</span>
+      }"/>
+            <span>${comment.user_name}</span>
+            <a href="javascript:updateComment('${comment._id}', '${
+        comment.note_id
+      }')">
+              <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+            </a>
+            <a href="javascript:deleteComment('${comment._id}', '${
+        comment.note_id
+      }')">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
             <p class="card-text"><small class="text-muted">留言時間: ${timeConverter(
               +comment.created_time
             )}</small></p>
@@ -280,12 +305,13 @@ const showShareToOtherList = async function (shareList, note_id) {
       shareList_html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                             ${p.user_email}
                           <span class="badge bg-primary rounded-pill">${permission}</span>
-                          <a href="${SERVER_HOST}/shareDetailPage?id=${note_id}">
-                              <i class="fa fa-share-alt" aria-hidden="true">
-                              </i>
-                          </a>
                         </li>`;
     });
+
+    // href icon
+    // <a href="${SERVER_HOST}/shareDetailPage?id=${current_note_id}">
+    //   <i class="fa fa-share-alt" aria-hidden="true"></i>
+    // </a>;
   } catch (error) {
     console.log(error);
   }
