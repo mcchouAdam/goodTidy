@@ -5,8 +5,7 @@ $('#addfont').click(async function () {
 
 // 儲存鍵 --------------------------------------
 $('#storeNote').click(async function () {
-  // TODO: 比較這次與前一次element的差別
-  // diff(prev_version_note, $('#update-note-content').html())
+  // TODO: 版控使用差異法
 
   // 確認儲存 & 輸入版本名稱
   let version_name = prompt('請輸入此版本名稱:', '');
@@ -16,8 +15,10 @@ $('#storeNote').click(async function () {
     return;
   }
 
-  // console.log('file_name: ', file_name);
-  console.log('version_name: ', version_name);
+  let ek = $('.addtextarea')
+    .map((_, el) => el.value)
+    .get();
+  let keywords = ek.join('').replaceAll('\n', '');
 
   // TODO: 目前version_img先寫死，可以用puppeteer截圖
   let data = {
@@ -26,7 +27,8 @@ $('#storeNote').click(async function () {
     'version_img': '123_coolthing_ver3.png',
     'version_name': version_name,
     'elements': $('#update-note-content').html(),
-    'keywords': $('.OCR_fonts p').text() + $('.add_fonts p').text(),
+    'keywords': keywords,
+    'text_elements': OCR_elements,
   };
 
   await axios({
@@ -36,6 +38,7 @@ $('#storeNote').click(async function () {
   });
 
   alert(`${version_name} 儲存成功!`);
+  window.location.assign('/updateNote');
 
   // 更新版本選擇的內容
   // ver_info = await load_version();
@@ -94,7 +97,6 @@ $('#version-change').click(function () {
 
 // 留言button
 $('#comment-btn').click(function (e) {
-
   const item = $(
     '<i class="fa fa-solid fa-comments" ondblclick="openNav()"></i>'
   )

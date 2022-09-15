@@ -1,5 +1,5 @@
-function addDragTextarea(div_id, text) {
-  //   let new_offset = { top: 30, left: 40 };
+function addDragTextarea(div_id, text, textTop, textLeft) {
+  let new_offset = { top: textTop, left: textLeft };
   let new_width = 200;
   let new_height = 150;
   let timestamp = Date.now();
@@ -29,8 +29,18 @@ function addDragTextarea(div_id, text) {
     })
     .on('drag', stepDrag)
     .on('input', stepInput)
-    .on('input', checkTextNull);
-  // .offset(new_offset);
+    .on('input', checkTextNull)
+    .offset(new_offset);
 
   $(div_id).append(newElement);
+
+  const OCR_object = {
+    'append_div': div_id,
+    'text': text,
+    'textTop': textTop,
+    'textLeft': textLeft,
+  };
+
+  // push進全域變數
+  OCR_elements.push(OCR_object);
 }

@@ -73,16 +73,11 @@ const editNotePage = async (req, res) => {
     const user_id = req.user.id;
     const { note_id } = req.params;
 
-    console.log(user_id, note_id);
     const result = await Notes.readNote(user_id, note_id);
-    console.log('result: ', result);
+
     res.status(200).json(result);
   }
 };
-
-// const createNotePage = async (req, res) => {
-//   res.render('createNote');
-// };
 
 const getUserNotes = async (req, res) => {
   const user_id = req.session.user.id;

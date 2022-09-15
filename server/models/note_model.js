@@ -47,6 +47,7 @@ const writeNote = async (note) => {
         'version_name': note.version_name,
         'elements': note.elements,
         'keywords': note.keywords,
+        'text_elements': JSON.parse(note.text_elements),
       };
 
       const version_result = await NoteVerCollection.insertOne(version_obj);

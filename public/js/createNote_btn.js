@@ -74,7 +74,8 @@ $('#submit_note').click(async function () {
     removeSrc_element,
     note_classification,
     ver_name,
-    keywords
+    keywords,
+    OCR_elements,
   );
 
   // location.reload();
@@ -114,11 +115,11 @@ $('#OCR').click(async function () {
 
       // append進預覽框裡
       // OCR_result[0] 是全部辨識的字串
-      let font = OCR_result[0].description;
-      let fontTop = OCR_result[0].boundingPoly.vertices[0].y;
-      let fontLeft = OCR_result[0].boundingPoly.vertices[0].x;
+      let text = OCR_result[0].description;
+      let textTop = OCR_result[0].boundingPoly.vertices[0].y;
+      let textLeft = OCR_result[0].boundingPoly.vertices[0].x;
 
-      addDragTextarea('#note-preview-content', font);
+      addDragTextarea('#note-preview-content', text, textTop, textLeft);
     })
     .catch(function (error) {
       console.log(error);

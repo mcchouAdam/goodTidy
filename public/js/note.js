@@ -7,7 +7,8 @@ async function noteUpload(
   elements,
   note_classification,
   version_name,
-  keywords
+  keywords,
+  OCR_elements
 ) {
   // 檔案上傳s3
   let data = new FormData();
@@ -20,6 +21,7 @@ async function noteUpload(
   data.append('note_classification', note_classification);
   data.append('version_name', version_name);
   data.append('keywords', keywords);
+  data.append('text_elements', JSON.stringify(OCR_elements));
 
   let config = {
     method: 'post',

@@ -64,7 +64,7 @@ function removeRectRemoveListener(canvas) {
 let clientX_percent;
 let clientY_percent;
 
-// 高寬
+// 魔術曲線使用的高寬
 let Screen_width = 600;
 let Screen_height = 300;
 
@@ -158,7 +158,7 @@ function rectContour_mousemove(e) {
 }
 
 function redraw_rectContour() {
-  context.clearRect(0, 0, 600, 500);
+  context.clearRect(0, 0, canvas_width, canvas_height);
   canvasBackground();
 
   context.beginPath();
