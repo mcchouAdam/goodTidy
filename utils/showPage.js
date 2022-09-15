@@ -9,10 +9,12 @@ const showShareDetail = async function (data) {
     note_version_info[note_version_info.length - 1].elements;
   const newest_version_name =
     note_version_info[note_version_info.length - 1].version_name;
+  const newest_version_text_elements =
+    note_version_info[note_version_info.length - 1].text_elements;
   const note_name = data[0].note_name;
   const note_pic = data[0].sharing_image;
   const file_name = data[0].file_name;
-  console.log(data);
+  // console.log('newest_version_text_elements', newest_version_text_elements);
 
   const result = {
     'note_name': note_name,
@@ -20,6 +22,7 @@ const showShareDetail = async function (data) {
     'version_name': newest_version_name,
     'file_name': file_name,
     'elements': newest_version_elements,
+    'newest_version_text_elements': newest_version_text_elements,
   };
 
   return result;
@@ -116,11 +119,20 @@ const showSocialCards = async function (data, user_id) {
     const sharing_image = data[i].sharing_image;
     const note_name = data[i].note_name;
     const sharing_descrition = data[i].sharing_descrition;
-    const lastEdit_time = data[i].lastEdit_time;
+    const sharing_time = data[i].sharing_time;
     const note_id = data[i]._id.toString();
-    const show_time = timeConverter(+lastEdit_time);
+    const show_time = timeConverter(+sharing_time);
+    const tags = data[i].tags;
     const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
+
+    // 畫tags
+    let tags_html = '';
+    if (tags) {
+      tags.map((t) => {
+        tags_html += `<span class="badge bg-success rounded-pill">${t}</span>`;
+      });
+    }
 
     // 檢查此篇筆記是否有被收藏過，畫紅色愛心
     const current_user = user_id;
@@ -154,7 +166,7 @@ const showSocialCards = async function (data, user_id) {
         <div class="card-body">
         <h5 class="card-title">${note_name}</h5>
         <p class="card-text">${sharing_descrition}</p>
-        <p class="card-text"><small class="text-muted">最後修改時間: ${show_time}</small>
+        <p class="card-text"><small class="text-muted">發文時間: ${show_time}</small>
         <br />
         <button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
             <i class="fa fa-solid fa-comments" style="color:green">
@@ -171,6 +183,7 @@ const showSocialCards = async function (data, user_id) {
             </a>
         </button>
         </p>
+        ${tags_html}
         </div>
     </div>`;
 

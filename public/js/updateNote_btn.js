@@ -15,20 +15,51 @@ $('#storeNote').click(async function () {
     return;
   }
 
+  // TODO: 目前version_img先寫死，可以用puppeteer截圖
+
+  // 圖形擷取資訊
+  let contourImg_count = $('.contour-pic').length;
+  let element_html = '';
+  for (let i = 0; i < contourImg_count; i++) {
+    element_html += $('.contour-pic').get(i).outerHTML;
+  }
+  let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
+
+  // 儲存時需要按照順序append
+  // OCR的draggable文字方塊資訊
+  OCR_elements = [];
+  OCR_ids.map((id) => {
+    const OCR_top = $(`#${id}`).parent().get(0).style.top;
+    const OCR_left = $(`#${id}`).parent().get(0).style.left;
+    const OCR_width = $(`#${id}`).parent().get(0).style.width;
+    const OCR_height = $(`#${id}`).parent().get(0).style.height;
+    const OCR_text = $(`#${id}`).val();
+    const OCR_obj = {
+      'text': OCR_text,
+      'textTop': OCR_top,
+      'textLeft': OCR_left,
+      'height': OCR_height,
+      'width': OCR_width,
+    };
+    OCR_elements.push(OCR_obj);
+  });
+
+  // console.log(OCR_elements);
+
+  // // 搜尋使用的keywords;
   let ek = $('.addtextarea')
     .map((_, el) => el.value)
     .get();
   let keywords = ek.join('').replaceAll('\n', '');
 
-  // TODO: 目前version_img先寫死，可以用puppeteer截圖
   let data = {
     'note_id': current_note_id,
     'created_time': Date.now(),
     'version_img': '123_coolthing_ver3.png',
     'version_name': version_name,
-    'elements': $('#update-note-content').html(),
+    'elements': removeSrc_element,
     'keywords': keywords,
-    'text_elements': OCR_elements,
+    'text_elements': JSON.stringify(OCR_elements),
   };
 
   await axios({
@@ -45,15 +76,16 @@ $('#storeNote').click(async function () {
   // show_version(ver_info);
 });
 
-// 復原版本鍵 --------------------------------------
-$('#recovery-btn').click(function () {
-  // 清空原div上的物件
-  $('#update-note-content').html('');
-  // 初始化drag elements
-  const version_chosen = +$('input[name=version]:checked').val();
-  let $note_content = $('#update-note-content');
-  drag_elements_init($note_content, [ver_info[version_chosen]]);
-});
+// // 復原版本鍵 --------------------------------------
+// $('#recovery-btn').click(function () {
+//   // 清空原div上的物件
+//   $('#update-note-content').html('');
+//   // 初始化drag elements
+//   const version_chosen = +$('input[name=version]:checked').val();
+//   let $note_content = $('#update-note-content');
+
+//   drag_elements_init($note_content, [ver_info[version_chosen]]);
+// });
 
 // 自動儲存鍵 ---------------------------------------------
 $('#autoSave_box').change(function () {
@@ -81,7 +113,7 @@ $('#newest-version-btn').click(function () {
   });
 });
 
-// version-btn -------------------------------------------
+// 版本列表鍵 -------------------------------------------
 $('#version_list-btn').click(async function () {
   current_version_obj = await getVersionList(
     version_obj,
@@ -89,10 +121,10 @@ $('#version_list-btn').click(async function () {
   );
 });
 
+// 版本回復鍵
 $('#version-change').click(function () {
   const version_chosen = $('input[name="version_options"]:checked').val();
   noteShowFromVer(version_chosen, current_version_obj);
-  // console.log(version_chosen);
 });
 
 // 留言button

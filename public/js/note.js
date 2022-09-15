@@ -40,18 +40,30 @@ async function noteUpload(
     });
 }
 
+// [編輯頁面] 點選筆記，顯示內容
 async function noteShow(note_id) {
-  // console.log(showNote_note_obj[note_id]);
   // Assign Global Variable
   current_note_id = note_id;
   console.log(current_note_id);
 
-  let note_content = showNote_note_obj[note_id].note_elements;
+  // 每次更換筆記都要洗掉之前的OCR物件
+  OCR_ids = [];
+
+  let note_ImgContent = showNote_note_obj[note_id].note_elements;
+  let note_textContent = showNote_note_obj[note_id].note_textElements;
   let note_filename = showNote_note_obj[note_id].note_file_name;
   let $note_div = $('#update-note-content');
-  note_bg = note_filename;
   $note_div.html('');
-  elements_init($note_div, note_content);
+  note_bg = note_filename;
+
+  const text_elements = text_elements_arr($note_div, note_textContent);
+  const Img_elements = Img_draggable_arr(note_ImgContent);
+  elements_init($note_div, Img_elements, text_elements);
+  $('.contour-pic.ui-draggable.ui-draggable-handle')
+    .draggable({
+      containment: '#update-note-content',
+    })
+    .on('drag', stepDrag);
 }
 
 async function getUserNotes() {
@@ -70,7 +82,7 @@ async function getUserNotes() {
       let note_obj = {};
       let search_list_obj = {};
       let showNote_obj = {};
-      data.map((s) => {
+      version_obj.map((s) => {
         // console.log(s);
         const note_classification = s.note_classification;
         const note_file_name = s.file_name;
@@ -81,11 +93,13 @@ async function getUserNotes() {
         const note_keywords = note_verInfo.keywords;
         const note_id = s._id;
         const lastEdit_time = s.lastEdit_time;
+        const note_textElements = note_verInfo.text_elements;
 
         if (!note_obj[note_classification]) {
           note_obj[note_classification] = {
             'note_name': [note_name],
             'note_elements': [note_elements],
+            'note_textElements': [note_textElements],
             'note_keywords': [note_keywords],
             'note_lastVersion': [note_lastVersion],
             'note_id': [note_id],
@@ -94,12 +108,16 @@ async function getUserNotes() {
         } else {
           note_obj[note_classification].note_name.push(note_name);
           note_obj[note_classification].note_elements.push(note_elements);
+          note_obj[note_classification].note_textElements.push(
+            note_textElements
+          );
           note_obj[note_classification].note_keywords.push(note_keywords);
           note_obj[note_classification].note_lastVersion.push(note_lastVersion);
           note_obj[note_classification].note_id.push(note_id);
           note_obj[note_classification].lastEdit_time.push(lastEdit_time);
         }
 
+        // 搜尋列表的物件
         if (!search_list_obj[note_name]) {
           search_list_obj[
             note_name
@@ -113,6 +131,7 @@ async function getUserNotes() {
         if (!showNote_obj[note_id]) {
           showNote_obj[note_id] = {
             'note_elements': note_elements,
+            'note_textElements': note_textElements,
             'note_file_name': note_file_name,
           };
         }
@@ -121,8 +140,6 @@ async function getUserNotes() {
       note_list_obj = $.extend(true, [], note_obj);
       search_note_list_obj = $.extend(true, [], search_list_obj);
       showNote_note_obj = $.extend(true, [], showNote_obj);
-      console.log(search_note_list_obj);
-      console.log(showNote_note_obj);
 
       // Show the NoteListNav
       showNoteList(note_obj, $('#search-list'));
@@ -210,7 +227,10 @@ async function getVersionList(version_obj, div_append) {
       if (o.note_id == current_note_id) {
         const version_info = o.version_info;
         version_info.map((v) => {
-          showVerObj[v.version_name] = v.elements;
+          showVerObj[v.version_name] = {
+            'elements': v.elements,
+            'text_elements': v.text_elements,
+          };
           name_html += `<input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
                     <label class="btn btn-secondary" for="${v.version_name}">${v.version_name}</label>`;
         });
@@ -221,11 +241,16 @@ async function getVersionList(version_obj, div_append) {
   }
 }
 
-// TODO: 跟noteShow一起重構
+// 回復版本資訊
 async function noteShowFromVer(version_name, showVerObj) {
-  console.log(showVerObj[version_name]);
+  console.log('version_recovery: ', showVerObj[version_name]);
   $('#update-note-content').html('');
-  elements_init($('#update-note-content'), showVerObj[version_name]);
+  const Img_elements = Img_draggable_arr(showVerObj[version_name].elements);
+  const text_elements = text_elements_arr(
+    $('#update-note-content'),
+    showVerObj[version_name].text_elements
+  );
+  elements_init($('#update-note-content'), Img_elements, text_elements);
 }
 
 // 改名筆記

@@ -127,6 +127,7 @@ async function getShareAll(note_id) {
       sharing_descrition = response.data[0].sharing_descrition;
       sharing_image = response.data[0].sharing_image;
       sharing_url = response.data[0].sharing_url;
+      tags = response.data[0].tags;
       // $('#shareOtherList').html('');
       // $('#shareOtherList').append($.parseHTML(response.data));
     })

@@ -28,14 +28,14 @@ $('#shapeView').click(function () {
     .css('height', previewBlah.height)
     .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`);
 
-  const item = $(`<div class="contour-pic"></div>`)
+  const item_id = `${Date.now()}_contour-pic`;
+  const item = $(`<div class="contour-pic" id="${item_id}"></div>`)
     .css('width', `${item_width}px`)
     .css('height', `${item_height}px`)
     .css('overflow', 'hidden')
     .draggable({ containment: '#note-preview-content' });
 
   item.append(item_img);
-
   $('#note-preview-content').append(item);
 
   // for next element clear
@@ -59,9 +59,32 @@ $('#submit_note').click(async function () {
   let filetype = $('input[type=file]').val().split('.').pop();
   let timestamp = Date.now();
   let filename = `${user_id}_${timestamp}.${filetype}`;
-  let elements = $('#note-preview-content').html();
-  let removeSrc_element = elements.replaceAll(previewBlah.src, '');
-  // console.log(removeSrc_element);
+
+  // 圖形擷取資訊
+  let contourImg_count = $('.contour-pic').length;
+  let element_html = '';
+  for (let i = 0; i < contourImg_count; i++) {
+    element_html += $('.contour-pic').get(i).outerHTML;
+  }
+  let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
+
+  // 儲存時需要按照順序append
+  // OCR的draggable文字方塊資訊
+  OCR_ids.map((id) => {
+    const OCR_top = $(`#${id}`).parent().get(0).style.top;
+    const OCR_left = $(`#${id}`).parent().get(0).style.left;
+    const OCR_width = $(`#${id}`).parent().get(0).style.width;
+    const OCR_height = $(`#${id}`).parent().get(0).style.height;
+    const OCR_text = $(`#${id}`).val();
+    const OCR_obj = {
+      'text': OCR_text,
+      'textTop': OCR_top,
+      'textLeft': OCR_left,
+      'height': OCR_height,
+      'width': OCR_width,
+    };
+    OCR_elements.push(OCR_obj);
+  });
 
   let keywords = $('#note-preview-content').text().replaceAll('\n', '');
 
@@ -75,10 +98,10 @@ $('#submit_note').click(async function () {
     note_classification,
     ver_name,
     keywords,
-    OCR_elements,
+    OCR_elements
   );
 
-  // location.reload();
+  location.reload();
 });
 
 // 去除非文字鍵 ------------------------------------

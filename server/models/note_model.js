@@ -34,6 +34,7 @@ const writeNote = async (note) => {
         'comment_count': 0,
         'saved_count': 0,
         'saved_user_id': [],
+        'tags': [],
       };
 
       const note_result = await NotesCollection.insertOne(note_obj);
@@ -70,6 +71,7 @@ const createNoteVersion = async (version_info) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
     // add new version_info to the collection [note_version]
+    version_info.text_elements = JSON.parse(version_info.text_elements);
     await versionCollection.insertOne(version_info);
     const note_id = version_info.note_id;
     const version_name = version_info.version_name;
@@ -273,6 +275,8 @@ const shareToAll = async (data) => {
   const sharing_descrition = data.sharing_descrition;
   const sharing_image = data.file_name;
   const sharing_url = data.sharing_url;
+  const tags = JSON.parse(data.tags);
+  const sharing_time = Date.now();
 
   try {
     const result = await NotesCollection.updateOne(
@@ -286,6 +290,8 @@ const shareToAll = async (data) => {
           'sharing_url': sharing_url,
           'sharing_descrition': sharing_descrition,
           'sharing_image': sharing_image,
+          'tags': tags,
+          'sharing_time': sharing_time,
         },
       }
     );
@@ -397,27 +403,33 @@ const getShareNotes = async (
 
     console.log('user_id: ', user_id);
 
+    const re = new RegExp(search_text);
     switch (search_method) {
       case '筆記標題':
-        matchObj = { 'isSharing': 1, 'note_name': search_text };
+        matchObj = { 'isSharing': 1, 'note_name': { $regex: re } };
         matchAterLookup = {};
         break;
       case '發文者':
         matchObj = { 'isSharing': 1 };
-        matchAterLookup = { 'user_info.name': search_text };
+        matchAterLookup = { 'user_info.name': { $regex: re } };
         break;
       case '發文時間':
         search_index = 'created_time';
         break;
       case '筆記簡介':
-        matchObj = { 'isSharing': 1, 'sharing_descrition': search_text };
+        matchObj = { 'isSharing': 1, 'sharing_descrition': { $regex: re } };
         matchAterLookup = {};
         break;
       case '筆記內容':
-        search_index = 'keywords';
+        matchObj = { 'isSharing': 1 };
+        matchAterLookup = { 'note_version_info.keywords': { $regex: re } };
         break;
       case 'tag':
-        search_index = 'tag';
+        matchObj = {
+          // 'isSharing': 1,
+          // 'tags': { $elemMatch: search_text },
+        };
+        matchAterLookup = {};
         break;
       case '收藏文章':
         matchObj = {
@@ -456,6 +468,14 @@ const getShareNotes = async (
           as: 'comments_info',
         },
       },
+      {
+        $lookup: {
+          from: 'note_version',
+          localField: 'foreign_note_id',
+          foreignField: 'note_id',
+          as: 'note_version_info',
+        },
+      },
       { $match: matchAterLookup },
       { $sort: sortObj },
     ])
@@ -463,7 +483,7 @@ const getShareNotes = async (
       .limit(limit)
       .toArray();
 
-    // console.log('aaaaaaa: ', result[0].user_info);
+    console.log('aaaaaaa: ', result[0].note_version_info);
 
     return result;
   } catch (error) {
@@ -676,6 +696,8 @@ const getShareToAll = async (note_id) => {
         'sharing_descrition': 1,
         'sharing_image': 1,
         'sharing_url': 1,
+        'sharing_time': 1,
+        'tags': 1,
       })
       .toArray();
 

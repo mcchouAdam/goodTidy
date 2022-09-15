@@ -13,31 +13,81 @@ block content
     script.
         S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
         elements = !{elements};
-        comments = !{comments};
-        console.log(elements);
-        elements_init($('#showShareDetail'),elements);
-        //- const elements_html = $.parseHTML(elements.elements);
-        //- $('#showShareDetail').append(elements_html);
-        //- console.log(elements_html);
-
-        //- 留言
-        //- const comments_html = $.parseHTML(comments);
-        //- $('#showShareDetail').append(comments_html);
+        console.log("elements:", elements);
 
         $('#note_name').text(elements.note_name);
         $('#note_version').text(elements.version_name);
         const note_pic_url = elements.note_pic;
         $('#note_pic').append($(`<img class="note-pic" src="${note_pic_url}"></img>`));
 
-        function elements_init(div_append, note_elements) {
-            // note_elements.length-1: 最後一個為最新版
-            // console.log(note_elements);
-            let elements = $.parseHTML(note_elements.elements);
-            let img_background = `${S3_HOST}notes/${note_elements.file_name}`;
+        note_bg = elements.file_name;
+        
+        let text_elements = elements.newest_version_text_elements;
+        text_elements = text_elements_arr($('#showShareDetail'),text_elements);
+        const Img_elements = Img_draggable_arr(elements.elements);
+        elements_init($('#showShareDetail'), Img_elements, text_elements)
+
+
+        function Img_draggable_arr(note_Imgcontent) {
+            let Img_elements = [];
+            let elements = $.parseHTML(note_Imgcontent);
+            let img_background = `${S3_HOST}notes/${note_bg}`;
 
             elements.map((s) => {
-                // 置換掉blob網址
-                $(s).contents().attr('src', `${img_background}`);
-                div_append.append(s);
+                $(s).find('img').attr('src', img_background);
+                Img_elements.push(s);
             });
-         }
+
+            return Img_elements;
+        }
+
+        function text_elements_arr(append_div, note_textContent) {
+            let text_elements = [];
+            note_textContent.map((s) => {
+                const element = Textarea_draggable_html(
+                append_div,
+                s.text,
+                s.width,
+                s.height,
+                s.textTop,
+                s.textLeft
+                );
+                text_elements.push(element);
+            });
+            return text_elements;
+        }
+
+        function elements_init(append_div, Img_elements, text_elements) {
+            let elements = Img_elements.concat(text_elements);
+            elements.map((e) => {
+                append_div.append(e);
+            });
+        }
+        function Textarea_draggable_html(
+            div_id,
+            text,
+            width,
+            height,
+            textTop,
+            textLeft
+        ) {
+            textLeft = +textLeft.replaceAll('px', '');
+            textTop = +textTop.replaceAll('px', '');
+
+            let new_offset = { top: textTop, left: textLeft };
+            let new_width = width;
+            let new_height = height;
+            let timestamp = Date.now();
+            let textarea_id = `${timestamp}_textarea`;
+            let newElement = $(
+                `<div class="div_addtextarea"><textarea id="${textarea_id}" readonly>${text}</textarea></div>`
+            )
+            .width(new_width)
+            .height(new_height)
+            .css({
+                'position': 'relative',
+            })
+            .offset(new_offset)
+
+                return newElement;
+            }

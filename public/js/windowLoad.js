@@ -24,6 +24,7 @@ let showNote_note_obj;
 let current_version_obj;
 
 // OCR info ----------------------------------------
+let OCR_ids = [];
 let OCR_elements = [];
 
 // Canvas ------------------------------------------
@@ -43,6 +44,7 @@ let note_url_permission;
 let sharing_descrition;
 let sharing_image;
 let sharing_url;
+let tags;
 
 // 預先讀取
 $(window).on('load', async function () {
