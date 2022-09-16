@@ -95,6 +95,10 @@ function Img_draggable_arr(note_Imgcontent) {
 
 function text_elements_arr(append_div, note_textContent) {
   let text_elements = [];
+  if (!note_textContent) {
+    return [];
+  }
+
   note_textContent.map((s) => {
     const element = Textarea_draggable_html(
       append_div,

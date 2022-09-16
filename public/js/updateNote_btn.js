@@ -69,7 +69,7 @@ $('#storeNote').click(async function () {
   });
 
   alert(`${version_name} 儲存成功!`);
-  window.location.assign('/updateNote');
+  window.location.assign('/note');
 
   // 更新版本選擇的內容
   // ver_info = await load_version();
@@ -127,6 +127,8 @@ $('#version-change').click(function () {
   noteShowFromVer(version_chosen, current_version_obj);
 });
 
+// ------------------------------------------------------
+
 // 留言button
 $('#comment-btn').click(function (e) {
   const item = $(
@@ -151,3 +153,20 @@ $('#commentSwitch').change(function () {
 $('#deleteNote').click(function () {
   console.log($(':focus'));
 });
+
+// --------------------------------------------------------
+// 特定人分享清單鍵
+$('#sharedNote-btn').click(function () {
+  getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+});
+
+// 特定人分享查看鍵
+$('#sharedNote-change').click(function () {
+  const note_chosen = $('input[name="shareNote_options"]:checked').val();
+  // console.log(shared_note_obj);
+  sharedNoteShow(note_chosen, shared_note_obj);
+  $('textarea').prop('disabled', true);
+  $('textarea').draggable({ 'disable': true });
+});
+
+// ------------------------------------------------------

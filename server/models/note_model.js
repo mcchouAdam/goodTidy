@@ -2,8 +2,15 @@ const { Mongo } = require('./mongocon');
 require('dotenv').config();
 const { MONGO_DB, SERVER_HOST } = process.env;
 const ObjectId = require('mongodb').ObjectId;
+const authorizationList = {
+  'read': 1,
+  'comment': 2,
+  'update': 4,
+  'delete': 8,
+  'admin': 16,
+};
 
-// 上傳筆記
+// [筆記頁面] 上傳筆記
 const writeNote = async (note) => {
   // transaction ------------------------------------------
   // Step 1: Start a Client Session
@@ -118,13 +125,23 @@ const createNoteVersion = async (version_info) => {
 //   }
 // };
 
-const getUserNotes = async (user_id) => {
+const getUserNotes = async (user_id, note_permission) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   try {
+    let note_ids = [];
+    let permissions = [];
+    note_permission.map((n) => {
+      note_ids.push(ObjectId(Object.keys(n)[0]));
+      permissions.push(Object.values(n)[0]);
+    });
+
+    console.log('note_ids', note_ids);
+
     const result = await NotesCollection.aggregate([
-      { '$match': { 'user_id': user_id } },
+      { '$match': { '_id': { $in: note_ids } } },
       { '$addFields': { 'note_id': { '$toString': '$_id' } } },
+      { '$addFields': { 'user_id': { '$toObjectId': '$user_id' } } },
       {
         $lookup: {
           from: 'note_version',
@@ -133,9 +150,19 @@ const getUserNotes = async (user_id) => {
           as: 'version_info',
         },
       },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user_info',
+        },
+      },
     ]).toArray();
 
-    // console.log(result);
+    for (let i = 0; i < result.length; i++) {
+      result[i]['user_permission'] = permissions[i];
+    }
 
     return result;
   } catch (error) {
@@ -278,7 +305,7 @@ const shareToAll = async (data) => {
 
   const note_id = data.note_id;
   const isSharing = +data.isSharing;
-  const url_permission = +data.url_permission;
+  const url_permission = authorizationList[data.url_permission];
   const sharing_descrition = data.sharing_descrition;
   const sharing_image = data.file_name;
   const sharing_url = data.sharing_url;
@@ -319,7 +346,8 @@ const shareToOther = async (data) => {
 
   // console.log(data);
   const note_id = data.note_id;
-  const permission = data.permission;
+  let permission = data.permission;
+  permission = authorizationList[permission];
   const user_email = data.addPerson;
   const insert_data = { 'user_email': user_email, 'permission': permission };
 
@@ -340,7 +368,6 @@ const shareToOther = async (data) => {
         $addToSet: { 'sharing_user': insert_data },
       }
     );
-    // console.log(result);
     return `${user_email} 新增成功`;
   } catch (error) {
     return { error };
@@ -426,12 +453,8 @@ const getShareNotes = async (
     // search_method -----------------------------
     let matchObj = { 'isSharing': 1 };
     let matchAterLookup;
-
-    console.log('user_id: ', user_id);
-
     const re = new RegExp(search_text);
-    console.log(startIsoDate);
-    console.log(endIsoDate);
+
     switch (search_method) {
       case '筆記標題':
         matchObj = { 'isSharing': 1, 'note_name': { $regex: re } };
@@ -518,7 +541,7 @@ const getShareNotes = async (
       .limit(limit)
       .toArray();
 
-    console.log('aaaaaaa: ', result[0].note_version_info);
+    // console.log('aaaaaaa: ', result[0].note_version_info);
 
     return result;
   } catch (error) {
@@ -549,82 +572,6 @@ const getNoteById = async (note_id) => {
     ]).toArray();
     // console.log(result);
     return result;
-  } catch (error) {
-    return { error };
-  } finally {
-    // await Mongo.close();
-  }
-};
-
-const getNoteAuth = async (user_email, note_id) => {
-  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-
-  try {
-    const isOwnNote_result = await NotesCollection.aggregate([
-      {
-        '$match': {
-          '_id': ObjectId(note_id),
-        },
-      },
-      { '$addFields': { 'foreign_user_id': { '$toObjectId': '$user_id' } } },
-      {
-        $lookup: {
-          from: 'user',
-          localField: 'foreign_user_id',
-          foreignField: '_id',
-          as: 'user_info',
-        },
-      },
-    ])
-      .project({ 'user_info': 1 })
-      .toArray();
-
-    let note_owner = isOwnNote_result[0].user_info[0].email;
-    if (note_owner == user_email) {
-      // TODO: 建立permission表
-      // note_owner permission 8
-      return 8;
-    }
-
-    const user_permission_result = await NotesCollection.aggregate([
-      {
-        '$match': {
-          '_id': ObjectId(note_id),
-        },
-      },
-      { $unwind: '$sharing_user' },
-      {
-        '$match': {
-          'sharing_user.user_email': user_email,
-        },
-      },
-    ])
-      .project({ 'sharing_user.permission': 1 })
-      .toArray();
-
-    const url_permission_result = await NotesCollection.find({
-      '_id': ObjectId(note_id),
-    })
-      .project({ 'url_permission': 1 })
-      .toArray();
-
-    // 檢查 url_permission & user_permission
-    // 皆以 user_permission 為主，0 代表 沒有開特定人的權限
-    let final_permission;
-    let user_permission;
-    let url_permission = url_permission_result[0].url_permission;
-    if (user_permission_result.length === 0) {
-      // 沒有user_permission
-      user_permission = 0;
-      final_permission = url_permission;
-    } else {
-      // 有user_permission
-      user_permission = user_permission_result[0].sharing_user.permission;
-      final_permission = user_permission;
-    }
-    console.log(user_permission, url_permission);
-
-    return final_permission;
   } catch (error) {
     return { error };
   } finally {
@@ -844,6 +791,156 @@ const deleteComment = async (data) => {
   }
 };
 
+// 權限管理 ----------------------------------------------------------
+// 社群頁面
+const getSocialAuth = async (user_email, note_id) => {
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+
+  try {
+    const isOwnNote_result = await NotesCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+        },
+      },
+      { '$addFields': { 'foreign_user_id': { '$toObjectId': '$user_id' } } },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'foreign_user_id',
+          foreignField: '_id',
+          as: 'user_info',
+        },
+      },
+    ])
+      .project({ 'user_info': 1 })
+      .toArray();
+
+    let note_owner = isOwnNote_result[0].user_info[0].email;
+    if (note_owner == user_email) {
+      // TODO: 建立permission表
+      // note_owner permission 8
+      return 8;
+    }
+
+    const user_permission_result = await NotesCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+        },
+      },
+      { $unwind: '$sharing_user' },
+      {
+        '$match': {
+          'sharing_user.user_email': user_email,
+        },
+      },
+    ])
+      .project({ 'sharing_user.permission': 1 })
+      .toArray();
+
+    const url_permission_result = await NotesCollection.find({
+      '_id': ObjectId(note_id),
+    })
+      .project({ 'url_permission': 1 })
+      .toArray();
+
+    // 檢查 url_permission & user_permission
+    // 皆以 user_permission 為主，0 代表 沒有開特定人的權限
+    let final_permission;
+    let user_permission;
+    let url_permission = url_permission_result[0].url_permission;
+    if (user_permission_result.length === 0) {
+      // 沒有user_permission
+      user_permission = 0;
+      final_permission = url_permission;
+    } else {
+      // 有user_permission
+      user_permission = user_permission_result[0].sharing_user.permission;
+      final_permission = user_permission;
+    }
+    console.log(user_permission, url_permission);
+
+    return final_permission;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+// 筆記頁面
+const getNoteAuth = async (user) => {
+  const user_id = user.id;
+  const user_email = user.email;
+
+  const UserCollection = Mongo.db(MONGO_DB).collection('user');
+  const NoteCollection = Mongo.db(MONGO_DB).collection('notes');
+
+  let note_id_permission = [];
+  try {
+    // 拿取自己筆記的權限
+    const ownNotes = await UserCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(user_id),
+        },
+      },
+      { '$addFields': { 'foreign_user_id': { '$toString': '$_id' } } },
+      {
+        $lookup: {
+          from: 'notes',
+          localField: 'foreign_user_id',
+          foreignField: 'user_id',
+          as: 'note_info',
+        },
+      },
+    ])
+      .project({ 'note_info._id': 1 })
+      .toArray();
+
+    console.log('ownNotes: ', ownNotes[0].note_info);
+    let note_ids = ownNotes[0].note_info;
+
+    note_ids.map((i) => {
+      let permission = {};
+      let note_id = i._id.toString();
+      permission[note_id] = authorizationList['admin'];
+      note_id_permission.push(permission);
+    });
+
+    // console.log(note_id_permission);
+
+    // 拿取他人筆記分享的權限
+    const shareNote = await NoteCollection.aggregate([
+      {
+        '$match': {
+          sharing_user: { $elemMatch: { user_email: user_email } },
+        },
+      },
+    ])
+      .project({ '_id': 1, 'sharing_user.permission': 1 })
+      .toArray();
+
+    // sharing_user的permission值
+    shareNote.map((s) => {
+      let obj = {};
+      const note_id = s._id.toString();
+      const permission = s.sharing_user[0].permission;
+      obj[note_id] = permission;
+      note_id_permission.push(obj);
+    });
+
+    console.log(note_id_permission);
+
+    return note_id_permission;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
 module.exports = {
   writeNote,
   deleteNote,
@@ -861,6 +958,7 @@ module.exports = {
   getNoteById,
   createComment,
   updateComment,
+  getSocialAuth,
   getNoteAuth,
   getComments,
   deleteComment,

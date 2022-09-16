@@ -22,6 +22,7 @@ let note_list_obj;
 let search_note_list_obj;
 let showNote_note_obj;
 let current_version_obj;
+let shared_note_obj;
 
 // OCR info ----------------------------------------
 let OCR_ids = [];
@@ -32,10 +33,17 @@ let canvas_width = 600;
 let canvas_height = 500;
 
 // Sharing Permission ------------------------------
-const sharePermission = {
-  'write': 4,
-  'comment': 2,
+const authorizationList = {
   'read': 1,
+  'comment': 2,
+  'update': 4,
+  'delete': 8,
+  'admin': 16,
+};
+
+const permissionToName = {
+  1: '允許觀看',
+  2: '允許留言',
 };
 
 // 筆記公開資訊

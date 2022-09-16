@@ -148,6 +148,21 @@ block content
         | AutoSave
         button#newest-version-btn(style="font-size:16px")
           i.fa.fa-solid.fa-refresh
+
+        //- 特定人分享頁面
+        button#sharedNote-btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
+          i.fa.fa-users
+        #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+          .modal-dialog
+            .modal-content
+              .modal-header
+                .input-group
+                  .form-outline
+                  h5.modal-title 特定人分享
+                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+              #modal-sharedNote-main.modal-body
+              .modal-footer
+                button#sharedNote-change.btn.btn-primary(type='button') 查看
                   
       //- Show the autoSave time notification
       span#auto-save-time

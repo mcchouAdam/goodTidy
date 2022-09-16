@@ -5,7 +5,7 @@ nav.py-2.bg-light.border-bottom
         //- svg.bi.me-2(width='40', height='32', role='img', aria-label='Bootstrap')
         //-   use(xlink:href='#bootstrap')
         li.nav-item
-          a.nav-link.link-dark.px-2(href='/updateNote', aria-current='page') Note
+          a.nav-link.link-dark.px-2(href='/note', aria-current='page') Note
         li.nav-item
           a.nav-link.link-dark.px-2(href='/socialPage?paging=1&sorting=created_time') Social
         li.nav-item
@@ -163,13 +163,13 @@ header
             const share_description = $('#share_description').val();
             const file = $('#shareNote_image')[0].files[0];
             const share_image = file.name;
-            let url_permission = 0;
+            let url_permission;
 
             if(isComment){
-              url_permission += sharePermission['comment'];
+              url_permission = 'comment';
             }
             if(isWatch){
-              url_permission += sharePermission['read'];
+              url_permission = 'read';
             }
 
             let data = new FormData();
@@ -193,15 +193,15 @@ header
 
             switch(permission){
               case '允許留言':
-                permission_num = 3;
+                permission = 'comment';
                 break;
               case '允許觀看':
-                permission_num = 1;
+                permission = 'read';
                 break;
             }
 
             const data = {
-              "permission": permission_num,
+              "permission": permission,
               "addPerson": addOther,
               "note_id" : current_note_id,
             };

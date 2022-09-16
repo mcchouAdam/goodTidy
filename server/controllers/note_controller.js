@@ -66,22 +66,14 @@ const createNoteVersion = async (req, res) => {
   return res.status(200).json(result);
 };
 
-const editNotePage = async (req, res) => {
-  if (!req.params.note_id) {
-    res.render('updateNote');
-  } else {
-    const user_id = req.user.id;
-    const { note_id } = req.params;
-
-    const result = await Notes.readNote(user_id, note_id);
-
-    res.status(200).json(result);
-  }
+const getNote = async (req, res) => {
+  return res.render('note');
 };
 
 const getUserNotes = async (req, res) => {
-  const user_id = req.session.user.id;
-  const result = await Notes.getUserNotes(user_id);
+  const user_id = req.user.id;
+  const note_permission = req.note_permission;
+  const result = await Notes.getUserNotes(user_id, note_permission);
 
   return res.status(200).json(result);
 };
@@ -136,7 +128,7 @@ module.exports = {
   renameNoteClass,
   deleteNoteClass,
   createNoteVersion,
-  editNotePage,
+  getNote,
   getUserNotes,
   shareToAll,
   getShareToAll,

@@ -78,68 +78,103 @@ async function getUserNotes() {
     .then((response) => {
       const data = response.data;
       version_obj = data;
-      console.log('version', version_obj);
+      // console.log('version', version_obj);
+
       let note_obj = {};
       let search_list_obj = {};
       let showNote_obj = {};
+      let sharedNote_obj = {};
+
+      // console.log('version_obj', version_obj);
+
       version_obj.map((s) => {
+        console.log('看這: ', s);
         // console.log(s);
         const note_classification = s.note_classification;
         const note_file_name = s.file_name;
         const note_name = s.note_name;
         const note_lastVersion = s.lastVersion;
-        const note_verInfo = s.version_info[s.version_info.length - 1];
+        const note_verInfo = s.version_info[s.version_info.length - 1]; //取最新版
         const note_elements = note_verInfo.elements;
         const note_keywords = note_verInfo.keywords;
         const note_id = s._id;
         const lastEdit_time = s.lastEdit_time;
         const note_textElements = note_verInfo.text_elements;
+        const user_permission = s.user_permission;
+        const user_picture = s.user_info[0].picture;
+        const user_name = s.user_info[0].name;
 
-        if (!note_obj[note_classification]) {
-          note_obj[note_classification] = {
-            'note_name': [note_name],
-            'note_elements': [note_elements],
-            'note_textElements': [note_textElements],
-            'note_keywords': [note_keywords],
-            'note_lastVersion': [note_lastVersion],
-            'note_id': [note_id],
-            'lastEdit_time': [lastEdit_time],
-          };
+        if (user_permission !== authorizationList['admin']) {
+          // 筆記呈現頁
+          if (!sharedNote_obj[note_name]) {
+            sharedNote_obj[note_name] = {
+              'note_elements': note_elements,
+              'note_textElements': note_textElements,
+              'note_file_name': note_file_name,
+              'user_permission': user_permission,
+              'user_picture': user_picture,
+              'user_name': user_name,
+            };
+          }
         } else {
-          note_obj[note_classification].note_name.push(note_name);
-          note_obj[note_classification].note_elements.push(note_elements);
-          note_obj[note_classification].note_textElements.push(
-            note_textElements
-          );
-          note_obj[note_classification].note_keywords.push(note_keywords);
-          note_obj[note_classification].note_lastVersion.push(note_lastVersion);
-          note_obj[note_classification].note_id.push(note_id);
-          note_obj[note_classification].lastEdit_time.push(lastEdit_time);
-        }
+          if (!note_obj[note_classification]) {
+            note_obj[note_classification] = {
+              'note_name': [note_name],
+              'note_elements': [note_elements],
+              'note_textElements': [note_textElements],
+              'note_keywords': [note_keywords],
+              'note_lastVersion': [note_lastVersion],
+              'note_id': [note_id],
+              'lastEdit_time': [lastEdit_time],
+            };
+          } else {
+            note_obj[note_classification].note_name.push(note_name);
+            note_obj[note_classification].note_elements.push(note_elements);
+            note_obj[note_classification].note_textElements.push(
+              note_textElements
+            );
+            note_obj[note_classification].note_keywords.push(note_keywords);
+            note_obj[note_classification].note_lastVersion.push(
+              note_lastVersion
+            );
+            note_obj[note_classification].note_id.push(note_id);
+            note_obj[note_classification].lastEdit_time.push(lastEdit_time);
+          }
 
-        // 搜尋列表的物件
-        if (!search_list_obj[note_name]) {
-          search_list_obj[
-            note_name
-          ] = `${note_name}${note_keywords}${note_classification}`;
-        } else {
-          search_list_obj[
-            note_name
-          ] += `${note_name}${note_keywords}${note_classification}`;
-        }
+          // 搜尋列表頁的筆記
+          if (!search_list_obj[note_name]) {
+            search_list_obj[
+              note_name
+            ] = `${note_name}${note_keywords}${note_classification}`;
+          } else {
+            search_list_obj[
+              note_name
+            ] += `${note_name}${note_keywords}${note_classification}`;
+          }
 
-        if (!showNote_obj[note_id]) {
-          showNote_obj[note_id] = {
-            'note_elements': note_elements,
-            'note_textElements': note_textElements,
-            'note_file_name': note_file_name,
-          };
+          // 筆記呈現頁
+          if (!showNote_obj[note_id]) {
+            showNote_obj[note_id] = {
+              'note_elements': note_elements,
+              'note_textElements': note_textElements,
+              'note_file_name': note_file_name,
+            };
+          }
         }
       });
+
       // Deep copy the note_obj
+      // 筆記列表呈現的內容
       note_list_obj = $.extend(true, [], note_obj);
+
+      // 列表筆記搜尋欄需呈現的內容
       search_note_list_obj = $.extend(true, [], search_list_obj);
+
+      // 點選列表筆記時需呈現的內容
       showNote_note_obj = $.extend(true, [], showNote_obj);
+
+      // 點選列表筆記時需呈現的內容
+      shared_note_obj = $.extend(true, [], sharedNote_obj);
 
       // Show the NoteListNav
       showNoteList(note_obj, $('#search-list'));
@@ -214,6 +249,30 @@ async function showSearchList(note_obj, div_append) {
   //   $('.list-unstyled').append(mb1_html);
 }
 
+// 特定人分享List的內容
+async function getSharedNote(sharedNote_obj, div_append) {
+  // console.log('sharedNote_obj', sharedNote_obj);
+
+  div_append.html('');
+  let shareNote_html = '';
+  const note_names = Object.keys(sharedNote_obj);
+  // sharedNote_obj.map((s) => {});
+  note_names.map((id) => {
+    const permission = sharedNote_obj[id].user_permission;
+    const user_picture = sharedNote_obj[id].user_picture;
+    const user_name = sharedNote_obj[id].user_name;
+    shareNote_html += `
+                        <img class="profile-pic mr-3" src="${S3_HOST}user_picture/${user_picture}">
+                        <span>${user_name}</span>
+                        <input type="radio" class="btn-check" name="shareNote_options" id="${id}" value="${id}" autocomplete="off">
+                        <label class="btn btn-secondary" for="${id}">${id}</label>
+                        <span class="badge bg-success rounded-pill">${permissionToName[permission]}</span><br \>
+                        `;
+  });
+  div_append.append(shareNote_html);
+}
+
+// 版本回復List的內容
 async function getVersionList(version_obj, div_append) {
   div_append.html('');
   if (!current_note_id) {
@@ -242,18 +301,32 @@ async function getVersionList(version_obj, div_append) {
 }
 
 // 回復版本資訊
-async function noteShowFromVer(version_name, showVerObj) {
-  console.log('version_recovery: ', showVerObj[version_name]);
+async function noteShowFromVer(name, Obj) {
+  // console.log('version_recovery: ', showVerObj[version_name]);
   $('#update-note-content').html('');
-  const Img_elements = Img_draggable_arr(showVerObj[version_name].elements);
+  const Img_elements = Img_draggable_arr(Obj[name].elements);
+  // console.log(Img_elements);
   const text_elements = text_elements_arr(
     $('#update-note-content'),
-    showVerObj[version_name].text_elements
+    Obj[name].text_elements
   );
   elements_init($('#update-note-content'), Img_elements, text_elements);
 }
 
-// 改名筆記
+// 查看特定人分享 -------------------------------------------------------
+async function sharedNoteShow(name, Obj) {
+  $('#update-note-content').html('');
+  console.log('name:', name, 'Obj: ', Obj);
+  note_bg = Obj[name].note_file_name;
+  const Img_elements = Img_draggable_arr(Obj[name].note_elements);
+  const text_elements = text_elements_arr(
+    $('#update-note-content'),
+    Obj[name].note_textElements
+  );
+  elements_init($('#update-note-content'), Img_elements, text_elements);
+}
+
+// 改名筆記 ------------------------------------------------------------
 async function renameNote(note_id) {
   const new_noteName = window.prompt('請問您的筆記要改什麼名字?');
   if (!new_noteName) {

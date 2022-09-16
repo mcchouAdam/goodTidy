@@ -3,8 +3,13 @@ const router = require('express').Router();
 require('dotenv').config();
 const API_VERSION = process.env.API_VERSION;
 
-const { wrapAsync, authentication } = require('../../utils/util');
 const {
+  wrapAsync,
+  authentication,
+  noteAuthorization,
+} = require('../../utils/util');
+const {
+  getNote,
   createNote,
   deleteNote,
   renameNote,
@@ -12,7 +17,6 @@ const {
   renameNoteClass,
   deleteNoteClass,
   createNoteVersion,
-  editNotePage,
   getUserNotes,
   shareToAll,
   getShareToAll,
@@ -70,16 +74,17 @@ router
   .route(`/api/${API_VERSION}/noteVersion`)
   .post(wrapAsync(createNoteVersion));
 
-// 使用者全部的Notes
+// 使用者全部可以看到的Notes
 router
   .route(`/api/${API_VERSION}/notes`)
-  .get(authentication(), wrapAsync(getUserNotes));
+  .get(authentication(), noteAuthorization(), wrapAsync(getUserNotes));
 
 // router
-//   .route(`/updateNote/:note_id`)
+//   .route(`/note/:note_id`)
 //   .get(authentication(), wrapAsync(editNotePage));
 
-router.route(`/updateNote`).get(authentication(), wrapAsync(editNotePage));
+// [筆記頁面]
+router.route(`/note`).get(authentication(), wrapAsync(getNote));
 
 // OCR ------------------------------------------------
 router
