@@ -4,7 +4,8 @@ async function createComments(note_id) {
     'user_id': user_id,
     'note_id': note_id,
     'contents': $(`#textarea_${note_id}`).val(),
-    'created_time': Date.now(),
+    'created_time': '',
+    'updated_time': '',
     'user_name': user_name,
     'user_picture': user_picture,
   };
@@ -300,12 +301,24 @@ $('#socialSearchBar').on('click', async function () {
   const urlParams = new URLSearchParams(queryString);
   const paging = urlParams.get('paging');
   const sorting = urlParams.get('sorting');
+  let startDate;
+  let endDate;
+  let search_url;
 
-  const search_url = `${server}/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}`;
+  //- 時間搜尋
+  if ($('#daterange').val()) {
+    startDate = $('#daterange').val().split('-')[0].replace(/\s/g, '');
+    endDate = $('#daterange').val().split('-')[1].replace(/\s/g, '');
+    search_url = `${server}/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}&startDate=${startDate}&endDate=${endDate}`;
+  } else {
+    search_url = `${server}/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}`;
+  }
 
   let data = {
     'search_input': search_text,
     'search_method': search_method,
+    'startDate': startDate,
+    'endDate': endDate,
   };
 
   let config = {

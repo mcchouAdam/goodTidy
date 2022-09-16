@@ -1,5 +1,4 @@
 extends layout.pug
-
 block content
 
     //- TODO: 加User資訊
@@ -9,6 +8,7 @@ block content
     #note_name
     #note_version
     #showShareDetail.showShareDetail
+    input#dateTimePicker.form-control(type='text')
 
     script.
         S3_HOST = 'https://goodtidy.s3.amazonaws.com/';

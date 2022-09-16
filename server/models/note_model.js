@@ -3,6 +3,7 @@ require('dotenv').config();
 const { MONGO_DB, SERVER_HOST } = process.env;
 const ObjectId = require('mongodb').ObjectId;
 
+// 上傳筆記
 const writeNote = async (note) => {
   // transaction ------------------------------------------
   // Step 1: Start a Client Session
@@ -28,8 +29,7 @@ const writeNote = async (note) => {
         'note_name': note.note_name,
         'file_name': note.file_name,
         'note_classification': note.note_classification,
-        'created_time': note.timestamp,
-        'lastEdit_time': note.timestamp,
+        'created_time': new Date(),
         'lastVersion': note.version_name,
         'comment_count': 0,
         'saved_count': 0,
@@ -40,9 +40,11 @@ const writeNote = async (note) => {
       const note_result = await NotesCollection.insertOne(note_obj);
       const note_id = note_result.insertedId.toString();
 
+      console.log('note_result', note_result);
+
       const version_obj = {
         'note_id': note_id,
-        'created_time': note.timestamp,
+        'created_time': new Date(),
         // 'file_name': note.file_name,   // 目前不改使用者上傳圖片
         'version_img': note.version_img, // TODO: 目前version_img 為 null
         'version_name': note.version_name,
@@ -52,6 +54,8 @@ const writeNote = async (note) => {
       };
 
       const version_result = await NoteVerCollection.insertOne(version_obj);
+
+      //TODO: 目前
     }, transactionOptions);
 
     //  ------------------------------------------
@@ -65,6 +69,7 @@ const writeNote = async (note) => {
   }
 };
 
+// 創立筆記版本
 const createNoteVersion = async (version_info) => {
   // await Mongo.connect();
   const versionCollection = Mongo.db(MONGO_DB).collection('note_version');
@@ -72,6 +77,7 @@ const createNoteVersion = async (version_info) => {
   try {
     // add new version_info to the collection [note_version]
     version_info.text_elements = JSON.parse(version_info.text_elements);
+    version_info.created_time = new Date();
     await versionCollection.insertOne(version_info);
     const note_id = version_info.note_id;
     const version_name = version_info.version_name;
@@ -265,6 +271,7 @@ const deleteNoteClass = async (user_id, old_classificationName) => {
   }
 };
 
+// 分享給全部人
 const shareToAll = async (data) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
@@ -276,7 +283,7 @@ const shareToAll = async (data) => {
   const sharing_image = data.file_name;
   const sharing_url = data.sharing_url;
   const tags = JSON.parse(data.tags);
-  const sharing_time = Date.now();
+  const sharing_time = new Date();
 
   try {
     const result = await NotesCollection.updateOne(
@@ -304,6 +311,7 @@ const shareToAll = async (data) => {
   }
 };
 
+// 分享給特定的人
 const shareToOther = async (data) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
@@ -341,8 +349,7 @@ const shareToOther = async (data) => {
   }
 };
 
-// TODO: 看可不可以一次查完
-//
+// 拿取 特定人 權限
 const getShareToOther = async (note_id) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
 
@@ -380,14 +387,33 @@ const getShareToOther = async (note_id) => {
   }
 };
 
+// 拿取 社群頁面 筆記
 const getShareNotes = async (
   paging,
   sorting,
   search_text,
   search_method,
-  user_id
+  user_id,
+  startDate,
+  endDate
 ) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  let startIsoDate;
+  let endIsoDate;
+
+  if (startDate && endDate) {
+    const startYear = startDate.split('/')[2];
+    const startMon = startDate.split('/')[0];
+    const startDay = startDate.split('/')[1];
+    const StartDateFormat = startYear + '-' + startMon + '-' + startDay;
+    startIsoDate = new Date(StartDateFormat);
+
+    const endYear = endDate.split('/')[2];
+    const endMon = endDate.split('/')[0];
+    const endDay = endDate.split('/')[1];
+    const EndDateFormat = endYear + '-' + endMon + '-' + endDay;
+    endIsoDate = new Date(EndDateFormat);
+  }
 
   try {
     const skip = (paging - 1) * 6;
@@ -404,6 +430,8 @@ const getShareNotes = async (
     console.log('user_id: ', user_id);
 
     const re = new RegExp(search_text);
+    console.log(startIsoDate);
+    console.log(endIsoDate);
     switch (search_method) {
       case '筆記標題':
         matchObj = { 'isSharing': 1, 'note_name': { $regex: re } };
@@ -414,7 +442,14 @@ const getShareNotes = async (
         matchAterLookup = { 'user_info.name': { $regex: re } };
         break;
       case '發文時間':
-        search_index = 'created_time';
+        matchObj = {
+          'isSharing': 1,
+          'sharing_time': {
+            '$gt': startIsoDate,
+            '$lt': endIsoDate,
+          },
+        };
+        matchAterLookup = {};
         break;
       case '筆記簡介':
         matchObj = { 'isSharing': 1, 'sharing_descrition': { $regex: re } };
@@ -426,8 +461,8 @@ const getShareNotes = async (
         break;
       case 'tag':
         matchObj = {
-          // 'isSharing': 1,
-          // 'tags': { $elemMatch: search_text },
+          'isSharing': 1,
+          'tags': { $in: [re] },
         };
         matchAterLookup = {};
         break;
@@ -716,6 +751,8 @@ const createComment = async (data) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
 
   try {
+    data.created_time = new Date();
+    data.updated_time = new Date();
     const result = await CommentsCollection.insertOne(data);
     const comment_id = result.insertedId.toString();
     const note_id = data.note_id;

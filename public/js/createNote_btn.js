@@ -86,7 +86,10 @@ $('#submit_note').click(async function () {
     OCR_elements.push(OCR_obj);
   });
 
-  let keywords = $('#note-preview-content').text().replaceAll('\n', '');
+  let keywords = $('#note-preview-content')
+    .text()
+    .replaceAll('\n', '')
+    .replace(/\s/g, '');
 
   await noteUpload(
     blob,

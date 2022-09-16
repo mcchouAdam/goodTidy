@@ -19,6 +19,8 @@ const socialPage = async (req, res) => {
   const user_id = req.session.user.id;
   const paging = +req.query.paging;
   const sorting = req.query.sorting;
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
   const search_text = req.query.search_text;
   const search_method = req.query.search_method;
 
@@ -29,7 +31,9 @@ const socialPage = async (req, res) => {
     sorting,
     search_text,
     search_method,
-    user_id
+    user_id,
+    startDate,
+    endDate
   );
   const cards_html = await showSocialCards(result, user_id);
   const paging_html = await showPagination(paging);

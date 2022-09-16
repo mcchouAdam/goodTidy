@@ -121,7 +121,8 @@ const showSocialCards = async function (data, user_id) {
     const sharing_descrition = data[i].sharing_descrition;
     const sharing_time = data[i].sharing_time;
     const note_id = data[i]._id.toString();
-    const show_time = timeConverter(+sharing_time);
+    // const show_time = timeConverter(+sharing_time);
+    const show_time = sharing_time;
     const tags = data[i].tags;
     const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
@@ -198,28 +199,18 @@ const showSocialCards = async function (data, user_id) {
       comment_cards_html += `
         <div class="card border-dark mb-3" style="max-width: 18rem;">
           <div class="card-header">
-            <img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${
-        comment.user_picture
-      }"/>
+            <img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${comment.user_picture}"/>
             <span>${comment.user_name}</span>
-            <a href="javascript:updateComment('${comment._id}', '${
-        comment.note_id
-      }')">
+            <a href="javascript:updateComment('${comment._id}', '${comment.note_id}')">
               <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
             </a>
-            <a href="javascript:deleteComment('${comment._id}', '${
-        comment.note_id
-      }')">
+            <a href="javascript:deleteComment('${comment._id}', '${comment.note_id}')">
               <i class="fa fa-times" aria-hidden="true"></i>
             </a>
-            <p class="card-text"><small class="text-muted">留言時間: ${timeConverter(
-              +comment.created_time
-            )}</small></p>
+            <p class="card-text"><small class="text-muted">留言時間: ${comment.created_time}</small></p>
             </div>
             <div class="card-body text-dark">
-            <p class="card-text"><small class="text-muted"></small>${
-              comment.contents
-            }</p>
+            <p class="card-text"><small class="text-muted"></small>${comment.contents}</p>
             </div>
         </div>`;
     });

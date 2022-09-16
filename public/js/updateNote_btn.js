@@ -50,11 +50,11 @@ $('#storeNote').click(async function () {
   let ek = $('.addtextarea')
     .map((_, el) => el.value)
     .get();
-  let keywords = ek.join('').replaceAll('\n', '');
+  let keywords = ek.join('').replaceAll('\n', '').replace(/\s/g, '');
 
   let data = {
     'note_id': current_note_id,
-    'created_time': Date.now(),
+    'created_time': '',
     'version_img': '123_coolthing_ver3.png',
     'version_name': version_name,
     'elements': removeSrc_element,
