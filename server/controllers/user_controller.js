@@ -1,6 +1,7 @@
 require('dotenv').config();
 const validator = require('validator');
 const User = require('../models/user_model');
+const { S3_HOST } = process.env;
 
 const signUp = async (req, res) => {
   let { name } = req.body;
@@ -107,9 +108,23 @@ const getUserProfile = async (req, res) => {
     picture: req.session.user.picture,
   };
 
-  // console.log('profile:', data);
-  res.status(200).json({ 'data': data });
-  return;
+  return res.status(200).json({ 'data': data });
+};
+
+const showUserProfile = async (req, res) => {
+  const id = req.session.user.id;
+  const provider = req.session.user.provider;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
+  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+  return res.status(200).render('profile', {
+    id: id,
+    provider: provider,
+    name: name,
+    email: email,
+    picture: picture,
+  });
 };
 
 const logOut = async (req, res) => {
@@ -122,4 +137,5 @@ module.exports = {
   signIn,
   logOut,
   getUserProfile,
+  showUserProfile,
 };

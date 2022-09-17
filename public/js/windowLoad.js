@@ -59,14 +59,14 @@ $(window).on('load', async function () {
   // [筆記上傳頁面] 限制預覽頁面寬度
   $('#fontOCRCanvas').attr('width', canvas_width).attr('height', canvas_height);
 
-  // 拿取User的Profile
+  // 拿取User的Profile;
   await profile();
 
-  // 拿取User所有note的資訊
+  // 拿取User所有note的資訊;
   await getUserNotes();
 
   // 拿取[社群頁面]排序狀態
-  await getSocialSortingColor();
+  // await getSocialSortingColor();
 
-  console.log('current_user_id: ', user_id);
+  // console.log('current_user_id: ', user_id);
 });

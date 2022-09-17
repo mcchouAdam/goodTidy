@@ -25,8 +25,8 @@ function addDragTextarea(div_id, text, textTop, textLeft) {
     })
     .offset(new_offset)
     .on('drag', stepDrag)
-    .on('input', stepInput)
-    .on('input', checkTextNull);
+    .on('input', stepInput);
+  // .on('input', checkTextNull);
 
   // 儲存所有textarea_id，以便取得更改值 .html()取不到
   OCR_ids.push(textarea_id);
@@ -70,8 +70,8 @@ function Textarea_draggable_html(
     })
     .offset(new_offset)
     .on('drag', stepDrag)
-    .on('input', stepInput)
-    .on('input', checkTextNull);
+    .on('input', stepInput);
+  // .on('input', checkTextNull);
 
   OCR_ids.push(textarea_id);
 

@@ -1,6 +1,24 @@
-const { ConditionFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const Notes = require('../models/note_model');
 const { showShareToOtherList } = require('../../utils/showPage');
+require('dotenv').config();
+const { S3_HOST } = process.env;
+
+// 新創筆記
+const showNote = async (req, res) => {
+  const id = req.session.user.id;
+  const provider = req.session.user.provider;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
+  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+  return res.status(200).render('notes', {
+    id: id,
+    provider: provider,
+    name: name,
+    email: email,
+    picture: picture,
+  });
+};
 
 // 新創筆記
 const createNote = async (req, res) => {
@@ -121,6 +139,7 @@ const saveNote = async (req, res) => {
 };
 
 module.exports = {
+  showNote,
   createNote,
   deleteNote,
   renameNote,

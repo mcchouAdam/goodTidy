@@ -1,12 +1,4 @@
-// // 預覽 ---------------------------------------
-// imgInp.onchange = (evt) => {
-//   const [file] = imgInp.files;
-//   if (file) {
-//     blah.src = URL.createObjectURL(file);
-//   }
-// };
-
-const form = document.querySelector('#my-form');
+const form = document.querySelector('#form-prview');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();

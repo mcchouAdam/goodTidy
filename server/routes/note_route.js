@@ -9,6 +9,7 @@ const {
   noteAuthorization,
 } = require('../../utils/util');
 const {
+  showNote,
   getNote,
   createNote,
   deleteNote,
@@ -37,6 +38,10 @@ const shareImageUpload = shareImgUpload.fields([
 
 const OCRImgupload = OCRupload.fields([{ name: 'OCR_upload', maxCount: 1 }]);
 
+// [筆記編輯頁面]
+router.route(`/notes`).get(authentication(), wrapAsync(showNote));
+
+// [筆記API]
 // 新增筆記
 router
   .route(`/api/${API_VERSION}/note`)

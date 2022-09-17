@@ -1,0 +1,146 @@
+extends layout_main.pug
+
+block content
+    main#main.main
+      .pagetitle
+        h1 筆記編輯
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/index') Home
+            li.breadcrumb-item.active 筆記編輯
+      // End Page Title
+      section.section.dashboard
+        .row
+          // Left side columns
+          .col-lg-12
+            .row
+              // Reports
+              .col-12
+                .card
+                  .filter
+                    a.icon(href='#', data-bs-toggle='dropdown')
+                      i.bi.bi-three-dots
+                    ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
+                      li.dropdown-header.text-start
+                        h6 Filter
+                      li
+                        a.dropdown-item(href='#') Today
+                      li
+                        a.dropdown-item(href='#') This Month
+                      li
+                        a.dropdown-item(href='#') This Year
+                  .card-body
+                    h5.card-title#update-note-name
+                      | 請選擇筆記or上傳筆記
+                      //- span /微笑呵呵呵
+                    ul.list-unstyled.ps-0(width="90%")
+
+                        //- 筆記上傳
+                        button#noteUpload-btn(type='button', data-bs-toggle='modal', data-bs-target='#noteUploadModal', style="font-size:16px")
+                            i.fa.fa-solid.fa-upload
+                        //- 筆記上傳Modal
+                        #noteUploadModal.modal.fade(tabindex='-1', aria-labelledby='noteUploadModal', aria-hidden='true')
+                          .modal-dialog.modal-lg
+                            .modal-content
+                              .modal-header
+                                .input-group
+                                  .form-outline
+                                  h1.modal-title 筆記上傳
+                                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              #modal-noteUpload-main.modal-body
+                                .OCR-block
+                                  form#form-prview(action='', method='post', r='')
+                                    input(type='file', name='photo', accept='image/*', required='')
+                                    button#form-prview-btn 圖形預覽
+                                  img#img-preview(hidden='')
+                                  .OCR-nav
+                                    //
+                                      <button id="pre">上一步</button>
+                                      <button id="next">下一步</button>
+                                    button#shapeRemoveBG(disabled='') 圖形去背
+                                    button#removeNotWant OCR去除圖形
+                                    button#OCR OCR 
+                                    // <button id="magicContour">圖形圈選</button>
+                                    button#rectContour 圖形圈選
+                                    button#shapeView 擷取
+                                    button#reDraw 回復
+                                  // Canvas
+                                  .OCR-preview
+                                    canvas#fontOCRCanvas
+                                .note-preview-block
+                                  h1 筆記預覽
+                                  .processed-content-nav
+                                    input#note-name(type='text', placeholder='筆記名稱')
+                                    input#note-classification(type='text', placeholder='筆記分類')
+                                    button#submit_note 上傳  
+                                  #note-preview-content.note-edit-block                  
+
+                        //- prev step
+                        button#prev(style='font-size:16px')
+                            i.fa.fa-rotate-left
+
+                        //- next step
+                        button#next(style='font-size:16px')
+                            i.fa.fa-rotate-right
+
+                        //- add Text
+                        button#addfont(style='font-size:16px')
+                            i.fa.fa-font
+
+                        //- saveNote
+                        button#storeNote(style='font-size:16px')
+                            i.fa.fa-floppy-o
+
+                        //- Delete
+                        button#deleteNote(style='font-size:16px')
+                            i.fa.fa-solid.fa-trash
+
+                        //- Share
+                        button#share-btn(style="font-size:16px")
+                            i.fa.fa-solid.fa-share
+
+                        button.openbtn#comment-btn
+                            i.fa.fa-solid.fa-comments
+
+                        //- TODO: AutoSava 改在選單裡
+                        //- AutoSave
+                        //- input#autoSave_box(type='checkbox', name='autoSave', value='autoSave')
+                        //- | AutoSave
+                        button#newest-version-btn(style="font-size:16px")
+                          i.fa.fa-solid.fa-refresh
+
+                        //- 特定人分享頁面
+                        button#sharedNote-btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
+                          i.fa.fa-users
+                        #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header
+                                .input-group
+                                  .form-outline
+                                  h5.modal-title 特定人分享
+                                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              #modal-sharedNote-main.modal-body
+                              .modal-footer
+                                button#sharedNote-change.btn.btn-primary(type='button') 查看
+
+                        .col-12#update-note-content(width='600px', height='500px')
+
+    // ======= Footer =======
+    footer#footer.footer
+      .copyright
+        | &copy; Copyright 
+        strong
+          span NiceAdmin
+        | . All Rights Reserved
+      .credits
+        // All the links in the footer should remain intact.
+        // You can delete the links only if you purchased the pro version.
+        // Licensing information: https://bootstrapmade.com/license/
+        // Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+        | Designed by 
+        a(href='https://bootstrapmade.com/') BootstrapMade
+    // End Footer
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short

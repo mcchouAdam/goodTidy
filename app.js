@@ -38,9 +38,11 @@ app.set('views', './server/views');
 app.use(express.static('public'));
 app.use(express.json());
 
-app.use('/api/' + API_VERSION, [require('./server/routes/user_route')]);
-app.use([require('./server/routes/note_route')]);
-app.use([require('./server/routes/social_route')]);
+app.use([
+  require('./server/routes/user_route'),
+  require('./server/routes/note_route'),
+  require('./server/routes/social_route'),
+]);
 
 // HomePage
 app.get('/', async (req, res) => {
@@ -48,8 +50,18 @@ app.get('/', async (req, res) => {
 });
 
 // Index
-app.get('/index', async (req, res) => {
-  return res.render('index');
+app.get('/notes', async (req, res) => {
+  return res.render('notes');
+});
+
+// signin
+app.get('/signin', async (req, res) => {
+  return res.render('signin');
+});
+
+// signup
+app.get('/signup', async (req, res) => {
+  return res.render('signup');
 });
 
 app.listen(port, () => {

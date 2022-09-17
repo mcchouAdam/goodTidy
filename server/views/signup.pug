@@ -1,0 +1,63 @@
+extends layout_noSideBar.pug
+
+block content
+  body
+    main
+      .container
+        section.section.register.min-vh-100.d-flex.flex-column.align-items-center.justify-content-center.py-4
+          .container
+            .row.justify-content-center
+              .col-lg-4.col-md-6.d-flex.flex-column.align-items-center.justify-content-center
+                .d-flex.justify-content-center.py-4
+                  a.logo.d-flex.align-items-center.w-auto(href='/index')
+                    img(src='assets/img/goodTidy_logo.png', alt='')
+                    span.d-none.d-lg-block GoodTidy
+                // End Logo
+                .card.mb-3
+                  .card-body
+                    .pt-4.pb-2
+                      h5.card-title.text-center.pb-0.fs-4 Create an Account
+                      p.text-center.small Enter your personal details to create account
+                    form.row.g-3.needs-validation(novalidate='')
+                      .col-12
+                        label.form-label(for='yourName') Your Name
+                        input#signup_username.form-control(type='text', name='name', required='')
+                        .invalid-feedback Please, enter your name!
+                      .col-12
+                        label.form-label(for='yourEmail') Your Email
+                        input#signup_useremail.form-control(type='email', name='email', required='')
+                        .invalid-feedback Please enter a valid Email adddress!
+                      .col-12
+                        label.form-label(for='yourPassword') Password
+                        input#signup_password.form-control(type='password', name='password', required='')
+                        .invalid-feedback Please enter your password!
+                      .col-12
+                        label.form-label(for='yourPicture') Picture
+                        br
+                        input#user_picture(type='file')
+                        .invalid-feedback Please upload your user picture.
+                      .col-12
+                        .form-check
+                          input#acceptTerms.form-check-input(name='terms', type='checkbox', value='', required='')
+                          label.form-check-label(for='acceptTerms')
+                            | I agree and accept the 
+                            a(href='#') terms and conditions
+                          .invalid-feedback You must agree before submitting.
+
+                      .col-12
+                        button#signup-form-btn.btn.btn-primary.w-100 Create Account
+                      .col-12
+                        p.small.mb-0
+                          | Already have an account? 
+                          a(href='/signin') Log in
+                .credits
+                  // All the links in the footer should remain intact.
+                  // You can delete the links only if you purchased the pro version.
+                  // Licensing information: https://bootstrapmade.com/license/
+                  // Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+                  | Designed by 
+                  a(href='https://bootstrapmade.com/') BootstrapMade
+    
+    // End #main
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short

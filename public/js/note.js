@@ -1,3 +1,4 @@
+// 筆記上傳 API ----------------------------
 async function noteUpload(
   blob,
   filename,
@@ -44,7 +45,9 @@ async function noteUpload(
 async function noteShow(note_id) {
   // Assign Global Variable
   current_note_id = note_id;
-  console.log(current_note_id);
+
+  console.log('showNote_note_obj', showNote_note_obj);
+  $('#update-note-name').html(showNote_note_obj[note_id]['note_name']);
 
   // 每次更換筆記都要洗掉之前的OCR物件
   OCR_ids = [];
@@ -155,6 +158,8 @@ async function getUserNotes() {
           // 筆記呈現頁
           if (!showNote_obj[note_id]) {
             showNote_obj[note_id] = {
+              'note_classification': note_classification,
+              'note_name': note_name,
               'note_elements': note_elements,
               'note_textElements': note_textElements,
               'note_file_name': note_file_name,
@@ -177,7 +182,7 @@ async function getUserNotes() {
       shared_note_obj = $.extend(true, [], sharedNote_obj);
 
       // Show the NoteListNav
-      showNoteList(note_obj, $('#search-list'));
+      showNoteList(note_obj, $('#sidebar-nav'));
     })
     .catch((error) => {
       console.log(error);
@@ -187,44 +192,33 @@ async function getUserNotes() {
 
 // 筆記導覽列
 async function showNoteList(note_obj, div_append) {
-  const classification = Object.keys(note_obj);
-  let mb1_html = $('<li class="mb-1"></li>');
-  let name_html = '';
+  const classifications = Object.keys(note_obj);
   let classification_html = '';
-
-  classification.map((c) => {
-    let ids = note_obj[c].note_id;
-    let names = note_obj[c].note_name;
-
-    classification_html += `
-          <button
-            class="btn btn-toggle align-items-center rounded collapsed"
-            data-bs-toggle="collapse"
-            data-bs-target="#${c}-collapse"
-            aria-expanded="true"
-          >${c}
-          </button><div class="collapse show" id="${c}-collapse">
-            <a href="javascript:renameclassification('${user_id}','${c}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-            <a href="javascript:deleteclassification('${user_id}','${c}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a></li>
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">`;
-
+  let notes_html = '';
+  classifications.map((classfi) => {
+    let ids = note_obj[classfi].note_id;
+    let names = note_obj[classfi].note_name;
+    classification_html += `<li class="nav-item">
+      <a class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
+        <i class="bi bi-menu-button-wide"></i>
+        <span>${classfi}</span>
+        <i class="bi bi-chevron-down ms-auto"></i>
+      </a>`;
     for (let i = 0; i < names.length; i++) {
-      name_html += `<li><a href="javascript:noteShow('${ids[i]}')" class="link-dark rounded">${names[i]}</a>
-      <a href="javascript:renameNote('${ids[i]}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-      <a href="javascript:deleteNote('${ids[i]}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-      <a href="javascript:moveNote('${ids[i]}')"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
-      </li>`;
+      notes_html += `<ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="javascript:noteShow('${ids[i]}', $('#update-note-content'))">
+              <i class="bi bi-circle"></i>
+              <span>${names[i]}</span>
+            </a>
+          </li>
+        </ul>`;
     }
-
-    classification_html += name_html;
-    classification_html += `</ul></div>`;
-
+    classification_html += notes_html;
+    classification_html += `</li>`;
     name_html = '';
   });
-
-  mb1_html.append(classification_html);
-  div_append.append(mb1_html);
-  //   $('.list-unstyled').append(mb1_html);
+  div_append.append(classification_html);
 }
 
 async function showSearchList(note_obj, div_append) {

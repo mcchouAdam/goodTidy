@@ -1,0 +1,52 @@
+extends layout_noSideBar.pug
+
+block content
+  body
+    main
+      .container
+        section.section.register.min-vh-100.d-flex.flex-column.align-items-center.justify-content-center.py-4
+          .container
+            .row.justify-content-center
+              .col-lg-4.col-md-6.d-flex.flex-column.align-items-center.justify-content-center
+                .d-flex.justify-content-center.py-4
+                  a.logo.d-flex.align-items-center.w-auto(href='/index')
+                    img(src='assets/img/goodTidy_logo.png', alt='')
+                    span.d-none.d-lg-block GoodTidy
+                // End Logo
+                .card.mb-3
+                  .card-body
+                    .pt-4.pb-2
+                      h5.card-title.text-center.pb-0.fs-4 Login to Your Account
+                      p.text-center.small Enter your username &amp; password to login
+                    form.row.g-3.needs-validation(novalidate='')
+                      .col-12
+                        label.form-label(for='signin_useremail') Username
+                        .input-group.has-validation
+                          span#inputGroupPrepend.input-group-text @
+                          input#signin_useremail.form-control(type='text', name='username', required='')
+                          .invalid-feedback Please enter your username.
+                      .col-12
+                        label.form-label(for='signin_password') Password
+                        input#signin_password.form-control(type='password', name='password', required='')
+                        .invalid-feedback Please enter your password!
+                      .col-12
+                        .form-check
+                          input#rememberMe.form-check-input(type='checkbox', name='remember', value='true')
+                          label.form-check-label(for='rememberMe') Remember me
+                      .col-12
+                        button#signin-form-btn.btn.btn-primary.w-100 Login
+                      .col-12
+                        p.small.mb-0
+                          | Don&apos;t have account? 
+                          a(href='pages-register.html') Create an account
+                .credits
+                  // All the links in the footer should remain intact.
+                  // You can delete the links only if you purchased the pro version.
+                  // Licensing information: https://bootstrapmade.com/license/
+                  // Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+                  | Designed by 
+                  a(href='https://bootstrapmade.com/') BootstrapMade
+    // End #main
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short
+
