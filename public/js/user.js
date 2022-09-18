@@ -2,7 +2,7 @@
 async function profile() {
   let config = {
     method: 'get',
-    url: `${server}/api/1.0/user/profile`,
+    url: `/api/1.0/user/profile`,
     data: '',
   };
 
@@ -30,7 +30,7 @@ async function signUp(picture, username, email, password, filename) {
 
   let config = {
     method: 'POST',
-    url: `${server}/api/1.0/user/signup`,
+    url: `/api/1.0/user/signup`,
     data: data,
   };
 
@@ -58,7 +58,7 @@ async function signIn(email, password) {
 
   let config = {
     method: 'POST',
-    url: `${server}/api/1.0/user/signIn`,
+    url: `/api/1.0/user/signIn`,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -172,7 +172,7 @@ $('#share-btn').click(async function () {
   console.log('sharing_descrition: ', sharing_descrition);
 
   // sharing_url 輸入Bar
-  $('#share_url').val(`${server}${sharing_url}`);
+  $('#share_url').val(`/${sharing_url}`);
 
   $('.badge.bg-success.rounded-pill').remove();
   tags.map((t) => {
@@ -227,7 +227,7 @@ $('#logout').click(async function () {
 
   let config = {
     method: 'GET',
-    url: `${server}/api/1.0/user/logout`,
+    url: `/api/1.0/user/logout`,
     data: data,
   };
 
@@ -249,7 +249,7 @@ $('#logout-btn').click(async function () {
 
   let config = {
     method: 'GET',
-    url: `${server}/api/1.0/user/logout`,
+    url: `/api/1.0/user/logout`,
     data: data,
   };
 

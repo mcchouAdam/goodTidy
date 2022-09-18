@@ -1,6 +1,6 @@
 // HOST
 let S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
-let server = 'http://localhost:3001';
+// let server = 'http://localhost:3001';
 let API_VERSION = '1.0';
 
 // user info --------------------------------------

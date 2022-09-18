@@ -113,7 +113,7 @@ const showSocialCards = async function (data, user_id) {
             <span class="saved_num">${saved_num}</span>
         </button>
         <button class="btn">
-            <a href="${SERVER_HOST}/shareNotePage?id=${note_id}">
+            <a href="${SERVER_HOST}/shareNotePage?id=${note_id}" target="blank">
                 <i class="fa fa-eye" aria-hidden="true"></i>
             </a>
         </button>

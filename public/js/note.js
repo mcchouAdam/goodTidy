@@ -26,7 +26,7 @@ async function noteUpload(
 
   let config = {
     method: 'post',
-    url: `${server}/api/1.0/note`,
+    url: `/api/1.0/note`,
     data: data,
   };
 
@@ -402,7 +402,7 @@ async function renameNote(note_id) {
 
   let config = {
     method: 'PATCH',
-    url: `${server}/api/1.0/note`,
+    url: `/api/1.0/note`,
     data: data,
   };
 
@@ -428,7 +428,7 @@ async function deleteNote(note_id) {
 
     let config = {
       method: 'DELETE',
-      url: `${server}/api/1.0/note`,
+      url: `/api/1.0/note`,
       data: data,
     };
 
@@ -459,7 +459,7 @@ async function moveNote(note_id) {
 
     let config = {
       method: 'PATCH',
-      url: `${server}/api/1.0/noteClass`,
+      url: `/api/1.0/noteClass`,
       data: data,
     };
 
@@ -492,7 +492,7 @@ async function renameclassification(user_id, old_classificationName) {
 
   let config = {
     method: 'PATCH',
-    url: `${server}/api/1.0/noteClass`,
+    url: `/api/1.0/noteClass`,
     data: data,
   };
 
@@ -521,7 +521,7 @@ async function deleteclassification(user_id, classificationName) {
 
     let config = {
       method: 'DELETE',
-      url: `${server}/api/1.0/noteClass`,
+      url: `/api/1.0/noteClass`,
       data: data,
     };
 
