@@ -5,7 +5,7 @@ node_modules/
 *.env
 
 # ignore the user upload files
-public/assets/*
+# public/assets/*
 
 # ignore the test files
 test/*
