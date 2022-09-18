@@ -124,7 +124,7 @@ $('#OCR').click(async function () {
 
   let config = {
     method: 'POST',
-    url: `${server}/api/1.0/OCR`,
+    url: `/api/1.0/OCR`,
     data: data,
   };
 

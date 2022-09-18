@@ -14,7 +14,7 @@ $('#shareToAll-toggle').click(function () {
   const checked = $(this).is(':checked');
   if (checked) {
     $('#shareToAllDetail').css('visibility', 'visible');
-    $('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
+    $('#share_url').val(`/shareNotePage?id=${current_note_id}`);
   } else {
     $('#shareToAllDetail').css('visibility', 'hidden');
   }
@@ -130,7 +130,7 @@ async function createComments(note_id) {
 
   var config = {
     method: 'POST',
-    url: `${server}/api/1.0/comment`,
+    url: `/api/1.0/comment`,
     data: data,
   };
 
@@ -155,7 +155,7 @@ async function createSave(note_id) {
 
   let config = {
     method: 'POST',
-    url: `${server}/api/1.0/note/save`,
+    url: `/api/1.0/note/save`,
     data: data,
   };
 
@@ -175,7 +175,7 @@ async function createSave(note_id) {
 async function shareToAlluser(data) {
   let config = {
     method: 'POST',
-    url: `${server}/api/${API_VERSION}/note/shareToAll`,
+    url: `/api/${API_VERSION}/note/shareToAll`,
     data: data,
   };
 
@@ -195,7 +195,7 @@ async function shareToAlluser(data) {
 async function shareToOther(data) {
   let config = {
     method: 'POST',
-    url: `${server}/api/${API_VERSION}/note/shareToOther`,
+    url: `/api/${API_VERSION}/note/shareToOther`,
     data: data,
   };
 
@@ -215,7 +215,7 @@ async function shareToOther(data) {
 async function getShareToOther(note_id) {
   let config = {
     method: 'GET',
-    url: `${server}/api/${API_VERSION}/note/ShareToOther/${note_id}`,
+    url: `/api/${API_VERSION}/note/ShareToOther/${note_id}`,
     data: '',
   };
 
@@ -234,7 +234,7 @@ async function getShareToOther(note_id) {
 async function getShareAll(note_id) {
   let config = {
     method: 'GET',
-    url: `${server}/api/${API_VERSION}/note/shareToAll/${note_id}`,
+    url: `/api/${API_VERSION}/note/shareToAll/${note_id}`,
     data: '',
   };
 
@@ -276,7 +276,7 @@ $('#heart_sorting-btn').click(function (e) {
     e.target.style.color = 'blue';
     $('#time_sorting-btn i').css('color', 'grey');
     $('#comments_sorting-btn i').css('color', 'grey');
-    window.location = `${server}/socialPage?paging=${paging}&sorting=saved_count`;
+    window.location = `/socialPage?paging=${paging}&sorting=saved_count`;
   } else {
     e.target.style.color = 'grey';
   }
@@ -291,7 +291,7 @@ $('#time_sorting-btn').click(function (e) {
     $('#heart_sorting-btn i').css('color', 'grey');
     e.target.style.color = 'blue';
     $('#comments_sorting-btn i').css('color', 'grey');
-    window.location = `${server}/socialPage?paging=${paging}&sorting=created_time`;
+    window.location = `/socialPage?paging=${paging}&sorting=created_time`;
   } else {
     e.target.style.color = 'grey';
   }
@@ -306,7 +306,7 @@ $('#comments_sorting-btn').click(function (e) {
     $('#heart_sorting-btn i').css('color', 'grey');
     $('#time_sorting-btn i').css('color', 'grey');
     e.target.style.color = 'blue';
-    window.location = `${server}/socialPage?paging=${paging}&sorting=comment_count`;
+    window.location = `/socialPage?paging=${paging}&sorting=comment_count`;
   } else {
     e.target.style.color = 'grey';
   }
@@ -328,7 +328,7 @@ async function updateComment(comment_id, note_id) {
 
   let config = {
     method: 'PATCH',
-    url: `${server}/api/1.0/comment`,
+    url: `/api/1.0/comment`,
     data: data,
   };
 
@@ -357,7 +357,7 @@ async function deleteComment(comment_id, note_id) {
 
   let config = {
     method: 'DELETE',
-    url: `${server}/api/1.0/comment`,
+    url: `/api/1.0/comment`,
     data: data,
   };
 
@@ -426,9 +426,9 @@ $('#socialSearchBar').on('click', async function () {
   if ($('#daterange').val()) {
     startDate = $('#daterange').val().split('-')[0].replace(/\s/g, '');
     endDate = $('#daterange').val().split('-')[1].replace(/\s/g, '');
-    search_url = `${server}/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}&startDate=${startDate}&endDate=${endDate}`;
+    search_url = `/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}&startDate=${startDate}&endDate=${endDate}`;
   } else {
-    search_url = `${server}/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}`;
+    search_url = `/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}`;
   }
 
   let data = {
