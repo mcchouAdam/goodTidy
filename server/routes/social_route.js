@@ -6,6 +6,7 @@ const {
   wrapAsync,
   authentication,
   socialComment_auth,
+  annotation_auth,
 } = require('../../utils/util');
 const {
   socialPage,
@@ -39,7 +40,7 @@ router
 // 查看特定人分享的頁面
 router
   .route(`/sharedToOtherNote/:note_id`)
-  .get(authentication(), wrapAsync(showSharedNote));
+  .get(authentication(), annotation_auth(), wrapAsync(showSharedNote));
 
 //   .get('/sharedNote/:note_id', async (req, res) => {
 //   return res.render('sharedNote');

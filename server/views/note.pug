@@ -50,7 +50,9 @@ block content
                           label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
                           input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
                       li
-                        button#newest-version-btn.btn.dropdown-item 回復最新
+                        button#newest-version-btn.btn.dropdown-item 本地最新
+                      li
+                        button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 其他版本
                   .card-body
                     h5.card-title#update-note-name
                       //- span /微笑呵呵呵
@@ -131,7 +133,7 @@ block content
                               #modal-shareToAll-main.modal-body
                                 #share_note_name
                                   .form-check.form-switch
-                                    label.form-check-label(for='flexSwitchCheckDefault') 向特定人分享
+                                    label.form-check-label(for='flexSwitchCheckDefault') 其他人分享給您的筆記
                                     input#shareToOther-toggle.form-check-input(type='checkbox', role='switch')
                                   #shareToOhterDetail(style="visibility: hidden")
                                     br
@@ -194,12 +196,6 @@ block content
                         button.openbtn#annotation-show-btn
                             i.fa.fa-commenting-o
 
-                        //- TODO: AutoSava 改在選單裡
-                        //- AutoSave
-                        //- input#autoSave_box(type='checkbox', name='autoSave', value='autoSave')
-                        //- | AutoSave
-                        button#newest-version-btn(style="font-size:16px")
-                          i.fa.fa-solid.fa-refresh
 
                         //- 特定人分享頁面
                         button#sharedNote-btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
@@ -210,15 +206,15 @@ block content
                               .modal-header
                                 .input-group
                                   .form-outline
-                                  h5.modal-title 特定人分享
+                                  h5.modal-title 其他人分享給您的筆記
                                   button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               #modal-sharedNote-main.modal-body
                               .modal-footer
                                 button#sharedNote-change.btn.btn-primary(type='button') 查看
 
-                        //- 版控
-                        button#version_list-btn(type='button', data-bs-toggle='modal', data-bs-target='#versionModal', style="font-size:16px")
-                          i.fa.fa-solid.fa-code-fork
+                        //- //- 版控
+                        //- button#version_list-btn(type='button', data-bs-toggle='modal', data-bs-target='#versionModal', style="font-size:16px")
+                        //-   i.fa.fa-solid.fa-code-fork
                         //- Modal
                         #versionModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
                           .modal-dialog
@@ -226,33 +222,24 @@ block content
                               .modal-header
                                 .input-group
                                   .form-outline
-                                  h5.modal-title 版本回復
+                                  h5.modal-title 其他版本
                                   //- button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
                                   button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               #modal-version-main.modal-body
                               .modal-footer
                                 button#version-change.btn.btn-primary(type='button') 回復
-                        
-                        //- 觀看留言鍵
-                        .form-check.form-switch
-                          label.form-check-label(for='flexSwitchCheckDefault') 觀看留言
-                          input#annotation-watch-toggle.form-check-input(type='checkbox', role='switch')
 
                         .col-12#update-note-content(width='600px', height='500px')
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
 
       script.
-            // 觀看註釋鍵
-            $('#annotation-watch-toggle').change(async function () {
-                if (this.checked) {
-                  $('#sidebar-nav').html('');
-                  $('.fa.fa-solid.fa-comments').remove();
-                  await getAnnotation("6325d0362b02266fd75a01b1", current_note_id);
-                  await showAnnotation($('#sidebar-nav'), $('#update-note-content'), current_annotation_element);
-                } else {
-                  $('#sidebar-nav').html('');
-                  $('.fa.fa-solid.fa-comments').remove();
-                  showNoteList(note_list_obj, $('#sidebar-nav'));
-                }
-            });
+        // 跳轉註解編輯頁鍵
+        $('#annotation-show-btn').click(async function () {
+            if(!current_note_id){
+              alert('請先選擇筆記');
+              return;
+            }
+
+            window.open(`/sharedToOtherNote/${current_note_id}`);
+        })

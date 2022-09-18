@@ -139,8 +139,8 @@ const getUserNotes = async (user_id, note_permission) => {
       permissions.push(Object.values(n)[0]);
     });
 
-    console.log('ids', ids);
-    console.log('permissions', permissions);
+    // console.log('ids', ids);
+    // console.log('permissions', permissions);
 
     const result = await NotesCollection.aggregate([
       { '$match': { '_id': { $in: note_ids } } },
@@ -935,7 +935,7 @@ const getNoteAuth = async (user) => {
       .project({ 'note_info._id': 1 })
       .toArray();
 
-    console.log('ownNotes: ', ownNotes[0].note_info);
+    // console.log('ownNotes: ', ownNotes[0].note_info);
     let note_ids = ownNotes[0].note_info;
 
     note_ids.map((i) => {
@@ -977,13 +977,58 @@ const getNoteAuth = async (user) => {
   }
 };
 
+// 註釋權限
+const getAnnotationAuth = async (user_email, note_id, user_id) => {
+  const NoteCollection = Mongo.db(MONGO_DB).collection('notes');
+
+  try {
+    // 拿取該筆記分享給這個使用者的權限
+    const sharedUsers = await NoteCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+          sharing_user: { $elemMatch: { user_email: user_email } },
+        },
+      },
+    ])
+      .project({ '_id': 1, 'sharing_user': 1, 'user_id': 1 })
+      .toArray();
+
+    let permission = 0;
+    if (sharedUsers.length == 0) {
+      return 0;
+    }
+    // sharing_user的permission值
+    sharedUsers.map((s) => {
+      let user_email_values = Object.values(s.sharing_user);
+      user_email_values.map((u) => {
+        if (u.user_email == user_email) {
+          permission = u.permission;
+        }
+      });
+    });
+
+    // 確認是否為自己的筆記
+    if (sharedUsers[0].user_id === user_id) {
+      permission = 16;
+    }
+
+    return permission;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
 // [註釋] ----------------------------------------------------------
 // 新增註釋
-const createAnnotation = async (
+const updateAnnotation = async (
   note_id,
   annotion_user_id,
   annotation_icon_html,
-  annotation_textarea
+  annotation_textarea,
+  annotation_user_name
 ) => {
   const AnnotationCollection = Mongo.db(MONGO_DB).collection('annotation');
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
@@ -1018,15 +1063,15 @@ const createAnnotation = async (
 
     await AnnotationCollection.updateOne(
       {
-        user_id: annotion_user_id,
+        note_id: note_id,
       },
       {
         $set: {
           user_id: annotion_user_id,
           note_id: note_id,
           annotation_icon_html: annotation_icon_html,
-          annotation_textarea,
-          annotation_textarea,
+          annotation_textarea: annotation_textarea,
+          annotation_user_name: annotation_user_name,
         },
       },
       { upsert: true }
@@ -1039,19 +1084,18 @@ const createAnnotation = async (
 };
 
 // 拿取註釋 ---------------------------------------------------------
-const getAnnotation = async (note_id, annotion_user_id) => {
+const getAnnotation = async (note_id) => {
   const AnnotationCollection = Mongo.db(MONGO_DB).collection('annotation');
   try {
     const result = await AnnotationCollection.aggregate([
       {
         '$match': {
           'note_id': note_id,
-          'user_id': annotion_user_id,
         },
       },
     ]).toArray();
 
-    console.log('getAnnotation: ', result);
+    // console.log('getAnnotation: ', result);
     return result;
   } catch (error) {
     return { error };
@@ -1083,6 +1127,7 @@ module.exports = {
   getComments,
   deleteComment,
   createSave,
-  createAnnotation,
+  updateAnnotation,
   getAnnotation,
+  getAnnotationAuth,
 };

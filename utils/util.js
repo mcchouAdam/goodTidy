@@ -62,6 +62,38 @@ const socialComment_auth = () => {
   };
 };
 
+// 註解的Authorization
+const annotation_auth = () => {
+  return async function (req, res, next) {
+    try {
+      const user_email = req.session.user.email;
+      const note_id = req.params.note_id || req.body.note_id;
+      const user_id = req.session.user._id;
+
+      const permission_result = await Note.getAnnotationAuth(
+        user_email,
+        note_id,
+        user_id
+      );
+
+      console.log('permission_result', permission_result);
+      // 無權限
+      if (permission_result == 0) {
+        return res.status(403).json({ 'msg': '抱歉！您沒有權限觀看' });
+      }
+
+      // 其他權限至少可以看
+      req.permission = permission_result;
+      next();
+
+      return;
+    } catch (err) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+  };
+};
+
 const timeConverter = (date) => {
   dataValues = [
     date.getFullYear(),
@@ -83,4 +115,5 @@ module.exports = {
   noteAuthorization,
   timeConverter,
   socialComment_auth,
+  annotation_auth,
 };

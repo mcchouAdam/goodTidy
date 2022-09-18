@@ -112,17 +112,17 @@ const deleteComments = async (req, res) => {
 // 呈現特定人分享的網頁資訊
 const showSharedNote = async (req, res) => {
   const annotion_user_id = req.session.user.id;
+  const annotion_user_name = req.session.user.name;
   const note_id = req.params.note_id;
-
-  console.log('annotion_user_id', annotion_user_id);
 
   const result = await getNoteById(note_id);
 
   const noteDetails = await showShareDetail(result);
-  // console.log('5555555', noteDetails);
 
   return res.render('sharedToOtherNote', {
+    permission: req.permission,
     annotion_user_id: annotion_user_id,
+    annotion_user_name: annotion_user_name,
     note_id: note_id,
     user_name: noteDetails.user_name,
     user_email: noteDetails.user_email,

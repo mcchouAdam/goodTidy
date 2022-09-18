@@ -38,7 +38,7 @@ block content
                           i.fa.fa-floppy-o
 
                       //- 新增留言鍵
-                      button.openbtn#comment-btn
+                      button.openbtn#annotation-btn
                           i.fa.fa-solid.fa-comments
                       
                       //- 觀看留言鍵
@@ -53,17 +53,23 @@ block content
       script.
               text_elements = !{text_elements};
               elements = !{elements};
+
+              let user_permission = !{JSON.stringify(permission)};
               let note_id = !{JSON.stringify(note_id)};
               let user_name = !{JSON.stringify(user_name)};
               let file_name = !{JSON.stringify(file_name)};
               let annotion_user_id = !{JSON.stringify(annotion_user_id)};
+              let annotion_user_name = !{JSON.stringify(annotion_user_name)}
 
+              // 重新渲染物件 (圖片+文字+註解)
               let text_element = text_elements_arr($('#update-note-content'), text_elements);
               let img_element = Img_elements_arr(elements);
 
-              console.log(text_element, img_element);
+              //- console.log("text_element:", text_element, "img_element: ", img_element);
               elements_init($('#update-note-content'), img_element, text_element);
 
+
+              // 圖片物件渲染(不可動)
               function Img_elements_arr(note_Imgcontent) {
                   let Img_elements = [];
                   let elements = $.parseHTML(note_Imgcontent);
@@ -77,14 +83,14 @@ block content
                   return Img_elements;
               }
 
+              // 文字物件渲染(不可動)
               function text_elements_arr(append_div, note_textContent) {
                   let text_elements = [];
                   if (!note_textContent) {
                       return [];
                   }
-
                   note_textContent.map((s) => {
-                      const element = Textarea_draggable_html(
+                      const element = Textarea_Notdraggable_html(
                           append_div,
                           s.text,
                           s.width,
@@ -104,7 +110,7 @@ block content
                   });
               }
 
-              function Textarea_draggable_html(
+              function Textarea_Notdraggable_html(
                   div_id,
                   text,
                   width,
@@ -133,8 +139,9 @@ block content
                   return newElement;
               }
 
-              // 留言button
-              $('#comment-btn').click(function (e) {
+              // 註解button
+              // 生成可移動註解icon + 導覽列的註解框
+              $('#annotation-btn').click(function (e) {
                 let annotation_count = $('.form-group').length;
                 let current_annotation_num = annotation_count + 1;
                 let annotation_id = `${note_id}_annotation_${current_annotation_num}`;
@@ -178,11 +185,14 @@ block content
                 let annotation_html = `
                                 <div class="form-group" id="form-group-${annotation_id}">
                                   <span class="badge bg-dark rounded-pill">${current_annotation_num}</span>
+                                  <span class="badge bg-info rounded-pill">${annotion_user_name}</span>
                                   <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..."></textarea>
                                   ${annotation_menu_html}
                                 </div>`;
 
                 $('#sidebar-comment').append(annotation_html);
+
+            
               });
 
               // 存檔鍵按鈕
@@ -193,9 +203,19 @@ block content
               // 觀看註釋鍵
               $('#annotation-watch-toggle').change(async function () {
                   if (this.checked) {
-                    await getAnnotation(annotion_user_id, note_id);
+                    await getAnnotation(note_id);
                     await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element);
+                  
+                    // TODO: 讀取權限表，目前寫死
+                    if(user_permission == 1){
+                      $('button').prop('disabled','true');
+                      //- $('.d-flex.flex-row.align-items-center').remove();
+                    }else if(user_permission >= 2){
+                      $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').draggable({ containment: '#update-note-content' });
+                      $('textarea').prop("disabled", false);
+                    }
                   } else {
-                    //- AutoSave.stop();
+                      $('#sidebar-comment').html('');
+                      $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').remove();
                   }
               });

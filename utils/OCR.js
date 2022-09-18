@@ -9,6 +9,7 @@ const client = new vision.ImageAnnotatorClient({
 
 const OCR_google = async (req, res) => {
   // filename
+  // console.log('aaaa');
   const filename = req.filename;
   // console.log(filename);
   const [result] = await client.textDetection(`${S3_HOST}/OCR/${filename}`);
@@ -20,17 +21,5 @@ const OCR_google = async (req, res) => {
 
   return res.status(200).json(detections);
 };
-
-/**
- * TODO(developer): Uncomment the following line before running the sample.
- */
-// const fileName = 'Local image file, e.g. /path/to/image.png';
-
-// // Performs text detection on the local file
-// $env:GOOGLE_APPLICATION_CREDENTIALS="/home/ec2-user/googleAPI/appworkssideproject-b9d30923d7e4.json"
-
-// env GOOGLE_APPLICATION_CREDENTIALS="/home/ec2-user/googleAPI/appworkssideproject-b9d30923d7e4.json"
-
-// $env:GOOGLE_APPLICATION_CREDENTIALS="C:\Users\adamp\appworkssideproject-b9d30923d7e4.json"
 
 module.exports = { OCR_google };
