@@ -1,4 +1,6 @@
 const router = require('express').Router();
+require('dotenv').config();
+const API_VERSION = process.env.API_VERSION;
 
 const { wrapAsync, authentication } = require('../../utils/util');
 
@@ -8,15 +10,21 @@ const {
   signIn,
   logOut,
   getUserProfile,
+  showUserProfile,
 } = require('../controllers/user_controller');
 
 const userPictureUpload = userPicUpload.fields([
   { name: 'user_pic_upload', maxCount: 1 },
 ]);
 
-router.route('/user/signup').post(userPictureUpload, wrapAsync(signUp));
-router.route('/user/signin').post(wrapAsync(signIn));
-router.route('/user/logout').get(wrapAsync(logOut));
-router.route('/user/profile').get(authentication(), wrapAsync(getUserProfile));
+router
+  .route(`/api/${API_VERSION}/user/signup`)
+  .post(userPictureUpload, wrapAsync(signUp));
+router.route(`/api/${API_VERSION}/user/signin`).post(wrapAsync(signIn));
+router.route(`/api/${API_VERSION}/user/logout`).get(wrapAsync(logOut));
+router
+  .route(`/api/${API_VERSION}/user/profile`)
+  .get(authentication(), wrapAsync(getUserProfile));
+router.route(`/profile`).get(authentication(), wrapAsync(showUserProfile));
 
 module.exports = router;

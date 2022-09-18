@@ -1,3 +1,6 @@
+require('dotenv').config();
+const { S3_HOST } = process.env;
+
 const {
   getShareNotes,
   getNoteById,
@@ -11,7 +14,6 @@ const {
   showShareDetail,
   showSocialCards,
   showPagination,
-  showCommentsDetail,
 } = require('../../utils/showPage');
 
 const socialPage = async (req, res) => {
@@ -24,7 +26,11 @@ const socialPage = async (req, res) => {
   const search_text = req.query.search_text;
   const search_method = req.query.search_method;
 
-  console.log('search_text', search_text, 'search_method', search_method);
+  const id = req.session.user.id;
+  const provider = req.session.user.provider;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
+  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   const result = await getShareNotes(
     paging,
@@ -39,33 +45,47 @@ const socialPage = async (req, res) => {
   const paging_html = await showPagination(paging);
 
   return res.render('socialPage', {
+    id: id,
+    provider: provider,
+    name: name,
+    email: email,
+    picture: picture,
     cards_html: JSON.stringify(cards_html),
     paging_html: JSON.stringify(paging_html),
   });
 };
 
-const shareDetailPage = async (req, res) => {
+const shareNotePage = async (req, res) => {
   const note_id = req.query.id;
-  console.log(req.query);
+  const id = req.session.user.id;
+  const provider = req.session.user.provider;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
+  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
   const result = await getNoteById(note_id);
   const noteDetails = await showShareDetail(result);
-  // const comments = await getComments(note_id);
-  // const comments_html = await showCommentsDetail(comments, note_id);
 
-  console.log(noteDetails);
-
-  return res.render('shareDetailPage', {
-    elements: JSON.stringify(noteDetails),
-    // comments: JSON.stringify(comments_html),
+  return res.render('shareNotePage', {
+    id: id,
+    provider: provider,
+    name: name,
+    email: email,
+    picture: picture,
+    user_name: noteDetails.user_name,
+    user_picture: noteDetails.user_picture,
+    note_name: noteDetails.note_name,
+    sharing_time: noteDetails.sharing_time,
+    file_name: noteDetails.file_name,
+    text_elements: JSON.stringify(noteDetails.text_elements),
+    elements: JSON.stringify(noteDetails.elements),
   });
 };
 
 const createComments = async (req, res) => {
-  // if (req.permission < 3) {
-  //   return res.status(403).json({ 'data': '您沒有權限留言' });
-  // }
   req.body.user_id = req.session.user.id;
   const data = req.body;
+  data.permission = req.permission;
   const result = await createComment(data);
 
   return res.status(200).json(`comment_id ${result} created successfully!`);
@@ -89,10 +109,36 @@ const deleteComments = async (req, res) => {
   return res.status(200).json(result);
 };
 
+// 呈現特定人分享的網頁資訊
+const showSharedNote = async (req, res) => {
+  const annotion_user_id = req.session.user.id;
+  const note_id = req.params.note_id;
+
+  console.log('annotion_user_id', annotion_user_id);
+
+  const result = await getNoteById(note_id);
+
+  const noteDetails = await showShareDetail(result);
+  // console.log('5555555', noteDetails);
+
+  return res.render('sharedToOtherNote', {
+    annotion_user_id: annotion_user_id,
+    note_id: note_id,
+    user_name: noteDetails.user_name,
+    user_email: noteDetails.user_email,
+    user_picture: noteDetails.user_picture,
+    note_name: noteDetails.note_name,
+    file_name: noteDetails.file_name,
+    text_elements: JSON.stringify(noteDetails.text_elements),
+    elements: JSON.stringify(noteDetails.elements),
+  });
+};
+
 module.exports = {
   socialPage,
-  shareDetailPage,
+  shareNotePage,
   createComments,
   updateComments,
   deleteComments,
+  showSharedNote,
 };

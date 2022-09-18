@@ -20,7 +20,7 @@ const authentication = () => {
       next();
     } else {
       console.log('not authenticated');
-      return res.status(403).render('homePage');
+      return res.status(403).render('NotSignIn');
     }
   };
 };
@@ -49,11 +49,7 @@ const socialComment_auth = () => {
       const user_email = req.session.user.email;
       const note_id = req.query.id || req.body.note_id;
       const permission_result = await Note.getSocialAuth(user_email, note_id);
-
-      console.log('permission_result', user_email, permission_result);
-      if (permission_result < 3) {
-        return res.status(403).json({ 'msg': '您無權限留言' });
-      }
+      // console.log('permission_result', user_email, permission_result);
 
       req.permission = permission_result;
       next();
@@ -66,8 +62,7 @@ const socialComment_auth = () => {
   };
 };
 
-const timeConverter = (timestamp) => {
-  let date = new Date(timestamp);
+const timeConverter = (date) => {
   dataValues = [
     date.getFullYear(),
     date.getMonth() + 1,

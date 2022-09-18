@@ -1,6 +1,6 @@
 // HOST
 let S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
-let server = 'http://localhost:3000';
+let server = 'http://localhost:3001';
 let API_VERSION = '1.0';
 
 // user info --------------------------------------
@@ -34,6 +34,7 @@ let canvas_height = 500;
 
 // Sharing Permission ------------------------------
 const authorizationList = {
+  'forbidden': 0,
   'read': 1,
   'comment': 2,
   'update': 4,
@@ -54,19 +55,33 @@ let sharing_image;
 let sharing_url;
 let tags;
 
+// 當前欲刪除的筆記物件
+let current_delete_element;
+
+// 註釋資訊
+let current_annotation_element;
+
 // 預先讀取
 $(window).on('load', async function () {
   // [筆記上傳頁面] 限制預覽頁面寬度
   $('#fontOCRCanvas').attr('width', canvas_width).attr('height', canvas_height);
 
-  // 拿取User的Profile
+  // 拿取User的Profile;
   await profile();
 
-  // 拿取User所有note的資訊
+  // 拿取User所有note的資訊;
   await getUserNotes();
 
   // 拿取[社群頁面]排序狀態
   await getSocialSortingColor();
 
-  console.log('current_user_id: ', user_id);
+  // 剛開始讀取使用者最近剛編輯的文章
+  AutoSave.restore();
+
+  // $('#update-note-content').click(function (event) {
+  //   current_delete_element = $(event.target);
+  //   $(event.target).focus(function () {
+  //     $(this).next('span').css('display', 'inline').fadeOut(1000);
+  //   });
+  // });
 });

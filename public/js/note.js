@@ -1,3 +1,4 @@
+// 筆記上傳 API ----------------------------
 async function noteUpload(
   blob,
   filename,
@@ -44,7 +45,9 @@ async function noteUpload(
 async function noteShow(note_id) {
   // Assign Global Variable
   current_note_id = note_id;
-  console.log(current_note_id);
+
+  console.log('showNote_note_obj', showNote_note_obj);
+  $('#update-note-name').html(showNote_note_obj[note_id]['note_name']);
 
   // 每次更換筆記都要洗掉之前的OCR物件
   OCR_ids = [];
@@ -57,7 +60,7 @@ async function noteShow(note_id) {
   note_bg = note_filename;
 
   const text_elements = text_elements_arr($note_div, note_textContent);
-  const Img_elements = Img_draggable_arr(note_ImgContent);
+  const Img_elements = Img_elements_arr(note_ImgContent);
   elements_init($note_div, Img_elements, text_elements);
   $('.contour-pic.ui-draggable.ui-draggable-handle')
     .draggable({
@@ -69,7 +72,7 @@ async function noteShow(note_id) {
 async function getUserNotes() {
   let config = {
     method: 'get',
-    url: `${server}/api/${API_VERSION}/notes`,
+    url: `/api/${API_VERSION}/notes`,
     data: '',
   };
 
@@ -88,7 +91,6 @@ async function getUserNotes() {
       // console.log('version_obj', version_obj);
 
       version_obj.map((s) => {
-        console.log('看這: ', s);
         // console.log(s);
         const note_classification = s.note_classification;
         const note_file_name = s.file_name;
@@ -104,10 +106,14 @@ async function getUserNotes() {
         const user_picture = s.user_info[0].picture;
         const user_name = s.user_info[0].name;
 
+        console.log(note_name, user_permission);
+        console.log(user_id);
+
         if (user_permission !== authorizationList['admin']) {
           // 筆記呈現頁
           if (!sharedNote_obj[note_name]) {
             sharedNote_obj[note_name] = {
+              'note_id': note_id,
               'note_elements': note_elements,
               'note_textElements': note_textElements,
               'note_file_name': note_file_name,
@@ -155,6 +161,8 @@ async function getUserNotes() {
           // 筆記呈現頁
           if (!showNote_obj[note_id]) {
             showNote_obj[note_id] = {
+              'note_classification': note_classification,
+              'note_name': note_name,
               'note_elements': note_elements,
               'note_textElements': note_textElements,
               'note_file_name': note_file_name,
@@ -173,64 +181,97 @@ async function getUserNotes() {
       // 點選列表筆記時需呈現的內容
       showNote_note_obj = $.extend(true, [], showNote_obj);
 
-      // 點選列表筆記時需呈現的內容
+      // 點選筆記特定人分享時需呈現的內容
       shared_note_obj = $.extend(true, [], sharedNote_obj);
 
       // Show the NoteListNav
-      showNoteList(note_obj, $('#search-list'));
+      showNoteList(note_obj, $('#sidebar-nav'));
     })
     .catch((error) => {
       console.log(error);
-      alert('請先登入');
     });
 }
 
 // 筆記導覽列
 async function showNoteList(note_obj, div_append) {
-  const classification = Object.keys(note_obj);
-  let mb1_html = $('<li class="mb-1"></li>');
-  let name_html = '';
+  console.log('note_obj: ', note_obj);
+  const classifications = Object.keys(note_obj);
+  let all_html = '';
   let classification_html = '';
+  let notes_html = '';
+  let note_menu_html = '';
 
-  classification.map((c) => {
-    let ids = note_obj[c].note_id;
-    let names = note_obj[c].note_name;
+  classifications.map((classfi) => {
+    console.log('classfi: ', classfi);
+    let ids = note_obj[classfi].note_id;
+    let names = note_obj[classfi].note_name;
 
-    classification_html += `
-          <button
-            class="btn btn-toggle align-items-center rounded collapsed"
-            data-bs-toggle="collapse"
-            data-bs-target="#${c}-collapse"
-            aria-expanded="true"
-          >${c}
-          </button><div class="collapse show" id="${c}-collapse">
-            <a href="javascript:renameclassification('${user_id}','${c}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-            <a href="javascript:deleteclassification('${user_id}','${c}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a></li>
-            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">`;
+    // console.log('ids: ', ids);
+    // console.log('names: ', names);
 
+    // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {
-      name_html += `<li><a href="javascript:noteShow('${ids[i]}')" class="link-dark rounded">${names[i]}</a>
-      <a href="javascript:renameNote('${ids[i]}')"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
-      <a href="javascript:deleteNote('${ids[i]}')"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
-      <a href="javascript:moveNote('${ids[i]}')"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
-      </li>`;
+      note_menu_html = '';
+      note_menu_html += `<div class="d-flex flex-row align-items-center">
+        <a
+          class="btn"
+          id="dropdownMenuLink"
+          href="#"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">
+            修改名稱
+          </a>
+          <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">
+            刪除
+          </a>
+          <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">
+            搬移
+          </a>
+        </div>
+      </div>`;
+
+      notes_html += `
+        <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="javascript:noteShow('${ids[i]}', $('#update-note-content'))">
+              <i class="bi bi-circle"></i>
+              <span>${names[i]}</span>
+              ${note_menu_html}
+            </a>
+          </li>
+        </ul>`;
     }
 
-    classification_html += name_html;
-    classification_html += `</ul></div>`;
+    // 分類的tag html
+    classification_html = `
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-menu-button-wide"></i>
+            <span>${classfi}</span>
+          <i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        ${notes_html}
+      </li>`;
 
-    name_html = '';
+    all_html += classification_html;
+    classification_html = '';
+    notes_html = '';
+    note_menu_html = '';
   });
 
-  mb1_html.append(classification_html);
-  div_append.append(mb1_html);
-  //   $('.list-unstyled').append(mb1_html);
+  div_append.append(all_html);
 }
 
 async function showSearchList(note_obj, div_append) {
   div_append.html('');
   const classification = Object.keys(note_obj);
-  let mb1_html = $('<li class="mb-1"></li>');
   let name_html = '';
 
   classification.map((c) => {
@@ -244,14 +285,12 @@ async function showSearchList(note_obj, div_append) {
     }
   });
 
-  mb1_html.append(name_html);
-  div_append.append(mb1_html);
-  //   $('.list-unstyled').append(mb1_html);
+  div_append.append(name_html);
 }
 
 // 特定人分享List的內容
 async function getSharedNote(sharedNote_obj, div_append) {
-  // console.log('sharedNote_obj', sharedNote_obj);
+  console.log('sharedNote_obj', sharedNote_obj);
 
   div_append.html('');
   let shareNote_html = '';
@@ -269,6 +308,7 @@ async function getSharedNote(sharedNote_obj, div_append) {
                         <span class="badge bg-success rounded-pill">${permissionToName[permission]}</span><br \>
                         `;
   });
+  console.log(shareNote_html);
   div_append.append(shareNote_html);
 }
 
@@ -304,13 +344,20 @@ async function getVersionList(version_obj, div_append) {
 async function noteShowFromVer(name, Obj) {
   // console.log('version_recovery: ', showVerObj[version_name]);
   $('#update-note-content').html('');
-  const Img_elements = Img_draggable_arr(Obj[name].elements);
+  const Img_elements = Img_elements_arr(Obj[name].elements);
   // console.log(Img_elements);
   const text_elements = text_elements_arr(
     $('#update-note-content'),
     Obj[name].text_elements
   );
   elements_init($('#update-note-content'), Img_elements, text_elements);
+
+  // 讓圖片可以移動
+  $('.contour-pic.ui-draggable.ui-draggable-handle')
+    .draggable({
+      containment: '#update-note-content',
+    })
+    .on('drag', stepDrag);
 }
 
 // 查看特定人分享 -------------------------------------------------------
@@ -318,12 +365,27 @@ async function sharedNoteShow(name, Obj) {
   $('#update-note-content').html('');
   console.log('name:', name, 'Obj: ', Obj);
   note_bg = Obj[name].note_file_name;
-  const Img_elements = Img_draggable_arr(Obj[name].note_elements);
-  const text_elements = text_elements_arr(
+  const user_permission = Obj[name].user_permission;
+  const Img_elements = Img_elements_arr(Obj[name].note_elements);
+  const text_elements = textarea_nondraggable_arr(
     $('#update-note-content'),
     Obj[name].note_textElements
   );
   elements_init($('#update-note-content'), Img_elements, text_elements);
+  $('textarea').prop('disabled', true);
+  $('textarea').draggable({ 'disable': true });
+
+  // //- 只能觀看，關閉所有前端按鍵
+  // if (user_permission === 1) {
+  //   $('#prev').attr('disabled', true);
+  //   $('#next').attr('disabled', true);
+  //   $('#addfont').attr('disabled', true);
+  //   $('#storeNote').attr('disabled', true);
+  //   $('#deleteElement').attr('disabled', true);
+  //   $('#share-btn').attr('disabled', true);
+  //   $('#newest-version-btn').attr('disabled', true);
+  //   $('#version_list-btn').attr('disabled', true);
+  // }
 }
 
 // 改名筆記 ------------------------------------------------------------
@@ -474,4 +536,180 @@ async function deleteclassification(user_id, classificationName) {
         alert('刪除分類失敗');
       });
   }
+}
+
+// 註釋 ------------------------------------------------------
+// 鎖定註釋
+async function lockAnnotation(annotation_id) {
+  const isCreated = window.confirm('確定新增此註釋?');
+
+  let annotation_icon_html = '';
+  let icon_class = '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
+  let annotation_icon_count = $(icon_class).length;
+  if (!isCreated) {
+    return;
+  }
+  alert($('#textarea-' + annotation_id).val());
+  $('#textarea-' + annotation_id).prop('disabled', true);
+  $('#icon-' + annotation_id).draggable('disable');
+
+  for (let i = 0; i < annotation_icon_count; i++) {
+    annotation_icon_html += $(icon_class).get(i).outerHTML;
+  }
+
+  console.log(annotation_icon_html);
+}
+
+// 修改註釋
+async function modifyAnnotation(annotation_id) {
+  const isModified = window.confirm('確定修改此註釋?');
+  if (!isModified) {
+    return;
+  }
+  // alert($('#' + annotation_id).val());
+  $('#textarea-' + annotation_id).prop('disabled', false);
+  $('#icon-' + annotation_id).draggable('enable');
+}
+
+async function deleteAnnotation(annotation_id) {
+  const isDeleted = window.confirm('確定刪除此註釋?');
+  if (!isDeleted) {
+    return;
+  }
+
+  $('#icon-' + annotation_id).remove();
+  $('#form-group-' + annotation_id).remove();
+}
+
+// 儲存註釋 ---
+async function saveAnnotation(annotion_user_id, note_id) {
+  const isSaved = window.confirm('確定要儲存全部的註釋?');
+  if (!isSaved) {
+    return;
+  }
+  let annotation_icon_html = '';
+  let annotation_textarea = [];
+  let annotation_icon_class =
+    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
+  let annotation_textarea_class = 'textarea.form-control';
+  let annotation_icon_count = $(annotation_icon_class).length;
+  let annotation_textare_count = $(annotation_textarea_class).length;
+
+  // 儲存註釋icon的html
+  for (let i = 0; i < annotation_icon_count; i++) {
+    annotation_icon_html += $(annotation_icon_class).get(i).outerHTML;
+  }
+
+  // 儲存註釋textarea的值
+  for (let i = 0; i < annotation_textare_count; i++) {
+    annotation_textarea.push($(annotation_textarea_class).get(i).value);
+  }
+
+  // axios儲存資料庫
+  let data = {
+    'note_id': note_id,
+    'annotion_user_id': annotion_user_id,
+    'annotation_icon_html': annotation_icon_html,
+    'annotation_textarea': JSON.stringify(annotation_textarea),
+  };
+
+  let config = {
+    method: 'POST',
+    url: `/api/1.0/annotation`,
+    data: data,
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(response);
+      alert('儲存註釋成功');
+      location.reload();
+    })
+    .catch(function (error) {
+      console.log(error);
+      alert('儲存註釋失敗');
+    });
+}
+
+// 拿取註釋資料 ---
+async function getAnnotation(annotion_user_id, note_id) {
+  let config = {
+    method: 'GET',
+    url: `/api/1.0/annotation/${note_id}/${annotion_user_id}`,
+    data: '',
+  };
+
+  await axios(config)
+    .then(function (response) {
+      current_annotation_element = response.data[0];
+      alert('拿取註釋成功');
+    })
+    .catch(function (error) {
+      console.log(error);
+      alert('拿取註釋失敗');
+    });
+}
+
+// 呈現註釋
+async function showAnnotation(
+  textarea_div_append,
+  icon_div_append,
+  annotation_element
+) {
+  // 顯示註釋icon
+  const annotation_icon_html = annotation_element.annotation_icon_html;
+  const annotation_icon = $.parseHTML(annotation_icon_html);
+  icon_div_append.append(annotation_icon);
+  $(
+    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle.ui-draggable-disabled'
+  ).draggable({ containment: '#update-note-content' });
+
+  // 顯示註釋textarea
+  const annotation_text = annotation_element.annotation_textarea;
+  const note_id = annotation_element.note_id;
+  const annotation_count = annotation_text.length;
+  let annotation_id;
+  let textarea_html = '';
+
+  for (id = 1; id <= annotation_count; id++) {
+    annotation_id = `${note_id}_annotation_${id}`;
+
+    // 組合annotation
+    let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
+                      <button class="btn" type="button" onclick="javascript:lockAnnotation('${annotation_id}')"><i class="bi bi-send"></i></button>
+                      <a
+                        class="btn"
+                        id="dropdownMenuLink"
+                        href="#"
+                        role="button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
+                          修改註釋
+                        </a>
+                        <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
+                          移除
+                        </a>
+                      </div>
+                    </div>`;
+
+    let annotation_html = `
+                          <div class="form-group" id="form-group-${annotation_id}">
+                            <span class="badge bg-dark rounded-pill">${id}</span>
+                            <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..." disabled>${
+      annotation_text[id - 1]
+    }</textarea>
+                            ${annotation_menu_html}
+                          </div>`;
+
+    textarea_html += annotation_html;
+  }
+
+  textarea_div_append.append(textarea_html);
+  // console.log(annotation_element);
 }

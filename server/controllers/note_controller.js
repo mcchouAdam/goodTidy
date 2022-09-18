@@ -1,6 +1,24 @@
-const { ConditionFilterSensitiveLog } = require('@aws-sdk/client-s3');
 const Notes = require('../models/note_model');
 const { showShareToOtherList } = require('../../utils/showPage');
+require('dotenv').config();
+const { S3_HOST } = process.env;
+
+// 渲染筆記頁面
+const showNote = async (req, res) => {
+  const id = req.session.user.id;
+  const provider = req.session.user.provider;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
+  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+  return res.status(200).render('note', {
+    id: id,
+    provider: provider,
+    name: name,
+    email: email,
+    picture: picture,
+  });
+};
 
 // 新創筆記
 const createNote = async (req, res) => {
@@ -75,6 +93,8 @@ const getUserNotes = async (req, res) => {
   const note_permission = req.note_permission;
   const result = await Notes.getUserNotes(user_id, note_permission);
 
+  console.log('permission_result: ', result);
+
   return res.status(200).json(result);
 };
 
@@ -82,6 +102,8 @@ const shareToAll = async (req, res) => {
   req.body.user_id = req.session.user.user_id;
   const data = req.body;
   data.file_name = req.filename;
+
+  // console.log('shareToAll: ', data);
 
   const share = await Notes.shareToAll(data);
   return res.status(200).send(share);
@@ -101,6 +123,16 @@ const shareToOther = async (req, res) => {
   return res.json(share);
 };
 
+// 刪除對特定人的分享
+const deleteShareToOther = async (req, res) => {
+  const note_id = req.body.note_id;
+  const delete_email = req.body.delete_email;
+
+  await Notes.deleteShareToOther(note_id, delete_email);
+  return res.status(200).json({ 'msg': `${delete_email}刪除成功` });
+};
+
+// 印出該使用者分享給特定人的資訊
 const getShareToOther = async (req, res) => {
   // const user_id = req.session.user.id;
   const note_id = req.params.note_id;
@@ -120,7 +152,35 @@ const saveNote = async (req, res) => {
   return res.status(200).json(saveResult);
 };
 
+// [註釋] --------------------------------------------------
+// 新增註釋
+const createAnnotation = async (req, res) => {
+  const note_id = req.body.note_id;
+  const annotion_user_id = req.body.annotion_user_id;
+  const annotation_icon_html = req.body.annotation_icon_html;
+  const annotation_textarea = JSON.parse(req.body.annotation_textarea);
+
+  const createResult = await Notes.createAnnotation(
+    note_id,
+    annotion_user_id,
+    annotation_icon_html,
+    annotation_textarea
+  );
+
+  return res.status(200).json({ 'msg': '新增註釋成功' });
+};
+
+// 拿取註釋
+const getAnnotation = async (req, res) => {
+  const note_id = req.params.note_id;
+  const annotion_user_id = req.params.annotion_user_id;
+
+  const getResult = await Notes.getAnnotation(note_id, annotion_user_id);
+  return res.status(200).json(getResult);
+};
+
 module.exports = {
+  showNote,
   createNote,
   deleteNote,
   renameNote,
@@ -133,6 +193,9 @@ module.exports = {
   shareToAll,
   getShareToAll,
   shareToOther,
+  deleteShareToOther,
   getShareToOther,
   saveNote,
+  createAnnotation,
+  getAnnotation,
 };

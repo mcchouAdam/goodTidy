@@ -13,11 +13,9 @@ async function profile() {
       user_picture = response.data.data.picture;
       user_name = response.data.data.name;
       user_email = response.data.data.email;
-      // console.log('aaaaa: ', user_id, user_picture, user_name, user_email);
     })
     .catch((error) => {
       console.log(error);
-      console.log('登入失敗');
     });
 }
 
@@ -76,6 +74,7 @@ async function signIn(email, password) {
       user_name = response.data.data.user.name;
       user_email = response.data.data.user.email;
       alert(`${user_name}您好！登入成功`);
+      window.location.assign('/profile');
     })
     .catch((error) => {
       console.log(error);
@@ -101,7 +100,7 @@ $('#profile-dialog').dialog({ title: 'profile', autoOpen: false });
 $('#share-dialog').dialog({ title: 'share', autoOpen: false });
 
 // signIn頁面 ---------------------------------
-$('#signin-btn').click(function () {
+$('#signin-btn').click(function (e) {
   if (user_email) {
     showProfile();
   } else {
@@ -161,7 +160,7 @@ $('#share-btn').click(async function () {
     case 1:
       $('#allowWatch-toggle').prop('checked', true);
       break;
-    case 3:
+    case 2:
       $('#allowWatch-toggle').prop('checked', true);
       $('#allowComment-toggle').prop('checked', true);
       break;
@@ -170,54 +169,60 @@ $('#share-btn').click(async function () {
   // share_description
   $('#share_description').html(sharing_descrition);
 
+  console.log('sharing_descrition: ', sharing_descrition);
+
   // sharing_url 輸入Bar
   $('#share_url').val(`${server}${sharing_url}`);
 
-  // tags
+  $('.badge.bg-success.rounded-pill').remove();
   tags.map((t) => {
     $('.note_tags').append(
       `<span class="badge bg-success rounded-pill">${t}</span>`
     );
   });
-
-  // TODO: 上傳照片預覽
-  // sharing_image
-
-  // dialog開關
-  $('#signin-dialog').dialog('close');
-  $('#signup-dialog').dialog('close');
-  $('#profile-dialog').dialog('close');
-  $('#share-dialog').dialog('open');
 });
 
 // 註冊鍵 -------------------------------------
-$('#signup-form-btn').click(async function () {
+$('#signup-form-btn').click(async function (e) {
+  e.preventDefault();
+
   if (!user_email) {
     const email = $('#signup_useremail').val();
     const password = $('#signup_password').val();
     const username = $('#signup_username').val();
     const picture = $('#user_picture')[0].files[0];
-    const filename = picture.name;
+
+    if (!picture) {
+      // 沒上傳圖片
+      filename = '';
+    } else {
+      filename = picture.name;
+    }
 
     await signUp(picture, username, email, password, filename);
+    alert('註冊成功');
   }
   await showProfile();
+  // window.location.assign('/note');
 });
 
 // 登入鍵 -------------------------------------
-$('#signin-form-btn').click(async function () {
+$('#signin-form-btn').click(async function (e) {
+  e.preventDefault();
+
   if (!user_email) {
     const email = $('#signin_useremail').val();
     const password = $('#signin_password').val();
 
     await signIn(email, password);
-    location.reload(true);
+    alert('登入成功');
+    // location.reload(true);
   }
 });
 
 // 登出鍵
+// FIXME: PUG重整完刪除
 $('#logout').click(async function () {
-  // TODO: 刪除cookie
   let data = '';
 
   let config = {
@@ -235,5 +240,27 @@ $('#logout').click(async function () {
     .catch(function (error) {
       console.log(error);
       console.log('登出失敗');
+    });
+});
+
+// 登出鍵
+$('#logout-btn').click(async function () {
+  let data = '';
+
+  let config = {
+    method: 'GET',
+    url: `${server}/api/1.0/user/logout`,
+    data: data,
+  };
+
+  await axios(config)
+    .then(function (response) {
+      console.log(response);
+      alert('登出成功');
+      window.location.assign('/signin');
+    })
+    .catch(function (error) {
+      console.log(error);
+      alert('登出失敗');
     });
 });

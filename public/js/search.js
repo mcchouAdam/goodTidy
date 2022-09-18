@@ -1,20 +1,3 @@
-// function replaceText() {
-//   $('body').find('.highlight').removeClass('highlight');
-//   var searchword = $('#notename-search').val();
-
-//   var custfilter = new RegExp(searchword, 'ig');
-//   var repstr = "<span class='highlight'>" + searchword + '</span>';
-
-//   if (searchword != '') {
-//     $('#update-note-content').each(function () {
-//       $(this).html($(this).html().replace(custfilter, repstr));
-//       $(this).children().draggable({
-//         containment: '#update-note-content',
-//       });
-//     });
-//   }
-// }
-
 // 查找筆記List內容 -------------------------
 $('#search_note_list').keydown(function () {
   // 清空搜尋標記
@@ -26,11 +9,8 @@ $('#search_note_list').keydown(function () {
     if (search_text) {
       const pattern = new RegExp(search_text, 'i');
       let result = text.match(pattern);
-      // console.log(result);
       if (result) {
-        console.log(result);
         markSearchText(key);
-        console.log(key);
       }
     }
   });
@@ -38,7 +18,7 @@ $('#search_note_list').keydown(function () {
 
 $('#search_note_list-btn').click(function () {
   showSearchList(note_list_obj, $('#modal-main'));
-  $('input[name="daterange"]').daterangepicker();
+  // $('input[name="daterange"]').daterangepicker();
 });
 
 // mark search_note_list

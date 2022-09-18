@@ -1,60 +1,104 @@
-extends layout.pug
+extends layout_noSideBar.pug
 
 block content
-    .container
-        .row.justify-center
-            .col-12
-                header
-                .input-group.mb-3
-                    button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 筆記標題
-                    ul#socialPageSearchMenu.dropdown-menu.dropdown-menu-end
-                        li
-                            a.dropdown-item 發文者
-                        li
-                            a.dropdown-item 發文時間
-                        li
-                            a.dropdown-item 筆記標題
-                        li
-                            a.dropdown-item 筆記簡介
-                        li
-                            a.dropdown-item 筆記內容
-                        li
-                            a.dropdown-item tag
-                        li
-                            a.dropdown-item 收藏文章
-                    input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2')
-                    button#socialSearchBar
-                        i.fa.fa-search
-                    
-                    input#daterange(type='text', name='daterange')
+    body
+        main
+            .container(style='margin: 75px 0 0 0')
+                .row.justify-center
+                    .col-12
+                        header
+                        .input-group.mb-3
+                            button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 筆記標題
+                            ul#socialPageSearchMenu.dropdown-menu.dropdown-menu-end
+                                li
+                                    a.dropdown-item 發文者
+                                li
+                                    a.dropdown-item 發文時間
+                                li
+                                    a.dropdown-item 筆記標題
+                                li
+                                    a.dropdown-item 筆記簡介
+                                li
+                                    a.dropdown-item 筆記內容
+                                li
+                                    a.dropdown-item tag
+                                li
+                                    a.dropdown-item 收藏文章
+                            input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2')
+                            button#socialSearchBar
+                                i.fa.fa-search
+                            
+                            input#daterange(type='text', name='daterange')
 
-    //- .input-group.rounded
-    //-     input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
-    //-     span#search-addon.input-group-text.border-0
-    //-         i.fa.fa-search
-    //- 排序搜尋法
-    button#time_sorting-btn.btn
-        i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
-    button#heart_sorting-btn.btn
-        i.fa.fa-heart(aria-hidden='true', style='color:grey')
-    button#comments_sorting-btn.btn 
-        i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
-    //- 分享筆記卡片
-    #sharing-cards
-    br
-    //- 分頁
-    #paging-block
+            //- .input-group.rounded
+            //-     input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
+            //-     span#search-addon.input-group-text.border-0
+            //-         i.fa.fa-search
+            //- 排序搜尋法
+            button#time_sorting-btn.btn
+                i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
+            button#heart_sorting-btn.btn
+                i.fa.fa-heart(aria-hidden='true', style='color:grey')
+            button#comments_sorting-btn.btn 
+                i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
+            //- 分享筆記卡片
+            #sharing-cards
+            //- button.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#modalDialogScrollable')
+            //-   | Modal Dialog Scrollable
+            //- #modalDialogScrollable.modal.fade(tabindex='-1')
+            //-   .modal-dialog.modal-dialog-scrollable
+            //-     .modal-content
+            //-       .modal-header
+            //-         h5.modal-title 留言小板板
+            //-         button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+            //-       .modal-body
+            //-             .card-body
+            //-                 .card
+            //-                     .card-body
+            //-                         p(style="margin: 10px 0;") 把你啊罵賣掉
+            //-                         .d-flex.justify-content-between
+            //-                             .d-flex.flex-row.align-items-center
+            //-                                 img.comment-pic(src='https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp')
+            //-                                 p.small.mb-0.ms-2 Adam
+            //-                             .d-flex.flex-row.align-items-center
+            //-                                 button.btn(type='button')
+            //-                                 a#dropdownMenuLink.btn(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+            //-                                         i.bi.bi-three-dots(style='margin-top: -0.16rem;')
+            //-                                 .dropdown-menu(aria-labelledby='dropdownMenuLink')
+            //-                                     a.dropdown-item(href='#') 刪除
+            //-                                     a.dropdown-item(href='#') 修改
+            //-                 .card
+            //-                     .card-body
+            //-                         p(style="margin: 10px 0;") 我是你啊罵
+            //-                         .d-flex.justify-content-between
+            //-                             .d-flex.flex-row.align-items-center
+            //-                                 img.comment-pic(src='https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp')
+            //-                                 p.small.mb-0.ms-2 我是2號
+            //-                             .d-flex.flex-row.align-items-center
+            //-                                 button.btn(type='button')
+            //-                                 a#dropdownMenuLink.btn(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
+            //-                                         i.bi.bi-three-dots(style='margin-top: -0.16rem;')
+            //-                                 .dropdown-menu(aria-labelledby='dropdownMenuLink')
+            //-                                     a.dropdown-item(href='#') 刪除
+            //-                                     a.dropdown-item(href='#') 修改
+            //-       .modal-footer
+            //-         .form-outline
+            //-             input#addANote.form-control(style="width:400px" type='text', placeholder='Type comment...')
+            //-         button.btn(type='button')
+            //-             i.bi.bi-send
+            //-         // End Modal Dialog Scrollable
+            br
+            //- 分頁
+            #paging-block
 
-    //- 留言
-    script.
-        cards_html = !{cards_html};
-        paging_html = !{paging_html};
-        
-        //- console.log(cards_html);
-        
-        const elements_html = $.parseHTML(cards_html);
-        $('#sharing-cards').append(elements_html);
-        const pagings_html = $.parseHTML(paging_html);
-        $('#paging-block').append(pagings_html);
+            //- 留言
+            script.
+                cards_html = !{cards_html};
+                paging_html = !{paging_html};
+                
+                const elements_html = $.parseHTML(cards_html);
+                $('#sharing-cards').append(elements_html);
+                const pagings_html = $.parseHTML(paging_html);
+                $('#paging-block').append(pagings_html);
 
 
