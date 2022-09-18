@@ -16,48 +16,40 @@ const authentication = () => {
   return async function (req, res, next) {
     if (req.session.user) {
       console.log('authenticated');
-      // console.log('req.session.user: ', req.session.user);
+      req.user = req.session.user;
       next();
     } else {
       console.log('not authenticated');
-      return res.status(403).render('homePage');
+      return res.status(403).render('NotSignIn');
     }
   };
 };
 
-// const authorization = () => {
-//   return async function (req, res, next) {
-//     try {
-//       const user_email = req.user.email;
-//       const note_id = req.query.id || req.body.note_id;
-//       const permission_result = await Note.getNoteAuth(user_email, note_id);
+// 筆記的Authorization
+const noteAuthorization = () => {
+  return async function (req, res, next) {
+    try {
+      const user = req.user;
+      const note_permission = await Note.getNoteAuth(user);
+      req.note_permission = note_permission;
+      next();
 
-//       if (permission_result === 0) {
-//         res.status(403).send({ 'msg': '您目前沒有權限' });
-//       }
+      return;
+    } catch (err) {
+      res.status(403).send({ error: 'Forbidden' });
+      return;
+    }
+  };
+};
 
-//       req.permission = permission_result;
-//       next();
-
-//       return;
-//     } catch (err) {
-//       res.status(403).send({ error: 'Forbidden' });
-//       return;
-//     }
-//   };
-// };
-
+// 社群的Authorization
 const socialComment_auth = () => {
   return async function (req, res, next) {
     try {
       const user_email = req.session.user.email;
       const note_id = req.query.id || req.body.note_id;
-      const permission_result = await Note.getNoteAuth(user_email, note_id);
-
-      console.log('permission_result', user_email, permission_result);
-      if (permission_result < 3) {
-        return res.status(403).json({ 'msg': '您無權限留言' });
-      }
+      const permission_result = await Note.getSocialAuth(user_email, note_id);
+      // console.log('permission_result', user_email, permission_result);
 
       req.permission = permission_result;
       next();
@@ -70,8 +62,7 @@ const socialComment_auth = () => {
   };
 };
 
-const timeConverter = (timestamp) => {
-  let date = new Date(timestamp);
+const timeConverter = (date) => {
   dataValues = [
     date.getFullYear(),
     date.getMonth() + 1,
@@ -89,6 +80,7 @@ const timeConverter = (timestamp) => {
 module.exports = {
   wrapAsync,
   authentication,
+  noteAuthorization,
   timeConverter,
   socialComment_auth,
 };

@@ -1,0 +1,258 @@
+extends layout_main.pug
+
+block content
+    main#main.main
+
+      .pagetitle
+        h1 筆記編輯
+          //- button#search_note_list-btn.btn
+          //-   i.fa.fa-search
+        
+          //- 搜尋bar --------------------
+          button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;')
+            i.fa.fa-search
+          #searchModal.modal.fade(tabindex='-1', aria-labelledby='searchModalLabel', aria-hidden='true')
+            .modal-dialog
+              .modal-content
+                .modal-header
+                  h5.modal-title 搜尋
+                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position='right')
+                #modal-main.modal-body
+                  //- 筆記名稱
+                .modal-footer
+                  //- .input-group
+                  input#search_note_list.form-control(type='search', placeholder='search...')
+                  button.btn(type='button')
+                    i.fa.fa-search
+                  button.btn(type='button')
+                    i.fa.fa-calendar
+                  input#daterange(type="text", name="daterange")
+        nav
+          ol.breadcrumb
+            li.breadcrumb-item
+              a(href='/note') Home
+            li.breadcrumb-item.active 筆記編輯
+      // End Page Title
+      section.section.dashboard
+        .row
+          // Left side columns
+          .col-lg-12
+            .row
+              // Reports
+              .col-12
+                .card
+                  .filter
+                    a.icon(href='#', data-bs-toggle='dropdown')
+                      i.bi.bi-three-dots
+                    ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
+                      li.dropdown-header.text-start
+                        .form-check.form-switch
+                          label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
+                          input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
+                      li
+                        button#newest-version-btn.btn.dropdown-item 回復最新
+                  .card-body
+                    h5.card-title#update-note-name
+                      //- span /微笑呵呵呵
+                    ul.list-unstyled.ps-0(width="90%")
+
+                        //- 筆記上傳
+                        button#noteUpload-btn(type='button', style="font-size:16px")
+                            a(href="/uploadNote")
+                              i.fa.fa-solid.fa-upload
+                        //- //- 筆記上傳Modal
+                        //- #noteUploadModal.modal.fade(tabindex='-1', aria-labelledby='noteUploadModal', aria-hidden='true')
+                        //-   .modal-dialog.modal-lg
+                        //-     .modal-content
+                        //-       .modal-header
+                        //-         .input-group
+                        //-           .form-outline
+                        //-           h1.modal-title 筆記上傳
+                        //-           button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                        //-       #modal-noteUpload-main.modal-body
+                        //-         .OCR-block
+                        //-           form#form-prview(action='', method='post', r='')
+                        //-             input(type='file', name='photo', accept='image/*', required='')
+                        //-             button#form-prview-btn 圖形預覽
+                        //-           img#img-preview(hidden='')
+                        //-           .OCR-nav
+                        //-             //
+                        //-               <button id="pre">上一步</button>
+                        //-               <button id="next">下一步</button>
+                        //-             button#shapeRemoveBG(disabled='') 圖形去背
+                        //-             button#removeNotWant OCR去除圖形
+                        //-             button#OCR OCR 
+                        //-             // <button id="magicContour">圖形圈選</button>
+                        //-             button#rectContour 圖形圈選
+                        //-             button#shapeView 擷取
+                        //-             button#reDraw 回復
+                        //-           // Canvas
+                        //-           .OCR-preview
+                        //-             canvas#fontOCRCanvas
+                        //-         .note-preview-block
+                        //-           h1 筆記預覽
+                        //-           .processed-content-nav
+                        //-             input#note-name(type='text', placeholder='筆記名稱')
+                        //-             input#note-classification(type='text', placeholder='筆記分類')
+                        //-             button#submit_note 上傳  
+                        //-           #note-preview-content.note-edit-block                  
+
+                        //- prev step
+                        button#prev(style='font-size:16px')
+                            i.fa.fa-rotate-left
+
+                        //- next step
+                        button#next(style='font-size:16px')
+                            i.fa.fa-rotate-right
+
+                        //- add Text
+                        button#addfont(style='font-size:16px')
+                            i.fa.fa-font
+
+                        //- saveNote
+                        button#storeNote(style='font-size:16px')
+                            i.fa.fa-floppy-o
+
+                        //- Delete
+                        button#deleteElement(style='font-size:16px')
+                            i.fa.fa-solid.fa-trash
+
+                        //- 分享鍵
+                        button#share-btn(type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px")
+                            i.fa.fa-solid.fa-share
+                        #shareToAllModal.modal.fade(tabindex='-1', aria-labelledby='shareModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header
+                                .input-group
+                                  .form-outline
+                                  h5.modal-title 分享社群
+                                  button#shareToClose.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              #modal-shareToAll-main.modal-body
+                                #share_note_name
+                                  .form-check.form-switch
+                                    label.form-check-label(for='flexSwitchCheckDefault') 向特定人分享
+                                    input#shareToOther-toggle.form-check-input(type='checkbox', role='switch')
+                                  #shareToOhterDetail(style="visibility: hidden")
+                                    br
+                                    .container
+                                      .row.justify-center
+                                        .col-12
+                                          header
+                                          .input-group.mb-3
+                                            button.btn.btn-outline-secondary.dropdown-toggle#shareToOtherMethod-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 允許觀看
+                                            ul#shareToOtherMenu.dropdown-menu.dropdown-menu-end
+                                              li
+                                                a.dropdown-item.disabled(href='#') 允許編輯
+                                              li
+                                                a.dropdown-item(href='#') 允許留言
+                                              li
+                                                a.dropdown-item(href='#') 允許觀看
+                                            input#addShareOther-input.form-control(type='text', placeholder='欲分享者的email...', aria-label='欲分享者的email', aria-describedby='basic-addon2')
+                                            .input-group-append
+                                              button#addShareOther-btn.btn.btn-outline-info(type='button') 加入
+                                          ul#shareOtherList.list-group
+                                  br
+                                  br
+                                  .form-check.form-switch
+                                    label.form-check-label(for='flexSwitchCheckDefault') 分享社群頁面
+                                    input#shareToAll-toggle.form-check-input(type='checkbox', role='switch')
+                                  br
+                                  #shareToAllDetail(style="visibility: hidden")
+                                    input#share_url(type='text', placeholder='share_url')
+                                    button.btn#copy_shareUrl
+                                      i.fa.fa-clipboard(aria-hidden="true")
+                                    br
+                                    br
+                                    .form-check.form-switch
+                                      label.form-check-label(for='flexSwitchCheckDefault') 開放編輯
+                                      input#allowWrite-toggle.form-check-input(type='checkbox', role='switch', disabled='')
+                                    .form-check.form-switch
+                                      label.form-check-label(for='flexSwitchCheckDefault') 開放留言
+                                      input#allowComment-toggle.form-check-input(type='checkbox', role='switch')
+                                    .form-check.form-switch
+                                      label.form-check-label(for='flexSwitchCheckDefault') 開放觀看
+                                      input#allowWatch-toggle.form-check-input(type='checkbox', role='switch')
+                                    br
+                                    .form-floating
+                                      textarea#share_description.form-control(placeholder='你會向大家怎麼介紹你的筆記?')
+                                      label(for='floatingTextarea') 你會向大家怎麼介紹你的筆記?
+                                    br
+                                    .mb-3
+                                      label.form-label(for='formFile') 封面照片
+                                      input#shareNote_image.form-control(type='file')
+                                    br
+                                    .note_tags 標籤
+                                      input#tag_input.form-control(type='text')
+                                      button.btn#add_note_tag-btn
+                                        i.fa.fa-plus(aria-hidden='true')
+                                    br
+                              .modal-footer
+                                button.btn.btn-primary#shareToAll_confirm-btn 分享
+
+                        //- 查看留言鍵
+                        button.openbtn#annotation-show-btn
+                            i.fa.fa-commenting-o
+
+                        //- TODO: AutoSava 改在選單裡
+                        //- AutoSave
+                        //- input#autoSave_box(type='checkbox', name='autoSave', value='autoSave')
+                        //- | AutoSave
+                        button#newest-version-btn(style="font-size:16px")
+                          i.fa.fa-solid.fa-refresh
+
+                        //- 特定人分享頁面
+                        button#sharedNote-btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
+                          i.fa.fa-users
+                        #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header
+                                .input-group
+                                  .form-outline
+                                  h5.modal-title 特定人分享
+                                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              #modal-sharedNote-main.modal-body
+                              .modal-footer
+                                button#sharedNote-change.btn.btn-primary(type='button') 查看
+
+                        //- 版控
+                        button#version_list-btn(type='button', data-bs-toggle='modal', data-bs-target='#versionModal', style="font-size:16px")
+                          i.fa.fa-solid.fa-code-fork
+                        //- Modal
+                        #versionModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header
+                                .input-group
+                                  .form-outline
+                                  h5.modal-title 版本回復
+                                  //- button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
+                                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              #modal-version-main.modal-body
+                              .modal-footer
+                                button#version-change.btn.btn-primary(type='button') 回復
+                        
+                        //- 觀看留言鍵
+                        .form-check.form-switch
+                          label.form-check-label(for='flexSwitchCheckDefault') 觀看留言
+                          input#annotation-watch-toggle.form-check-input(type='checkbox', role='switch')
+
+                        .col-12#update-note-content(width='600px', height='500px')
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short
+
+      script.
+            // 觀看註釋鍵
+            $('#annotation-watch-toggle').change(async function () {
+                if (this.checked) {
+                  $('#sidebar-nav').html('');
+                  $('.fa.fa-solid.fa-comments').remove();
+                  await getAnnotation("6325d0362b02266fd75a01b1", current_note_id);
+                  await showAnnotation($('#sidebar-nav'), $('#update-note-content'), current_annotation_element);
+                } else {
+                  $('#sidebar-nav').html('');
+                  $('.fa.fa-solid.fa-comments').remove();
+                  showNoteList(note_list_obj, $('#sidebar-nav'));
+                }
+            });

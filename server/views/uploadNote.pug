@@ -1,0 +1,56 @@
+extends layout_noSideBar.pug
+
+block content
+    .container(style="margin: 100px 60px;")
+        .row
+            .col
+                //- 筆記上傳區塊
+                h1 筆記上傳
+                //- button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                .OCR-block
+                    form#form-preview(action='', method='post', r='')
+                        //- input(type='file', name='photo', accept='image/*', required='')
+                        .row.mb-3
+                            .col-sm-10
+                                input.form-control(type='file', name='photo', accept='image/*', required='')
+                                button#form-prview-btn.button-55 圖形預覽
+                    
+                    img#img-preview(hidden='')
+                    .OCR-nav
+                        //- <button id="pre">上一步</button>
+                        //- <button id="next">下一步</button>
+                        //- button#shapeRemoveBG(disabled='') 圖形去背
+                        button#removeNotWant.button-55 去除圖形
+                        button#OCR.button-55 OCR 
+                        //- // <button id="magicContour">圖形圈選</button>
+                        button#rectContour.button-55 圖形圈選
+                        button#shapeView.button-55 擷取
+                        button#reDraw.button-55 回復
+                    .OCR-preview
+                        canvas#fontOCRCanvas
+            .col
+                .container
+                    .row
+                        .col
+                            h1 預覽
+                        .col
+                            button#submit_note.button-55 上傳  
+                .note-preview-block
+                    .processed-content-nav
+                        .row.mb-3
+                            label.col-sm-2.col-form-label 筆記名稱
+                            .col-sm-10
+                                input#note-name.form-control(type='text')
+                        .row.mb-3
+                            label.col-sm-2.col-form-label 筆記分類
+                            .col-sm-10
+                                input#note-classification.form-control(type='text')
+                    
+                    #note-preview-content.note-edit-block                   
+
+                    //- input#note-name(type='text', placeholder='筆記名稱')
+                    //- input#note-classification(type='text', placeholder='筆記分類')
+                    //- button#submit_note 上傳  
+                    //- #note-preview-content.note-edit-block 
+                    
+                                     

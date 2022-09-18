@@ -9,18 +9,17 @@ const {
 } = require('../../utils/util');
 const {
   socialPage,
-  shareDetailPage,
+  shareNotePage,
   createComments,
   updateComments,
   deleteComments,
+  showSharedNote,
 } = require('../controllers/social_controller');
 
 router.route('/socialPage').get(authentication(), wrapAsync(socialPage));
 
 // 分享Detail頁面
-router
-  .route('/shareDetailPage')
-  .get(authentication(), wrapAsync(shareDetailPage));
+router.route('/shareNotePage').get(authentication(), wrapAsync(shareNotePage));
 
 // 新增留言
 router
@@ -36,5 +35,14 @@ router
 router
   .route(`/api/${API_VERSION}/comment`)
   .delete(authentication(), socialComment_auth(), wrapAsync(deleteComments));
+
+// 查看特定人分享的頁面
+router
+  .route(`/sharedToOtherNote/:note_id`)
+  .get(authentication(), wrapAsync(showSharedNote));
+
+//   .get('/sharedNote/:note_id', async (req, res) => {
+//   return res.render('sharedNote');
+// });
 
 module.exports = router;

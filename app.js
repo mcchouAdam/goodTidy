@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 require('dotenv').config();
-const { MONGO_DB_URL } = process.env;
+const { MONGO_DB_URL, SESSION_SECRET } = process.env;
 
 // [Session] ------------------------------------------------------
 // creating 24 hours from milliseconds
@@ -13,7 +13,7 @@ const sevenDay = 1000 * 60 * 60 * 24 * 7;
 //session middleware
 app.use(
   session({
-    secret: '123qweasdzxc',
+    secret: SESSION_SECRET,
     name: 'user',
     cookie: { maxAge: sevenDay },
     saveUninitialized: false,
@@ -38,9 +38,11 @@ app.set('views', './server/views');
 app.use(express.static('public'));
 app.use(express.json());
 
-app.use('/api/' + API_VERSION, [require('./server/routes/user_route')]);
-app.use([require('./server/routes/note_route')]);
-app.use([require('./server/routes/social_route')]);
+app.use([
+  require('./server/routes/user_route'),
+  require('./server/routes/note_route'),
+  require('./server/routes/social_route'),
+]);
 
 // HomePage
 app.get('/', async (req, res) => {
@@ -48,8 +50,34 @@ app.get('/', async (req, res) => {
 });
 
 // Index
-app.get('/index', async (req, res) => {
-  return res.render('index');
+app.get('/notes', async (req, res) => {
+  return res.render('notes');
+});
+
+// signin
+app.get('/signin', async (req, res) => {
+  return res.render('signin');
+});
+
+// signup
+app.get('/signup', async (req, res) => {
+  return res.render('signup');
+});
+
+// uploadNote
+app.get('/uploadNote', async (req, res) => {
+  return res.render('uploadNote');
+});
+
+// sharedNote
+app.get('/sharedNote/:note_id', async (req, res) => {
+  return res.render('sharedNote');
+});
+
+// error handling
+app.use((err, req, res, next) => {
+  // console.error(err.stack)
+  res.status(404).render('404');
 });
 
 app.listen(port, () => {

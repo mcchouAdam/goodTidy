@@ -3,8 +3,14 @@ const router = require('express').Router();
 require('dotenv').config();
 const API_VERSION = process.env.API_VERSION;
 
-const { wrapAsync, authentication } = require('../../utils/util');
 const {
+  wrapAsync,
+  authentication,
+  noteAuthorization,
+} = require('../../utils/util');
+const {
+  showNote,
+  getNote,
   createNote,
   deleteNote,
   renameNote,
@@ -12,13 +18,15 @@ const {
   renameNoteClass,
   deleteNoteClass,
   createNoteVersion,
-  editNotePage,
   getUserNotes,
   shareToAll,
+  deleteShareToOther,
   getShareToAll,
   shareToOther,
   getShareToOther,
   saveNote,
+  createAnnotation,
+  getAnnotation,
 } = require('../controllers/note_controller');
 const { OCRupload, noteUpload, shareImgUpload } = require('../models/s3');
 const { OCR_google } = require('../../utils/OCR');
@@ -33,6 +41,10 @@ const shareImageUpload = shareImgUpload.fields([
 
 const OCRImgupload = OCRupload.fields([{ name: 'OCR_upload', maxCount: 1 }]);
 
+// [筆記編輯頁面]
+router.route(`/note`).get(authentication(), wrapAsync(showNote));
+
+// [筆記API]
 // 新增筆記
 router
   .route(`/api/${API_VERSION}/note`)
@@ -70,23 +82,20 @@ router
   .route(`/api/${API_VERSION}/noteVersion`)
   .post(wrapAsync(createNoteVersion));
 
-// 使用者全部的Notes
+// 使用者全部可以看到的Notes
 router
   .route(`/api/${API_VERSION}/notes`)
-  .get(authentication(), wrapAsync(getUserNotes));
+  .get(authentication(), noteAuthorization(), wrapAsync(getUserNotes));
 
-// router
-//   .route(`/updateNote/:note_id`)
-//   .get(authentication(), wrapAsync(editNotePage));
-
-router.route(`/updateNote`).get(authentication(), wrapAsync(editNotePage));
+// [筆記頁面]
+router.route(`/note`).get(authentication(), wrapAsync(getNote));
 
 // OCR ------------------------------------------------
 router
   .route(`/api/${API_VERSION}/OCR`)
   .post(OCRImgupload, wrapAsync(OCR_google));
 
-// share -----------------------------------------------
+// [分享] -----------------------------------------------
 
 // 筆記分享給所有人
 router
@@ -102,12 +111,29 @@ router
   .route(`/api/${API_VERSION}/note/shareToOther`)
   .post(authentication(), wrapAsync(shareToOther));
 
+// 刪除筆記對特定人的分享
+router
+  .route(`/api/${API_VERSION}/note/shareToOther`)
+  .delete(authentication(), wrapAsync(deleteShareToOther));
+
 // 拿取分享特定人權限
 router
   .route(`/api/${API_VERSION}/note/shareToOther/:note_id`)
   .get(authentication(), wrapAsync(getShareToOther));
 
-// 收藏 -----------------------------------------------------------------
+// [收藏] -----------------------------------------------------------------
 router.route(`/api/${API_VERSION}/note/save`).post(wrapAsync(saveNote));
+
+// [註釋] -----------------------------------------------------------------
+// 新增註釋
+// TODO: 新增註釋權限
+router
+  .route(`/api/${API_VERSION}/annotation`)
+  .post(authentication(), wrapAsync(createAnnotation));
+
+// 拿取註釋權限
+router
+  .route(`/api/${API_VERSION}/annotation/:note_id/:annotion_user_id`)
+  .get(authentication(), wrapAsync(getAnnotation));
 
 module.exports = router;

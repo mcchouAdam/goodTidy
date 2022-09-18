@@ -1,0 +1,194 @@
+extends layout_noSideBar.pug
+
+block content
+    main
+        .card(style="margin: 100px auto;")
+            .card-header
+                .d-flex.flex-row.align-items-center
+                    img.profile-pic(src=user_picture)
+                    p.small.mb-0.ms-2=user_name
+            .card-body
+                #showShareDetail(style="width: 100%; padding: 20px 0 0 0;")
+            .card-footer
+                h1.card-title=note_name
+                p.small=sharing_time
+
+    script.
+        text_elements = !{text_elements};
+        elements = !{elements};
+        let file_name  = !{JSON.stringify(file_name)};
+
+        let text_element = text_elements_arr($('#showShareDetail'), text_elements);
+        let img_element = Img_elements_arr(elements);
+
+        console.log(text_element, img_element);
+        elements_init($('#showShareDetail'), img_element, text_element);
+
+        function Img_elements_arr(note_Imgcontent) {
+            let Img_elements = [];
+            let elements = $.parseHTML(note_Imgcontent);
+            let img_background = file_name;
+
+            elements.map((s) => {
+                $(s).find('img').attr('src', img_background);
+                Img_elements.push(s);
+            });
+
+            return Img_elements;
+        }
+
+        function text_elements_arr(append_div, note_textContent) {
+            let text_elements = [];
+            if (!note_textContent) {
+                return [];
+            }
+
+            note_textContent.map((s) => {
+                const element = Textarea_draggable_html(
+                    append_div,
+                    s.text,
+                    s.width,
+                    s.height,
+                    s.textTop,
+                    s.textLeft
+                );
+                text_elements.push(element);
+            });
+                return text_elements;
+        }
+
+        function elements_init(append_div, Img_elements, text_elements) {
+            let elements = Img_elements.concat(text_elements);
+            elements.map((e) => {
+                append_div.append(e);
+            });
+        }
+
+        function Textarea_draggable_html(
+            div_id,
+            text,
+            width,
+            height,
+            textTop,
+            textLeft
+            ) {
+            textLeft = +textLeft.replaceAll('px', '');
+            textTop = +textTop.replaceAll('px', '');
+
+            let new_offset = { top: textTop, left: textLeft };
+            let new_width = width;
+            let new_height = height;
+            let timestamp = Date.now();
+            let textarea_id = `${timestamp}_textarea`;
+            let newElement = $(
+                `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" disabled>${text}</textarea></div>`
+            )
+                .width(new_width)
+                .height(new_height)
+                .css({
+                    'position': 'relative',
+                })
+                .offset(new_offset)
+
+            return newElement;
+        }
+    
+  
+  
+  
+  
+  
+  
+  
+    //- TODO: 加User資訊
+  
+  
+    //- #user_pic
+    //- #user_name
+    //- #note_pic
+    //- #note_name
+    //- #note_version
+    //- #showShareDetail.showShareDetail
+    //- input#dateTimePicker.form-control(type='text')
+
+    //- script.
+    //-     S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
+    //-     elements = !{elements};
+    //-     console.log("elements:", elements);
+
+    //-     $('#note_name').text(elements.note_name);
+    //-     $('#note_version').text(elements.version_name);
+    //-     const note_pic_url = elements.note_pic;
+    //-     $('#note_pic').append($(`<img class="note-pic" src="${note_pic_url}"></img>`));
+
+    //-     note_bg = elements.file_name;
+        
+    //-     let text_elements = elements.newest_version_text_elements;
+    //-     text_elements = text_elements_arr($('#showShareDetail'),text_elements);
+    //-     const Img_elements = Img_draggable_arr(elements.elements);
+    //-     elements_init($('#showShareDetail'), Img_elements, text_elements)
+
+
+    //-     function Img_draggable_arr(note_Imgcontent) {
+    //-         let Img_elements = [];
+    //-         let elements = $.parseHTML(note_Imgcontent);
+    //-         let img_background = `${S3_HOST}notes/${note_bg}`;
+
+    //-         elements.map((s) => {
+    //-             $(s).find('img').attr('src', img_background);
+    //-             Img_elements.push(s);
+    //-         });
+
+    //-         return Img_elements;
+    //-     }
+
+    //-     function text_elements_arr(append_div, note_textContent) {
+    //-         let text_elements = [];
+    //-         note_textContent.map((s) => {
+    //-             const element = Textarea_draggable_html(
+    //-             append_div,
+    //-             s.text,
+    //-             s.width,
+    //-             s.height,
+    //-             s.textTop,
+    //-             s.textLeft
+    //-             );
+    //-             text_elements.push(element);
+    //-         });
+    //-         return text_elements;
+    //-     }
+
+    //-     function elements_init(append_div, Img_elements, text_elements) {
+    //-         let elements = Img_elements.concat(text_elements);
+    //-         elements.map((e) => {
+    //-             append_div.append(e);
+    //-         });
+    //-     }
+    //-     function Textarea_draggable_html(
+    //-         div_id,
+    //-         text,
+    //-         width,
+    //-         height,
+    //-         textTop,
+    //-         textLeft
+    //-     ) {
+    //-         textLeft = +textLeft.replaceAll('px', '');
+    //-         textTop = +textTop.replaceAll('px', '');
+
+    //-         let new_offset = { top: textTop, left: textLeft };
+    //-         let new_width = width;
+    //-         let new_height = height;
+    //-         let timestamp = Date.now();
+    //-         let textarea_id = `${timestamp}_textarea`;
+    //-         let newElement = $(
+    //-             `<div class="div_addtextarea"><textarea id="${textarea_id}" readonly>${text}</textarea></div>`
+    //-         )
+    //-         .width(new_width)
+    //-         .height(new_height)
+    //-         .css({
+    //-             'position': 'relative',
+    //-         })
+    //-         .offset(new_offset)
+
+    //-             return newElement;
+    //-         }

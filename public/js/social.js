@@ -1,3 +1,121 @@
+// 分享筆記 ------------------------------------------------------------
+// 打開分享給特定人隱藏內容
+$('#shareToOther-toggle').click(function () {
+  const checked = $(this).is(':checked');
+  if (checked) {
+    $('#shareToOhterDetail').css('visibility', 'visible');
+  } else {
+    $('#shareToOhterDetail').css('visibility', 'hidden');
+  }
+});
+
+// 打開分享給所有人隱藏內容
+$('#shareToAll-toggle').click(function () {
+  const checked = $(this).is(':checked');
+  if (checked) {
+    $('#shareToAllDetail').css('visibility', 'visible');
+    $('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
+  } else {
+    $('#shareToAllDetail').css('visibility', 'hidden');
+  }
+});
+
+// 分享給特定人的權限設定的按鈕
+$('#shareToOtherMenu li').on('click', function () {
+  console.log($(this).text());
+  console.log($('#shareToOtherMethod-btn').text());
+  $('#shareToOtherMethod-btn').text($(this).text());
+});
+
+// 分享鍵 ----------------------------------
+$('#shareToAll_confirm-btn').click(async function () {
+  const isComment = $('#allowComment-toggle').is(':checked');
+  const isWatch = $('#allowWatch-toggle').is(':checked');
+
+  let tags = $('.badge.bg-success.rounded-pill')
+    .map((i, e) => e.outerText)
+    .get();
+  tags = $.grep(tags, (n) => n == 0 || n);
+
+  const share_description = $('#share_description').val();
+  const file = $('#shareNote_image')[0].files[0];
+  const share_image = file.name;
+  let url_permission;
+  let isSharing;
+
+  if (isWatch && !isComment) {
+    url_permission = 'read';
+    isSharing = 1;
+  } else if (!isWatch && !isComment) {
+    url_permission = 'forbidden';
+    isSharing = 0;
+  } else {
+    url_permission = 'comment';
+    isSharing = 1;
+  }
+
+  console.log(url_permission);
+  let data = new FormData();
+  data.append('isSharing', isSharing);
+  data.append('url_permission', url_permission);
+  data.append('note_id', current_note_id);
+  data.append('sharing_descrition', share_description);
+  data.append('share_ImgUpload', file);
+  data.append('sharing_url', `/shareNotePage?id=${current_note_id}`);
+  data.append('tags', JSON.stringify(tags));
+
+  await shareToAlluser(data);
+});
+
+// 加入分享特定的人按鍵
+$('#addShareOther-btn').click(async function () {
+  let permission = $('#shareToOtherMethod-btn').text();
+  let addOther = $('#addShareOther-input').val();
+
+  if (!addOther) {
+    alert('不能為空值');
+    return;
+  }
+
+  switch (permission) {
+    case '允許留言':
+      user_permission = 'comment';
+      break;
+    case '允許觀看':
+      user_permission = 'read';
+      break;
+  }
+
+  const data = {
+    'permission': user_permission,
+    'addPerson': addOther,
+    'note_id': current_note_id,
+  };
+
+  const result = await shareToOther(data);
+
+  let list_html = `
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                  ${addOther}
+                  <span class="badge bg-primary rounded-pill">${permission}</span>
+                  <button class="btn"><a href="javascript:deleteShareToOther('${current_note_id}','${addOther}')"><span class='bi bi-x-circle'></span></a></button>
+              </li>`;
+  $('#shareOtherList').append(list_html);
+});
+
+// [筆記分享] 加入筆記tag鍵
+$('#add_note_tag-btn').click(function () {
+  const tag_name = $('#tag_input').val();
+  let tag_html = `<span class="badge bg-success rounded-pill">${tag_name}</span>`;
+  $('.note_tags').append(tag_html);
+  $('#tag_input').val('');
+});
+
+// [筆記分享] 刪除筆記tag鍵
+$(document).on('click', '.badge.bg-success.rounded-pill', function () {
+  $(this).remove();
+});
+
 // 發出留言
 async function createComments(note_id) {
   let data = {
@@ -64,12 +182,12 @@ async function shareToAlluser(data) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('分享所有人成功');
+      alert('更改設定成功');
       location.reload();
     })
     .catch((error) => {
       console.log(error);
-      alert('分享所有人失敗');
+      alert('更改設定失敗');
     });
 }
 
@@ -293,7 +411,6 @@ $('#socialPageSearchMenu li').on('click', function () {
 });
 
 // [社群頁面]
-
 $('#socialSearchBar').on('click', async function () {
   const search_text = $('#socialPageSearch-input').val();
   const search_method = $('#socialPageSearch-btn').text();
@@ -338,3 +455,34 @@ $('#socialSearchBar').on('click', async function () {
       alert(error.response.data.msg);
     });
 });
+
+//
+
+async function deleteShareToOther(note_id, delete_email) {
+  const isDeleted = confirm(`確定要刪除對${delete_email}的分享?`);
+  if (!isDeleted) {
+    return;
+  }
+
+  let data = {
+    'note_id': note_id,
+    'delete_email': delete_email,
+  };
+
+  let config = {
+    method: 'DELETE',
+    url: `/api/${API_VERSION}/note/shareToOther`,
+    data: data,
+  };
+
+  await axios(config)
+    .then((response) => {
+      console.log(response);
+      alert('刪除成功');
+      window.location = '/note';
+    })
+    .catch((error) => {
+      console.log(error);
+      alert(error.response.data.msg);
+    });
+}
