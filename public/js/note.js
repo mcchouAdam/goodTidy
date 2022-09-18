@@ -589,20 +589,28 @@ async function saveAnnotation(annotion_user_id, note_id) {
   }
   let annotation_icon_html = '';
   let annotation_textarea = [];
+  let annotation_user_name = [];
   let annotation_icon_class =
     '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
   let annotation_textarea_class = 'textarea.form-control';
+  let annotation_user_name_class = '.bg-info';
   let annotation_icon_count = $(annotation_icon_class).length;
   let annotation_textare_count = $(annotation_textarea_class).length;
+  let annotation_user_name_count = $(annotation_user_name_class).length;
 
-  // 儲存註釋icon的html
+  // 儲存註釋 icon的html
   for (let i = 0; i < annotation_icon_count; i++) {
     annotation_icon_html += $(annotation_icon_class).get(i).outerHTML;
   }
 
-  // 儲存註釋textarea的值
+  // 儲存註釋 textarea的值
   for (let i = 0; i < annotation_textare_count; i++) {
     annotation_textarea.push($(annotation_textarea_class).get(i).value);
+  }
+
+  // 儲存註釋 留言人名
+  for (let i = 0; i < annotation_user_name_count; i++) {
+    annotation_user_name.push($(annotation_user_name_class).get(i).innerHTML);
   }
 
   // axios儲存資料庫
@@ -611,11 +619,12 @@ async function saveAnnotation(annotion_user_id, note_id) {
     'annotion_user_id': annotion_user_id,
     'annotation_icon_html': annotation_icon_html,
     'annotation_textarea': JSON.stringify(annotation_textarea),
+    'annotation_user_name': JSON.stringify(annotation_user_name),
   };
 
   let config = {
     method: 'POST',
-    url: `/api/1.0/annotation`,
+    url: '/api/1.0/annotation',
     data: data,
   };
 
@@ -632,10 +641,10 @@ async function saveAnnotation(annotion_user_id, note_id) {
 }
 
 // 拿取註釋資料 ---
-async function getAnnotation(annotion_user_id, note_id) {
+async function getAnnotation(note_id) {
   let config = {
     method: 'GET',
-    url: `/api/1.0/annotation/${note_id}/${annotion_user_id}`,
+    url: `/api/1.0/annotation/${note_id}`,
     data: '',
   };
 
@@ -666,6 +675,7 @@ async function showAnnotation(
 
   // 顯示註釋textarea
   const annotation_text = annotation_element.annotation_textarea;
+  const annotation_user_name = annotation_element.annotation_user_name;
   const note_id = annotation_element.note_id;
   const annotation_count = annotation_text.length;
   let annotation_id;
@@ -701,6 +711,9 @@ async function showAnnotation(
     let annotation_html = `
                           <div class="form-group" id="form-group-${annotation_id}">
                             <span class="badge bg-dark rounded-pill">${id}</span>
+                            <span class="badge bg-info rounded-pill">${
+                              annotation_user_name[id - 1]
+                            }</span>
                             <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..." disabled>${
       annotation_text[id - 1]
     }</textarea>

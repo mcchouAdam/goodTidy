@@ -7,6 +7,7 @@ const {
   wrapAsync,
   authentication,
   noteAuthorization,
+  annotation_auth,
 } = require('../../utils/util');
 const {
   showNote,
@@ -25,7 +26,7 @@ const {
   shareToOther,
   getShareToOther,
   saveNote,
-  createAnnotation,
+  updateAnnotation,
   getAnnotation,
 } = require('../controllers/note_controller');
 const { OCRupload, noteUpload, shareImgUpload } = require('../models/s3');
@@ -125,15 +126,14 @@ router
 router.route(`/api/${API_VERSION}/note/save`).post(wrapAsync(saveNote));
 
 // [註釋] -----------------------------------------------------------------
-// 新增註釋
-// TODO: 新增註釋權限
+// 新增/修改/刪除註釋權限
 router
   .route(`/api/${API_VERSION}/annotation`)
-  .post(authentication(), wrapAsync(createAnnotation));
+  .post(authentication(), annotation_auth(), wrapAsync(updateAnnotation));
 
-// 拿取註釋權限
+// 拿取註釋內容
 router
-  .route(`/api/${API_VERSION}/annotation/:note_id/:annotion_user_id`)
-  .get(authentication(), wrapAsync(getAnnotation));
+  .route(`/api/${API_VERSION}/annotation/:note_id`)
+  .get(authentication(), annotation_auth(), wrapAsync(getAnnotation));
 
 module.exports = router;

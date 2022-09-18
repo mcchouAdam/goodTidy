@@ -93,7 +93,7 @@ const getUserNotes = async (req, res) => {
   const note_permission = req.note_permission;
   const result = await Notes.getUserNotes(user_id, note_permission);
 
-  console.log('permission_result: ', result);
+  // console.log('permission_result: ', result);
 
   return res.status(200).json(result);
 };
@@ -154,17 +154,27 @@ const saveNote = async (req, res) => {
 
 // [註釋] --------------------------------------------------
 // 新增註釋
-const createAnnotation = async (req, res) => {
+const updateAnnotation = async (req, res) => {
+  // 檢查權限
+  const permission = req.permission;
+  console.log('permission:', permission);
+
+  if (permission < 2) {
+    return res.status(403).json({ 'msg': '您無權限新增/修改/刪除/註釋' });
+  }
+
   const note_id = req.body.note_id;
   const annotion_user_id = req.body.annotion_user_id;
   const annotation_icon_html = req.body.annotation_icon_html;
   const annotation_textarea = JSON.parse(req.body.annotation_textarea);
+  const annotation_user_name = JSON.parse(req.body.annotation_user_name);
 
-  const createResult = await Notes.createAnnotation(
+  const createResult = await Notes.updateAnnotation(
     note_id,
     annotion_user_id,
     annotation_icon_html,
-    annotation_textarea
+    annotation_textarea,
+    annotation_user_name
   );
 
   return res.status(200).json({ 'msg': '新增註釋成功' });
@@ -196,6 +206,6 @@ module.exports = {
   deleteShareToOther,
   getShareToOther,
   saveNote,
-  createAnnotation,
+  updateAnnotation,
   getAnnotation,
 };
