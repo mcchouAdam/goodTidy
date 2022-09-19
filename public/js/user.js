@@ -93,12 +93,6 @@ async function showProfile() {
   $('#user_name').text(user_name);
 }
 
-// dialog視窗
-$('#signup-dialog').dialog({ title: 'signup', autoOpen: false });
-$('#signin-dialog').dialog({ title: 'signin', autoOpen: false });
-$('#profile-dialog').dialog({ title: 'profile', autoOpen: false });
-$('#share-dialog').dialog({ title: 'share', autoOpen: false });
-
 // signIn頁面 ---------------------------------
 $('#signin-btn').click(function (e) {
   if (user_email) {

@@ -141,7 +141,7 @@ async function createComments(note_id) {
       location.reload();
     })
     .catch((error) => {
-      console.log(error);
+      console.log(error.response.data.msg);
       alert(error.response.data.msg);
     });
 }
@@ -203,7 +203,6 @@ async function shareToOther(data) {
     .then((response) => {
       console.log(response);
       alert(response.data);
-      // location.reload();
     })
     .catch((error) => {
       console.log(error);
@@ -363,8 +362,7 @@ async function deleteComment(comment_id, note_id) {
 
   await axios(config)
     .then((response) => {
-      console.log(response.data);
-      alert(response.data);
+      alert('刪除留言成功');
       location.reload();
     })
     .catch((error) => {
@@ -479,7 +477,8 @@ async function deleteShareToOther(note_id, delete_email) {
     .then((response) => {
       console.log(response);
       alert('刪除成功');
-      window.location = '/note';
+      // 刪除該list
+      $(`li:contains("${delete_email}")`).remove();
     })
     .catch((error) => {
       console.log(error);

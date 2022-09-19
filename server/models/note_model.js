@@ -43,6 +43,7 @@ const writeNote = async (note) => {
         'saved_count': 0,
         'saved_user_id': [],
         'tags': [],
+        'annotation_user_id': [],
       };
 
       const note_result = await NotesCollection.insertOne(note_obj);
@@ -567,8 +568,6 @@ const getShareNotes = async (
       .limit(limit)
       .toArray();
 
-    // console.log('aaaaaaa: ', result[0].note_version_info);
-
     return result;
   } catch (error) {
     return { error };
@@ -638,8 +637,6 @@ const createSave = async (note_id, user_id) => {
   const UserCollection = Mongo.db(MONGO_DB).collection('user');
   try {
     // 檢查User是否已經點過這個
-
-    console.log('111111user_id:', user_id);
     // 更新saved_user_id
     // Update the Note saved_user_id ----------------------------
     await NotesCollection.updateOne(
@@ -730,9 +727,6 @@ const getShareToAll = async (note_id) => {
 
 // 新創留言
 const createComment = async (data) => {
-  if (data.permission < authorizationList.comment) {
-    return res.status(403).json({ 'msg': '您無權限留言' });
-  }
   const CommentsCollection = Mongo.db(MONGO_DB).collection('comments');
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
 
@@ -781,8 +775,13 @@ const updateComment = async (data) => {
       }
     );
 
-    console.log('result: ', result);
-    return result;
+    if (!result.lastErrorObject.updatedExisting) {
+      // 無權修改別人留言
+      return 0;
+    } else {
+      // 修改留言成功
+      return 1;
+    }
   } catch (error) {
     return { error };
   } finally {
@@ -819,9 +818,11 @@ const deleteComment = async (data) => {
     console.log('updateResult:', updateResult);
 
     if (result.deletedCount === 0) {
-      return '您無權限刪除他人留言';
+      // 無權刪除別人留言
+      return 0;
     } else {
-      return '成功刪除留言';
+      // 刪除留言成功
+      return 1;
     }
   } catch (error) {
     return { error };
@@ -956,16 +957,20 @@ const getNoteAuth = async (user) => {
         },
       },
     ])
-      .project({ '_id': 1, 'sharing_user.permission': 1 })
+      .project({ '_id': 1, 'sharing_user': 1, 'user_id': 1 })
       .toArray();
 
     // sharing_user的permission值
     shareNote.map((s) => {
       let obj = {};
       const note_id = s._id.toString();
-      const permission = s.sharing_user[0].permission;
-      obj[note_id] = permission;
-      note_id_permission.push(obj);
+      let user_email_values = Object.values(s.sharing_user);
+      user_email_values.map((u) => {
+        if (u.user_email == user_email) {
+          obj[note_id] = u.permission;
+          note_id_permission.push(obj);
+        }
+      });
     });
 
     console.log(note_id_permission);
@@ -1034,6 +1039,7 @@ const updateAnnotation = async (
   const AnnotationCollection = Mongo.db(MONGO_DB).collection('annotation');
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
 
+  console.log('1111note_id:', note_id);
   // let note_id_permission = [];
   try {
     // 新增筆記內，本次新增註釋的使用者

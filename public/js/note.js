@@ -125,6 +125,8 @@ async function getUserNotes() {
     .then((response) => {
       const data = response.data;
       version_obj = data;
+
+      console.log();
       // console.log('version', version_obj);
 
       let note_obj = {};
@@ -153,8 +155,9 @@ async function getUserNotes() {
         console.log(note_name, user_permission);
         console.log(user_id);
 
+        // 只要自己不是筆記的admin就是別人分享給你的
         if (user_permission !== authorizationList['admin']) {
-          // 筆記呈現頁
+          // 別人分享給你的筆記
           if (!sharedNote_obj[note_name]) {
             sharedNote_obj[note_name] = {
               'note_id': note_id,
@@ -166,6 +169,7 @@ async function getUserNotes() {
               'user_name': user_name,
             };
           }
+          // 自己的筆記
         } else {
           if (!note_obj[note_classification]) {
             note_obj[note_classification] = {
@@ -252,31 +256,31 @@ async function showNoteList(note_obj, div_append) {
 
     // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {
-      note_menu_html = '';
-      note_menu_html += `<div class="d-flex flex-row align-items-center">
-        <a
-          class="btn"
-          id="dropdownMenuLink"
-          href="#"
-          role="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-        >
-          <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-        </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-          <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">
-            修改名稱
-          </a>
-          <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">
-            刪除
-          </a>
-          <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">
-            搬移
-          </a>
-        </div>
-      </div>`;
+      note_menu_html = `
+              <div class="d-flex flex-row align-items-center">
+                <a
+                  class="btn"
+                  id="dropdownMenuLink"
+                  href="#"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                  <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">
+                    修改名稱
+                  </a>
+                  <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">
+                    刪除
+                  </a>
+                  <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">
+                    搬移
+                  </a>
+                </div>
+              </div>`;
 
       notes_html += `
         <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
@@ -288,6 +292,8 @@ async function showNoteList(note_obj, div_append) {
             </a>
           </li>
         </ul>`;
+
+      console.log('zzzzzzz: ', notes_html);
     }
 
     // 分類的tag html
@@ -329,7 +335,7 @@ async function showSearchList(note_obj, div_append) {
   div_append.append(name_html);
 }
 
-// 特定人分享List的內容
+// [其他人分享給您的筆記] 特定人分享List的內容
 async function getSharedNote(sharedNote_obj, div_append) {
   console.log('sharedNote_obj', sharedNote_obj);
 
@@ -339,6 +345,7 @@ async function getSharedNote(sharedNote_obj, div_append) {
   // sharedNote_obj.map((s) => {});
   note_names.map((id) => {
     const permission = sharedNote_obj[id].user_permission;
+    // console.log('11111permission', permission);
     const user_picture = sharedNote_obj[id].user_picture;
     const user_name = sharedNote_obj[id].user_name;
     shareNote_html += `
@@ -582,15 +589,9 @@ async function deleteclassification(user_id, classificationName) {
 // 註釋 ------------------------------------------------------
 // 鎖定註釋
 async function lockAnnotation(annotation_id) {
-  const isCreated = window.confirm('確定新增此註釋?');
-
   let annotation_icon_html = '';
   let icon_class = '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
   let annotation_icon_count = $(icon_class).length;
-  if (!isCreated) {
-    return;
-  }
-  alert($('#textarea-' + annotation_id).val());
   $('#textarea-' + annotation_id).prop('disabled', true);
   $('#icon-' + annotation_id).draggable('disable');
 
@@ -609,7 +610,7 @@ async function modifyAnnotation(annotation_id) {
   }
   // alert($('#' + annotation_id).val());
   $('#textarea-' + annotation_id).prop('disabled', false);
-  $('#icon-' + annotation_id).draggable('enable');
+  $('#icon-' + annotation_id).draggable({ disabled: false });
 }
 
 async function deleteAnnotation(annotation_id) {
@@ -692,11 +693,11 @@ async function getAnnotation(note_id) {
   await axios(config)
     .then(function (response) {
       current_annotation_element = response.data[0];
-      alert('拿取註釋成功');
+      console.log('拿取註釋成功');
     })
     .catch(function (error) {
       console.log(error);
-      alert('拿取註釋失敗');
+      console.log('拿取註釋失敗');
     });
 }
 
@@ -704,9 +705,14 @@ async function getAnnotation(note_id) {
 async function showAnnotation(
   textarea_div_append,
   icon_div_append,
-  annotation_element
+  annotation_element,
+  user_permission
 ) {
   // 顯示註釋icon
+  if (!annotation_element) {
+    return;
+  }
+
   const annotation_icon_html = annotation_element.annotation_icon_html;
   const annotation_icon = $.parseHTML(annotation_icon_html);
   icon_div_append.append(annotation_icon);
@@ -726,8 +732,25 @@ async function showAnnotation(
     annotation_id = `${note_id}_annotation_${id}`;
 
     // 組合annotation
-    let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
-                      <button class="btn" type="button" onclick="javascript:lockAnnotation('${annotation_id}')"><i class="bi bi-send"></i></button>
+    let textarea_modify_icon_html = '';
+
+    if (user_permission >= 2) {
+      textarea_modify_icon_html = `
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">
+                          鎖定
+                        </a>
+                        <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
+                          修改
+                        </a>
+                        <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
+                          移除
+                        </a>
+                      </div>`;
+    }
+
+    let annotation_menu_html = `
+                    <div class="d-flex flex-row align-items-center">
                       <a
                         class="btn"
                         id="dropdownMenuLink"
@@ -739,14 +762,6 @@ async function showAnnotation(
                       >
                         <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
                       </a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
-                          修改註釋
-                        </a>
-                        <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
-                          移除
-                        </a>
-                      </div>
                     </div>`;
 
     let annotation_html = `
