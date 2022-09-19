@@ -339,7 +339,6 @@ $('#version-change').click(function () {
 //   $('#sidebar-comment').append(annotation_html);
 // });
 
-
 // --------------------------------------------------------
 // 特定人分享清單鍵
 $('#sharedNote-btn').click(async function () {

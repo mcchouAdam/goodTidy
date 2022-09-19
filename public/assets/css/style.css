@@ -263,7 +263,7 @@ h6 {
 }
 
 .card-body {
-  padding: 0 20px 20px 20px;
+  padding: 20px 20px 20px 20px;
 }
 
 .card-img-overlay {
@@ -1291,6 +1291,10 @@ h6 {
 
 /* OCR字體/新增文字方塊 --------------------------------------------------- */
 
+#update-note-content {
+  border: 1px solid black;
+}
+
 /* 新增修改字串 */
 .addtextarea {
   height: 100%;
@@ -1305,8 +1309,13 @@ h6 {
   -moz-box-shadow: none !important;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
-  border: 1px solid #00c853 !important;
+  /* border: 1px solid #00c853 !important; */
   outline-width: 0 !important;
+}
+
+.highlight {
+  padding: 1px;
+  border: #00cc00 dotted 5px;
 }
 
 .card-group {

@@ -32,6 +32,7 @@ block content
             li.breadcrumb-item
               a(href='/note') Home
             li.breadcrumb-item.active 筆記編輯
+            li.breadcrumb-item.active#click_note_name
       // End Page Title
       section.section.dashboard
         .row
@@ -54,12 +55,10 @@ block content
                       li
                         button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 其他版本
                   .card-body
-                    h5.card-title#update-note-name
-                      //- span /微笑呵呵呵
                     ul.list-unstyled.ps-0(width="90%")
 
                         //- 筆記上傳
-                        button#noteUpload-btn(type='button', style="font-size:16px")
+                        button#noteUpload-btn.btn(type='button', style="font-size:16px")
                               i.fa.fa-solid.fa-upload
                         //- //- 筆記上傳Modal
                         //- #noteUploadModal.modal.fade(tabindex='-1', aria-labelledby='noteUploadModal', aria-hidden='true')
@@ -99,27 +98,27 @@ block content
                         //-           #note-preview-content.note-edit-block                  
 
                         //- prev step
-                        button#prev(style='font-size:16px')
+                        button#prev.btn(style='font-size:16px')
                             i.fa.fa-rotate-left
 
                         //- next step
-                        button#next(style='font-size:16px')
+                        button#next.btn(style='font-size:16px')
                             i.fa.fa-rotate-right
 
                         //- add Text
-                        button#addfont(style='font-size:16px')
+                        button#addfont.btn(style='font-size:16px')
                             i.fa.fa-font
 
                         //- saveNote
-                        button#storeNote(style='font-size:16px')
+                        button#storeNote.btn(style='font-size:16px')
                             i.fa.fa-floppy-o
 
                         //- Delete
-                        button#deleteElement(style='font-size:16px')
+                        button#deleteElement.btn(style='font-size:16px')
                             i.fa.fa-solid.fa-trash
 
                         //- 分享鍵
-                        button#share-btn(type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px")
+                        button#share-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px")
                             i.fa.fa-solid.fa-share
                         #shareToAllModal.modal.fade(tabindex='-1', aria-labelledby='shareModal', aria-hidden='true')
                           .modal-dialog
@@ -192,12 +191,12 @@ block content
                                 button.btn.btn-primary#shareToAll_confirm-btn 分享
 
                         //- 查看留言鍵
-                        button.openbtn#annotation-show-btn
+                        button.openbtn#annotation-show-btn.btn
                             i.fa.fa-commenting-o
 
 
                         //- 特定人分享頁面
-                        button#sharedNote-btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
+                        button#sharedNote-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
                           i.fa.fa-users
                         #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
                           .modal-dialog
@@ -246,3 +245,10 @@ block content
        $('#noteUpload-btn').click(async function (){
           window.open('/uploadNote');
        })
+
+        $('#deleteElement').click(function (){
+          const isDeleted = window.confirm("確定是否刪除選取的物件?");
+          if(isDeleted){
+            $('#update-note-content').find('.highlight').remove();
+          }
+        });
