@@ -219,9 +219,11 @@ block content
                    if(user_permission == 1){
                       // 不能用註釋icon也不能用textarea
                       $('button').prop('disabled', true);
+                      $('.form-control').prop('disabled', true);
                     }else if(user_permission >= 2){
                       $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').draggable({ containment: '#update-note-content' });
                       $('button').prop('disabled', false);
+                      $('.form-control').prop('disabled', false);
                     }
                   } else {
                       $('#annotation-btn').prop('disabled',true);
