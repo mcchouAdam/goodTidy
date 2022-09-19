@@ -216,7 +216,7 @@ const showShareToOtherList = async function (shareList, note_id) {
         case 1:
           permission = '允許觀看';
           break;
-        case 3:
+        case 2:
           permission = '允許留言';
           break;
       }

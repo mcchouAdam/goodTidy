@@ -9,14 +9,14 @@ block content
                 //- button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                 .OCR-block
                     form#form-preview(action='', method='post', r='')
-                        //- input(type='file', name='photo', accept='image/*', required='')
-                        .row.mb-3
-                            .col-sm-10
+                        .row(style="margin:10px 0;")
+                            .col-sm
                                 input.form-control(type='file', name='photo', accept='image/*', required='')
-                                button#form-prview-btn.button-55 圖形預覽
+                            .col-sm
+                                button#form-prview-btn.button-55 預覽
                     
                     img#img-preview(hidden='')
-                    .OCR-nav
+                    .OCR-nav(style="margin:10px 0 20px 10px;")
                         //- <button id="pre">上一步</button>
                         //- <button id="next">下一步</button>
                         //- button#shapeRemoveBG(disabled='') 圖形去背
@@ -29,24 +29,24 @@ block content
                     .OCR-preview
                         canvas#fontOCRCanvas
             .col
-                .container
+                .OCR-block
                     .row
-                        .col
+                        .col-sm
                             h1 預覽
-                        .col
-                            button#submit_note.button-55 上傳  
-                .note-preview-block
-                    .processed-content-nav
-                        .row.mb-3
-                            label.col-sm-2.col-form-label 筆記名稱
-                            .col-sm-10
-                                input#note-name.form-control(type='text')
-                        .row.mb-3
-                            label.col-sm-2.col-form-label 筆記分類
-                            .col-sm-10
-                                input#note-classification.form-control(type='text')
-                    
-                    #note-preview-content.note-edit-block                   
+                        .col-sm(style="margin:0 0 0 400px")
+                            button#submit_note.button-55 上傳
+                        .note-preview-block
+                            .processed-content-nav
+                                .row.mb-3
+                                    label.col-sm-2.col-form-label 筆記名稱
+                                    .col-sm-10
+                                        input#note-name.form-control(type='text')
+                                .row.mb-3
+                                    label.col-sm-2.col-form-label 筆記分類
+                                    .col-sm-10
+                                        input#note-classification.form-control(type='text')
+                            
+                            #note-preview-content.note-edit-block                   
 
                     //- input#note-name(type='text', placeholder='筆記名稱')
                     //- input#note-classification(type='text', placeholder='筆記分類')

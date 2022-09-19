@@ -1,5 +1,4 @@
 // 圖形圈選 ---------------------------
-
 // 魔術
 $('#magicContour').click(async function () {
   initCanvasListener(canvas);
@@ -26,7 +25,7 @@ $('#shapeView').click(function () {
   const item_img = $(`<img src="${previewBlah.src}" />`)
     .css('width', previewBlah.width)
     .css('height', previewBlah.height)
-    .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`);
+    .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`); // 取圈選的位置
 
   const item_id = `${Date.now()}_contour-pic`;
   const item = $(`<div class="contour-pic" id="${item_id}"></div>`)
@@ -141,14 +140,17 @@ $('#OCR').click(async function () {
 
       // append進預覽框裡
       // OCR_result[0] 是全部辨識的字串
+      // 整張圖在OCR時，有時候座標為負值，故定死為10,10
       let text = OCR_result[0].description;
-      let textTop = OCR_result[0].boundingPoly.vertices[0].y;
-      let textLeft = OCR_result[0].boundingPoly.vertices[0].x;
+      // let textTop = OCR_result[0].boundingPoly.vertices[0].y;
+      // let textLeft = OCR_result[0].boundingPoly.vertices[0].x;
+      let textTop = 10;
+      let textLeft = 10;
 
       addDragTextarea('#note-preview-content', text, textTop, textLeft);
     })
     .catch(function (error) {
-      console.log(error);
+      alert(response.data.msg);
       console.log('OCR失敗');
     });
 });
@@ -163,7 +165,8 @@ $('#reDraw').click(function () {
 
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
-  addDragTextarea('#update-note-content', '新增文字方塊');
+  addDragTextarea('#update-note-content', '新增文字方塊', 25, 25);
+  textareaClick();
 });
 
 // 儲存鍵 --------------------------------------
@@ -189,25 +192,25 @@ $('#storeNote').click(async function () {
   // 儲存時需要按照順序append
   // OCR的draggable文字方塊資訊
   OCR_elements = [];
-  OCR_ids.map((id) => {
-    const OCR_top = $(`#${id}`).parent().get(0).style.top;
-    const OCR_left = $(`#${id}`).parent().get(0).style.left;
-    const OCR_width = $(`#${id}`).parent().get(0).style.width;
-    const OCR_height = $(`#${id}`).parent().get(0).style.height;
-    const OCR_text = $(`#${id}`).val();
-    const OCR_obj = {
-      'text': OCR_text,
-      'textTop': OCR_top,
-      'textLeft': OCR_left,
-      'height': OCR_height,
-      'width': OCR_width,
-    };
-    OCR_elements.push(OCR_obj);
-  });
+  if (OCR_ids.length != 0) {
+    OCR_ids.map((id) => {
+      const OCR_top = $(`#${id}`).parent().get(0).style.top;
+      const OCR_left = $(`#${id}`).parent().get(0).style.left;
+      const OCR_width = $(`#${id}`).parent().get(0).style.width;
+      const OCR_height = $(`#${id}`).parent().get(0).style.height;
+      const OCR_text = $(`#${id}`).val();
+      const OCR_obj = {
+        'text': OCR_text,
+        'textTop': OCR_top,
+        'textLeft': OCR_left,
+        'height': OCR_height,
+        'width': OCR_width,
+      };
+      OCR_elements.push(OCR_obj);
+    });
+  }
 
-  // console.log(OCR_elements);
-
-  // // 搜尋使用的keywords;
+  // 搜尋使用的keywords，將全部的字串串起來
   let ek = $('.addtextarea')
     .map((_, el) => el.value)
     .get();
@@ -339,7 +342,6 @@ $('#version-change').click(function () {
 //   $('#sidebar-comment').append(annotation_html);
 // });
 
-
 // --------------------------------------------------------
 // 特定人分享清單鍵
 $('#sharedNote-btn').click(async function () {
@@ -353,11 +355,4 @@ $('#sharedNote-change').click(function () {
   // sharedNoteShow(note_chosen, shared_note_obj);
   // $('textarea').prop('disabled', true);
   // $('textarea').draggable({ 'disable': true });
-});
-
-// ------------------------------------------------------
-
-// 刪除物件鍵
-$('#deleteElement').click(function () {
-  current_delete_element.remove();
 });

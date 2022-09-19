@@ -19,15 +19,15 @@ block content
                 img.rounded-circle(src=picture, alt='Profile')
                 h2=name
                 h3=email
-                .social-links.mt-2
-                  a.twitter(href='#')
-                    i.bi.bi-twitter
-                  a.facebook(href='#')
-                    i.bi.bi-facebook
-                  a.instagram(href='#')
-                    i.bi.bi-instagram
-                  a.linkedin(href='#')
-                    i.bi.bi-linkedin
+                //- .social-links.mt-2
+                //-   a.twitter(href='#')
+                //-     i.bi.bi-twitter
+                //-   a.facebook(href='#')
+                //-     i.bi.bi-facebook
+                //-   a.instagram(href='#')
+                //-     i.bi.bi-instagram
+                //-   a.linkedin(href='#')
+                //-     i.bi.bi-linkedin
           .col-xl-8
             .card
               .card-body.pt-3
@@ -35,17 +35,17 @@ block content
                 ul.nav.nav-tabs.nav-tabs-bordered
                   li.nav-item
                     button.nav-link.active(data-bs-toggle='tab', data-bs-target='#profile-overview') Overview
-                  li.nav-item
-                    button.nav-link(data-bs-toggle='tab', data-bs-target='#profile-edit') Edit Profile
-                  li.nav-item
-                    button.nav-link(data-bs-toggle='tab', data-bs-target='#profile-settings') Settings
-                  li.nav-item
-                    button.nav-link(data-bs-toggle='tab', data-bs-target='#profile-change-password') Change Password
+                  //- li.nav-item
+                  //-   button.nav-link(data-bs-toggle='tab', data-bs-target='#profile-edit') Edit Profile
+                  //- li.nav-item
+                  //-   button.nav-link(data-bs-toggle='tab', data-bs-target='#profile-settings') Settings
+                  //- li.nav-item
+                  //-   button.nav-link(data-bs-toggle='tab', data-bs-target='#profile-change-password') Change Password
                 .tab-content.pt-2
                   #profile-overview.tab-pane.fade.show.active.profile-overview
-                    h5.card-title About
-                    p.small.fst-italic
-                      | Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.
+                    //- h5.card-title About
+                    //- p.small.fst-italic
+                    //-   | 一個森愛歷史的男紙
                     h5.card-title Profile Details
                     .row
                       .col-lg-3.col-md-4.label Full Name
@@ -73,92 +73,92 @@ block content
                         label.col-md-4.col-lg-3.col-form-label(for='about') About
                         .col-md-8.col-lg-9
                           textarea#about.form-control(name='about', style='height: 100px')
-                            | Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='company') Company
-                        .col-md-8.col-lg-9
-                          input#company.form-control(name='company', type='text', value='Lueilwitz, Wisoky and Leuschke')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Job') Job
-                        .col-md-8.col-lg-9
-                          input#Job.form-control(name='job', type='text', value='Web Designer')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Country') Country
-                        .col-md-8.col-lg-9
-                          input#Country.form-control(name='country', type='text', value='USA')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Address') Address
-                        .col-md-8.col-lg-9
-                          input#Address.form-control(name='address', type='text', value='A108 Adam Street, New York, NY 535022')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Phone') Phone
-                        .col-md-8.col-lg-9
-                          input#Phone.form-control(name='phone', type='text', value='(436) 486-3538 x29071')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Email') Email
-                        .col-md-8.col-lg-9
-                          input#Email.form-control(name='email', type='email', value='k.anderson@example.com')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Twitter') Twitter Profile
-                        .col-md-8.col-lg-9
-                          input#Twitter.form-control(name='twitter', type='text', value='https://twitter.com/#')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Facebook') Facebook Profile
-                        .col-md-8.col-lg-9
-                          input#Facebook.form-control(name='facebook', type='text', value='https://facebook.com/#')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Instagram') Instagram Profile
-                        .col-md-8.col-lg-9
-                          input#Instagram.form-control(name='instagram', type='text', value='https://instagram.com/#')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='Linkedin') Linkedin Profile
-                        .col-md-8.col-lg-9
-                          input#Linkedin.form-control(name='linkedin', type='text', value='https://linkedin.com/#')
-                      .text-center
-                        button.btn.btn-primary(type='submit') Save Changes
+                            | 
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='company') Company
+                      //-   .col-md-8.col-lg-9
+                      //-     input#company.form-control(name='company', type='text', value='Lueilwitz, Wisoky and Leuschke')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Job') Job
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Job.form-control(name='job', type='text', value='Web Designer')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Country') Country
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Country.form-control(name='country', type='text', value='USA')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Address') Address
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Address.form-control(name='address', type='text', value='A108 Adam Street, New York, NY 535022')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Phone') Phone
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Phone.form-control(name='phone', type='text', value='(436) 486-3538 x29071')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Email') Email
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Email.form-control(name='email', type='email', value='k.anderson@example.com')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Twitter') Twitter Profile
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Twitter.form-control(name='twitter', type='text', value='https://twitter.com/#')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Facebook') Facebook Profile
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Facebook.form-control(name='facebook', type='text', value='https://facebook.com/#')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Instagram') Instagram Profile
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Instagram.form-control(name='instagram', type='text', value='https://instagram.com/#')
+                      //- .row.mb-3
+                      //-   label.col-md-4.col-lg-3.col-form-label(for='Linkedin') Linkedin Profile
+                      //-   .col-md-8.col-lg-9
+                      //-     input#Linkedin.form-control(name='linkedin', type='text', value='https://linkedin.com/#')
+                      //- .text-center
+                      //-   button.btn.btn-primary(type='submit') Save Changes
                     // End Profile Edit Form
-                  #profile-settings.tab-pane.fade.pt-3
-                    // Settings Form
-                    form
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='fullName') Email Notifications
-                        .col-md-8.col-lg-9
-                          .form-check
-                            input#changesMade.form-check-input(type='checkbox', checked='')
-                            label.form-check-label(for='changesMade')
-                              | Changes made to your account
-                          .form-check
-                            input#newProducts.form-check-input(type='checkbox', checked='')
-                            label.form-check-label(for='newProducts')
-                              | Information on new products and services
-                          .form-check
-                            input#proOffers.form-check-input(type='checkbox')
-                            label.form-check-label(for='proOffers')
-                              | Marketing and promo offers
-                          .form-check
-                            input#securityNotify.form-check-input(type='checkbox', checked='', disabled='')
-                            label.form-check-label(for='securityNotify')
-                              | Security alerts
-                      .text-center
-                        button.btn.btn-primary(type='submit') Save Changes
-                    // End settings Form
-                  #profile-change-password.tab-pane.fade.pt-3
-                    // Change Password Form
-                    form
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='currentPassword') Current Password
-                        .col-md-8.col-lg-9
-                          input#currentPassword.form-control(name='password', type='password')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='newPassword') New Password
-                        .col-md-8.col-lg-9
-                          input#newPassword.form-control(name='newpassword', type='password')
-                      .row.mb-3
-                        label.col-md-4.col-lg-3.col-form-label(for='renewPassword') Re-enter New Password
-                        .col-md-8.col-lg-9
-                          input#renewPassword.form-control(name='renewpassword', type='password')
-                      .text-center
-                        button.btn.btn-primary(type='submit') Change Password
+                  //- #profile-settings.tab-pane.fade.pt-3
+                  //-   // Settings Form
+                  //-   form
+                  //-     .row.mb-3
+                  //-       label.col-md-4.col-lg-3.col-form-label(for='fullName') Email Notifications
+                  //-       .col-md-8.col-lg-9
+                  //-         .form-check
+                  //-           input#changesMade.form-check-input(type='checkbox', checked='')
+                  //-           label.form-check-label(for='changesMade')
+                  //-             | Changes made to your account
+                  //-         .form-check
+                  //-           input#newProducts.form-check-input(type='checkbox', checked='')
+                  //-           label.form-check-label(for='newProducts')
+                  //-             | Information on new products and services
+                  //-         .form-check
+                  //-           input#proOffers.form-check-input(type='checkbox')
+                  //-           label.form-check-label(for='proOffers')
+                  //-             | Marketing and promo offers
+                  //-         .form-check
+                  //-           input#securityNotify.form-check-input(type='checkbox', checked='', disabled='')
+                  //-           label.form-check-label(for='securityNotify')
+                  //-             | Security alerts
+                  //-     .text-center
+                  //-       button.btn.btn-primary(type='submit') Save Changes
+                  //-   // End settings Form
+                  //- #profile-change-password.tab-pane.fade.pt-3
+                  //-   // Change Password Form
+                  //-   form
+                  //-     .row.mb-3
+                  //-       label.col-md-4.col-lg-3.col-form-label(for='currentPassword') Current Password
+                  //-       .col-md-8.col-lg-9
+                  //-         input#currentPassword.form-control(name='password', type='password')
+                  //-     .row.mb-3
+                  //-       label.col-md-4.col-lg-3.col-form-label(for='newPassword') New Password
+                  //-       .col-md-8.col-lg-9
+                  //-         input#newPassword.form-control(name='newpassword', type='password')
+                  //-     .row.mb-3
+                  //-       label.col-md-4.col-lg-3.col-form-label(for='renewPassword') Re-enter New Password
+                  //-       .col-md-8.col-lg-9
+                  //-         input#renewPassword.form-control(name='renewpassword', type='password')
+                  //-     .text-center
+                  //-       button.btn.btn-primary(type='submit') Change Password
                     // End Change Password Form
                 // End Bordered Tabs
     // End #main
@@ -167,15 +167,7 @@ block content
       .copyright
         | &copy; Copyright 
         strong
-          span NiceAdmin
-        | . All Rights Reserved
-      .credits
-        // All the links in the footer should remain intact.
-        // You can delete the links only if you purchased the pro version.
-        // Licensing information: https://bootstrapmade.com/license/
-        // Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-        | Designed by 
-        a(href='https://bootstrapmade.com/') BootstrapMade
+          span GoodTidy
     // End Footer
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short

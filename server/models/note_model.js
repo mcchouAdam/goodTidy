@@ -639,6 +639,7 @@ const createSave = async (note_id, user_id) => {
   try {
     // 檢查User是否已經點過這個
 
+    console.log('111111user_id:', user_id);
     // 更新saved_user_id
     // Update the Note saved_user_id ----------------------------
     await NotesCollection.updateOne(
