@@ -988,6 +988,21 @@ const getAnnotationAuth = async (user_email, note_id, user_id) => {
   const NoteCollection = Mongo.db(MONGO_DB).collection('notes');
 
   try {
+    // 確認是否為自己筆記
+    const ownNote = await NoteCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+          'user_id': user_id,
+        },
+      },
+    ]).toArray();
+
+    // 確認是否為自己的筆記
+    if (ownNote.length == 1) {
+      return 16;
+    }
+
     // 拿取該筆記分享給這個使用者的權限
     const sharedUsers = await NoteCollection.aggregate([
       {
@@ -1000,6 +1015,7 @@ const getAnnotationAuth = async (user_email, note_id, user_id) => {
       .project({ '_id': 1, 'sharing_user': 1, 'user_id': 1 })
       .toArray();
 
+    // 找不到則為沒權限
     let permission = 0;
     if (sharedUsers.length == 0) {
       return 0;
@@ -1013,11 +1029,6 @@ const getAnnotationAuth = async (user_email, note_id, user_id) => {
         }
       });
     });
-
-    // 確認是否為自己的筆記
-    if (sharedUsers[0].user_id === user_id) {
-      permission = 16;
-    }
 
     return permission;
   } catch (error) {

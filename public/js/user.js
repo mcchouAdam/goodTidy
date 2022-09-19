@@ -215,7 +215,7 @@ $('#signin-form-btn').click(async function (e) {
     const password = $('#signin_password').val();
 
     await signIn(email, password);
-    alert('登入成功');
+    // alert('登入成功');
     // location.reload(true);
   }
 });

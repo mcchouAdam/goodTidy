@@ -734,6 +734,7 @@ async function showAnnotation(
     // 組合annotation
     let textarea_modify_icon_html = '';
 
+    console.log('user_permission: ', user_permission);
     if (user_permission >= 2) {
       textarea_modify_icon_html = `
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -761,6 +762,7 @@ async function showAnnotation(
                         aria-expanded="false"
                       >
                         <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+                        ${textarea_modify_icon_html}
                       </a>
                     </div>`;
 
@@ -770,7 +772,7 @@ async function showAnnotation(
                             <span class="badge bg-info rounded-pill">${
                               annotation_user_name[id - 1]
                             }</span>
-                            <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..." disabled>${
+                            <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?...">${
       annotation_text[id - 1]
     }</textarea>
                             ${annotation_menu_html}
