@@ -11,6 +11,7 @@ const {
   logOut,
   getUserProfile,
   showUserProfile,
+  showSignIn,
 } = require('../controllers/user_controller');
 
 const userPictureUpload = userPicUpload.fields([
@@ -26,5 +27,8 @@ router
   .route(`/api/${API_VERSION}/user/profile`)
   .get(authentication(), wrapAsync(getUserProfile));
 router.route(`/profile`).get(authentication(), wrapAsync(showUserProfile));
+
+// 登入
+router.route(`/signin`).get(wrapAsync(showSignIn));
 
 module.exports = router;

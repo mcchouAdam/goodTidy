@@ -3,7 +3,7 @@ const { showShareToOtherList } = require('../../utils/showPage');
 require('dotenv').config();
 const { S3_HOST } = process.env;
 
-// 渲染筆記頁面
+// [頁面呈現] 渲染編輯筆記
 const showNote = async (req, res) => {
   const id = req.session.user.id;
   const provider = req.session.user.provider;
@@ -12,6 +12,23 @@ const showNote = async (req, res) => {
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   return res.status(200).render('note', {
+    id: id,
+    provider: provider,
+    name: name,
+    email: email,
+    picture: picture,
+  });
+};
+
+// [頁面呈現] 渲染編輯筆記
+const showUploadNote = async (req, res) => {
+  const id = req.session.user.id;
+  const provider = req.session.user.provider;
+  const name = req.session.user.name;
+  const email = req.session.user.email;
+  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+  return res.status(200).render('uploadNote', {
     id: id,
     provider: provider,
     name: name,
@@ -145,7 +162,7 @@ const getShareToOther = async (req, res) => {
 
 const saveNote = async (req, res) => {
   const note_id = req.body.note_id;
-  const user_id = req.body.user_id;
+  const user_id = req.session.user.id;
 
   const saveResult = await Notes.createSave(note_id, user_id);
   // const shareList_html = await showShareToOtherList(shareList, note_id);
@@ -208,4 +225,5 @@ module.exports = {
   saveNote,
   updateAnnotation,
   getAnnotation,
+  showUploadNote,
 };

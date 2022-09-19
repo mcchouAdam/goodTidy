@@ -73,19 +73,13 @@ async function noteShow(note_id) {
     .on('drag', stepDrag);
 
   // 物件生成後，才可以抓取物件click
-  // 圖形選取
-  $('.contour-pic.ui-draggable.ui-draggable-handle').click(function (e) {
-    let click_element = $('#' + e.currentTarget.id);
+  pictureClick();
+  textareaClick();
+}
 
-    if (click_element.hasClass('highlight')) {
-      click_element.removeClass('highlight');
-    } else {
-      click_element.addClass('highlight');
-    }
-  });
-
-  // 文字選取
-  $('.addtextarea').click(function (e) {
+// [function][筆記編輯頁面] 圖形點選框選
+function pictureClick() {
+  $('.contour-pic.ui-draggable.ui-draggable-handle').dblclick(function (e) {
     let click_element = $('#' + e.currentTarget.id);
 
     if (click_element.hasClass('highlight')) {
@@ -96,6 +90,29 @@ async function noteShow(note_id) {
   });
 }
 
+// [function][筆記編輯頁面] 文字點選框選
+function textareaClick() {
+  $('.addtextarea').dblclick(function (e) {
+    let click_element = e.currentTarget.parentNode;
+    let click_id = e.target.id;
+
+    // 取消框選
+    if (click_element.classList.contains('highlight')) {
+      click_element.classList.remove('highlight');
+      if (OCR_delete_ids.indexOf(click_id) !== -1) {
+        OCR_delete_ids.splice(click_id, 1);
+      }
+      // 框選
+    } else {
+      click_element.classList.add('highlight');
+      OCR_delete_ids.push(click_id);
+    }
+  });
+}
+
+// [function][筆記編輯頁面] 文字點選框選
+
+// 剛進入畫面時拿取User的筆記資訊
 async function getUserNotes() {
   let config = {
     method: 'get',
@@ -232,9 +249,6 @@ async function showNoteList(note_obj, div_append) {
     console.log('classfi: ', classfi);
     let ids = note_obj[classfi].note_id;
     let names = note_obj[classfi].note_name;
-
-    // console.log('ids: ', ids);
-    // console.log('names: ', names);
 
     // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {

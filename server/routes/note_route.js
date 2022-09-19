@@ -28,6 +28,7 @@ const {
   saveNote,
   updateAnnotation,
   getAnnotation,
+  showUploadNote,
 } = require('../controllers/note_controller');
 const { OCRupload, noteUpload, shareImgUpload } = require('../models/s3');
 const { OCR_google } = require('../../utils/OCR');
@@ -89,7 +90,11 @@ router
   .get(authentication(), noteAuthorization(), wrapAsync(getUserNotes));
 
 // [筆記頁面]
+// 編輯筆記頁面
 router.route(`/note`).get(authentication(), wrapAsync(getNote));
+
+// 上傳筆記頁面
+router.route(`/uploadNote`).get(authentication(), wrapAsync(showUploadNote));
 
 // OCR ------------------------------------------------
 router
@@ -123,7 +128,9 @@ router
   .get(authentication(), wrapAsync(getShareToOther));
 
 // [收藏] -----------------------------------------------------------------
-router.route(`/api/${API_VERSION}/note/save`).post(wrapAsync(saveNote));
+router
+  .route(`/api/${API_VERSION}/note/save`)
+  .post(authentication(), wrapAsync(saveNote));
 
 // [註釋] -----------------------------------------------------------------
 // 新增/修改/刪除註釋權限

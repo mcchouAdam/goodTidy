@@ -119,6 +119,10 @@ const showUserProfile = async (req, res) => {
   });
 };
 
+const showSignIn = async (req, res) => {
+  return res.status(200).render('signin');
+};
+
 const logOut = async (req, res) => {
   req.session.destroy();
   return res.status(200).send({ 'msg': '登出成功' });
@@ -130,4 +134,5 @@ module.exports = {
   logOut,
   getUserProfile,
   showUserProfile,
+  showSignIn,
 };

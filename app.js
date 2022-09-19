@@ -54,20 +54,16 @@ app.get('/notes', async (req, res) => {
   return res.render('notes');
 });
 
-// signin
-app.get('/signin', async (req, res) => {
-  return res.render('signin');
-});
-
+// TODO: 搬家
 // signup
 app.get('/signup', async (req, res) => {
   return res.render('signup');
 });
 
-// uploadNote
-app.get('/uploadNote', async (req, res) => {
-  return res.render('uploadNote');
-});
+// // uploadNote
+// app.get('/uploadNote', async (req, res) => {
+//   return res.render('uploadNote');
+// });
 
 // sharedNote
 app.get('/sharedNote/:note_id', async (req, res) => {

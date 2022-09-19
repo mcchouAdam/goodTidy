@@ -14,7 +14,7 @@ $('#shareToAll-toggle').click(function () {
   const checked = $(this).is(':checked');
   if (checked) {
     $('#shareToAllDetail').css('visibility', 'visible');
-    $('#share_url').val(`/shareNotePage?id=${current_note_id}`);
+    $('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
   } else {
     $('#shareToAllDetail').css('visibility', 'hidden');
   }

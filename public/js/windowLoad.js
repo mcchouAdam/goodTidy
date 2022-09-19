@@ -1,6 +1,6 @@
 // HOST
 let S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
-// let server = 'http://localhost:3001';
+let server = 'http://localhost:3001';
 let API_VERSION = '1.0';
 
 // user info --------------------------------------
@@ -26,6 +26,7 @@ let shared_note_obj;
 
 // OCR info ----------------------------------------
 let OCR_ids = [];
+let OCR_delete_ids = [];
 let OCR_elements = [];
 
 // Canvas ------------------------------------------
@@ -61,6 +62,7 @@ let current_delete_element;
 // 註釋資訊
 let current_annotation_element;
 
+// TODO: 只在有需求的頁面Load相對應的function
 // 預先讀取
 $(window).on('load', async function () {
   // [筆記上傳頁面] 限制預覽頁面寬度
@@ -77,11 +79,4 @@ $(window).on('load', async function () {
 
   // 剛開始讀取使用者最近剛編輯的文章
   AutoSave.restore();
-
-  // $('#update-note-content').click(function (event) {
-  //   current_delete_element = $(event.target);
-  //   $(event.target).focus(function () {
-  //     $(this).next('span').css('display', 'inline').fadeOut(1000);
-  //   });
-  // });
 });

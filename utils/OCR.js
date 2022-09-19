@@ -8,10 +8,7 @@ const client = new vision.ImageAnnotatorClient({
 });
 
 const OCR_google = async (req, res) => {
-  // filename
-  // console.log('aaaa');
   const filename = req.filename;
-  // console.log(filename);
   const [result] = await client.textDetection(`${S3_HOST}/OCR/${filename}`);
   const detections = result.textAnnotations;
   detections.forEach((text) => {
@@ -19,6 +16,9 @@ const OCR_google = async (req, res) => {
     console.log(text.boundingPoly.vertices);
   });
 
+  if (detections.length == 0) {
+    return res.status(500).json({ 'msg': 'OCR錯誤，請您重新嘗試' });
+  }
   return res.status(200).json(detections);
 };
 

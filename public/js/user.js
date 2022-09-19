@@ -133,8 +133,14 @@ $('#profile-btn').click(async function () {
 // [分享頁面] 分享toggle元件 ---------------------------------
 $('#share-btn').click(async function () {
   if (!current_note_id) {
+    $('#shareToAllModal').modal({
+      backdrop: 'static',
+      keyboard: false,
+    });
     alert('請先選擇筆記');
-    return;
+
+    // $('#shareToAllModal').modal('hide');
+    return 0;
   }
 
   // PreLoad the 特定人士清單
@@ -172,7 +178,7 @@ $('#share-btn').click(async function () {
   console.log('sharing_descrition: ', sharing_descrition);
 
   // sharing_url 輸入Bar
-  $('#share_url').val(`/${sharing_url}`);
+  $('#share_url').val(`${server}${sharing_url}`);
 
   $('.badge.bg-success.rounded-pill').remove();
   tags.map((t) => {
