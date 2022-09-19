@@ -60,7 +60,6 @@ block content
 
                         //- 筆記上傳
                         button#noteUpload-btn(type='button', style="font-size:16px")
-                            a(href="/uploadNote" target="_blank")
                               i.fa.fa-solid.fa-upload
                         //- //- 筆記上傳Modal
                         //- #noteUploadModal.modal.fade(tabindex='-1', aria-labelledby='noteUploadModal', aria-hidden='true')
@@ -243,3 +242,7 @@ block content
 
             window.open(`/sharedToOtherNote/${current_note_id}`);
         })
+
+       $('#noteUpload-btn').click(async function (){
+          window.open('/uploadNote');
+       })
