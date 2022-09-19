@@ -44,10 +44,6 @@ app.use([
   require('./server/routes/social_route'),
 ]);
 
-// HomePage
-app.get('/', async (req, res) => {
-  return res.render('homePage');
-});
 
 // Index
 app.get('/notes', async (req, res) => {
