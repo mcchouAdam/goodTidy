@@ -110,7 +110,7 @@ const getUserNotes = async (req, res) => {
   const note_permission = req.note_permission;
   const result = await Notes.getUserNotes(user_id, note_permission);
 
-  // console.log('permission_result: ', result);
+  console.log('note_permission: ', note_permission);
 
   return res.status(200).json(result);
 };

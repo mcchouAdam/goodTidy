@@ -61,6 +61,7 @@ block content
               let annotion_user_id = !{JSON.stringify(annotion_user_id)};
               let annotion_user_name = !{JSON.stringify(annotion_user_name)}
 
+
               // 重新渲染物件 (圖片+文字+註解)
               let text_element = text_elements_arr($('#update-note-content'), text_elements);
               let img_element = Img_elements_arr(elements);
@@ -160,7 +161,6 @@ block content
 
                 // 組合annotation
                 let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
-                      <button class="btn" type="button" onclick="javascript:lockAnnotation('${annotation_id}')"><i class="bi bi-send"></i></button>
                       <a
                         class="btn"
                         id="dropdownMenuLink"
@@ -173,14 +173,19 @@ block content
                         <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
                       </a>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">
+                          鎖定
+                        </a>
                         <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
-                          修改註釋
+                          修改
                         </a>
                         <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
                           移除
                         </a>
                       </div>
                     </div>`;
+
+
 
                 let annotation_html = `
                                 <div class="form-group" id="form-group-${annotation_id}">
@@ -199,29 +204,29 @@ block content
               $('#saveAnnotation').click(async function(){
                 await saveAnnotation(annotion_user_id, note_id);
               })
+              
+              // 沒打開觀看留言時，關閉存檔與移除
+              $('#annotation-btn').prop('disabled',true);
+              $('#saveAnnotation').prop('disabled',true);
 
               // 觀看註釋鍵
               $('#annotation-watch-toggle').change(async function () {
                   if (this.checked) {
+
                     await getAnnotation(note_id);
-                    await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element);
+                    await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element, user_permission);
                   
-                    // TODO: 讀取權限表，目前寫死
-                    if(user_permission == 1){
-                      $('button').prop('disabled','true');
-                      //- $('.d-flex.flex-row.align-items-center').remove();
+                   if(user_permission == 1){
+                      // 不能用註釋icon也不能用textarea
+                      $('button').prop('disabled', true);
                     }else if(user_permission >= 2){
                       $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').draggable({ containment: '#update-note-content' });
-                      $('textarea').prop("disabled", false);
+                      $('button').prop('disabled', false);
                     }
                   } else {
+                      $('#annotation-btn').prop('disabled',true);
+                      $('#saveAnnotation').prop('disabled',true);
                       $('#sidebar-comment').html('');
                       $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').remove();
                   }
               });
-
-            // 刪除鍵
-            $('#deleteElement').click(function(){
-              
-
-            })

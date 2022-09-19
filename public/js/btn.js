@@ -150,7 +150,7 @@ $('#OCR').click(async function () {
       addDragTextarea('#note-preview-content', text, textTop, textLeft);
     })
     .catch(function (error) {
-      alert(response.data.msg);
+      alert(error.response.data.msg);
       console.log('OCR失敗');
     });
 });
@@ -291,57 +291,6 @@ $('#version-change').click(function () {
   noteShowFromVer(version_chosen, current_version_obj);
 });
 
-// ------------------------------------------------------
-
-// // 留言button
-// $('#comment-btn').click(function (e) {
-//   let annotation_count = $('.form-group').length;
-//   let current_annotation_num = annotation_count + 1;
-
-//   // 先append
-//   const item = $(
-//     `<i class="fa fa-solid fa-comments"><span class="badge bg-dark rounded-pill">${current_annotation_num}</span></i>`
-//   )
-//     // .attr('contenteditable', 'true')
-//     .draggable({ containment: '#update-note-content' })
-//     .css({ 'color': 'red', 'position': 'relative', 'font-size': '24px' })
-//     .offset({ top: 0, left: 0 })
-//     .on('drag', stepDrag);
-//   $('#update-note-content').append(item);
-
-//   let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
-//         <button class="btn" type="button" onclick="javascript:lockAnnotation('')"><i class="bi bi-send"></i></button>
-//         <a
-//           class="btn"
-//           id="dropdownMenuLink"
-//           href="#"
-//           role="button"
-//           data-toggle="dropdown"
-//           aria-haspopup="true"
-//           aria-expanded="false"
-//         >
-//           <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-//         </a>
-//         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-//           <a class="dropdown-item" href="javascript:updateAnnotation('')">
-//             修改註釋
-//           </a>
-//           <a class="dropdown-item" href="javascript:deleteAnnotation('')">
-//             移除
-//           </a>
-//         </div>
-//       </div>`;
-
-//   let annotation_html = `
-//                   <div class="form-group">
-//                     <span class="badge bg-dark rounded-pill">${current_annotation_num}</span>
-//                     <textarea class="form-control" id="${note_id}_annotation_${current_annotation_num}" rows="3" placeholder="您想註釋什麼?..."></textarea>
-//                     ${annotation_menu_html}
-//                   </div>`;
-
-//   $('#sidebar-comment').append(annotation_html);
-// });
-
 // --------------------------------------------------------
 // 特定人分享清單鍵
 $('#sharedNote-btn').click(async function () {
@@ -352,7 +301,4 @@ $('#sharedNote-btn').click(async function () {
 $('#sharedNote-change').click(function () {
   const note_chosen = $('input[name="shareNote_options"]:checked').val();
   window.open(`/sharedToOtherNote/${shared_note_obj[note_chosen].note_id}`);
-  // sharedNoteShow(note_chosen, shared_note_obj);
-  // $('textarea').prop('disabled', true);
-  // $('textarea').draggable({ 'disable': true });
 });

@@ -42,8 +42,4 @@ router
   .route(`/sharedToOtherNote/:note_id`)
   .get(authentication(), annotation_auth(), wrapAsync(showSharedNote));
 
-//   .get('/sharedNote/:note_id', async (req, res) => {
-//   return res.render('sharedNote');
-// });
-
 module.exports = router;
