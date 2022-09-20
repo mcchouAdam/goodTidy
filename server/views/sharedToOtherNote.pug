@@ -133,7 +133,7 @@ block content
                       .width(new_width)
                       .height(new_height)
                       .css({
-                          'position': 'relative',
+                          'position': 'absolute',
                       })
                       .offset(new_offset)
 
@@ -152,7 +152,7 @@ block content
                   `<i class="fa fa-solid fa-comments"><span class="badge bg-dark rounded-pill">${current_annotation_num}</span></i>`
                 )
                   .draggable({ containment: '#update-note-content' })
-                  .css({ 'color': 'red', 'position': 'relative', 'font-size': '24px' })
+                  .css({ 'color': 'red', 'position': 'absolute', 'font-size': '24px' })
                   .offset({ top: 0, left: 0 })
                   .on('drag', stepDrag);
 
@@ -221,7 +221,9 @@ block content
                       $('button').prop('disabled', true);
                       $('.form-control').prop('disabled', true);
                     }else if(user_permission >= 2){
-                      $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').draggable({ containment: '#update-note-content' });
+                      $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
+                          .css('position', 'absolute')
+                          .draggable({ containment: '#update-note-content' });
                       $('button').prop('disabled', false);
                       $('.form-control').prop('disabled', false);
                     }

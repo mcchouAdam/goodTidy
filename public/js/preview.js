@@ -1,8 +1,7 @@
 const form = document.querySelector('#form-preview');
 
-form.addEventListener('submit', async (e) => {
-  
-  e.preventDefault();
+form.addEventListener('change', async (e) => {
+  // e.preventDefault();
 
   // Get data URI of the selected image
   const formData = new FormData(e.currentTarget);

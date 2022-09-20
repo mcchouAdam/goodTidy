@@ -32,7 +32,7 @@ $('#shapeView').click(function () {
     .css('width', `${item_width}px`)
     .css('height', `${item_height}px`)
     .css('overflow', 'hidden')
-    // .css('position', 'absolute')
+    .css('position', 'absolute')
     .draggable({ containment: '#note-preview-content' });
 
   item.append(item_img);
@@ -42,7 +42,7 @@ $('#shapeView').click(function () {
   Screen_percent_arr = [];
 });
 
-// 上傳檔案 ----------------------------
+// 上傳檔案鍵 ----------------------------
 $('#submit_note').click(async function () {
   note_name = $('#note-name').val();
   note_classification = $('#note-classification').val();
@@ -104,7 +104,7 @@ $('#submit_note').click(async function () {
     OCR_elements
   );
 
-  location.reload();
+  window.location.assign('/note');
 });
 
 // 去除非文字鍵 ------------------------------------
@@ -135,6 +135,8 @@ $('#OCR').click(async function () {
   await axios(config)
     .then(function (response) {
       alert('OCR成功');
+
+      // Loading釋放
       $('#OCR').prop('disabled', false);
       $('body').css('cursor', 'default');
 
@@ -159,6 +161,10 @@ $('#OCR').click(async function () {
     .catch(function (error) {
       alert(error.response.data.msg);
       console.log('OCR失敗');
+
+      // Loading釋放
+      $('#OCR').prop('disabled', false);
+      $('body').css('cursor', 'default');
     });
 });
 
@@ -276,9 +282,11 @@ $('#newest-version-btn').click(function (e) {
   //TODO: 待重構
   let elements = $.parseHTML(newest_version);
   elements.map((s) => {
-    $('.contour-pic.ui-draggable.ui-draggable-handle').draggable({
-      containment: '#update-note-content',
-    });
+    $('.contour-pic.ui-draggable.ui-draggable-handle')
+      .css('position', 'absolute')
+      .draggable({
+        containment: '#update-note-content',
+      });
 
     $('#update-note-content').append(s);
   });

@@ -30,7 +30,7 @@ $('#shareToOtherMenu li').on('click', function () {
 // 分享鍵 ----------------------------------
 $('#shareToAll_confirm-btn').click(async function () {
   const isComment = $('#allowComment-toggle').is(':checked');
-  const isWatch = $('#allowWatch-toggle').is(':checked');
+  const isWatch = $('#shareToAll-toggle').is(':checked');
 
   let tags = $('.badge.bg-success.rounded-pill')
     .map((i, e) => e.outerText)
@@ -39,7 +39,14 @@ $('#shareToAll_confirm-btn').click(async function () {
 
   const share_description = $('#share_description').val();
   const file = $('#shareNote_image')[0].files[0];
-  const share_image = file.name;
+  let share_image;
+
+  if (!file) {
+    share_image = '';
+  } else {
+    share_image = file.name;
+  }
+
   let url_permission;
   let isSharing;
 

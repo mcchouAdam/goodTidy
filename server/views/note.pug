@@ -132,12 +132,12 @@ block content
                                       //- .form-check.form-switch
                                       //- label.form-check-label(for='flexSwitchCheckDefault') 開放編輯
                                       //- input#allowWrite-toggle.form-check-input(type='checkbox', role='switch', disabled='')
-                                    .form-check.form-switch
+                                    .form-check
                                       label.form-check-label(for='flexSwitchCheckDefault') 開放留言
-                                      input#allowComment-toggle.form-check-input(type='checkbox', role='switch')
-                                    .form-check.form-switch
-                                      label.form-check-label(for='flexSwitchCheckDefault') 開放觀看
-                                      input#allowWatch-toggle.form-check-input(type='checkbox', role='switch')
+                                      input#allowComment-toggle.form-check-input(type='checkbox')
+                                    //- .form-check.form-switch
+                                    //-   label.form-check-label(for='flexSwitchCheckDefault') 開放觀看
+                                    //-   input#allowWatch-toggle.form-check-input(type='checkbox', role='switch')
                                     br
                                     .form-floating
                                       textarea#share_description.form-control(style="height:100px;" placeholder='你會向大家怎麼介紹你的筆記?')
@@ -152,8 +152,8 @@ block content
                                       button.btn#add_note_tag-btn
                                         i.fa.fa-plus(aria-hidden='true')
                                     br
-                              .modal-footer
-                                button.btn.btn-primary#shareToAll_confirm-btn 分享
+                                    button.btn.btn-primary#shareToAll_confirm-btn 變更分享
+                                
 
                         //- 查看留言鍵
                         button.openbtn#annotation-show-btn.btn

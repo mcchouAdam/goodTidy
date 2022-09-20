@@ -70,6 +70,7 @@ async function noteShow(note_id) {
     .draggable({
       containment: '#update-note-content',
     })
+    .css('position', 'absolute')
     .on('drag', stepDrag);
 
   // 物件生成後，才可以抓取物件click
@@ -413,6 +414,7 @@ async function noteShowFromVer(name, Obj) {
     .draggable({
       containment: '#update-note-content',
     })
+    .css('position', 'absolute')
     .on('drag', stepDrag);
 }
 
@@ -726,7 +728,9 @@ async function showAnnotation(
   icon_div_append.append(annotation_icon);
   $(
     '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle.ui-draggable-disabled'
-  ).draggable({ containment: '#update-note-content' });
+  )
+    .css('position', 'absolute')
+    .draggable({ containment: '#update-note-content' });
 
   // 顯示註釋textarea
   const annotation_text = annotation_element.annotation_textarea;
