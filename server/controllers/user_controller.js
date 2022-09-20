@@ -120,7 +120,43 @@ const showUserProfile = async (req, res) => {
 };
 
 const showSignIn = async (req, res) => {
+  if (req.session.user) {
+    const id = req.session.user.id;
+    const provider = req.session.user.provider;
+    const name = req.session.user.name;
+    const email = req.session.user.email;
+    const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+    return res.status(200).render('profile', {
+      id: id,
+      provider: provider,
+      name: name,
+      email: email,
+      picture: picture,
+    });
+  }
+
   return res.status(200).render('signin');
+};
+
+const showSignUp = async (req, res) => {
+  if (req.session.user) {
+    const id = req.session.user.id;
+    const provider = req.session.user.provider;
+    const name = req.session.user.name;
+    const email = req.session.user.email;
+    const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+    return res.status(200).render('profile', {
+      id: id,
+      provider: provider,
+      name: name,
+      email: email,
+      picture: picture,
+    });
+  }
+
+  return res.status(200).render('signup');
 };
 
 const logOut = async (req, res) => {
@@ -135,4 +171,5 @@ module.exports = {
   getUserProfile,
   showUserProfile,
   showSignIn,
+  showSignUp,
 };

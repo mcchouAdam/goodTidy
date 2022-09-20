@@ -120,13 +120,18 @@ async function getUserNotes() {
     data: '',
   };
 
+  $body = $('body');
+  $body.addClass('loading');
+
   // 抓取筆記資料
   await axios(config)
     .then((response) => {
       const data = response.data;
       version_obj = data;
 
-      console.log();
+      // Loading取消
+      $body.removeClass('loading');
+
       // console.log('version', version_obj);
 
       let note_obj = {};
@@ -236,6 +241,9 @@ async function getUserNotes() {
       showNoteList(note_obj, $('#sidebar-nav'));
     })
     .catch((error) => {
+      // Loading取消
+      $body.removeClass('loading');
+
       console.log(error);
     });
 }

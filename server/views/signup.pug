@@ -16,26 +16,27 @@ block content
                 .card.mb-3
                   .card-body
                     .pt-4.pb-2
-                      h5.card-title.text-center.pb-0.fs-4 Create an Account
-                      p.text-center.small Enter your personal details to create account
+                      h5.card-title.text-center.pb-0.fs-4 註冊頁面
+                      br
+                      //- p.text-center.small Enter your personal details to create account
                     form.row.g-3.needs-validation(novalidate='')
                       .col-12
-                        label.form-label(for='yourName') Your Name
+                        label.form-label(for='yourName') 使用者名稱
                         input#signup_username.form-control(type='text', name='name', required='')
-                        .invalid-feedback Please, enter your name!
+                        .invalid-feedback 請您輸入使用者名稱
                       .col-12
-                        label.form-label(for='yourEmail') Your Email
+                        label.form-label(for='yourEmail') 信箱
                         input#signup_useremail.form-control(type='email', name='email', required='')
-                        .invalid-feedback Please enter a valid Email adddress!
+                        .invalid-feedback 請您輸入Email
                       .col-12
-                        label.form-label(for='yourPassword') Password
+                        label.form-label(for='yourPassword') 密碼
                         input#signup_password.form-control(type='password', name='password', required='')
-                        .invalid-feedback Please enter your password!
+                        .invalid-feedback 請您輸入密碼
                       .col-12
-                        label.form-label(for='yourPicture') Picture
+                        label.form-label(for='yourPicture') 大頭貼
                         br
                         input#user_picture(type='file')
-                        .invalid-feedback Please upload your user picture.
+                        //- .invalid-feedback Please upload your user picture.
                       //- .col-12
                       //-   .form-check
                       //-     input#acceptTerms.form-check-input(name='terms', type='checkbox', value='', required='')
@@ -45,11 +46,11 @@ block content
                       //-     .invalid-feedback You must agree before submitting.
 
                       .col-12
-                        button#signup-form-btn.btn.btn-primary.w-100 Create Account
+                        button#signup-form-btn.btn.btn-primary.w-100 創立帳號
                       .col-12
                         p.small.mb-0
-                          | Already have an account? 
-                          a(href='/signin') Sign in
+                          | 已經有帳號了嗎？ 
+                          a(href='/signin') 登入頁面
     // End #main
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short

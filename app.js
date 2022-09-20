@@ -44,23 +44,12 @@ app.use([
   require('./server/routes/social_route'),
 ]);
 
+// TODO: 搬家
 
 // Index
 app.get('/notes', async (req, res) => {
   return res.render('notes');
 });
-
-// TODO: 搬家
-// signup
-app.get('/signup', async (req, res) => {
-  return res.render('signup');
-});
-
-// // uploadNote
-// app.get('/uploadNote', async (req, res) => {
-//   return res.render('uploadNote');
-// });
-
 // sharedNote
 app.get('/sharedNote/:note_id', async (req, res) => {
   return res.render('sharedNote');
