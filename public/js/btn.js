@@ -32,6 +32,7 @@ $('#shapeView').click(function () {
     .css('width', `${item_width}px`)
     .css('height', `${item_height}px`)
     .css('overflow', 'hidden')
+    // .css('position', 'absolute')
     .draggable({ containment: '#note-preview-content' });
 
   item.append(item_img);
@@ -113,6 +114,10 @@ $('#removeNotWant').click(function () {
 
 // 文字辨識鍵 --------------------------------------
 $('#OCR').click(async function () {
+  // Loading
+  $('#OCR').prop('disabled', true);
+  $('body').css('cursor', 'progress');
+
   let image = canvas.toDataURL('image/jpeg', 1);
   const base64Response = await fetch(image);
   const blob = await base64Response.blob();
@@ -130,6 +135,8 @@ $('#OCR').click(async function () {
   await axios(config)
     .then(function (response) {
       alert('OCR成功');
+      $('#OCR').prop('disabled', false);
+      $('body').css('cursor', 'default');
 
       // Canvas重畫
       clearContext(canvas, context);

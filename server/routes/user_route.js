@@ -12,6 +12,7 @@ const {
   getUserProfile,
   showUserProfile,
   showSignIn,
+  showSignUp,
 } = require('../controllers/user_controller');
 
 const userPictureUpload = userPicUpload.fields([
@@ -30,5 +31,8 @@ router.route(`/profile`).get(authentication(), wrapAsync(showUserProfile));
 
 // 登入
 router.route(`/signin`).get(wrapAsync(showSignIn));
+
+// 註冊
+router.route('/signup').get(wrapAsync(showSignUp));
 
 module.exports = router;

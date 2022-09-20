@@ -79,4 +79,5 @@ $(window).on('load', async function () {
 
   // 剛開始讀取使用者最近剛編輯的文章
   AutoSave.restore();
+  
 });
