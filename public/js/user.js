@@ -220,47 +220,4 @@ $('#signin-form-btn').click(async function (e) {
   }
 });
 
-// 登出鍵
-// FIXME: PUG重整完刪除
-$('#logout').click(async function () {
-  let data = '';
 
-  let config = {
-    method: 'GET',
-    url: `/api/1.0/user/logout`,
-    data: data,
-  };
-
-  await axios(config)
-    .then(function (response) {
-      console.log(response);
-      console.log('登出成功');
-      window.location.assign('/');
-    })
-    .catch(function (error) {
-      console.log(error);
-      console.log('登出失敗');
-    });
-});
-
-// 登出鍵
-$('#logout-btn').click(async function () {
-  let data = '';
-
-  let config = {
-    method: 'GET',
-    url: `/api/1.0/user/logout`,
-    data: data,
-  };
-
-  await axios(config)
-    .then(function (response) {
-      console.log(response);
-      alert('登出成功');
-      window.location.assign('/signin');
-    })
-    .catch(function (error) {
-      console.log(error);
-      alert('登出失敗');
-    });
-});

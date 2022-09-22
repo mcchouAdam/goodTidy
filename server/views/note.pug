@@ -31,8 +31,10 @@ block content
         nav
           ol.breadcrumb
             li.breadcrumb-item
-              a(href='/note') Home
-            li.breadcrumb-item.active 筆記編輯
+              a(href='/') Home
+            li.breadcrumb-item
+              a(href='/note') 筆記編輯
+            li.breadcrumb-item.active#click_note_classification
             li.breadcrumb-item.active#click_note_name
       // End Page Title
       section.section.dashboard
@@ -44,9 +46,9 @@ block content
               .col-12
                 .card
                   .filter
-                    a.icon(href='#', data-bs-toggle='dropdown')
+                    a.icon(href='#', data-bs-toggle='dropdown', style="padding: 10px;")
                       i.bi.bi-three-dots
-                    ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
+                    ul#note_menu.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
                       li.dropdown-header.text-start
                         .form-check.form-switch
                           label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
@@ -55,7 +57,15 @@ block content
                         button#newest-version-btn.btn.dropdown-item 本地最新
                       li
                         button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 選擇版本
-                  .card-body
+                      li
+
+                      li
+                        button#changeNoteName.btn.dropdown-item 修改筆記名稱
+                      li
+                        button#moveNote.btn.dropdown-item 搬移筆記
+                      li
+                        button#deleteNote.btn.dropdown-item 刪除筆記
+                  .card-body(style="padding:0px;")
                     ul.list-unstyled.ps-0(width="90%")
 
                         //- 筆記上傳
@@ -194,6 +204,19 @@ block content
       i.bi.bi-arrow-up-short
 
       script.
+        // 修改/刪除/搬移筆記
+        $('#changeNoteName').click(async function (){
+          await renameNote(current_note_id);
+        })
+        $('#deleteNote').click(async function (){
+          await deleteNote(current_note_id);
+        })
+        $('#moveNote').click(async function (){
+          await moveNote(current_note_id);
+        })
+
+
+
         // 跳轉註解編輯頁鍵
         $('#annotation-show-btn').click(async function () {
             if(!current_note_id){
@@ -247,3 +270,17 @@ block content
         //- $('#update-note-content').on('DOMSubtreeModified', function(){
         //-   console.log('changed');
         //- });
+
+
+      script(src='/js/user.js')
+      script(src='/js/windowLoad.js')
+      script(src='/js/note.js')
+      script(src='/js/draggable.js')
+      script(src='/js/btn.js')
+      script(src='/js/restore.js')
+      //- script(src='/js/preview.js')
+      //- script(src='/js/canvas.js')
+      script(src='/js/social.js')
+      script(src='/js/search.js')
+      script(src='/js/autoSave.js')
+      script(src='/js/annotationBar.js')

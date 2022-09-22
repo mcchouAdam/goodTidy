@@ -751,7 +751,7 @@ h6 {
   font-weight: 600;
   color: #012970;
   transition: 0.3;
-  padding: 10px 0 10px 40px;
+  padding: 10px 0 10px 30px;
   transition: 0.3s;
 }
 
@@ -1266,6 +1266,9 @@ h6 {
   position: absolute;
   width: 100%;
   height: 800px;
+  border: 1px #b0bac3 solid;
+  background: white;
+  border-radius: 5px;
 }
 
 /* 筆記上傳頁面 --------------------------------------------------- */
@@ -1292,11 +1295,6 @@ h6 {
 }
 
 /* OCR字體/新增文字方塊 --------------------------------------------------- */
-
-#update-note-content {
-  border: 1px solid black;
-}
-
 /* 新增修改字串 */
 .addtextarea {
   height: 100%;
@@ -1404,6 +1402,8 @@ h6 {
 /* [筆記編輯頁面] */
 .ps-0 {
   margin: 0;
+  border: 1px #b0bac3 solid;
+  border-radius: 5px;
 }
 
 /* 留言小板板 */
@@ -1411,7 +1411,66 @@ h6 {
   overflow-y: auto;
 }
 
-
 .badge {
   cursor: pointer;
+}
+
+/* Loading 特效 */
+.cover-loading {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  width: 100vw;
+  height: 100vh;
+  background: white;
+}
+
+.wrapper-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 142px;
+  height: 40px;
+  margin: -20px 0 0 -71px;
+  background: white;
+  filter: contrast(20);
+}
+.dot-loading {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 12px;
+  left: 5px;
+  filter: blur(4px);
+  background: #000;
+  border-radius: 50%;
+  transform: translateX(0);
+  animation: dot 2.8s infinite;
+}
+.dots-loading {
+  transform: translateX(0);
+  margin-top: 12px;
+  margin-left: 31px;
+  animation: dots 2.8s infinite;
+}
+.span-loading {
+  display: block;
+  float: left;
+  width: 16px;
+  height: 16px;
+  margin-left: 16px;
+  filter: blur(4px);
+  background: #000;
+  border-radius: 50%;
+}
+
+@keyframes dot {
+  50% {
+    transform: translateX(96px);
+  }
+}
+@keyframes dots {
+  50% {
+    transform: translateX(-31px);
+  }
 }

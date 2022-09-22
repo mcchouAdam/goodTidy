@@ -1,43 +1,66 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
-    ></script>
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
-    />
-    <style></style>
+    <style>
+      .wrapper-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 142px;
+        height: 40px;
+        margin: -20px 0 0 -71px;
+        background: white;
+        filter: contrast(20);
+      }
+      .dot-loading {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        top: 12px;
+        left: 5px;
+        filter: blur(4px);
+        background: #000;
+        border-radius: 50%;
+        transform: translateX(0);
+        animation: dot 2.8s infinite;
+      }
+      .dots-loading {
+        transform: translateX(0);
+        margin-top: 12px;
+        margin-left: 31px;
+        animation: dots 2.8s infinite;
+      }
+      .span-loading {
+        display: block;
+        float: left;
+        width: 16px;
+        height: 16px;
+        margin-left: 16px;
+        filter: blur(4px);
+        background: #000;
+        border-radius: 50%;
+      }
+
+      @keyframes dot {
+        50% {
+          transform: translateX(96px);
+        }
+      }
+      @keyframes dots {
+        50% {
+          transform: translateX(-31px);
+        }
+      }
+    </style>
   </head>
   <body>
-    <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
-    <script>
-      $(function () {
-        $('input[name="daterange"]').daterangepicker(
-          {
-            opens: 'left',
-          },
-          function (start, end, label) {
-            console.log(
-              'A new date selection was made: ' +
-                start.format('YYYY-MM-DD') +
-                ' to ' +
-                end.format('YYYY-MM-DD')
-            );
-          }
-        );
-      });
-    </script>
+    <div class="wrapper-loading">
+      <span class="dot-loading"></span>
+      <div class="dots-loading">
+        <span class="span-loading"></span>
+        <span class="span-loading"></span>
+        <span class="span-loading"></span>
+      </div>
+    </div>
   </body>
 </html>

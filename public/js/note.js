@@ -48,16 +48,20 @@ async function noteShow(note_id) {
   // Assign Global Variable
   current_note_id = note_id;
 
+  // 筆記已被刪除
+  if (!showNote_note_obj[note_id]) {
+    return;
+  }
+
   let note_ImgContent = showNote_note_obj[note_id].note_elements;
   let note_textContent = showNote_note_obj[note_id].note_textElements;
   let note_filename = showNote_note_obj[note_id].note_file_name;
-  let click_notename = showNote_note_obj[note_id]['note_name'];
+  let note_classification = showNote_note_obj[note_id].note_classification;
+  let click_notename = showNote_note_obj[note_id].note_name;
   let $note_div = $('#update-note-content');
 
+  $('#click_note_classification').html(note_classification);
   $('#click_note_name').html(click_notename);
-  // console.log('showNote_note_obj', showNote_note_obj);
-
-  // $('#update-note-name').html(showNote_note_obj[note_id]['note_name']);
 
   // 每次更換筆記都要洗掉之前的OCR物件
   OCR_ids = [];
@@ -73,12 +77,6 @@ async function noteShow(note_id) {
       containment: '#update-note-content',
     })
     .css('position', 'absolute');
-  // .mouseup(function () {
-  //   console.log('aaa');
-  // });
-  // .on('mouseup', stepAppend(this, 'drag', 1, 2, ''));
-  // .on('drag', stepDrag);
-  // $('.contour-pic').addEventListener('mouseup', alert('aaaa'));
 
   // 物件生成後，才可以抓取物件click
   pictureClick();
@@ -126,6 +124,9 @@ function textareaClick() {
 
 // 剛進入畫面時拿取User的筆記資訊
 async function getUserNotes() {
+  // $('body').addClass('cover-loading');
+  // $('body').append(loading_html);
+
   let config = {
     method: 'get',
     url: `/api/${API_VERSION}/notes`,
@@ -245,6 +246,10 @@ async function getUserNotes() {
 
       // Show the NoteListNav
       showNoteList(note_obj, $('#sidebar-nav'));
+
+      // Loading -----------------------------------
+      // $('.wrapper-loading').remove();
+      // $('body').removeClass('cover-loading');
     })
     .catch((error) => {
       // Loading取消
@@ -270,32 +275,20 @@ async function showNoteList(note_obj, div_append) {
 
     // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {
-      note_menu_html = `
-              <div class="d-flex flex-row align-items-center">
-                <a
-                  class="btn"
-                  id="dropdownMenuLink"
-                  href="#"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">
-                    修改名稱
-                  </a>
-                  <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">
-                    刪除
-                  </a>
-                  <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">
-                    搬移
-                  </a>
-                </div>
-              </div>`;
+      // 筆記修改/刪除/移動清單
+      // note_menu_html = `
+      //         <div class="d-flex flex-row align-items-center">
+      //           <a class="btn" id="dropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      //             <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+      //           </a>
+      //           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+      //             <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">修改名稱</a>
+      //             <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">刪除</a>
+      //             <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">搬移</a>
+      //           </div>
+      //         </div>`;
 
+      note_menu_html = '';
       notes_html += `
         <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
           <li>
