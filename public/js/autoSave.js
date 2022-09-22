@@ -62,7 +62,7 @@ let AutoSave = (function () {
         containment: '#update-note-content',
       })
       .css('position', 'absolute')
-      .on('drag', stepDrag);
+      // .on('drag', stepDrag);
 
     // 文字draggable
     let text_elements = JSON.parse(saved_text_elements);
@@ -99,8 +99,8 @@ let AutoSave = (function () {
           'position': 'absolute',
         })
         .offset(new_offset)
-        .on('drag', stepDrag)
-        .on('input', stepInput);
+        // .on('drag', stepDrag)
+        // .on('input', stepInput);
 
       $('#update-note-content').append(newElement);
     }

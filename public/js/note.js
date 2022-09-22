@@ -30,6 +30,8 @@ async function noteUpload(
     data: data,
   };
 
+  console.log('upload data:', data);
+
   await axios(config)
     .then(function (response) {
       console.log(response);
@@ -70,8 +72,13 @@ async function noteShow(note_id) {
     .draggable({
       containment: '#update-note-content',
     })
-    .css('position', 'absolute')
-    .on('drag', stepDrag);
+    .css('position', 'absolute');
+  // .mouseup(function () {
+  //   console.log('aaa');
+  // });
+  // .on('mouseup', stepAppend(this, 'drag', 1, 2, ''));
+  // .on('drag', stepDrag);
+  // $('.contour-pic').addEventListener('mouseup', alert('aaaa'));
 
   // 物件生成後，才可以抓取物件click
   pictureClick();
@@ -326,14 +333,19 @@ async function showSearchList(note_obj, div_append) {
   const classification = Object.keys(note_obj);
   let name_html = '';
 
+  let num = 1;
   classification.map((c) => {
     let ids = note_obj[c].note_id;
     let names = note_obj[c].note_name;
 
     for (let i = 0; i < names.length; i++) {
-      name_html += `<li><a href="javascript:noteShow(
-        '${ids[i]}'
-      )" class="link-dark rounded">${names[i]}</a></li>`;
+      name_html += `
+            <div style="font-size:16px; font-weight:500; margin:5px 0;">
+              <span class="small badge bg-primary rounded-pill">${num}</span>
+              <a href="javascript:noteShow('${ids[i]}')" class="link-dark rounded">${names[i]}</a>
+            </div>
+          `;
+      num++;
     }
   });
 
@@ -374,16 +386,25 @@ async function getVersionList(version_obj, div_append) {
     let showVerObj = {};
     let name_html = '';
 
+    let num = 1;
     version_obj.map((o) => {
       if (o.note_id == current_note_id) {
         const version_info = o.version_info;
+
         version_info.map((v) => {
           showVerObj[v.version_name] = {
             'elements': v.elements,
             'text_elements': v.text_elements,
+            'created_time': v.created_time,
           };
-          name_html += `<input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
-                    <label class="btn btn-secondary" for="${v.version_name}">${v.version_name}</label>`;
+          name_html += `
+                <span class="badge bg-primary rounded-pill">${num}</span>
+                <input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
+                <label class="btn btn-light" for="${v.version_name}">${v.version_name}</label>
+                <span class="small" style="float:right; margin:8px;">${v.created_time}</span>
+                <br />
+              `;
+          num++;
         });
         div_append.append(name_html);
       }
@@ -409,8 +430,8 @@ async function noteShowFromVer(name, Obj) {
     .draggable({
       containment: '#update-note-content',
     })
-    .css('position', 'absolute')
-    .on('drag', stepDrag);
+    .css('position', 'absolute');
+  // .on('drag', stepDrag);
 }
 
 // 查看特定人分享 -------------------------------------------------------

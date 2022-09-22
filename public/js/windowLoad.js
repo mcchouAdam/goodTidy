@@ -79,4 +79,14 @@ $(window).on('load', async function () {
 
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();
+
+  // dragable 上一步&下一步
+  $('.contour-pic') // 圖形
+    .add('.div_addtextarea') // 文字
+    .mouseup(function (e) {
+      const element = e.target.parentElement;
+      const top = element.style.top;
+      const left = element.style.left;
+      stepAppend(element, 'drag', top, left, '');
+    });
 });

@@ -1,7 +1,7 @@
 // 查找筆記List內容 -------------------------
-$('#search_note_list').keydown(function () {
+$('#search_note_list').change(function () {
   // 清空搜尋標記
-  $('#modal-main').find('.highlight').removeClass('highlight');
+  $('#modal-main').find('.searchHighlight').removeClass('searchHighlight');
 
   Object.keys(search_note_list_obj).map((key) => {
     const text = search_note_list_obj[key];
@@ -26,13 +26,13 @@ function markSearchText(match) {
   var searchword = match;
 
   var custfilter = new RegExp(searchword, 'ig');
-  var repstr = "<span class='highlight'>" + searchword + '</span>';
+  var repstr = "<span class='searchHighlight'>" + searchword + '</span>';
 
   if (searchword != '') {
     $('#modal-main').each(function () {
       $(this).html($(this).html().replace(custfilter, repstr));
     });
   } else {
-    $('#modal-main').find('.highlight').removeClass('highlight');
+    $('#modal-main').find('.searchHighlight').removeClass('searchHighlight');
   }
 }

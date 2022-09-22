@@ -241,3 +241,76 @@ $('#sharedNote-change').click(function () {
   const note_chosen = $('input[name="shareNote_options"]:checked').val();
   window.open(`/sharedToOtherNote/${shared_note_obj[note_chosen].note_id}`);
 });
+
+// 上傳檔案鍵 ----------------------------
+// $('#submit_note').click(async function () {
+//   // Loading圖示
+//   $('#submit_note').prop('disabled', true);
+//   $('body').css('cursor', 'progress');
+
+//   note_name = $('#note-name').val();
+//   note_classification = $('#note-classification').val();
+//   let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
+
+//   // // 檢查版本名
+//   if (ver_name == null || ver_name == '') {
+//     alert('版本名不能為空');
+//     return;
+//   }
+
+//   // blob url to file
+//   let blob = await fetch(previewBlah.src).then((r) => r.blob());
+//   let filetype = $('input[type=file]').val().split('.').pop();
+//   let timestamp = Date.now();
+//   let filename = `${user_id}_${timestamp}.${filetype}`;
+
+//   // 圖形擷取資訊
+//   let contourImg_count = $('.contour-pic').length;
+//   let element_html = '';
+//   for (let i = 0; i < contourImg_count; i++) {
+//     element_html += $('.contour-pic').get(i).outerHTML;
+//   }
+//   let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
+
+//   // 儲存時需要按照順序append
+//   // OCR的draggable文字方塊資訊
+//   OCR_ids.map((id) => {
+//     const OCR_top = $(`#${id}`).parent().get(0).style.top;
+//     const OCR_left = $(`#${id}`).parent().get(0).style.left;
+//     const OCR_width = $(`#${id}`).parent().get(0).style.width;
+//     const OCR_height = $(`#${id}`).parent().get(0).style.height;
+//     const OCR_text = $(`#${id}`).val();
+//     const OCR_obj = {
+//       'text': OCR_text,
+//       'textTop': OCR_top,
+//       'textLeft': OCR_left,
+//       'height': OCR_height,
+//       'width': OCR_width,
+//     };
+//     OCR_elements.push(OCR_obj);
+//   });
+
+//   let keywords = $('#note-preview-content')
+//     .text()
+//     .replaceAll('\n', '')
+//     .replace(/\s/g, '');
+
+//   await noteUpload(
+//     blob,
+//     filename,
+//     user_id,
+//     note_name,
+//     timestamp,
+//     removeSrc_element,
+//     note_classification,
+//     ver_name,
+//     keywords,
+//     OCR_elements
+//   );
+
+//   // Loading釋放
+//   $('#submit_note').prop('disabled', false);
+//   $('body').css('cursor', 'default');
+
+//   window.location.assign('/note');
+// });

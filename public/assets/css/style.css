@@ -1320,6 +1320,11 @@ h6 {
   border: #00cc00 dotted 5px;
 }
 
+.searchHighlight {
+  padding: 1px;
+  border: #007ecc dotted 2px;
+}
+
 .card-group {
   width: 90%;
   margin: 0 auto;
@@ -1404,4 +1409,9 @@ h6 {
 /* 留言小板板 */
 .modal-dialog-scrollable .modal-content {
   overflow-y: auto;
+}
+
+
+.badge {
+  cursor: pointer;
 }

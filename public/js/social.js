@@ -121,7 +121,18 @@ $('#addShareOther-btn').click(async function () {
 // [筆記分享] 加入筆記tag鍵
 $('#add_note_tag-btn').click(function () {
   const tag_name = $('#tag_input').val();
-  let tag_html = `<span class="badge bg-success rounded-pill">${tag_name}</span>`;
+  if (!tag_name) {
+    return;
+  }
+  if ($('.badge.bg-success.rounded-pill').length === 5) {
+    alert('標籤不能超過5個');
+    return;
+  }
+  let tag_html = `
+    <span class="badge bg-success rounded-pill">${tag_name}&nbsp
+      <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
+    </span>
+  `;
   $('.note_tags').append(tag_html);
   $('#tag_input').val('');
 });

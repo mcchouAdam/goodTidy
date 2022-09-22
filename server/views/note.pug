@@ -89,10 +89,8 @@ block content
                           .modal-dialog
                             .modal-content
                               .modal-header
-                                .input-group
-                                  .form-outline
-                                  h5.modal-title 分享社群
-                                  button#shareToClose.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                                h5.modal-title 分享社群
+                                button#shareToClose.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               #modal-shareToAll-main.modal-body
                                 #share_note_name
                                   .form-check.form-switch
@@ -124,7 +122,7 @@ block content
                                     input#shareToAll-toggle.form-check-input(type='checkbox', role='switch')
                                   br
                                   #shareToAllDetail(style="visibility: hidden")
-                                    input#share_url(type='text', placeholder='share_url')
+                                    input#share_url.form-control(type='text', placeholder='share_url', style="width:90%;display:inline;")
                                     button.btn#copy_shareUrl
                                       i.fa.fa-clipboard(aria-hidden="true")
                                     br
@@ -147,12 +145,16 @@ block content
                                       label.form-label(for='formFile') 封面照片
                                       input#shareNote_image.form-control(type='file')
                                     br
-                                    .note_tags 標籤
-                                      input#tag_input.form-control(type='text')
+                                    .note_tags 標籤 (最多不能超過5個)
+                                      br
+                                      input#tag_input.form-control(type='text', style="width:70%;display:inline;")
                                       button.btn#add_note_tag-btn
                                         i.fa.fa-plus(aria-hidden='true')
+                                        span.small 
+                                      br
+                                      br
                                     br
-                                    button.btn.btn-primary#shareToAll_confirm-btn 變更分享
+                                    button.btn.btn-primary#shareToAll_confirm-btn(style="float: right") 變更分享
                                 
 
                         //- 查看留言鍵
@@ -177,19 +179,12 @@ block content
                         
                         p#auto-save-time.small(style="float: right;margin: 10px 30px 0 0;")
 
-                        //- //- 版控
-                        //- button#version_list-btn(type='button', data-bs-toggle='modal', data-bs-target='#versionModal', style="font-size:16px")
-                        //-   i.fa.fa-solid.fa-code-fork
-                        //- Modal
                         #versionModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
                           .modal-dialog
                             .modal-content
                               .modal-header
-                                .input-group
-                                  .form-outline
-                                  h5.modal-title 其他版本
-                                  //- button.btn.btn-primary(type='button', data-bs-toggle='button') Only search titles
-                                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                                h5.modal-title 其他版本
+                                button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               #modal-version-main.modal-body
                               .modal-footer
                                 button#version-change.btn.btn-primary(type='button') 回復
@@ -221,16 +216,19 @@ block content
           
           //- console.log("OCR_delete_ids: ", OCR_delete_ids);
           if(isDeleted){
-            $('#update-note-content').find('.highlight').remove();
-
-            // 增加刪除的上一步
-            OCR_delete_ids.map((i, delete_id) => {
-              
-              const top = $('#'+ delete_id).offsetParent().get(i).style.top;
-              const left = $('#'+ delete_id).offsetParent().get(i).style.left;
-              
-            })
             
+            // 刪除: 上一步&下一步
+            const delete_items = $('.highlight');
+            delete_items.map((i, delete_id) => { 
+              const top = delete_items.get(i).style.top;
+              const left = delete_items.get(i).style.left;
+              const item = delete_items.get(i);
+              console.log("delete-item:", item, top, left);
+              stepAppend(item, 'delete', top, left);
+            })
+
+            // 刪除所有被標記的物件
+            $('#update-note-content').find('.highlight').remove();
           }
         });
 
@@ -239,3 +237,13 @@ block content
           e.preventDefault();
           AutoSave.restore();
         });
+
+
+        // 上下一步
+        //- $('#update-note-content').on('drag', 'change', 'input', function (){
+        //-   alert("aaaa");        
+        //- })
+
+        //- $('#update-note-content').on('DOMSubtreeModified', function(){
+        //-   console.log('changed');
+        //- });
