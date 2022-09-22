@@ -96,13 +96,16 @@ const showSocialCards = async function (data, user_id) {
     sharingNote_cards_html += `
       <div class="card card-social">
         <div class="card-header"><img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${user_picture}"/>
-        <span>${user_name}</span></div>
-        <img class="card-img-top" style="width:100%;height:200px;"src="${S3_HOST}/sharing_image/${sharing_image}" alt="Card image cap">
+          <span>${user_name}</span></div>
+          <a href="${SERVER_HOST}/shareNotePage?id=${note_id}" target="blank">
+            <img class="card-img-top" style="width:100%;height:200px;"src="${S3_HOST}/sharing_image/${sharing_image}" alt="Card image cap">
+          </a>
         <div class="card-body">
         <h5 class="card-title">${note_name}</h5>
         <p class="card-text">${sharing_descrition}</p>
-        <p class="card-text"><small class="text-muted">發文時間: ${show_time}</small>
         <br />
+        <p class="card-text"><small class="text-muted">發文時間: ${show_time}</small></p>
+
         <button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
             <i class="fa fa-solid fa-comments" style="color:green">
                 <span id="comments_num">${comments_num}</span>
@@ -112,15 +115,16 @@ const showSocialCards = async function (data, user_id) {
             <i class="fa fa-heart" aria-hidden="true" style="color:${heart_color}"></i>
             <span class="saved_num">${saved_num}</span>
         </button>
-        <button class="btn">
-            <a href="${SERVER_HOST}/shareNotePage?id=${note_id}" target="blank">
-                <i class="fa fa-eye" aria-hidden="true"></i>
-            </a>
-        </button>
-        </p>
+        <br />        
         ${tags_html}
         </div>
     </div>`;
+
+    // <button class="btn">
+    //     <a href="${SERVER_HOST}/shareNotePage?id=${note_id}" target="blank">
+    //         <i class="fa fa-eye" aria-hidden="true"></i>
+    //     </a>
+    // </button>
 
     change_cardGroup--;
     // 三個一分
@@ -172,7 +176,7 @@ const showSocialCards = async function (data, user_id) {
               ${comment_cards_html}
             <div class="modal-footer">
               <div class="form-outline">
-                <input class="form-control" id="textarea_${note_id}" style="width:400px" type="text" placeholder="向作者講句話吧..."/>
+                <input class="form-control" id="textarea_${note_id}" onKeyDown="if(event.keyCode==13) javascript:createComments('${note_id}');" style="width:400px" type="text" placeholder="向作者講句話吧..."/>
               </div>
               <button class="btn" type="button" onclick="javascript:createComments('${note_id}')"><i class="bi bi-send"></i></button>
             </div>
@@ -187,19 +191,62 @@ const showSocialCards = async function (data, user_id) {
 };
 
 // Draw分頁
-const showPagination = async function (paging) {
-  // 三個分成一列，排版較好看
+const showPagination = async function (
+  paging,
+  sorting,
+  allPages_count,
+  currentPage
+) {
+  // console.log('allPages_count: ', allPages_count);
+  let prevPage_html = '';
+  let currentPage_html = '';
+  let nextPage_html = '';
+
+  let prevPage_href = `${SERVER_HOST}/socialPage?paging=${
+    paging - 1
+  }&sorting=${sorting}`;
+
+  let nextPage_href = `${SERVER_HOST}/socialPage?paging=${
+    paging + 1
+  }&sorting=${sorting}`;
+
+  // 判斷第一頁&最後一頁的前後頁
+  if (currentPage == allPages_count) {
+    nextPage_href = `javascript:alert_paging('最後一頁')`;
+  } else if (currentPage == 1) {
+    prevPage_href = `javascript:alert_paging('第一頁')`;
+  }
+
+  prevPage_html = `
+      <li class="page-item"></li>
+      <a class="page-link" href="${prevPage_href}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+      </a>
+      `;
+
+  currentPage_html = `
+      <li class="page-item"></li>
+      <input id="setPage" style="width:30px;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1"> of ${allPages_count}</a>
+      </li>
+    `;
+
+  nextPage_html = `
+        <li class="page-item"></li>
+        <a class="page-link" href="${nextPage_href}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>`;
+
   const paging_html = `
     <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-        <li class="page-item"></li><a class="page-link" href="${SERVER_HOST}/socialPage?paging=${
-    paging - 1
-  }" aria-label="Previous"><span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span></a>
-        <li class="page-item"></li><a class="page-link" href="${SERVER_HOST}/socialPage?paging=${paging}">${paging}</a>
-        <li class="page-item"></li><a class="page-link" href="${SERVER_HOST}/socialPage?paging=${
-    paging + 1
-  }" aria-label="Next"><span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span></a>
+        ${prevPage_html}
+        ${currentPage_html}
+        ${nextPage_html}
     </ul>
+    
     </nav>`;
 
   return paging_html;

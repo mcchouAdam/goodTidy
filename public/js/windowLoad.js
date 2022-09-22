@@ -62,12 +62,12 @@ let current_delete_element;
 // 註釋資訊
 let current_annotation_element;
 
+// 筆記preview資訊
+let upload_preview_element = [];
+
 // TODO: 只在有需求的頁面Load相對應的function
 // 預先讀取
 $(window).on('load', async function () {
-  // [筆記上傳頁面] 限制預覽頁面寬度
-  $('#fontOCRCanvas').attr('width', canvas_width).attr('height', canvas_height);
-
   // 拿取User的Profile;
   await profile();
 
@@ -78,6 +78,5 @@ $(window).on('load', async function () {
   await getSocialSortingColor();
 
   // 剛開始讀取使用者最近剛編輯的文章
-  AutoSave.restore();
-  
+  await getlatestNode();
 });

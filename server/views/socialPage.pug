@@ -8,27 +8,27 @@ block content
                     .col-12
                         header
                         .input-group.mb-3
-                            button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 筆記標題
+                            button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 搜尋
                             ul#socialPageSearchMenu.dropdown-menu.dropdown-menu-end
                                 li
-                                    a.dropdown-item 發文者
-                                //- li
-                                //-     a.dropdown-item 發文時間
+                                    a.dropdown-item 作者
                                 li
-                                    a.dropdown-item 筆記標題
+                                    a.dropdown-item 時間
                                 li
-                                    a.dropdown-item 筆記簡介
+                                    a.dropdown-item 標題
                                 li
-                                    a.dropdown-item 筆記內容
+                                    a.dropdown-item 簡介
                                 li
-                                    a.dropdown-item tag
+                                    a.dropdown-item 內容
                                 li
-                                    a.dropdown-item 收藏文章
-                            input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2')
+                                    a.dropdown-item 標籤
+                                li
+                                    a.dropdown-item 收藏
+                            input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2', onKeyDown="if(event.keyCode==13) javascript:socialSearch();")
                             button#socialSearchBar.btn
                                 i.fa.fa-search
                             
-                            //- input#daterange(type='text', name='daterange')
+                            input#daterange(type="text", name="daterange", value="09/20/2022 - 09/22/2022")
 
             //- .input-group.rounded
             //-     input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
@@ -43,56 +43,29 @@ block content
                 i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
             //- 分享筆記卡片
             #sharing-cards
-            //- button.btn.btn-primary(type='button', data-bs-toggle='modal', data-bs-target='#modalDialogScrollable')
-            //-   | Modal Dialog Scrollable
-            //- #modalDialogScrollable.modal.fade(tabindex='-1')
-            //-   .modal-dialog.modal-dialog-scrollable
-            //-     .modal-content
-            //-       .modal-header
-            //-         h5.modal-title 留言小板板
-            //-         button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
-            //-       .modal-body
-            //-             .card-body
-            //-                 .card
-            //-                     .card-body
-            //-                         p(style="margin: 10px 0;") 把你啊罵賣掉
-            //-                         .d-flex.justify-content-between
-            //-                             .d-flex.flex-row.align-items-center
-            //-                                 img.comment-pic(src='https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp')
-            //-                                 p.small.mb-0.ms-2 Adam
-            //-                             .d-flex.flex-row.align-items-center
-            //-                                 button.btn(type='button')
-            //-                                 a#dropdownMenuLink.btn(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-            //-                                         i.bi.bi-three-dots(style='margin-top: -0.16rem;')
-            //-                                 .dropdown-menu(aria-labelledby='dropdownMenuLink')
-            //-                                     a.dropdown-item(href='#') 刪除
-            //-                                     a.dropdown-item(href='#') 修改
-            //-                 .card
-            //-                     .card-body
-            //-                         p(style="margin: 10px 0;") 我是你啊罵
-            //-                         .d-flex.justify-content-between
-            //-                             .d-flex.flex-row.align-items-center
-            //-                                 img.comment-pic(src='https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(4).webp')
-            //-                                 p.small.mb-0.ms-2 我是2號
-            //-                             .d-flex.flex-row.align-items-center
-            //-                                 button.btn(type='button')
-            //-                                 a#dropdownMenuLink.btn(href='#', role='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false')
-            //-                                         i.bi.bi-three-dots(style='margin-top: -0.16rem;')
-            //-                                 .dropdown-menu(aria-labelledby='dropdownMenuLink')
-            //-                                     a.dropdown-item(href='#') 刪除
-            //-                                     a.dropdown-item(href='#') 修改
-            //-       .modal-footer
-            //-         .form-outline
-            //-             input#addANote.form-control(style="width:400px" type='text', placeholder='Type comment...')
-            //-         button.btn(type='button')
-            //-             i.bi.bi-send
-            //-         // End Modal Dialog Scrollable
             br
             //- 分頁
             #paging-block
 
             //- 留言
             script.
+
+                $(function () {
+                    $('input[name="daterange"]').daterangepicker(
+                    {
+                        opens: 'left',
+                    },
+                    function (start, end, label) {
+                        console.log(
+                        'A new date selection was made: ' +
+                            start.format('YYYY-MM-DD') +
+                            ' to ' +
+                            end.format('YYYY-MM-DD')
+                        );
+                    }
+                    );
+                });
+
                 cards_html = !{cards_html};
                 paging_html = !{paging_html};
                 
@@ -100,5 +73,21 @@ block content
                 $('#sharing-cards').append(elements_html);
                 const pagings_html = $.parseHTML(paging_html);
                 $('#paging-block').append(pagings_html);
+
+                function alert_paging(str) {
+                    alert('已經是' + str);
+                }
+
+                // [func] 輸入分頁跳轉
+                function getInputPage(){
+                    const setPage = $('#setPage').val();
+                    const protocol = document.location.protocol;
+                    const server = document.location.host;
+                    const sorting = new URLSearchParams(document.location.search).get("sorting");
+                    window.location.assign(`${protocol}//${server}/socialPage?paging=${setPage}&sorting=${sorting}`);
+                }
+
+                // [UI] 點選搜尋畫面
+                $('.dropdown-item').css("cursor", "pointer")
 
 

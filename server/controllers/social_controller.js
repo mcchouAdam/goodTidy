@@ -34,13 +34,14 @@ const socialPage = async (req, res) => {
   const search_text = req.query.search_text;
   const search_method = req.query.search_method;
 
+  // 呈現右上Profile的資訊
   const id = req.session.user.id;
   const provider = req.session.user.provider;
   const name = req.session.user.name;
   const email = req.session.user.email;
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
-  const result = await getShareNotes(
+  const socialcards_result = await getShareNotes(
     paging,
     sorting,
     search_text,
@@ -49,8 +50,17 @@ const socialPage = async (req, res) => {
     startDate,
     endDate
   );
-  const cards_html = await showSocialCards(result, user_id);
-  const paging_html = await showPagination(paging);
+
+  const allPages_count = socialcards_result.allPages_count;
+  const currentPage = socialcards_result.currentPage;
+
+  const cards_html = await showSocialCards(socialcards_result, user_id);
+  const paging_html = await showPagination(
+    paging,
+    sorting,
+    allPages_count,
+    currentPage
+  );
 
   return res.render('socialPage', {
     id: id,

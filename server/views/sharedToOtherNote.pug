@@ -30,23 +30,23 @@ block content
                 .card
                   .card-body
                     h5.card-title#update-note-name
-                    ul.list-unstyled.ps-0(width="90%")      
+                    ul.list-unstyled.ps-0(width="90%") 
 
+                      //- 觀看留言鍵
+                      .form-check.form-switch
+                        label.form-check-label(for='flexSwitchCheckDefault') 觀看註釋
+                        input#annotation-watch-toggle.form-check-input(type='checkbox', role='switch')     
 
                       //- saveAnnotation
-                      button#saveAnnotation(style='font-size:16px')
+                      button#saveAnnotation.btn(style='font-size:16px')
                           i.fa.fa-floppy-o
 
                       //- 新增留言鍵
-                      button.openbtn#annotation-btn
+                      button.openbtn#annotation-btn.btn
                           i.fa.fa-solid.fa-comments
-                      
-                      //- 觀看留言鍵
-                      .form-check.form-switch
-                        label.form-check-label(for='flexSwitchCheckDefault') 觀看留言
-                        input#annotation-watch-toggle.form-check-input(type='checkbox', role='switch')
 
-                        .col-12#update-note-content(width='600px', height='500px')
+                      //- 畫面位置
+                      .col-12#update-note-content(width='600px', height='500px')
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
 

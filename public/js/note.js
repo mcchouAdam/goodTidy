@@ -76,6 +76,10 @@ async function noteShow(note_id) {
   // 物件生成後，才可以抓取物件click
   pictureClick();
   textareaClick();
+
+  // 打開自動儲存
+  $('#autoSave-toggle').prop('checked', true);
+  AutoSave.start();
 }
 
 // [function][筆記編輯頁面] 圖形點選框選
@@ -121,17 +125,11 @@ async function getUserNotes() {
     data: '',
   };
 
-  $body = $('body');
-  $body.addClass('loading');
-
   // 抓取筆記資料
   await axios(config)
     .then((response) => {
       const data = response.data;
       version_obj = data;
-
-      // Loading取消
-      $body.removeClass('loading');
 
       // console.log('version', version_obj);
 
@@ -301,8 +299,6 @@ async function showNoteList(note_obj, div_append) {
             </a>
           </li>
         </ul>`;
-
-      console.log('zzzzzzz: ', notes_html);
     }
 
     // 分類的tag html
@@ -354,7 +350,6 @@ async function getSharedNote(sharedNote_obj, div_append) {
   // sharedNote_obj.map((s) => {});
   note_names.map((id) => {
     const permission = sharedNote_obj[id].user_permission;
-    // console.log('11111permission', permission);
     const user_picture = sharedNote_obj[id].user_picture;
     const user_name = sharedNote_obj[id].user_name;
     shareNote_html += `
@@ -432,18 +427,6 @@ async function sharedNoteShow(name, Obj) {
   elements_init($('#update-note-content'), Img_elements, text_elements);
   $('textarea').prop('disabled', true);
   $('textarea').draggable({ 'disable': true });
-
-  // //- 只能觀看，關閉所有前端按鍵
-  // if (user_permission === 1) {
-  //   $('#prev').attr('disabled', true);
-  //   $('#next').attr('disabled', true);
-  //   $('#addfont').attr('disabled', true);
-  //   $('#storeNote').attr('disabled', true);
-  //   $('#deleteElement').attr('disabled', true);
-  //   $('#share-btn').attr('disabled', true);
-  //   $('#newest-version-btn').attr('disabled', true);
-  //   $('#version_list-btn').attr('disabled', true);
-  // }
 }
 
 // 改名筆記 ------------------------------------------------------------

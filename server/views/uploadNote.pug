@@ -11,7 +11,7 @@ block content
                     form#form-preview(action='', method='post', r='')
                         .row(style="margin:10px 0;")
                             .col-sm
-                                input.form-control(type='file', name='photo', accept='image/*', required='')
+                                input#file-preview.form-control(type='file', name='photo', accept='image/*', required='')
                             //- .col-sm
                             //-     button#form-prview-btn.button-55 預覽
                     img#img-preview(hidden='')
@@ -21,12 +21,14 @@ block content
                         //- button#shapeRemoveBG(disabled='') 圖形去背
                         //- <button id="magicContour">圖形圈選</button>
                         button#rectContour.button-55 圖形圈選
-                        button#shapeView.button-55 擷取
+                        //- button#shapeView.button-55 擷取
                         button#removeNotWant.button-55 去除圖形
                         button#OCR.button-55 OCR 
-                        button#reDraw.button-55 回復
+                        //- button#reDraw.button-55 回復
+                        button#reDraw.btn(style='font-size:16px')
+                            i.fa.fa-rotate-left
                     .OCR-preview
-                        canvas#fontOCRCanvas
+                        canvas#fontOCRCanvas(width="600" height="500")
             .col
                 .OCR-block
                     .row
@@ -44,12 +46,162 @@ block content
                                     label.col-sm-2.col-form-label 筆記分類
                                     .col-sm-10
                                         input#note-classification.form-control(type='text')
+                                .row.mb-3
+                                    .col-sm-1
+                                        //- 刪除鍵
+                                        button#deleteElement.btn(style='font-size:16px')
+                                            i.fa.fa-solid.fa-trash 
                             
-                            #note-preview-content.note-edit-block                   
+                            #note-preview-content.note-edit-block
 
-                    //- input#note-name(type='text', placeholder='筆記名稱')
-                    //- input#note-classification(type='text', placeholder='筆記分類')
-                    //- button#submit_note 上傳  
-                    //- #note-preview-content.note-edit-block 
+                            script.
+
+
+                                // 文字辨識鍵 --------------------------------------
+                                $('#OCR').click(async function () {
+                                    // Loading圖示
+                                    $('#OCR').prop('disabled', true);
+                                    $('body').css('cursor', 'progress');
+
+                                    let image = canvas.toDataURL('image/jpeg', 1);
+                                    const base64Response = await fetch(image);
+                                    const blob = await base64Response.blob();
+
+                                    let file_name = `OCR_${Date.now()}.jpg`;
+                                    let data = new FormData();
+                                    data.append('OCR_upload', blob, file_name);
+
+                                    let config = {
+                                        method: 'POST',
+                                        url: `/api/1.0/OCR`,
+                                        data: data,
+                                    };
+
+                                    await axios(config)
+                                        .then(function (response) {
+                                        alert('OCR成功');
+
+                                        // Loading圖示釋放
+                                        $('#OCR').prop('disabled', false);
+                                        $('body').css('cursor', 'default');
+
+                                        // Canvas重畫
+                                        clearContext(canvas, context);
+                                        canvasBackground();
+                                        removeRectRemoveListener(canvas);
+
+                                        const OCR_result = response.data;
+
+                                        // append進預覽框裡
+                                        // OCR_result[0] 是全部辨識的字串
+                                        // 整張圖在OCR時，有時候座標為負值，故定死為10,10
+                                        let text = OCR_result[0].description;
+                                        // let textTop = OCR_result[0].boundingPoly.vertices[0].y;
+                                        // let textLeft = OCR_result[0].boundingPoly.vertices[0].x;
+                                        let textTop = 10;
+                                        let textLeft = 10;
+
+                                        addDragTextarea('#note-preview-content', text, textTop, textLeft);
+                                        })
+                                        .catch(function (error) {
+                                        alert(error.response.data.msg);
+                                        console.log('OCR失敗');
+
+                                        // Loading釋放
+                                        $('#OCR').prop('disabled', false);
+                                        $('body').css('cursor', 'default');
+                                    });
+                                });
+
+                                // 去除非文字鍵 ------------------------------------
+                                $('#removeNotWant').click(function () {
+                                    removeRectContourRemoveListener(canvas);
+                                    initRectListener(canvas);
+                                });
+
+                                // 刪除按鈕
+                                $('#deleteElement').click(function (){
+                                    const isDeleted = window.confirm("確定是否刪除選取的物件?");
+                                    if(isDeleted){
+                                        $('#note-preview-content').find('.highlight').remove();
+                                    }
+                                });
+
+                                // 上傳檔案鍵 ----------------------------
+                                $('#submit_note').click(async function () {
+                                    // Loading圖示
+                                    $('#submit_note').prop('disabled', true);
+                                    $('body').css('cursor', 'progress');
+
+                                    note_name = $('#note-name').val();
+                                    note_classification = $('#note-classification').val();
+                                    let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
+
+                                    // // 檢查版本名
+                                    if (ver_name == null || ver_name == '') {
+                                        alert('版本名不能為空');
+                                        return;
+                                    }
+
+                                    // blob url to file
+                                    let blob = await fetch(previewBlah.src).then((r) => r.blob());
+                                    let filetype = $('input[type=file]').val().split('.').pop();
+                                    let timestamp = Date.now();
+                                    let filename = `${user_id}_${timestamp}.${filetype}`;
+
+                                    // 圖形擷取資訊
+                                    let contourImg_count = $('.contour-pic').length;
+                                    let element_html = '';
+                                    for (let i = 0; i < contourImg_count; i++) {
+                                        element_html += $('.contour-pic').get(i).outerHTML;
+                                    }
+                                    let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
+
+                                    // 儲存時需要按照順序append
+                                    // OCR的draggable文字方塊資訊
+                                    OCR_ids.map((id) => {
+                                        const OCR_top = $(`#${id}`).parent().get(0).style.top;
+                                        const OCR_left = $(`#${id}`).parent().get(0).style.left;
+                                        const OCR_width = $(`#${id}`).parent().get(0).style.width;
+                                        const OCR_height = $(`#${id}`).parent().get(0).style.height;
+                                        const OCR_text = $(`#${id}`).val();
+                                        const OCR_obj = {
+                                        'text': OCR_text,
+                                        'textTop': OCR_top,
+                                        'textLeft': OCR_left,
+                                        'height': OCR_height,
+                                        'width': OCR_width,
+                                        };
+                                        OCR_elements.push(OCR_obj);
+                                    });
+
+                                    let keywords = $('#note-preview-content')
+                                        .text()
+                                        .replaceAll('\n', '')
+                                        .replace(/\s/g, '');
+
+                                    await noteUpload(
+                                        blob,
+                                        filename,
+                                        user_id,
+                                        note_name,
+                                        timestamp,
+                                        removeSrc_element,
+                                        note_classification,
+                                        ver_name,
+                                        keywords,
+                                        OCR_elements
+                                    );
+
+                                    // Loading釋放
+                                    $('#submit_note').prop('disabled', false);
+                                    $('body').css('cursor', 'default');
+
+                                    window.location.assign('/note');
+                                });
+
+
+               
+
                     
                                      

@@ -470,8 +470,9 @@ const getShareNotes = async (
   }
 
   try {
-    const skip = (paging - 1) * 6;
-    const limit = 6;
+    const cards_ToOnePage = 6;
+    const skip = (paging - 1) * cards_ToOnePage;
+    const limit = cards_ToOnePage;
 
     // sorting -----------------------------
     let sortObj = {};
@@ -483,15 +484,15 @@ const getShareNotes = async (
     const re = new RegExp(search_text);
 
     switch (search_method) {
-      case '筆記標題':
+      case '標題':
         matchObj = { 'isSharing': 1, 'note_name': { $regex: re } };
         matchAterLookup = {};
         break;
-      case '發文者':
+      case '作者':
         matchObj = { 'isSharing': 1 };
         matchAterLookup = { 'user_info.name': { $regex: re } };
         break;
-      case '發文時間':
+      case '時間':
         matchObj = {
           'isSharing': 1,
           'sharing_time': {
@@ -501,22 +502,22 @@ const getShareNotes = async (
         };
         matchAterLookup = {};
         break;
-      case '筆記簡介':
+      case '簡介':
         matchObj = { 'isSharing': 1, 'sharing_descrition': { $regex: re } };
         matchAterLookup = {};
         break;
-      case '筆記內容':
+      case '內容':
         matchObj = { 'isSharing': 1 };
         matchAterLookup = { 'note_version_info.keywords': { $regex: re } };
         break;
-      case 'tag':
+      case '標籤':
         matchObj = {
           'isSharing': 1,
           'tags': { $in: [re] },
         };
         matchAterLookup = {};
         break;
-      case '收藏文章':
+      case '收藏':
         matchObj = {
           'isSharing': 1,
           'saved_user_id': user_id,
@@ -531,7 +532,51 @@ const getShareNotes = async (
 
     console.log('matchObj', matchObj);
 
-    const result = await NotesCollection.aggregate([
+    // 計算所有符合條件
+    const allCards_count = await NotesCollection.aggregate([
+      {
+        '$match': matchObj,
+      },
+      { '$addFields': { 'foreign_user_id': { '$toObjectId': '$user_id' } } },
+      { '$addFields': { 'foreign_note_id': { '$toString': '$_id' } } },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'foreign_user_id',
+          foreignField: '_id',
+          as: 'user_info',
+        },
+      },
+      {
+        $lookup: {
+          from: 'comments',
+          localField: 'foreign_note_id',
+          foreignField: 'note_id',
+          as: 'comments_info',
+        },
+      },
+      {
+        $lookup: {
+          from: 'note_version',
+          localField: 'foreign_note_id',
+          foreignField: 'note_id',
+          as: 'note_version_info',
+        },
+      },
+      { $match: matchAterLookup },
+      { $count: 'isSharing' },
+    ]).toArray();
+
+    let allPages_count = 0;
+    if (allCards_count.length != 0) {
+      allPages_count = Math.ceil(allCards_count[0].isSharing / cards_ToOnePage);
+    }
+    // console.log('allPages_count: ', allPages_count);
+
+    // console.log('allPages_count: ', allPages_count);
+
+    // 顯示符合條件的Sharing Cards
+    const cards_result = await NotesCollection.aggregate([
       {
         '$match': matchObj,
       },
@@ -568,7 +613,10 @@ const getShareNotes = async (
       .limit(limit)
       .toArray();
 
-    return result;
+    cards_result.allPages_count = allPages_count;
+    cards_result.currentPage = paging;
+
+    return cards_result;
   } catch (error) {
     return { error };
   } finally {
