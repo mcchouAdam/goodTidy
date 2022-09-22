@@ -105,12 +105,21 @@ function mouseDown(e) {
   rect.startX = e.offsetX;
   rect.startY = e.offsetY;
   drag = true;
+
+  // console.log('prev_context: ', prev_context[0]);
+  // context.fillRect(
+  //   prev_context[0],
+  //   prev_context[1],
+  //   prev_context[2],
+  //   prev_context[3]
+  // );
 }
 
 function mouseUp() {
   drag = false;
 }
 
+// let removeNotWantRect = [];
 function mouseMove(e) {
   if (drag) {
     rect.w = e.offsetX - rect.startX;
@@ -120,8 +129,15 @@ function mouseMove(e) {
   }
 }
 
+// let prev_context;
 function drawMarker() {
   context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+  // let obj = {};
+
+  // context.clearRect(0, 0, canvas_width, canvas_height);
+  // canvasBackground();
+
+  // prev_context = [rect.startX, rect.startY, rect.w, rect.h];
 }
 
 // 方形圈選 ----------------------------------------
@@ -147,6 +163,9 @@ function rectContour_mouseup(e) {
     e.offsetX - rectContour_params[0],
     e.offsetY - rectContour_params[1]
   );
+
+  // 直接擷取圖形
+  shapeSnapShot();
 }
 
 function rectContour_mousemove(e) {

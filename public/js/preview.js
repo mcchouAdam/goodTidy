@@ -1,8 +1,10 @@
 const form = document.querySelector('#form-preview');
 
-form.addEventListener('submit', async (e) => {
-  
-  e.preventDefault();
+form.addEventListener('change', async (e) => {
+  // e.preventDefault();
+
+  // 每次新Load一張圖片，清掉preview視窗
+  $('#note-preview-content').html('');
 
   // Get data URI of the selected image
   const formData = new FormData(e.currentTarget);

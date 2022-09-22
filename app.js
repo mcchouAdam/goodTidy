@@ -45,11 +45,16 @@ app.use([
 ]);
 
 // TODO: 搬家
+// Index
+app.get('/', async (req, res) => {
+  return res.render('Home');
+});
 
 // Index
 app.get('/notes', async (req, res) => {
   return res.render('notes');
 });
+
 // sharedNote
 app.get('/sharedNote/:note_id', async (req, res) => {
   return res.render('sharedNote');

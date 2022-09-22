@@ -20,6 +20,16 @@ let stepInput = function () {
   );
 };
 
+let stepDelete = function () {
+  stepAppend(
+    $(this),
+    'delete',
+    $(this).css('top'),
+    $(this).css('left'),
+    $(this).html()
+  );
+};
+
 function stepAppend(item, event, top, left, val) {
   step++;
   let obj;
@@ -35,6 +45,14 @@ function stepAppend(item, event, top, left, val) {
       'item': item,
       'event': 'input',
       'val': val,
+    };
+  } else if (event === 'delete') {
+    obj = {
+      'item': item,
+      'event': 'delete',
+      'top': top,
+      'left': left,
+      'element_html': element_html,
     };
   }
   stepObject.push(obj);
@@ -53,6 +71,8 @@ prev.onclick = function () {
       item.css({ top: obj.top });
     } else if (obj.event === 'input') {
       item.text(obj.val);
+    } else if (obj.event === 'delete') {
+      alert('刪除上一步');
     }
   }
 };
@@ -70,6 +90,8 @@ next.onclick = function () {
       item.css({ top: obj.top });
     } else if (obj.event === 'input') {
       item.text(obj.val);
+    } else if (obj.event === 'delete') {
+      alert('刪除下一步');
     }
   }
 };

@@ -158,10 +158,10 @@ $('#share-btn').click(async function () {
 
   switch (note_url_permission) {
     case 1:
-      $('#allowWatch-toggle').prop('checked', true);
+      $('#shareToAll-toggle').prop('checked', true);
       break;
     case 2:
-      $('#allowWatch-toggle').prop('checked', true);
+      $('#shareToAll-toggle').prop('checked', true);
       $('#allowComment-toggle').prop('checked', true);
       break;
   }

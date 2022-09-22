@@ -21,7 +21,7 @@ function addDragTextarea(div_id, text, textTop, textLeft) {
     })
     .resizable()
     .css({
-      'position': 'relative',
+      'position': 'absolute',
     })
     .offset(new_offset)
     .on('drag', stepDrag)
@@ -66,7 +66,7 @@ function Textarea_draggable_html(
     })
     .resizable()
     .css({
-      'position': 'relative',
+      'position': 'absolute',
     })
     .offset(new_offset)
     .on('drag', stepDrag)
@@ -100,7 +100,7 @@ function textarea_nondraggable_html(
     .width(new_width)
     .height(new_height)
     .css({
-      'position': 'relative',
+      'position': 'absolute',
     })
     .offset(new_offset);
 

@@ -29,8 +29,12 @@ $('#shareToOtherMenu li').on('click', function () {
 
 // 分享鍵 ----------------------------------
 $('#shareToAll_confirm-btn').click(async function () {
+  // Loading圖示
+  $('#shareToAll_confirm-btn').prop('disabled', true);
+  $('body').css('cursor', 'progress');
+
   const isComment = $('#allowComment-toggle').is(':checked');
-  const isWatch = $('#allowWatch-toggle').is(':checked');
+  const isWatch = $('#shareToAll-toggle').is(':checked');
 
   let tags = $('.badge.bg-success.rounded-pill')
     .map((i, e) => e.outerText)
@@ -39,7 +43,14 @@ $('#shareToAll_confirm-btn').click(async function () {
 
   const share_description = $('#share_description').val();
   const file = $('#shareNote_image')[0].files[0];
-  const share_image = file.name;
+  let share_image;
+
+  if (!file) {
+    share_image = '';
+  } else {
+    share_image = file.name;
+  }
+
   let url_permission;
   let isSharing;
 
@@ -65,6 +76,10 @@ $('#shareToAll_confirm-btn').click(async function () {
   data.append('tags', JSON.stringify(tags));
 
   await shareToAlluser(data);
+
+  // 釋放Loading圖示
+  $('#shareToAll_confirm-btn').prop('disabled', false);
+  $('body').css('cursor', 'default  ');
 });
 
 // 加入分享特定的人按鍵
@@ -183,7 +198,7 @@ async function shareToAlluser(data) {
     .then((response) => {
       console.log(response);
       alert('更改設定成功');
-      location.reload();
+      window.location.assign('/socialPage?paging=1&sorting=created_time');
     })
     .catch((error) => {
       console.log(error);
@@ -410,6 +425,16 @@ $('#socialPageSearchMenu li').on('click', function () {
 
 // [社群頁面]
 $('#socialSearchBar').on('click', async function () {
+  await socialSearch();
+});
+
+// [func] 搜尋列轉網址
+async function socialSearch() {
+  // Loading圖示
+  $('#socialPageSearch-input').prop('disabled', true);
+  $('#socialSearchBar').prop('disabled', true);
+  $('body').css('cursor', 'progress');
+
   const search_text = $('#socialPageSearch-input').val();
   const search_method = $('#socialPageSearch-btn').text();
   const queryString = window.location.search;
@@ -452,9 +477,7 @@ $('#socialSearchBar').on('click', async function () {
       console.log(error);
       alert(error.response.data.msg);
     });
-});
-
-//
+}
 
 async function deleteShareToOther(note_id, delete_email) {
   const isDeleted = confirm(`確定要刪除對${delete_email}的分享?`);
