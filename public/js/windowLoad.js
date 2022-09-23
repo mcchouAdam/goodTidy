@@ -1,5 +1,5 @@
 // HOST
-let S3_HOST = 'https://goodtidy.s3.amazonaws.com/';
+let S3_HOST = 'https://d3it5ttaa2apin.cloudfront.net/';
 let server = 'http://localhost:3001';
 let API_VERSION = '1.0';
 
