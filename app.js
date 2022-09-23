@@ -62,12 +62,7 @@ app.get('/sharedNote/:note_id', async (req, res) => {
 
 // error handling
 app.all('*', (req, res) => {
-  // if (err instanceof NotFound) {
   return res.status(404).render('404');
-  // } else {
-  //   next(err);
-  // }
-  // return res.status(404).render('404');
 });
 
 app.listen(port, () => {
