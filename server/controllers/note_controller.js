@@ -41,6 +41,7 @@ const showUploadNote = async (req, res) => {
 const createNote = async (req, res) => {
   const note = req.body;
   note.file_name = req.filename;
+
   const result = await Notes.writeNote(note);
   // const { note_id } = req.params;
 

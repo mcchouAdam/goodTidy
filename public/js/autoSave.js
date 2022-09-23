@@ -41,7 +41,7 @@ let AutoSave = (function () {
 
       // 更新時間
       let now_time = timeConverter(new Date());
-      $('#auto-save-time').text(`已於${now_time}建立最新儲存`);
+      $('#auto-save-time').text(`最新儲存: ${now_time}`);
     }
   }
 
@@ -61,8 +61,8 @@ let AutoSave = (function () {
       .draggable({
         containment: '#update-note-content',
       })
-      .css('position', 'absolute')
-      .on('drag', stepDrag);
+      .css('position', 'absolute');
+    // .on('drag', stepDrag);
 
     // 文字draggable
     let text_elements = JSON.parse(saved_text_elements);
@@ -98,9 +98,9 @@ let AutoSave = (function () {
         .css({
           'position': 'absolute',
         })
-        .offset(new_offset)
-        .on('drag', stepDrag)
-        .on('input', stepInput);
+        .offset(new_offset);
+      // .on('drag', stepDrag)
+      // .on('input', stepInput);
 
       $('#update-note-content').append(newElement);
     }
@@ -143,6 +143,21 @@ const timeConverter = (date) => {
 
 // 進入note頁面後，抓取使用者最近編輯的筆記
 async function getlatestNode() {
-  let note_id = localStorage.getItem('CURRENTNOTEID');
-  await noteShow(note_id, $('#update-note-content'));
+  current_note_id = localStorage.getItem('CURRENTNOTEID');
+
+  // 筆記編輯頁面上方連結
+  const note_name = showNote_note_obj[current_note_id].note_name;
+  const note_classification =
+    showNote_note_obj[current_note_id].note_classification;
+  $('#click_note_classification').html(note_classification);
+  $('#click_note_name').html(note_name);
+
+  // 自動Reload
+  AutoSave.restore();
+
+  // 打開自動儲存
+  $('#autoSave-toggle').prop('checked', true);
+  AutoSave.start();
+
+  // await noteShow(current_note_id, $('#update-note-content'));
 }

@@ -27,8 +27,12 @@ block content
                             input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2', onKeyDown="if(event.keyCode==13) javascript:socialSearch();")
                             button#socialSearchBar.btn
                                 i.fa.fa-search
-                            
+
+
+                            button#searchCalendar.btn
+                                i.fa.fa-calendar
                             input#daterange(type="text", name="daterange", value="09/20/2022 - 09/22/2022")
+
 
             //- .input-group.rounded
             //-     input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
@@ -89,5 +93,19 @@ block content
 
                 // [UI] 點選搜尋畫面
                 $('.dropdown-item').css("cursor", "pointer")
+
+
+        script(src='/js/user.js')
+        script(src='/js/windowLoad.js')
+        script(src='/js/note.js')
+        script(src='/js/draggable.js')
+        script(src='/js/btn.js')
+        //- script(src='/js/restore.js')
+        //- script(src='/js/preview.js')
+        //- script(src='/js/canvas.js')
+        script(src='/js/social.js')
+        script(src='/js/search.js')
+        script(src='/js/autoSave.js')
+        script(src='/js/annotationBar.js')
 
 

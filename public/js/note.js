@@ -30,6 +30,8 @@ async function noteUpload(
     data: data,
   };
 
+  console.log('upload data:', data);
+
   await axios(config)
     .then(function (response) {
       console.log(response);
@@ -46,16 +48,20 @@ async function noteShow(note_id) {
   // Assign Global Variable
   current_note_id = note_id;
 
+  // 筆記已被刪除
+  if (!showNote_note_obj[note_id]) {
+    return;
+  }
+
   let note_ImgContent = showNote_note_obj[note_id].note_elements;
   let note_textContent = showNote_note_obj[note_id].note_textElements;
   let note_filename = showNote_note_obj[note_id].note_file_name;
-  let click_notename = showNote_note_obj[note_id]['note_name'];
+  let note_classification = showNote_note_obj[note_id].note_classification;
+  let click_notename = showNote_note_obj[note_id].note_name;
   let $note_div = $('#update-note-content');
 
+  $('#click_note_classification').html(note_classification);
   $('#click_note_name').html(click_notename);
-  // console.log('showNote_note_obj', showNote_note_obj);
-
-  // $('#update-note-name').html(showNote_note_obj[note_id]['note_name']);
 
   // 每次更換筆記都要洗掉之前的OCR物件
   OCR_ids = [];
@@ -70,8 +76,7 @@ async function noteShow(note_id) {
     .draggable({
       containment: '#update-note-content',
     })
-    .css('position', 'absolute')
-    .on('drag', stepDrag);
+    .css('position', 'absolute');
 
   // 物件生成後，才可以抓取物件click
   pictureClick();
@@ -119,6 +124,9 @@ function textareaClick() {
 
 // 剛進入畫面時拿取User的筆記資訊
 async function getUserNotes() {
+  // $('body').addClass('cover-loading');
+  // $('body').append(loading_html);
+
   let config = {
     method: 'get',
     url: `/api/${API_VERSION}/notes`,
@@ -238,6 +246,10 @@ async function getUserNotes() {
 
       // Show the NoteListNav
       showNoteList(note_obj, $('#sidebar-nav'));
+
+      // Loading -----------------------------------
+      // $('.wrapper-loading').remove();
+      // $('body').removeClass('cover-loading');
     })
     .catch((error) => {
       // Loading取消
@@ -263,32 +275,20 @@ async function showNoteList(note_obj, div_append) {
 
     // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {
-      note_menu_html = `
-              <div class="d-flex flex-row align-items-center">
-                <a
-                  class="btn"
-                  id="dropdownMenuLink"
-                  href="#"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">
-                    修改名稱
-                  </a>
-                  <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">
-                    刪除
-                  </a>
-                  <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">
-                    搬移
-                  </a>
-                </div>
-              </div>`;
+      // 筆記修改/刪除/移動清單
+      // note_menu_html = `
+      //         <div class="d-flex flex-row align-items-center">
+      //           <a class="btn" id="dropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      //             <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+      //           </a>
+      //           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+      //             <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">修改名稱</a>
+      //             <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">刪除</a>
+      //             <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">搬移</a>
+      //           </div>
+      //         </div>`;
 
+      note_menu_html = '';
       notes_html += `
         <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
           <li>
@@ -326,14 +326,19 @@ async function showSearchList(note_obj, div_append) {
   const classification = Object.keys(note_obj);
   let name_html = '';
 
+  let num = 1;
   classification.map((c) => {
     let ids = note_obj[c].note_id;
     let names = note_obj[c].note_name;
 
     for (let i = 0; i < names.length; i++) {
-      name_html += `<li><a href="javascript:noteShow(
-        '${ids[i]}'
-      )" class="link-dark rounded">${names[i]}</a></li>`;
+      name_html += `
+            <div style="font-size:16px; font-weight:500; margin:5px 0;">
+              <span class="small badge bg-primary rounded-pill">${num}</span>
+              <a href="javascript:noteShow('${ids[i]}')" class="link-dark rounded">${names[i]}</a>
+            </div>
+          `;
+      num++;
     }
   });
 
@@ -374,16 +379,25 @@ async function getVersionList(version_obj, div_append) {
     let showVerObj = {};
     let name_html = '';
 
+    let num = 1;
     version_obj.map((o) => {
       if (o.note_id == current_note_id) {
         const version_info = o.version_info;
+
         version_info.map((v) => {
           showVerObj[v.version_name] = {
             'elements': v.elements,
             'text_elements': v.text_elements,
+            'created_time': v.created_time,
           };
-          name_html += `<input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
-                    <label class="btn btn-secondary" for="${v.version_name}">${v.version_name}</label>`;
+          name_html += `
+                <span class="badge bg-primary rounded-pill">${num}</span>
+                <input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
+                <label class="btn btn-light" for="${v.version_name}">${v.version_name}</label>
+                <span class="small" style="float:right; margin:8px;">${v.created_time}</span>
+                <br />
+              `;
+          num++;
         });
         div_append.append(name_html);
       }
@@ -409,8 +423,8 @@ async function noteShowFromVer(name, Obj) {
     .draggable({
       containment: '#update-note-content',
     })
-    .css('position', 'absolute')
-    .on('drag', stepDrag);
+    .css('position', 'absolute');
+  // .on('drag', stepDrag);
 }
 
 // 查看特定人分享 -------------------------------------------------------

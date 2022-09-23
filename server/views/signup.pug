@@ -15,9 +15,8 @@ block content
                 // End Logo
                 .card.mb-3
                   .card-body
-                    .pt-4.pb-2
-                      h5.card-title.text-center.pb-0.fs-4 註冊頁面
-                      br
+                    h5.card-title.text-center.pb-0.fs-4 註冊頁面
+                    br
                       //- p.text-center.small Enter your personal details to create account
                     form.row.g-3.needs-validation(novalidate='')
                       .col-12
@@ -35,7 +34,8 @@ block content
                       .col-12
                         label.form-label(for='yourPicture') 大頭貼
                         br
-                        input#user_picture(type='file')
+                        input#user_picture.form-control(type='file')
+                        br
                         //- .invalid-feedback Please upload your user picture.
                       //- .col-12
                       //-   .form-check
@@ -54,3 +54,16 @@ block content
     // End #main
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
+
+      script(src='/js/user.js')
+      script(src='/js/windowLoad.js')
+      //- script(src='/js/note.js')
+      //- script(src='/js/draggable.js')
+      //- script(src='/js/btn.js')
+      //- script(src='/js/restore.js')
+      //- script(src='/js/preview.js')
+      //- script(src='/js/canvas.js')
+      //- script(src='/js/social.js')
+      //- script(src='/js/search.js')
+      //- script(src='/js/autoSave.js')
+      //- script(src='/js/annotationBar.js')

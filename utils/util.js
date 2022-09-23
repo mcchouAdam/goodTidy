@@ -36,8 +36,9 @@ const noteAuthorization = () => {
 
       return;
     } catch (err) {
-      res.status(403).send({ error: 'Forbidden' });
-      return;
+      console.log('Forbidden');
+      // res.status(403).send({ error: 'Forbidden' });
+      return res.status(403).render('NoAuth');
     }
   };
 };
@@ -56,8 +57,9 @@ const socialComment_auth = () => {
 
       return;
     } catch (err) {
-      res.status(403).send({ error: 'Forbidden' });
-      return;
+      console.log('Forbidden');
+      // res.status(403).send({ error: 'Forbidden' });
+      return res.status(403).render('NoAuth');
     }
   };
 };
@@ -79,7 +81,9 @@ const annotation_auth = () => {
       console.log('permission_result', permission_result);
       // 無權限
       if (permission_result == 0) {
-        return res.status(403).json({ 'msg': '抱歉！您沒有權限觀看' });
+        console.log('Forbidden');
+        // res.status(403).send({ error: 'Forbidden' });
+        return res.status(403).render('NoAuth');
       }
 
       // 其他權限至少可以看
@@ -88,8 +92,9 @@ const annotation_auth = () => {
 
       return;
     } catch (err) {
-      res.status(403).json({ error: 'Forbidden' });
-      return;
+      console.log('Forbidden');
+      // res.status(403).send({ error: 'Forbidden' });
+      return res.status(403).render('NoAuth');
     }
   };
 };

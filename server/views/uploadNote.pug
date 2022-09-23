@@ -157,23 +157,27 @@ block content
                                     }
                                     let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
 
-                                    // 儲存時需要按照順序append
-                                    // OCR的draggable文字方塊資訊
-                                    OCR_ids.map((id) => {
-                                        const OCR_top = $(`#${id}`).parent().get(0).style.top;
-                                        const OCR_left = $(`#${id}`).parent().get(0).style.left;
-                                        const OCR_width = $(`#${id}`).parent().get(0).style.width;
-                                        const OCR_height = $(`#${id}`).parent().get(0).style.height;
-                                        const OCR_text = $(`#${id}`).val();
-                                        const OCR_obj = {
-                                        'text': OCR_text,
-                                        'textTop': OCR_top,
-                                        'textLeft': OCR_left,
-                                        'height': OCR_height,
-                                        'width': OCR_width,
+                                    // 文字擷取
+                                    const text_elements = $('.div_addtextarea');
+
+                                    let text_elements_arr = [];
+                                    text_elements.map((i, e) => {
+                                        let obj = {};
+                                        const OCR_top = e.style.top;
+                                        const OCR_left = e.style.left;
+                                        const OCR_width = e.style.width;
+                                        const OCR_height = e.style.height;
+                                        const OCR_text = e.firstChild.value;
+                                        obj = {
+                                            'textTop': OCR_top,
+                                            'textLeft': OCR_left,
+                                            'width': OCR_width,
+                                            'height': OCR_height,
+                                            'text': OCR_text,
                                         };
-                                        OCR_elements.push(OCR_obj);
+                                        OCR_elements.push(obj);
                                     });
+                                   
 
                                     let keywords = $('#note-preview-content')
                                         .text()
@@ -200,6 +204,19 @@ block content
                                     window.location.assign('/note');
                                 });
 
+
+                            script(src='/js/user.js')
+                            script(src='/js/windowLoad.js')
+                            script(src='/js/note.js')
+                            script(src='/js/draggable.js')
+                            script(src='/js/btn.js')
+                            script(src='/js/restore.js')
+                            script(src='/js/preview.js')
+                            script(src='/js/canvas.js')
+                            script(src='/js/social.js')
+                            script(src='/js/search.js')
+                            script(src='/js/autoSave.js')
+                            script(src='/js/annotationBar.js')
 
                
 

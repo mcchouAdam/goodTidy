@@ -48,6 +48,18 @@ const permissionToName = {
   2: '允許留言',
 };
 
+// Loading div ------------------------------------
+let loading_html = `
+      <div class="wrapper-loading">
+        <span class="dot-loading"></span>
+        <div class="dots-loading">
+          <span class="span-loading"></span>
+          <span class="span-loading"></span>
+          <span class="span-loading"></span>
+        </div>
+      </div>
+    `;
+
 // 筆記公開資訊
 let note_isSharing;
 let note_url_permission;
@@ -65,6 +77,10 @@ let current_annotation_element;
 // 筆記preview資訊
 let upload_preview_element = [];
 
+// // Loading
+// $('body').addClass('cover-loading');
+// $('body').append(loading_html);
+
 // TODO: 只在有需求的頁面Load相對應的function
 // 預先讀取
 $(window).on('load', async function () {
@@ -79,4 +95,18 @@ $(window).on('load', async function () {
 
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();
+
+  // Loading結束
+  // $('.wrapper-loading').remove();
+  // $('body').removeClass('cover-loading');
+
+  // dragable 上一步&下一步
+  $('.contour-pic') // 圖形
+    .add('.div_addtextarea') // 文字
+    .mouseup(function (e) {
+      const element = e.target.parentElement;
+      const top = element.style.top;
+      const left = element.style.left;
+      stepAppend(element, 'drag', top, left, '');
+    });
 });
