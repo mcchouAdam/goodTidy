@@ -61,9 +61,13 @@ app.get('/sharedNote/:note_id', async (req, res) => {
 });
 
 // error handling
-app.use((err, req, res, next) => {
-  // console.error(err.stack)
-  res.status(404).render('404');
+app.all('*', (req, res) => {
+  // if (err instanceof NotFound) {
+  return res.status(404).render('404');
+  // } else {
+  //   next(err);
+  // }
+  // return res.status(404).render('404');
 });
 
 app.listen(port, () => {
