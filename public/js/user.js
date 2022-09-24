@@ -220,4 +220,18 @@ $('#signin-form-btn').click(async function (e) {
   }
 });
 
-
+// 顯示User所有通知 ----------------------------
+async function showUserMsg() {
+  current_user_msg.map((m) => {
+    let item = `
+      <li class="notification-item">
+        <i class="bi bi-exclamation-circle text-warning"></i>
+        <div>
+          <h4>${m.type}</h4>
+          <p>${m.content}</p>
+          <p>${m.created_time}</p>
+          </div>
+      </li>`;
+    $('ul.notifications').append(item);
+  });
+}

@@ -145,6 +145,10 @@ const timeConverter = (date) => {
 async function getlatestNode() {
   current_note_id = localStorage.getItem('CURRENTNOTEID');
 
+  if (!showNote_note_obj[current_note_id]) {
+    return;
+  }
+
   // 筆記編輯頁面上方連結
   const note_name = showNote_note_obj[current_note_id].note_name;
   const note_classification =

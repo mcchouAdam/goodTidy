@@ -15,6 +15,7 @@ const {
   updateComments,
   deleteComments,
   showSharedNote,
+  showUserMessage,
 } = require('../controllers/social_controller');
 
 router.route('/socialPage').get(authentication(), wrapAsync(socialPage));
@@ -41,5 +42,10 @@ router
 router
   .route(`/sharedToOtherNote/:note_id`)
   .get(authentication(), annotation_auth(), wrapAsync(showSharedNote));
+
+// 更新使用者通知
+router
+  .route(`/api/${API_VERSION}/message`)
+  .get(authentication(), wrapAsync(showUserMessage));
 
 module.exports = router;

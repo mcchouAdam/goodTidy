@@ -14,19 +14,32 @@ block content
                                 input#file-preview.form-control(type='file', name='photo', accept='image/*', required='')
                             //- .col-sm
                             //-     button#form-prview-btn.button-55 預覽
+                    br
                     img#img-preview(hidden='')
-                    .OCR-nav(style="margin:10px 0 20px 10px;")
+                    .OCR-nav(style="margin:10px 0 15px 0px;")
                         //- <button id="pre">上一步</button>
                         //- <button id="next">下一步</button>
                         //- button#shapeRemoveBG(disabled='') 圖形去背
                         //- <button id="magicContour">圖形圈選</button>
-                        button#rectContour.button-55 圖形圈選
+                        br
+                        //- 圖形擷取
+                        button#rectContour.btn(style='font-size:16px')
+                            i.fa.fa-scissors
                         //- button#shapeView.button-55 擷取
-                        button#removeNotWant.button-55 去除圖形
+                        
+                        //- 去除圖形
+                        button#removeNotWant(style='font-size:16px')
+                            i.fa.fa-file-image-o
+                            i.fa.fa-times-circle(style="margin-left:-3px;" aria-hidden="true")
+                        
+                        //- OCR
                         button#OCR.button-55 OCR 
-                        //- button#reDraw.button-55 回復
+                        //- button#reDraw.button-55 復原
+
+                        //- 復原
                         button#reDraw.btn(style='font-size:16px')
                             i.fa.fa-rotate-left
+                        br
                     .OCR-preview
                         canvas#fontOCRCanvas(width="600" height="500")
             .col
@@ -34,8 +47,8 @@ block content
                     .row
                         .col-sm
                             h1 預覽
-                        .col-sm(style="margin:0 0 0 400px")
-                            button#submit_note.button-55 上傳
+                        //- .col-sm(style="margin:0 0 0 400px")
+                        //-     button#submit_note.button-55 上傳
                         .note-preview-block
                             .processed-content-nav
                                 .row.mb-3
@@ -50,7 +63,10 @@ block content
                                     .col-sm-1
                                         //- 刪除鍵
                                         button#deleteElement.btn(style='font-size:16px')
-                                            i.fa.fa-solid.fa-trash 
+                                            i.fa.fa-solid.fa-trash
+                                    .col-sm
+                                        button#submit_note.btn(style='font-size:16px')
+                                            i.fa.fa-solid.fa-upload
                             
                             #note-preview-content.note-edit-block
 

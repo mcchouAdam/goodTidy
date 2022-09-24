@@ -111,7 +111,7 @@ const showSocialCards = async function (data, user_id) {
                 <span id="comments_num">${comments_num}</span>
             </i>
         </button>
-        <button class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
+        <button id="${note_id}" class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
             <i class="fa fa-heart" aria-hidden="true" style="color:${heart_color}"></i>
             <span class="saved_num">${saved_num}</span>
         </button>
@@ -270,7 +270,11 @@ const showShareToOtherList = async function (shareList, note_id) {
       shareList_html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                             ${p.user_email}
                           <span class="badge bg-primary rounded-pill">${permission}</span>
-                          <button class="btn"><a href="javascript:deleteShareToOther('${note_id}','${p.user_email}')"><span class='bi bi-x-circle'></span></a></button>
+                          <button id="${p.user_email}" class="deleteShareToOther-btn btn">
+                            <a href="javascript:deleteShareToOther('${note_id}','${p.user_email}')">
+                              <span class='bi bi-x-circle'></span>
+                            </a>
+                          </button>
                         </li>`;
     });
   } catch (error) {

@@ -350,15 +350,18 @@ const shareToOther = async (data) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   const UserCollection = Mongo.db(MONGO_DB).collection('user');
+  const MessageCollection = Mongo.db(MONGO_DB).collection('message');
 
   // console.log(data);
   const note_id = data.note_id;
   let permission = data.permission;
   permission = authorizationList[permission];
   const user_email = data.addPerson;
+  const shareUser_email = data.shareUser_email;
   const insert_data = { 'user_email': user_email, 'permission': permission };
 
   try {
+    // 確認user存在
     const checkUserExist = await UserCollection.find({
       'email': user_email,
     }).toArray();
@@ -367,6 +370,7 @@ const shareToOther = async (data) => {
       return '此使用者不存在';
     }
 
+    // 更新note資料
     const result = await NotesCollection.updateOne(
       {
         '_id': ObjectId(note_id),
@@ -375,6 +379,15 @@ const shareToOther = async (data) => {
         $addToSet: { 'sharing_user': insert_data },
       }
     );
+
+    // 更新使用者通知資料
+    const msg_result = await MessageCollection.insertOne({
+      'notify_user_email': user_email,
+      'type': 'share',
+      'content': `${shareUser_email}分享一篇筆記給您`,
+      'created_time': new Date(),
+    });
+
     return `${user_email} 新增成功`;
   } catch (error) {
     return { error };
@@ -735,7 +748,7 @@ const createSave = async (note_id, user_id) => {
       ]
     );
 
-    return 'save successfully!';
+    return note_saved_conut;
   } catch (error) {
     return { error };
   } finally {

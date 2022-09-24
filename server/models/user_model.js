@@ -109,9 +109,28 @@ const shareToAll = async (data) => {
   }
 };
 
+const getMessages = async (data) => {
+  const user_email = data.user_email;
+  const MsgCollection = Mongo.db(MONGO_DB).collection('message');
+  try {
+    const msg_result = await MsgCollection.find({
+      'notify_user_email': user_email,
+    }).toArray();
+
+    return msg_result;
+  } catch (e) {
+    return null;
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+getMessages;
+
 module.exports = {
   signUp,
   nativeSignIn,
   getUserDetail,
   shareToAll,
+  getMessages,
 };

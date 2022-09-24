@@ -9,6 +9,9 @@ let user_picture;
 let user_name;
 let user_email;
 
+// user_msg_info ----------------------------------
+let current_user_msg;
+
 // note info --------------------------------------
 let ver_info; // 筆記版本資料
 let current_note_id;
@@ -71,11 +74,17 @@ let tags;
 // 當前欲刪除的筆記物件
 let current_delete_element;
 
+// 按蒐藏的狀態
+let note_savedStatus = {};
+
 // 註釋資訊
 let current_annotation_element;
 
 // 筆記preview資訊
 let upload_preview_element = [];
+
+// Socket
+let socket = io();
 
 // // Loading
 // $('body').addClass('cover-loading');
@@ -87,8 +96,15 @@ $(window).on('load', async function () {
   // 拿取User的Profile;
   await profile();
 
+  // 發送socket上線
+  socket.emit('authentication', user_email);
+
   // 拿取User所有note的資訊;
   await getUserNotes();
+
+  // 拿取User所有通知
+  await getUserMsg();
+  await showUserMsg();
 
   // 拿取[社群頁面]排序狀態
   await getSocialSortingColor();

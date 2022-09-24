@@ -65,6 +65,4 @@ app.all('*', (req, res) => {
   return res.status(404).render('404');
 });
 
-app.listen(port, () => {
-  console.log(`listen ${port} sucessfully!`);
-});
+module.exports = app;

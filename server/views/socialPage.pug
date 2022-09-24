@@ -94,7 +94,32 @@ block content
                 // [UI] 點選搜尋畫面
                 $('.dropdown-item').css("cursor", "pointer")
 
+                // 按讚推播 Socket -----
+                $('.btn-heart').click(function(){
+                    const save_note_id = $(this).get(0).id;
+                    const heart_color = $(this).children().get(0).style.color;
+                    let heart_count = +$(this).children().get(1).innerHTML;
+                    if(heart_color == 'grey'){
+                        $(this).children("i").css("color", "red");
+                        heart_count++;
+                        // 按讚socket
+                        socket.emit('save_note', {
+                            "save_note_id": save_note_id,
+                            "heart_count": heart_count,
+                            "user_name": user_name,
+                            "user_email": user_email,
+                            "note_savedStatus": JSON.stringify(note_savedStatus)
+                        });
+                    }else{  
+                        $(this).children("i").css("color", "grey");
+                        heart_count--;
+                    }
 
+                    // 改愛心數
+                    $(this).children("span").text(`${heart_count}`)
+                });
+
+                
         script(src='/js/user.js')
         script(src='/js/windowLoad.js')
         script(src='/js/note.js')
@@ -107,5 +132,12 @@ block content
         script(src='/js/search.js')
         script(src='/js/autoSave.js')
         script(src='/js/annotationBar.js')
+
+
+        //- //- 監聽別人是否有更新收藏
+        //- socket.on('saved_count_update', function(note_savedStatus){
+        //-     console.log("sssssssssssss");
+        //-     alert(note_savedStatus);;
+        //- })
 
 

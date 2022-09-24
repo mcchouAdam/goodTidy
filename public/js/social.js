@@ -87,6 +87,12 @@ $('#addShareOther-btn').click(async function () {
   let permission = $('#shareToOtherMethod-btn').text();
   let addOther = $('#addShareOther-input').val();
 
+  // 推播給該用戶
+  socket.emit('shareToyou', {
+    'user_email': user_email,
+    'addOther': addOther,
+  });
+
   if (!addOther) {
     alert('不能為空值');
     return;
@@ -113,7 +119,11 @@ $('#addShareOther-btn').click(async function () {
               <li class="list-group-item d-flex justify-content-between align-items-center">
                   ${addOther}
                   <span class="badge bg-primary rounded-pill">${permission}</span>
-                  <button class="btn"><a href="javascript:deleteShareToOther('${current_note_id}','${addOther}')"><span class='bi bi-x-circle'></span></a></button>
+                  <button id="${addOther}" class="deleteShareToOther-btn btn">
+                    <a href="javascript:deleteShareToOther('${current_note_id}','${addOther}')">
+                      <span class='bi bi-x-circle'></span>
+                    </a>
+                  </button>
               </li>`;
   $('#shareOtherList').append(list_html);
 });
@@ -187,9 +197,10 @@ async function createSave(note_id) {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
-      // alert('收藏成功');
-      location.reload();
+      // console.log('收藏成功:', response);
+      const new_saved_count = response.data;
+      note_savedStatus[note_id] = new_saved_count;
+      // console.log('note_savedStatus', note_savedStatus);
     })
     .catch((error) => {
       console.log(error);
@@ -228,6 +239,8 @@ async function shareToOther(data) {
   await axios(config)
     .then((response) => {
       console.log(response);
+      // TODO: 加入通知列
+
       alert(response.data);
     })
     .catch((error) => {
@@ -282,16 +295,6 @@ async function getShareAll(note_id) {
 }
 
 // 愛心、留言、時間、留言數 圖形特效 --------------------------------------
-// save_note -------
-$('.btn-heart').click(function (e) {
-  let heart_color = e.target.style.color;
-  if (heart_color == 'grey') {
-    e.target.style.color = 'red';
-  } else {
-    e.target.style.color = 'grey';
-  }
-});
-
 // heart_sorting -------
 $('#heart_sorting-btn').click(function (e) {
   let heart_color = e.target.style.color;
@@ -513,6 +516,11 @@ async function deleteShareToOther(note_id, delete_email) {
       alert('刪除成功');
       // 刪除該list
       $(`li:contains("${delete_email}")`).remove();
+      // TODO: 推播
+      socket.emit('delete_ShareToYou', {
+        'user_email': user_email,
+        'delete_email': delete_email,
+      });
     })
     .catch((error) => {
       console.log(error);

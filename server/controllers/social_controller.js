@@ -17,6 +17,9 @@ const {
   deleteComment,
   getComments,
 } = require('../models/note_model');
+
+const { getMessages } = require('../models/user_model');
+
 Notes = require('../models/note_model');
 const {
   showShareDetail,
@@ -174,6 +177,22 @@ const showSharedNote = async (req, res) => {
   });
 };
 
+// 拿取使用者的所有通知
+const showUserMessage = async (req, res) => {
+  req.body.user_id = req.session.user.id;
+  req.body.user_email = req.session.user.email;
+  const data = req.body;
+  const UserMsg = await getMessages(data);
+
+  console.log('UserMsg:', UserMsg);
+  return res.status(200).json({ 'data': UserMsg });
+  // if (result === 0) {
+  //   return res.status(403).json({ 'msg': '您無權刪除別人留言' });
+  // } else {
+  //   return res.status(200).json({ 'msg': '成功刪除留言' });
+  // }
+};
+
 module.exports = {
   socialPage,
   shareNotePage,
@@ -181,4 +200,5 @@ module.exports = {
   updateComments,
   deleteComments,
   showSharedNote,
+  showUserMessage,
 };

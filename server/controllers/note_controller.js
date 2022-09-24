@@ -135,6 +135,7 @@ const getShareToAll = async (req, res) => {
 
 const shareToOther = async (req, res) => {
   req.body.user_id = req.session.user.id;
+  req.body.shareUser_email = req.session.user.email;
   const data = req.body;
 
   const share = await Notes.shareToOther(data);

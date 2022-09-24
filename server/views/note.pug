@@ -95,6 +95,7 @@ block content
                         //- 分享鍵
                         button#share-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px")
                             i.fa.fa-solid.fa-share
+
                         #shareToAllModal.modal.fade(tabindex='-1', aria-labelledby='shareModal', aria-hidden='true')
                           .modal-dialog
                             .modal-content
@@ -130,7 +131,8 @@ block content
                                   .form-check.form-switch
                                     label.form-check-label(for='flexSwitchCheckDefault') 分享社群頁面
                                     input#shareToAll-toggle.form-check-input(type='checkbox', role='switch')
-                                  br
+
+
                                   #shareToAllDetail(style="visibility: hidden")
                                     input#share_url.form-control(type='text', placeholder='share_url', style="width:90%;display:inline;")
                                     button.btn#copy_shareUrl
@@ -155,7 +157,9 @@ block content
                                       label.form-label(for='formFile') 封面照片
                                       input#shareNote_image.form-control(type='file')
                                     br
-                                    .note_tags 標籤 (最多不能超過5個)
+                                    .note_tags
+                                      i.fa.fa-tags 
+                                      | 標籤 (最多不能超過5個)
                                       br
                                       input#tag_input.form-control(type='text', style="width:70%;display:inline;")
                                       button.btn#add_note_tag-btn
@@ -175,6 +179,7 @@ block content
                         //- 特定人分享頁面
                         button#sharedNote-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px")
                           i.fa.fa-users
+                          span#sharedNoteCount.badge.bg-primary.badge-number(style='font-size: 5px;margin: -10px 0 0 -2px;')
                         #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
                           .modal-dialog
                             .modal-content
@@ -214,8 +219,6 @@ block content
         $('#moveNote').click(async function (){
           await moveNote(current_note_id);
         })
-
-
 
         // 跳轉註解編輯頁鍵
         $('#annotation-show-btn').click(async function () {
@@ -262,6 +265,7 @@ block content
         });
 
 
+
         // 上下一步
         //- $('#update-note-content').on('drag', 'change', 'input', function (){
         //-   alert("aaaa");        
@@ -278,9 +282,10 @@ block content
       script(src='/js/draggable.js')
       script(src='/js/btn.js')
       script(src='/js/restore.js')
-      //- script(src='/js/preview.js')
-      //- script(src='/js/canvas.js')
       script(src='/js/social.js')
       script(src='/js/search.js')
       script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
+      //- script(src='/js/preview.js')
+      //- script(src='/js/canvas.js')
+

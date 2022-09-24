@@ -31,54 +31,62 @@ body
                 i.bi.bi-people
 
           //- //- 小鈴鐺 Icon
-          //- li.nav-item.dropdown
-          //-   a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
-          //-     i.bi.bi-bell
-          //-     span.badge.bg-primary.badge-number 4
-          //-   // End Notification Icon
-          //-   ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications
-          //-     li.dropdown-header
-          //-       | You have 4 new notifications
-          //-       a(href='#')
-          //-         span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-exclamation-circle.text-warning
-          //-       div
-          //-         h4 Lorem Ipsum
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 30 min. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-x-circle.text-danger
-          //-       div
-          //-         h4 Atque rerum nesciunt
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 1 hr. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-check-circle.text-success
-          //-       div
-          //-         h4 Sit rerum fuga
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 2 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-info-circle.text-primary
-          //-       div
-          //-         h4 Dicta reprehenderit
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 4 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.dropdown-footer
-          //-       a(href='#') Show all notifications
-          //-   // End Notification Dropdown Items
-          //- // End Notification Nav
+          li.nav-item.dropdown
+            a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
+              i.bi.bi-bell
+              span.badge.bg-primary.badge-number 4
+            // End Notification Icon
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications
+              li.dropdown-header
+                | You have 4 new notifications
+                a(href='#')
+                  span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
+              li
+                hr.dropdown-divider
+              li.notification-item
+                i.bi.bi-exclamation-circle.text-warning
+                div
+                  h4 Lorem Ipsum
+                  p Quae dolorem earum veritatis oditseno
+                  p 30 min. ago
+              li
+                hr.dropdown-divider
+              li.notification-item
+                i.bi.bi-x-circle.text-danger
+                div
+                  h4 Atque rerum nesciunt
+                  p Quae dolorem earum veritatis oditseno
+                  p 1 hr. ago
+              li
+                hr.dropdown-divider
+              li.notification-item
+                i.bi.bi-check-circle.text-success
+                div
+                  h4 Sit rerum fuga
+                  p Quae dolorem earum veritatis oditseno
+                  p 2 hrs. ago
+              li
+                hr.dropdown-divider
+              li.notification-item
+                i.bi.bi-info-circle.text-primary
+                div
+                  h4 Dicta reprehenderit
+                  p Quae dolorem earum veritatis oditseno
+                  p 4 hrs. ago
+              li
+                hr.dropdown-divider
+              li.notification-item
+                i.bi.bi-info-circle.text-primary
+                div
+                  h4 Dicta reprehenderit
+                  p Quae dolorem earum veritatis oditseno
+                  p 4 hrs. ago
+              li
+                hr.dropdown-divider
+              li.dropdown-footer
+                a(href='#') Show all notifications
+            // End Notification Dropdown Items
+          // End Notification Nav
           //- li.nav-item.dropdown
           //-   a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
           //-     i.bi.bi-chat-left-text
@@ -195,3 +203,27 @@ body
             alert('登出失敗');
           });
       });
+
+      // Socket ------------------------------------------
+
+      // Socket 被喜歡的推播
+      socket.on('saved_msg', function(msg){
+        alert(msg)
+      })
+
+      //- Socket 有人分享筆記給你
+      socket.on('shareToyou_msg', async function(shareUserEmail){
+        // TODO: 更新上方推播通知
+        alert(`${shareUserEmail}分享筆記給您`);
+        await getUserNotes();
+        await getUserMsg();
+      })
+
+      //- Socket 有人刪除他的分享筆記
+      socket.on('delete_shareToyou_msg', async function(delete_user_email){
+        // TODO: 換成上方推播通知
+        alert(`${delete_user_email}刪除分享的筆記`);
+        await getUserNotes();
+      })
+
+      
