@@ -493,6 +493,7 @@ async function socialSearch() {
     });
 }
 
+// 刪除對特定人的分享
 async function deleteShareToOther(note_id, delete_email) {
   const isDeleted = confirm(`確定要刪除對${delete_email}的分享?`);
   if (!isDeleted) {
@@ -521,6 +522,36 @@ async function deleteShareToOther(note_id, delete_email) {
         'user_email': user_email,
         'delete_email': delete_email,
       });
+    })
+    .catch((error) => {
+      console.log(error);
+      alert(error.response.data.msg);
+    });
+}
+
+// 刪除推播資訊
+async function deleteMsg(msg_id) {
+  const isDeleted = confirm(`確定要刪除此則留言?`);
+  if (!isDeleted) {
+    return;
+  }
+
+  let data = {
+    'msg_id': msg_id,
+  };
+
+  let config = {
+    method: 'DELETE',
+    url: `/api/${API_VERSION}/message`,
+    data: data,
+  };
+
+  await axios(config)
+    .then((response) => {
+      console.log(response);
+      alert('刪除成功');
+      // 刪除該list
+      $(`li:contains("${msg_id}")`).remove();
     })
     .catch((error) => {
       console.log(error);

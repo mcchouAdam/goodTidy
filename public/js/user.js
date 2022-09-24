@@ -222,10 +222,20 @@ $('#signin-form-btn').click(async function (e) {
 
 // 顯示User所有通知 ----------------------------
 async function showUserMsg() {
+  const msg_count = current_user_msg.length;
+  $('#msg_count').text(msg_count);
+  if (msg_count === 0) {
+    return;
+  }
+
+  $('ul.notifications').html('');
   current_user_msg.map((m) => {
     let item = `
-      <li class="notification-item">
-        <i class="bi bi-exclamation-circle text-warning"></i>
+      <button class="btn msg-close" style="display:inline;float:right;cursor:pointer">
+        <i id="${m._id}" class="bi bi-x-circle-fill" style="float:right;cursor:pointer"></i>
+      </button>
+      <li class="notification-item" style="cursor:pointer;">
+        <i class="bi bi-share"></i>
         <div>
           <h4>${m.type}</h4>
           <p>${m.content}</p>

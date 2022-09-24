@@ -34,57 +34,63 @@ body
           li.nav-item.dropdown
             a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
               i.bi.bi-bell
-              span.badge.bg-primary.badge-number 4
+              span#msg_count.badge.bg-primary.badge-number 0
             // End Notification Icon
-            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications(style="min-width: 300px;")
+              //- li.dropdown-header
+              //-   | You have 4 new notifications
+              //-   a(href='#')
+              //-     span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
+              //- li
               li.dropdown-header
-                | You have 4 new notifications
-                a(href='#')
-                  span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
+                | 您無新訊息
+                //- a(href='#')
+                //-   span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
               li
                 hr.dropdown-divider
-              li.notification-item
-                i.bi.bi-exclamation-circle.text-warning
-                div
-                  h4 Lorem Ipsum
-                  p Quae dolorem earum veritatis oditseno
-                  p 30 min. ago
-              li
-                hr.dropdown-divider
-              li.notification-item
-                i.bi.bi-x-circle.text-danger
-                div
-                  h4 Atque rerum nesciunt
-                  p Quae dolorem earum veritatis oditseno
-                  p 1 hr. ago
-              li
-                hr.dropdown-divider
-              li.notification-item
-                i.bi.bi-check-circle.text-success
-                div
-                  h4 Sit rerum fuga
-                  p Quae dolorem earum veritatis oditseno
-                  p 2 hrs. ago
-              li
-                hr.dropdown-divider
-              li.notification-item
-                i.bi.bi-info-circle.text-primary
-                div
-                  h4 Dicta reprehenderit
-                  p Quae dolorem earum veritatis oditseno
-                  p 4 hrs. ago
-              li
-                hr.dropdown-divider
-              li.notification-item
-                i.bi.bi-info-circle.text-primary
-                div
-                  h4 Dicta reprehenderit
-                  p Quae dolorem earum veritatis oditseno
-                  p 4 hrs. ago
-              li
-                hr.dropdown-divider
-              li.dropdown-footer
-                a(href='#') Show all notifications
+              //- li.notification-item
+              //-   i.bi.bi-exclamation-circle.text-warning
+              //-   div
+              //-     h4 Lorem Ipsum
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 30 min. ago
+
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-x-circle.text-danger
+              //-   div
+              //-     h4 Atque rerum nesciunt
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 1 hr. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-check-circle.text-success
+              //-   div
+              //-     h4 Sit rerum fuga
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 2 hrs. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-info-circle.text-primary
+              //-   div
+              //-     h4 Dicta reprehenderit
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 4 hrs. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-info-circle.text-primary
+              //-   div
+              //-     h4 Dicta reprehenderit
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 4 hrs. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.dropdown-footer
+              //-   a(href='#') Show all notifications
             // End Notification Dropdown Items
           // End Notification Nav
           //- li.nav-item.dropdown
@@ -215,15 +221,26 @@ body
       socket.on('shareToyou_msg', async function(shareUserEmail){
         // TODO: 更新上方推播通知
         alert(`${shareUserEmail}分享筆記給您`);
-        await getUserNotes();
         await getUserMsg();
+        await showUserMsg()
+        await getUserNotes();
+        
       })
 
       //- Socket 有人刪除他的分享筆記
       socket.on('delete_shareToyou_msg', async function(delete_user_email){
         // TODO: 換成上方推播通知
         alert(`${delete_user_email}刪除分享的筆記`);
+        await getUserMsg();
+        await showUserMsg();
         await getUserNotes();
+      })
+
+      $(document).on('click', '.msg-close', async function(e){
+          const msg_id = e.target.id;
+          await deleteMsg(msg_id);
+          await getUserMsg();
+          await showUserMsg();
       })
 
       

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const { ObjectId } = require('mongodb');
 // TODO: 換argon比較快
 
 const { Mongo } = require('./mongocon');
@@ -125,7 +126,21 @@ const getMessages = async (data) => {
   }
 };
 
-getMessages;
+const deleteUserMessage = async (data) => {
+  const msg_id = data.msg_id;
+  const MsgCollection = Mongo.db(MONGO_DB).collection('message');
+  try {
+    const msg_result = await MsgCollection.deleteOne({
+      '_id': ObjectId(msg_id),
+    }).toArray();
+
+    return msg_result;
+  } catch (e) {
+    return null;
+  } finally {
+    // await Mongo.close();
+  }
+};
 
 module.exports = {
   signUp,
@@ -133,4 +148,5 @@ module.exports = {
   getUserDetail,
   shareToAll,
   getMessages,
+  deleteUserMessage,
 };

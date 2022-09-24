@@ -18,9 +18,8 @@ const {
   getComments,
 } = require('../models/note_model');
 
-const { getMessages } = require('../models/user_model');
+const { getMessages, deleteUserMessage } = require('../models/user_model');
 
-Notes = require('../models/note_model');
 const {
   showShareDetail,
   showSocialCards,
@@ -193,6 +192,16 @@ const showUserMessage = async (req, res) => {
   // }
 };
 
+// 刪除使用者通知
+const deleteMessage = async (req, res) => {
+  req.body.user_id = req.session.user.id;
+  req.body.user_email = req.session.user.email;
+  const data = req.body;
+  await deleteUserMessage(data);
+
+  return res.status(200).json({ 'data': '成功刪除' });
+};
+
 module.exports = {
   socialPage,
   shareNotePage,
@@ -201,4 +210,5 @@ module.exports = {
   deleteComments,
   showSharedNote,
   showUserMessage,
+  deleteMessage,
 };

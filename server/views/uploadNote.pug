@@ -24,16 +24,17 @@ block content
                         br
                         //- 圖形擷取
                         button#rectContour.btn(style='font-size:16px')
-                            i.fa.fa-scissors
+                            i.bi.bi-bounding-box-circles
                         //- button#shapeView.button-55 擷取
                         
                         //- 去除圖形
-                        button#removeNotWant(style='font-size:16px')
-                            i.fa.fa-file-image-o
-                            i.fa.fa-times-circle(style="margin-left:-3px;" aria-hidden="true")
+                        button#removeNotWant.btn(style='font-size:16px')
+                            i.bi.bi-x-square-fill
+                            //- i.fa.fa-times-circle(style="margin-left:-3px;" aria-hidden="true")
                         
                         //- OCR
-                        button#OCR.button-55 OCR 
+                        button#OCR.btn
+                            img(src="/assets/img/ocr.png" style="width:25px;height:25px;")
                         //- button#reDraw.button-55 復原
 
                         //- 復原
