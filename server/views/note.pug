@@ -173,7 +173,7 @@ block content
 
                         //- 查看留言鍵
                         button.openbtn#annotation-show-btn.btn
-                            i.fa.fa-commenting-o
+                            i.bi.bi-stickies
 
 
                         //- 特定人分享頁面
@@ -353,7 +353,7 @@ block content
         });
 
         
-        // 監聽dragable 上一步&下一步
+        // TODO: 目前拿掉，監聽圖形dragable 上一步&下一步
         $(document).on('mouseup', '.contour-pic', function(e){
           const element = e.target.parentElement;
           const top = element.style.top;
@@ -362,12 +362,24 @@ block content
           //- stepAppend(element, 'drag', top, left, '');
         });
 
+        // TODO: 目前拿掉，監聽文字dragable 上一步&下一步
         $(document).on('mouseup', '.div_addtextarea', function(e){
           const element = e.target.parentElement;
           const top = element.style.top;
           const left = element.style.left;
           //- stepAppend(element, 'drag', top, left, '');
         });
+
+        let online_user;
+        // 拿取目前在線上的名單
+        $(document).ready(function() {
+          socket.on("users", async (users) => {
+            online_user = users;
+            // 重新渲染分享頁面
+            await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+          });
+        });
+
 
       script(src='/js/user.js')
       script(src='/js/windowLoad.js')
@@ -379,4 +391,9 @@ block content
       script(src='/js/search.js')
       script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
+
+
+
+
+
 

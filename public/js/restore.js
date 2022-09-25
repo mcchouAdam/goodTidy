@@ -83,24 +83,24 @@ prev.onclick = function () {
 };
 
 // 下一步 -------------------------------------
-next.onclick = function () {
-  //TODO: 做前一步相反的事
-  if (step > last_step) {
-    Swal.fire('沒有下一步');
-  } else if (step == last_step) {
-    // 最後一步為最新狀態
-    AutoSave.restore();
-  } else {
-    step++;
-    let obj = stepObject[step];
-    let item = obj.item;
-    if (obj.event === 'drag') {
-      item.style.top = obj.top;
-      item.style.left = obj.left;
-    } else if (obj.event === 'input') {
-      item.text(obj.val);
-    } else if (obj.event === 'delete') {
-      Swal.fire('刪除下一步');
-    }
-  }
-};
+// next.onclick = function () {
+//   //TODO: 做前一步相反的事
+//   if (step > last_step) {
+//     Swal.fire('沒有下一步');
+//   } else if (step == last_step) {
+//     // 最後一步為最新狀態
+//     AutoSave.restore();
+//   } else {
+//     step++;
+//     let obj = stepObject[step];
+//     let item = obj.item;
+//     if (obj.event === 'drag') {
+//       item.style.top = obj.top;
+//       item.style.left = obj.left;
+//     } else if (obj.event === 'input') {
+//       item.text(obj.val);
+//     } else if (obj.event === 'delete') {
+//       Swal.fire('刪除下一步');
+//     }
+//   }
+// };

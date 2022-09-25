@@ -188,6 +188,13 @@ body
     // End Header
 
     script.
+
+      // Socket
+      let socket = io();
+
+      //- // 發送socket上線
+      //- socket.emit('authentication', user_email);
+
       // 登出鍵
       $('#logout-btn').click(async function () {
         let data = '';
