@@ -652,6 +652,7 @@ async function modifyAnnotation(annotation_id) {
   $('#icon-' + annotation_id).draggable({ disabled: false });
 }
 
+// 刪除註釋
 async function deleteAnnotation(annotation_id) {
   const isDeleted = window.confirm('確定刪除此註釋?');
   if (!isDeleted) {
@@ -660,6 +661,47 @@ async function deleteAnnotation(annotation_id) {
 
   $('#icon-' + annotation_id).remove();
   $('#form-group-' + annotation_id).remove();
+
+  // icon的id與編碼要重新排順序
+  const icon_count = $('.fa-comments').length - 1; // 第一個是工具列的工具icon
+  for (let i = 1; i <= icon_count; i++) {
+    let comments_arr = $('.fa-comments')[i].id.split('_');
+    comments_arr[comments_arr.length - 1] = i;
+    let new_id = comments_arr.join('_');
+    $('.fa-comments')[i].id = new_id;
+    $('.fa-comments')[
+      i
+    ].innerHTML = `<span class="badge bg-dark rounded-pill">${i}</span>`;
+  }
+
+  //textarea的id與編碼要重新排序
+  const textarea_count = $('.form-control').length;
+  for (let i = 1; i <= textarea_count; i++) {
+    let textarea_arr = $('.form-control')[i - 1].id.split('_');
+    textarea_arr[textarea_arr.length - 1] = i;
+    let new_id = textarea_arr.join('_');
+    $('.form-control')[i - 1].id = new_id;
+  }
+
+  //formgroup的id與編碼要重新排序
+  const formgroup_count = $('.form-group').length;
+  for (let i = 1; i <= formgroup_count; i++) {
+    let formgroup_arr = $('.form-group')[i - 1].id.split('_');
+    formgroup_arr[formgroup_arr.length - 1] = i;
+    let new_id = formgroup_arr.join('_');
+    console.log('new_id', new_id);
+    $('.form-group')[i - 1].id = new_id;
+    $('.form-group span.bg-dark')[i - 1].innerHTML = i;
+  }
+
+  //href也要重新排序
+  const href_count = $('div.dropdown-menu a.dropdown-item').length;
+  for (let i = 1; i <= href_count; i++) {
+    let href = $('div.dropdown-menu a.dropdown-item')[i - 1].href;
+    let new_id = annotation_id.substring(0, annotation_id.length - 1) + i;
+    let new_href = `javascript:deleteAnnotation('${new_id}')`;
+    $('div.dropdown-menu a.dropdown-item')[i - 1].href = new_href;
+  }
 }
 
 // 儲存註釋 ---
@@ -752,14 +794,9 @@ async function showAnnotation(
     return;
   }
 
+  // 註釋icon
   const annotation_icon_html = annotation_element.annotation_icon_html;
   const annotation_icon = $.parseHTML(annotation_icon_html);
-  icon_div_append.append(annotation_icon);
-  $(
-    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle.ui-draggable-disabled'
-  )
-    .css('position', 'absolute')
-    .draggable({ containment: '#update-note-content' });
 
   // 顯示註釋textarea
   const annotation_text = annotation_element.annotation_textarea;
@@ -772,56 +809,66 @@ async function showAnnotation(
   for (id = 1; id <= annotation_count; id++) {
     annotation_id = `${note_id}_annotation_${id}`;
 
+    //重新換掉icon的id與標記數字
+    annotation_icon[id - 1].id = `icon-${annotation_id}`;
+    annotation_icon[
+      id - 1
+    ].innerHTML = `<span class="badge bg-dark rounded-pill">${id}</span>`;
+
     // 組合annotation
     let textarea_modify_icon_html = '';
 
-    console.log('user_permission: ', user_permission);
+    // <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">鎖定</a>
+    // <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">修改</a>
+    // console.log('user_permission: ', user_permission);
+
     if (user_permission >= 2) {
       textarea_modify_icon_html = `
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">
-                          鎖定
-                        </a>
-                        <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
-                          修改
-                        </a>
-                        <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
-                          移除
-                        </a>
-                      </div>`;
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+          <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
+            移除
+          </a>
+        </div>`;
     }
 
     let annotation_menu_html = `
-                    <div class="d-flex flex-row align-items-center">
-                      <a
-                        class="btn"
-                        id="dropdownMenuLink"
-                        href="#"
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                      >
-                        <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-                        ${textarea_modify_icon_html}
-                      </a>
-                    </div>`;
+        <div class="d-flex flex-row align-items-center">
+          <a
+            class="btn"
+            id="dropdownMenuLink"
+            href="#"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+            ${textarea_modify_icon_html}
+          </a>
+        </div>`;
 
     let annotation_html = `
-                          <div class="form-group" id="form-group-${annotation_id}">
-                            <span class="badge bg-dark rounded-pill">${id}</span>
-                            <span class="badge bg-info rounded-pill">${
-                              annotation_user_name[id - 1]
-                            }</span>
-                            <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?...">${
+        <div class="form-group" id="form-group-${annotation_id}">
+          <span class="badge bg-dark rounded-pill">${id}</span>
+          <span style="font-size:15px;" class="badge bg-info rounded-pill">${
+            annotation_user_name[id - 1]
+          }</span>
+          <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?...">${
       annotation_text[id - 1]
     }</textarea>
-                            ${annotation_menu_html}
-                          </div>`;
+          ${annotation_menu_html}
+        </div>`;
 
     textarea_html += annotation_html;
   }
 
+  // 文字框與icon加回去
   textarea_div_append.append(textarea_html);
+  icon_div_append.append(annotation_icon);
+  $(
+    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle.ui-draggable-disabled'
+  )
+    .css('position', 'absolute')
+    .draggable({ containment: '#update-note-content' });
   // console.log(annotation_element);
 }

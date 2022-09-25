@@ -7,12 +7,16 @@ block content
                 .d-flex.flex-row.align-items-center
                     img.profile-pic(src=user_picture)
                     p.small.mb-0.ms-2=user_name
+                    .row
+                        .col-10(style="margin: 0 0 0 20px")
+                            span.badge.bg-dark.rounded-pill(style="cursor:default") 筆記名稱
+                            span(style="margin: 20px 10px;")=note_name
+                        .col-10(style="margin: 0 0 0 20px")
+                            span.badge.bg-dark.rounded-pill(style="cursor:default") 分享時間
+                            span(style="margin: 20px 10px;")=sharing_time
             .card-body(style="height:600px;")
                 #showShareDetail(style="padding: 20px 0 0 0; position: absolute;")
-            .card-footer
-                span.badge.bg-dark.rounded-pill 筆記
-                h1.card-title=note_name
-                p.small=sharing_time
+
 
     script.
         text_elements = !{text_elements};

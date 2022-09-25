@@ -87,12 +87,6 @@ $('#addShareOther-btn').click(async function () {
   let permission = $('#shareToOtherMethod-btn').text();
   let addOther = $('#addShareOther-input').val();
 
-  // 推播給該用戶
-  socket.emit('shareToyou', {
-    'user_email': user_email,
-    'addOther': addOther,
-  });
-
   if (!addOther) {
     Swal.fire('不能為空值');
     return;
@@ -113,8 +107,13 @@ $('#addShareOther-btn').click(async function () {
     'note_id': current_note_id,
   };
 
-  const result = await shareToOther(data);
+  // 確認使用者存在
+  const user_notExist = await shareToOther(data);
+  if (user_notExist) {
+    return;
+  }
 
+  // 渲染畫面
   let list_html = `
               <li class="list-group-item d-flex justify-content-between align-items-center">
                   ${addOther}
@@ -126,10 +125,27 @@ $('#addShareOther-btn').click(async function () {
                   </button>
               </li>`;
   $('#shareOtherList').append(list_html);
+
+  // 推播給該用戶
+  socket.emit('shareToyou', {
+    'user_email': user_email,
+    'addOther': addOther,
+  });
 });
 
 // [筆記分享] 加入筆記tag鍵
 $('#add_note_tag-btn').click(function () {
+  add_tag();
+});
+
+$('#tag_input').on('keyup', function (e) {
+  if (e.key === 'Enter' || e.keyCode === 13) {
+    add_tag();
+  }
+});
+
+// [Tag加入function]
+function add_tag() {
   const tag_name = $('#tag_input').val();
   if (!tag_name) {
     return;
@@ -139,16 +155,16 @@ $('#add_note_tag-btn').click(function () {
     return;
   }
   let tag_html = `
-    <span class="badge bg-success rounded-pill">${tag_name}&nbsp
+    <span class="tags badge bg-info rounded-pill" style="color:white;">${tag_name}&nbsp
       <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
     </span>
   `;
   $('.note_tags').append(tag_html);
   $('#tag_input').val('');
-});
+}
 
 // [筆記分享] 刪除筆記tag鍵
-$(document).on('click', '.badge.bg-success.rounded-pill', function () {
+$(document).on('click', '.tags', function () {
   $(this).remove();
 });
 
@@ -220,7 +236,7 @@ async function shareToAlluser(data) {
     .then((response) => {
       console.log(response);
       Swal.fire('更改設定成功');
-      window.location.assign('/socialPage?paging=1&sorting=created_time');
+      window.location.assign('/socialPage?paging=1&sorting=sharing_time');
     })
     .catch((error) => {
       console.log(error);
@@ -236,17 +252,20 @@ async function shareToOther(data) {
     data: data,
   };
 
+  let user_notExist = false;
+
   await axios(config)
     .then((response) => {
       console.log(response);
-      // TODO: 加入通知列
-
       Swal.fire(response.data);
     })
     .catch((error) => {
       console.log(error);
-      Swal.fire('分享特定人失敗');
+      user_notExist = true;
+      Swal.fire(error.response.data.msg);
     });
+
+  return user_notExist;
 }
 
 // 拿取特定人士權限 -------------------------------------------------------------
@@ -308,7 +327,7 @@ $('#time_sorting-btn').click(function (e) {
   let time_color = e.target.style.color;
   let params = new URL(document.location).searchParams;
   let paging = params.get('paging');
-  window.location = `/socialPage?paging=${paging}&sorting=created_time`;
+  window.location = `/socialPage?paging=${paging}&sorting=sharing_time`;
 });
 
 // comments_sorting -------
@@ -387,7 +406,10 @@ $('#socialPageSearchMenu li').on('click', function () {
   $('#socialPageSearch-btn').text($(this).text());
 
   // 收藏文章不需要輸入搜尋文字
-  if ($('#socialPageSearch-btn').text() === '收藏') {
+  if (
+    $('#socialPageSearch-btn').text() === '收藏' ||
+    $('#socialPageSearch-btn').text() === '時間'
+  ) {
     $('#socialPageSearch-input').prop('disabled', true);
   } else {
     $('#socialPageSearch-input').prop('disabled', false);

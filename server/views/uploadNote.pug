@@ -171,6 +171,7 @@ block content
 
                                     let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
                                     
+                                    //- let ver_name;
                                     //- Swal.fire({
                                     //-      title: '請輸入此版本名稱',
                                     //-      input: 'text',
@@ -181,36 +182,25 @@ block content
                                     //-      confirmButtonText: '確認',
                                     //-      cancelButtonText: '取消',
                                     //-    }).then((result) => {
-                                    //-         //- console.log(result);
-                                    //-         ver_name = result.value;
-                                    //-         //- 取消
-                                    //-         if(!result.isConfirmed){
+                                    //-         if(result.isConfirmed){
+                                    //-             ver_name = result.value;
                                     //-              // Loading釋放
                                     //-             $('#submit_note').prop('disabled', false);
                                     //-             $('body').css('cursor', 'default');
-                                    //-             return;
-                                    //-         }
-                                    //-         //- 確認
-                                    //-         else {
-                                    //-             //- const ver_name = result.value;
                                     //-             if(ver_name == null || ver_name == '' ){
                                     //-                 Swal.fire('版本名不能為空白');
-                                    //-                 // Loading釋放
-                                    //-                 $('#submit_note').prop('disabled', false);
-                                    //-                 $('body').css('cursor', 'default');
-                                    //-                 return;
                                     //-             }
                                     //-             if(note_name == '' || note_classification == '' ){
-                                    //-                 Swal.fire('筆記名稱或筆記分類不能為空白');
-                                    //-                 // Loading釋放
-                                    //-                 $('#submit_note').prop('disabled', false);
-                                    //-                 $('body').css('cursor', 'default');
-                                    //-                 return;
+                                    //-                  Swal.fire('筆記名稱或筆記分類不能為空白');
                                     //-             }
+                                    //-         }
+                                    //-         //- 取消
+                                    //-         else {
+                                    //-            return;
                                     //-         }
                                     //-     });
 
-                                    // // 檢查版本名
+                                    //- 檢查版本名
                                     if (ver_name == null || ver_name == '') {
                                         Swal.fire('版本名不能為空');
                                         // Loading釋放

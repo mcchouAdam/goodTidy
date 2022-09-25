@@ -46,6 +46,11 @@ block content
             //- 留言
             script.
 
+                // 預先選擇內容
+                $(document).ready(function() {  
+                    $(".dropdown-menu li a")[4].click();
+                });
+
                 $(function () {
                     $('input[name="daterange"]').daterangepicker(
                     {
@@ -68,7 +73,7 @@ block content
 
                 // sorting決定變色
                 switch(sorting){
-                    case 'created_time': 
+                    case 'sharing_time': 
                         $('.fa-clock-o').css('color','blue');
                         break;
                     case 'saved_count': 
