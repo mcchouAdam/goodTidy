@@ -36,7 +36,7 @@ body
               i.bi.bi-bell
               span#msg_count.badge.bg-primary.badge-number 0
             // End Notification Icon
-            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications(style="min-width: 300px;")
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
               //- li.dropdown-header
               //-   | You have 4 new notifications
               //-   a(href='#')
@@ -146,9 +146,9 @@ body
           li.nav-item.dropdown.pe-3
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
               if picture
-                img.rounded-circle(src=picture, alt='Profile')
+                img.rounded-circle(src=picture, alt='Profile', style="width: 50px;height: 50px;")
               else
-                img.rounded-circle(src="/assets/img/user.png", alt='Profile')
+                img.rounded-circle(src="/assets/img/user.png", alt='Profile', style="width: 50px;height: 50px;")
               if name
                 span.d-none.d-md-block.dropdown-toggle.ps-2=name
               else
@@ -201,28 +201,43 @@ body
         await axios(config)
           .then(function (response) {
             console.log(response);
-            alert('登出成功');
-            window.location.assign('/signin');
+            Swal.fire({
+              icon: 'success',
+              title: '登出成功',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(function() {
+                window.location.assign('/signin');
+            });
           })
           .catch(function (error) {
             console.log(error);
-            alert('登出失敗');
+            Swal.fire({
+              icon: 'error',
+              title: '登出失敗',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(function() {
+                window.location.assign('/signin');
+            });
           });
       });
 
       // Socket ------------------------------------------
 
       // Socket 被喜歡的推播
-      socket.on('saved_msg', function(msg){
-        alert(msg)
+      socket.on('saved_msg', async function(msg){
+        await getUserMsg();
+        await showUserMsg();
+        Swal.fire(msg)
       })
 
       //- Socket 有人分享筆記給你
       socket.on('shareToyou_msg', async function(shareUserEmail){
         // TODO: 更新上方推播通知
-        alert(`${shareUserEmail}分享筆記給您`);
+        Swal.fire(`${shareUserEmail}分享筆記給您`);
         await getUserMsg();
-        await showUserMsg()
+        await showUserMsg();
         await getUserNotes();
         
       })
@@ -230,11 +245,11 @@ body
       //- Socket 有人刪除他的分享筆記
       socket.on('delete_shareToyou_msg', async function(delete_user_email){
         // TODO: 換成上方推播通知
-        alert(`${delete_user_email}刪除分享的筆記`);
+        Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
         await getUserMsg();
         await showUserMsg();
         await getUserNotes();
-      })
+      });
 
       $(document).on('click', '.msg-close', async function(e){
           const msg_id = e.target.id;

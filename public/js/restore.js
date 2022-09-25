@@ -1,31 +1,8 @@
 // TODO: 第一步會記不到
-let step = 0; // 步驟變數
+let step = 1; // 步驟變數
+let last_step = step;
 let initialObject = [];
 let stepObject = []; // 需復原的物件
-
-// // 復原的object要input的參數
-// let stepDrag = function () {
-//   stepAppend($(this), 'drag', $(this).css('top'), $(this).css('left'));
-// };
-
-// let stepInput = function () {
-//   stepAppend(
-//     $(this),
-//     'input',
-//     $(this).css('top'),
-//     $(this).css('left'),
-//     $(this).text()
-//   );
-// };
-
-// let stepDelete = function () {
-//   stepAppend(
-//     $(this),
-//     'delete',
-//     $(this).css('top'),
-//     $(this).css('left'),
-//   );
-// };
 
 function stepAppend(item, event, top, left, val) {
   let obj;
@@ -48,42 +25,71 @@ function stepAppend(item, event, top, left, val) {
       'event': event,
       'top': top,
       'left': left,
+      'val': val,
     };
   }
 
   console.log('stepAppendObject:', obj);
   stepObject[step] = obj;
+  console.log('此物件step: ', step);
   step++;
+  last_step = step;
+  console.log('目前step: ', step);
+  console.log('最後一步step: ', last_step);
 }
 
 // 上一步 -------------------------------------
 prev.onclick = function () {
-  if (step < 1) {
-    alert('沒有上一步');
+  if (step == 0) {
+    AutoSave.restore('INITIALSAVE');
   } else {
     step--;
-    let obj = stepObject[step - 1];
+    console.log('上一步step:', step);
+    let obj = stepObject[step];
     console.log('上一步obj: ', obj);
 
     let item = obj.item;
     if (obj.event === 'drag') {
+      // input上一個記到的是最新的狀態，所以要在上一步
+      if (step - 1 == 0) {
+        AutoSave.restore('INITIALSAVE');
+      }
+      item = stepObject[step - 1].item;
+      obj = stepObject[step - 1];
+
       item.style.top = obj.top;
       item.style.left = obj.left;
     } else if (obj.event === 'input') {
-      item.text(obj.val);
+      // input上一個記到的是最新的狀態，所以要在上一步
+      if (step - 1 == 0) {
+        AutoSave.restore('INITIALSAVE');
+      }
+      obj = stepObject[step - 1];
+
+      item.val(obj.val);
     } else if (obj.event === 'delete') {
-      console.log(item);
-      $('#update-note-content').append(item);
       const restore_id = item.id;
-      $('#' + restore_id).draggable({ containment: '#update-note-content' });
+      if (restore_id.split('_')[1] === 'contour-pic') {
+        $('#update-note-content').append(item);
+        $('#' + restore_id).draggable({ containment: '#update-note-content' });
+      } else {
+        // 文字需另外處理才能draggable
+        let top = +obj.top.replaceAll('px', '');
+        let left = +obj.left.replaceAll('px', '');
+        addDragTextarea($('#update-note-content'), obj.val, top, left);
+      }
     }
   }
 };
 
 // 下一步 -------------------------------------
 next.onclick = function () {
-  if (step >= stepObject.length) {
-    alert('沒有下一步');
+  //TODO: 做前一步相反的事
+  if (step > last_step) {
+    Swal.fire('沒有下一步');
+  } else if (step == last_step) {
+    // 最後一步為最新狀態
+    AutoSave.restore();
   } else {
     step++;
     let obj = stepObject[step];
@@ -94,7 +100,7 @@ next.onclick = function () {
     } else if (obj.event === 'input') {
       item.text(obj.val);
     } else if (obj.event === 'delete') {
-      alert('刪除下一步');
+      Swal.fire('刪除下一步');
     }
   }
 };

@@ -18,7 +18,7 @@ block content
               span=note_name
             li.breadcrumb-item
               span 分享者:
-              span=user_name
+              span=ShareUser_name
       // End Page Title
       section.section.dashboard
         .row
@@ -54,7 +54,7 @@ block content
 
               let user_permission = !{JSON.stringify(permission)};
               let note_id = !{JSON.stringify(note_id)};
-              let user_name = !{JSON.stringify(user_name)};
+              let ShareUser_name = !{JSON.stringify(ShareUser_name)};
               let file_name = !{JSON.stringify(file_name)};
               let annotion_user_id = !{JSON.stringify(annotion_user_id)};
               let annotion_user_name = !{JSON.stringify(annotion_user_name)}
@@ -157,6 +157,9 @@ block content
                 item.attr("id", `icon-${annotation_id}`);
                 $('#update-note-content').append(item);
 
+                //--- 同步 ---
+                //- socket.emit('create_annotation_icon', item);
+
                 // 組合annotation
                 let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
                       <a
@@ -234,6 +237,8 @@ block content
               });
 
 
+
+
       script(src='/js/user.js')
       script(src='/js/windowLoad.js')
       script(src='/js/note.js')
@@ -244,5 +249,10 @@ block content
       //- script(src='/js/canvas.js')
       script(src='/js/social.js')
       script(src='/js/search.js')
-      script(src='/js/autoSave.js')
+      //- script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
+
+      // 同步更新註釋
+      //- socket.on('create_annotation_icon', function(obj){
+      //-   $('#update-note-content').append(JSON.parse(item));
+      //- })

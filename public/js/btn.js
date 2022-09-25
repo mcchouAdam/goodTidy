@@ -8,7 +8,8 @@ $('#magicContour').click(async function () {
 $('#rectContour').click(async function (e) {
   const isfile_upload = $('#file-preview').get(0).files.length;
   if (isfile_upload == 0) {
-    alert('請先選擇檔案');
+    // Swal.fire('請先選擇檔案');
+    Swal.fire('請先選擇檔案');
     return;
   }
 
@@ -44,17 +45,6 @@ async function shapeSnapShot() {
 
   item.append(item_img);
   $('#note-preview-content').append(item);
-
-  // 點選刪除
-  $('#' + item_id).dblclick(function (e) {
-    let target = $(e.target.parentElement);
-    // console.log(target);
-    if (target.hasClass('highlight')) {
-      target.removeClass('highlight');
-    } else {
-      target.addClass('highlight');
-    }
-  });
 
   upload_preview_element.push(item);
   // for next element clear
@@ -105,7 +95,6 @@ $('#reDraw').click(function () {
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
   addDragTextarea('#update-note-content', '新增文字方塊', 25, 25);
-  textareaClick();
 });
 
 // 儲存鍵 --------------------------------------
@@ -114,7 +103,7 @@ $('#storeNote').click(async function () {
   let version_name = prompt('請輸入此版本名稱:', '');
 
   if (version_name === null || version_name === '') {
-    alert('版本名不能為空');
+    Swal.fire('版本名不能為空');
     return;
   }
 
@@ -192,7 +181,7 @@ $('#storeNote').click(async function () {
     data: data,
   });
 
-  alert(`${version_name} 儲存成功!`);
+  Swal.fire(`版本: ${version_name} 儲存成功!`);
   window.location.assign('/note');
 });
 
@@ -254,7 +243,7 @@ $('#sharedNote-change').click(function () {
 
 //   // // 檢查版本名
 //   if (ver_name == null || ver_name == '') {
-//     alert('版本名不能為空');
+//     Swal.fire('版本名不能為空');
 //     return;
 //   }
 

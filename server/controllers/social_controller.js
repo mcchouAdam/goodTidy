@@ -55,8 +55,6 @@ const socialPage = async (req, res) => {
 
   const allPages_count = socialcards_result.allPages_count;
   const currentPage = socialcards_result.currentPage;
-
-  const cards_html = await showSocialCards(socialcards_result, user_id);
   const paging_html = await showPagination(
     paging,
     sorting,
@@ -64,12 +62,34 @@ const socialPage = async (req, res) => {
     currentPage
   );
 
+  if (currentPage > allPages_count || currentPage < 0 || isNaN(currentPage)) {
+    const card_html = `
+        <div id="noMatchResult" style="padding: 0 0 0 30vw;">
+          <i class="bi bi-exclamation-circle" style="font-size:100px;color:#ffc107;margin: 0 0 0 15vw;"></i>
+          <h1>無相關搜尋內容，請您重新查詢</h1>
+        </div>`;
+
+    return res.render('socialPage', {
+      id: id,
+      provider: provider,
+      name: name,
+      email: email,
+      picture: picture,
+      sorting: sorting,
+      cards_html: JSON.stringify(card_html),
+      paging_html: JSON.stringify(paging_html),
+    });
+  }
+
+  const cards_html = await showSocialCards(socialcards_result, user_id);
+
   return res.render('socialPage', {
     id: id,
     provider: provider,
     name: name,
     email: email,
     picture: picture,
+    sorting: sorting,
     cards_html: JSON.stringify(cards_html),
     paging_html: JSON.stringify(paging_html),
   });
@@ -166,7 +186,7 @@ const showSharedNote = async (req, res) => {
     email: email,
     picture: picture,
     note_id: note_id,
-    user_name: noteDetails.user_name,
+    ShareUser_name: noteDetails.user_name,
     user_email: noteDetails.user_email,
     user_picture: noteDetails.user_picture,
     note_name: noteDetails.note_name,

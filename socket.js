@@ -10,7 +10,7 @@ const server = app.listen(port, () => {
 const io = require('socket.io')(server, {
   cors: {
     origin: '*', //['https://styagram-6edf0.web.app/', 'http://localhost:3000', 'https://localhost:3000'],
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'DELETE', 'UPDATE'],
     // allowedHeaders: ['my-custom-header'],
     // credentials: true,
   },
@@ -71,6 +71,19 @@ io.on('connection', async (socket) => {
     const deletedShareUser_socket_id = user_online_socketId[deleted_user_email];
     console.log('deletedShareUser_socket_id', deletedShareUser_socket_id);
 
-    io.to(deletedShareUser_socket_id).emit('delete_shareToyou_msg', delete_user_email);
+    io.to(deletedShareUser_socket_id).emit(
+      'delete_shareToyou_msg',
+      delete_user_email
+    );
+  });
+
+  // 註釋功能同步
+  socket.on('create_annotation_icon', async (obj) => {
+    // const delete_user_email = obj.user_email;
+    // const deleted_user_email = obj.delete_email;
+    // const deletedShareUser_socket_id = user_online_socketId[deleted_user_email];
+    // console.log('deletedShareUser_socket_id', deletedShareUser_socket_id);
+
+    socket.broadcast.emit('create_annotation_icon', obj);
   });
 });

@@ -94,7 +94,7 @@ $('#addShareOther-btn').click(async function () {
   });
 
   if (!addOther) {
-    alert('不能為空值');
+    Swal.fire('不能為空值');
     return;
   }
 
@@ -135,7 +135,7 @@ $('#add_note_tag-btn').click(function () {
     return;
   }
   if ($('.badge.bg-success.rounded-pill').length === 5) {
-    alert('標籤不能超過5個');
+    Swal.fire('標籤不能超過5個');
     return;
   }
   let tag_html = `
@@ -173,12 +173,12 @@ async function createComments(note_id) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('留言成功');
+      Swal.fire('留言成功');
       location.reload();
     })
     .catch((error) => {
       console.log(error.response.data.msg);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
 }
 
@@ -204,7 +204,7 @@ async function createSave(note_id) {
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
 }
 
@@ -219,12 +219,12 @@ async function shareToAlluser(data) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('更改設定成功');
+      Swal.fire('更改設定成功');
       window.location.assign('/socialPage?paging=1&sorting=created_time');
     })
     .catch((error) => {
       console.log(error);
-      alert('更改設定失敗');
+      Swal.fire('更改設定失敗');
     });
 }
 
@@ -241,11 +241,11 @@ async function shareToOther(data) {
       console.log(response);
       // TODO: 加入通知列
 
-      alert(response.data);
+      Swal.fire(response.data);
     })
     .catch((error) => {
       console.log(error);
-      alert('分享特定人失敗');
+      Swal.fire('分享特定人失敗');
     });
 }
 
@@ -264,7 +264,7 @@ async function getShareToOther(note_id) {
     })
     .catch((error) => {
       console.log(error);
-      alert('拿取特定人士權限失敗');
+      Swal.fire('拿取特定人士權限失敗');
     });
 }
 
@@ -290,24 +290,17 @@ async function getShareAll(note_id) {
     })
     .catch((error) => {
       console.log(error);
-      alert('拿取特定人士權限失敗');
+      Swal.fire('拿取特定人士權限失敗');
     });
 }
 
-// 愛心、留言、時間、留言數 圖形特效 --------------------------------------
+// 愛心、時間、留言數 排序 --------------------------------------
 // heart_sorting -------
 $('#heart_sorting-btn').click(function (e) {
   let heart_color = e.target.style.color;
   let params = new URL(document.location).searchParams;
   let paging = params.get('paging');
-  if (heart_color == 'grey') {
-    e.target.style.color = 'blue';
-    $('#time_sorting-btn i').css('color', 'grey');
-    $('#comments_sorting-btn i').css('color', 'grey');
-    window.location = `/socialPage?paging=${paging}&sorting=saved_count`;
-  } else {
-    e.target.style.color = 'grey';
-  }
+  window.location = `/socialPage?paging=${paging}&sorting=saved_count`;
 });
 
 // time_sorting -------
@@ -315,14 +308,7 @@ $('#time_sorting-btn').click(function (e) {
   let time_color = e.target.style.color;
   let params = new URL(document.location).searchParams;
   let paging = params.get('paging');
-  if (time_color == 'grey') {
-    $('#heart_sorting-btn i').css('color', 'grey');
-    e.target.style.color = 'blue';
-    $('#comments_sorting-btn i').css('color', 'grey');
-    window.location = `/socialPage?paging=${paging}&sorting=created_time`;
-  } else {
-    e.target.style.color = 'grey';
-  }
+  window.location = `/socialPage?paging=${paging}&sorting=created_time`;
 });
 
 // comments_sorting -------
@@ -330,21 +316,14 @@ $('#comments_sorting-btn').click(function (e) {
   let comments_color = e.target.style.color;
   let params = new URL(document.location).searchParams;
   let paging = params.get('paging');
-  if (comments_color == 'grey') {
-    $('#heart_sorting-btn i').css('color', 'grey');
-    $('#time_sorting-btn i').css('color', 'grey');
-    e.target.style.color = 'blue';
-    window.location = `/socialPage?paging=${paging}&sorting=comment_count`;
-  } else {
-    e.target.style.color = 'grey';
-  }
+  window.location = `/socialPage?paging=${paging}&sorting=comment_count`;
 });
 
 // 留言 修改/刪除
 async function updateComment(comment_id, note_id) {
   const new_content = window.prompt('您要修改的內容?');
   if (!new_content) {
-    alert('內容不能為空');
+    Swal.fire('內容不能為空');
     return;
   }
 
@@ -363,12 +342,12 @@ async function updateComment(comment_id, note_id) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('修改留言成功');
+      Swal.fire('修改留言成功');
       location.reload();
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
 }
 
@@ -391,35 +370,13 @@ async function deleteComment(comment_id, note_id) {
 
   await axios(config)
     .then((response) => {
-      alert('刪除留言成功');
+      Swal.fire('刪除留言成功');
       location.reload();
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
-}
-
-// 預讀排序圖形顏色
-async function getSocialSortingColor() {
-  let params = new URL(document.location).searchParams;
-  let sorting = params.get('sorting');
-
-  $('#heart_sorting-btn i').css('color', 'grey');
-  $('#time_sorting-btn i').css('color', 'grey');
-  $('#comments_sorting-btn i').css('color', 'grey');
-
-  switch (sorting) {
-    case 'created_time':
-      $('#time_sorting-btn i').css('color', 'blue');
-      break;
-    case 'saved_count':
-      $('#heart_sorting-btn i').css('color', 'blue');
-      break;
-    case 'comment_count':
-      $('#comments_sorting-btn i').css('color', 'blue');
-      break;
-  }
 }
 
 // [社群頁面]
@@ -430,10 +387,15 @@ $('#socialPageSearchMenu li').on('click', function () {
   $('#socialPageSearch-btn').text($(this).text());
 
   // 收藏文章不需要輸入搜尋文字
-  if ($('#socialPageSearch-btn').text() === '收藏文章') {
+  if ($('#socialPageSearch-btn').text() === '收藏') {
     $('#socialPageSearch-input').prop('disabled', true);
   } else {
     $('#socialPageSearch-input').prop('disabled', false);
+  }
+
+  // 時間搜尋去點日曆
+  if ($('#socialPageSearch-btn').text() === '時間') {
+    $('#daterange').click();
   }
 });
 
@@ -484,12 +446,12 @@ async function socialSearch() {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('搜尋成功');
+      Swal.fire('搜尋成功');
       window.location = search_url;
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
 }
 
@@ -514,7 +476,7 @@ async function deleteShareToOther(note_id, delete_email) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('刪除成功');
+      Swal.fire('刪除成功');
       // 刪除該list
       $(`li:contains("${delete_email}")`).remove();
       // TODO: 推播
@@ -525,7 +487,7 @@ async function deleteShareToOther(note_id, delete_email) {
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
 }
 
@@ -549,12 +511,12 @@ async function deleteMsg(msg_id) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      alert('刪除成功');
+      Swal.fire('刪除成功');
       // 刪除該list
       $(`li:contains("${msg_id}")`).remove();
     })
     .catch((error) => {
       console.log(error);
-      alert(error.response.data.msg);
+      Swal.fire(error.response.data.msg);
     });
 }

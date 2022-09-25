@@ -30,16 +30,28 @@ async function noteUpload(
     data: data,
   };
 
-  console.log('upload data:', data);
+  // console.log('upload data:', data);
 
   await axios(config)
     .then(function (response) {
-      console.log(response);
-      alert('上傳筆記成功');
+      // console.log(response);
+      Swal.fire({
+        icon: 'success',
+        title: '上傳筆記成功',
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(function () {
+        window.location.assign('/note');
+      });
     })
     .catch(function (error) {
       console.log(error);
-      alert('上傳筆記失敗');
+      Swal.fire({
+        icon: 'error',
+        title: '上傳筆記失敗',
+        showConfirmButton: false,
+        timer: 1500,
+      });
     });
 }
 
@@ -78,46 +90,9 @@ async function noteShow(note_id) {
     })
     .css('position', 'absolute');
 
-  // 物件生成後，才可以抓取物件click
-  pictureClick();
-  textareaClick();
-
   // 打開自動儲存
   $('#autoSave-toggle').prop('checked', true);
   AutoSave.start();
-}
-
-// [function][筆記編輯頁面] 圖形點選框選
-function pictureClick() {
-  $('.contour-pic.ui-draggable.ui-draggable-handle').dblclick(function (e) {
-    let click_element = $('#' + e.currentTarget.id);
-
-    if (click_element.hasClass('highlight')) {
-      click_element.removeClass('highlight');
-    } else {
-      click_element.addClass('highlight');
-    }
-  });
-}
-
-// [function][筆記編輯頁面] 文字點選框選
-function textareaClick() {
-  $('.addtextarea').dblclick(function (e) {
-    let click_element = e.currentTarget.parentNode;
-    let click_id = e.target.id;
-
-    // 取消框選
-    if (click_element.classList.contains('highlight')) {
-      click_element.classList.remove('highlight');
-      if (OCR_delete_ids.indexOf(click_id) !== -1) {
-        OCR_delete_ids.splice(click_id, 1);
-      }
-      // 框選
-    } else {
-      click_element.classList.add('highlight');
-      OCR_delete_ids.push(click_id);
-    }
-  });
 }
 
 // [function][筆記編輯頁面] 文字點選框選
@@ -164,8 +139,8 @@ async function getUserNotes() {
         const user_picture = s.user_info[0].picture;
         const user_name = s.user_info[0].name;
 
-        console.log(note_name, user_permission);
-        console.log(user_id);
+        // console.log(note_name, user_permission);
+        // console.log(user_id);
 
         // 只要自己不是筆記的admin就是別人分享給你的
         if (user_permission !== authorizationList['admin']) {
@@ -408,7 +383,7 @@ async function showNoteList(note_obj, div_append) {
   let note_menu_html = '';
 
   classifications.map((classfi) => {
-    console.log('classfi: ', classfi);
+    // console.log('classfi: ', classfi);
     let ids = note_obj[classfi].note_id;
     let names = note_obj[classfi].note_name;
 
@@ -492,16 +467,22 @@ async function getSharedNote(sharedNote_obj, div_append) {
   let shareNote_html = '';
   const note_names = Object.keys(sharedNote_obj);
   // sharedNote_obj.map((s) => {});
+  let num = 1;
   note_names.map((id) => {
     const permission = sharedNote_obj[id].user_permission;
     const user_picture = sharedNote_obj[id].user_picture;
     const user_name = sharedNote_obj[id].user_name;
     shareNote_html += `
-                        <img class="profile-pic mr-3" src="${S3_HOST}user_picture/${user_picture}">
-                        <span>${user_name}</span>
-                        <input type="radio" class="btn-check" name="shareNote_options" id="${id}" value="${id}" autocomplete="off">
-                        <label class="btn btn-secondary" for="${id}">${id}</label>
-                        <span class="badge bg-success rounded-pill">${permissionToName[permission]}</span><br \>
+                        <div>
+                            <span class="badge bg-dark rounded-pill" style="color:white;">${num++}</span>
+                            <img class="profile-pic mr-3" src="${S3_HOST}user_picture/${user_picture}">
+                            <span>${user_name}</span>
+                            <input type="radio" class="btn-check btn" name="shareNote_options" id="${id}" value="${id}" autocomplete="off">
+                            <label class="btn" for="${id}" style="margin:0 0 0 20px;">${id}</label>
+                            <span class="badge bg-warning rounded-pill" style="color:black;float:right;margin:25px 0 0 0;"">${
+                              permissionToName[permission]
+                            }</span><br \>
+                        </div>
                         `;
   });
   console.log(shareNote_html);
@@ -547,10 +528,9 @@ async function getVersionList(version_obj, div_append) {
 
 // 回復版本資訊
 async function noteShowFromVer(name, Obj) {
-  // console.log('version_recovery: ', showVerObj[version_name]);
+
   $('#update-note-content').html('');
   const Img_elements = Img_elements_arr(Obj[name].elements);
-  // console.log(Img_elements);
   const text_elements = text_elements_arr(
     $('#update-note-content'),
     Obj[name].text_elements
@@ -586,7 +566,7 @@ async function sharedNoteShow(name, Obj) {
 async function renameNote(note_id) {
   const new_noteName = window.prompt('請問您的筆記要改什麼名字?');
   if (!new_noteName) {
-    alert('名字不能為空');
+    Swal.fire('名字不能為空');
     return;
   }
   data = {
@@ -603,12 +583,12 @@ async function renameNote(note_id) {
   await axios(config)
     .then(function (response) {
       console.log(response);
-      alert('改名筆記成功');
+      Swal.fire('改名筆記成功');
       location.reload();
     })
     .catch(function (error) {
       console.log(error);
-      alert('改名筆記失敗');
+      Swal.fire('改名筆記失敗');
     });
 }
 
@@ -629,12 +609,12 @@ async function deleteNote(note_id) {
     await axios(config)
       .then(function (response) {
         console.log(response);
-        alert('刪除筆記成功');
+        Swal.fire('刪除筆記成功');
         location.reload();
       })
       .catch(function (error) {
         console.log(error);
-        alert('刪除筆記失敗');
+        Swal.fire('刪除筆記失敗');
       });
   }
 }
@@ -643,7 +623,7 @@ async function deleteNote(note_id) {
 async function moveNote(note_id) {
   const MoveToClass = window.prompt('您要搬移到哪個分類?');
   if (!MoveToClass) {
-    alert('分類不能為空');
+    Swal.fire('分類不能為空');
     return;
   } else {
     data = {
@@ -660,12 +640,12 @@ async function moveNote(note_id) {
     await axios(config)
       .then(function (response) {
         console.log(response);
-        alert('搬移筆記成功');
+        Swal.fire('搬移筆記成功');
         location.reload();
       })
       .catch(function (error) {
         console.log(error);
-        alert('搬移筆記失敗');
+        Swal.fire('搬移筆記失敗');
       });
   }
 }
@@ -673,8 +653,23 @@ async function moveNote(note_id) {
 // 改名分類
 async function renameclassification(user_id, old_classificationName) {
   const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
+  //   Swal.fire({
+  //     title: 'Submit your Github username',
+  //     input: 'text',
+  //     inputAttributes: {
+  //     autocapitalize: 'off'
+  //   },
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Look up',
+  //     showLoaderOnConfirm: true,
+  //   }).then((result) => {
+  //   if (!result.isConfirmed) {
+  //     Swal.fire("QQ")
+  //   }
+  // })}
+
   if (!new_classificationName) {
-    alert('分類名字不能為空');
+    Swal.fire('分類名字不能為空');
     return;
   }
 
@@ -693,12 +688,12 @@ async function renameclassification(user_id, old_classificationName) {
   await axios(config)
     .then(function (response) {
       console.log(response);
-      alert('改名分類成功');
+      Swal.fire('改名分類成功');
       location.reload();
     })
     .catch(function (error) {
       console.log(error);
-      alert('改名分類失敗');
+      Swal.fire('改名分類失敗');
     });
 }
 
@@ -722,12 +717,12 @@ async function deleteclassification(user_id, classificationName) {
     await axios(config)
       .then(function (response) {
         console.log(response);
-        alert('刪除分類成功');
+        Swal.fire('刪除分類成功');
         location.reload();
       })
       .catch(function (error) {
         console.log(error);
-        alert('刪除分類失敗');
+        Swal.fire('刪除分類失敗');
       });
   }
 }
@@ -754,7 +749,7 @@ async function modifyAnnotation(annotation_id) {
   if (!isModified) {
     return;
   }
-  // alert($('#' + annotation_id).val());
+  // Swal.fire($('#' + annotation_id).val());
   $('#textarea-' + annotation_id).prop('disabled', false);
   $('#icon-' + annotation_id).draggable({ disabled: false });
 }
@@ -819,12 +814,12 @@ async function saveAnnotation(annotion_user_id, note_id) {
   await axios(config)
     .then(function (response) {
       console.log(response);
-      alert('儲存註釋成功');
+      Swal.fire('儲存註釋成功');
       location.reload();
     })
     .catch(function (error) {
       console.log(error);
-      alert('儲存註釋失敗');
+      Swal.fire('儲存註釋失敗');
     });
 }
 

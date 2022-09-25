@@ -106,23 +106,10 @@ $(window).on('load', async function () {
   await getUserMsg();
   await showUserMsg();
 
-  // 拿取[社群頁面]排序狀態
-  await getSocialSortingColor();
-
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();
 
   // Loading結束
   // $('.wrapper-loading').remove();
   // $('body').removeClass('cover-loading');
-
-  // dragable 上一步&下一步
-  $('.contour-pic') // 圖形
-    .add('.div_addtextarea') // 文字
-    .mouseup(function (e) {
-      const element = e.target.parentElement;
-      const top = element.style.top;
-      const left = element.style.left;
-      stepAppend(element, 'drag', top, left, '');
-    });
 });

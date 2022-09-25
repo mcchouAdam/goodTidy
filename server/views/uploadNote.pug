@@ -23,12 +23,12 @@ block content
                         //- <button id="magicContour">圖形圈選</button>
                         br
                         //- 圖形擷取
-                        button#rectContour.btn(style='font-size:16px')
+                        button#rectContour.btn(style='font-size:25px')
                             i.bi.bi-bounding-box-circles
                         //- button#shapeView.button-55 擷取
                         
                         //- 去除圖形
-                        button#removeNotWant.btn(style='font-size:16px')
+                        button#removeNotWant.btn(style='font-size:25px')
                             i.bi.bi-x-square-fill
                             //- i.fa.fa-times-circle(style="margin-left:-3px;" aria-hidden="true")
                         
@@ -38,7 +38,7 @@ block content
                         //- button#reDraw.button-55 復原
 
                         //- 復原
-                        button#reDraw.btn(style='font-size:16px')
+                        button#reDraw.btn(style='font-size:25px')
                             i.fa.fa-rotate-left
                         br
                     .OCR-preview
@@ -63,10 +63,10 @@ block content
                                 .row.mb-3
                                     .col-sm-1
                                         //- 刪除鍵
-                                        button#deleteElement.btn(style='font-size:16px')
+                                        button#deleteElement.btn(style='font-size:25px')
                                             i.fa.fa-solid.fa-trash
                                     .col-sm
-                                        button#submit_note.btn(style='font-size:16px')
+                                        button#submit_note.btn(style='font-size:25px')
                                             i.fa.fa-solid.fa-upload
                             
                             #note-preview-content.note-edit-block
@@ -96,8 +96,12 @@ block content
 
                                     await axios(config)
                                         .then(function (response) {
-                                        alert('OCR成功');
-
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'OCR成功',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        })
                                         // Loading圖示釋放
                                         $('#OCR').prop('disabled', false);
                                         $('body').css('cursor', 'default');
@@ -121,12 +125,15 @@ block content
                                         addDragTextarea('#note-preview-content', text, textTop, textLeft);
                                         })
                                         .catch(function (error) {
-                                        alert(error.response.data.msg);
-                                        console.log('OCR失敗');
-
-                                        // Loading釋放
-                                        $('#OCR').prop('disabled', false);
-                                        $('body').css('cursor', 'default');
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: error.response.data.msg,
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            })
+                                            // Loading釋放
+                                            $('#OCR').prop('disabled', false);
+                                            $('body').css('cursor', 'default');
                                     });
                                 });
 
@@ -138,10 +145,19 @@ block content
 
                                 // 刪除按鈕
                                 $('#deleteElement').click(function (){
-                                    const isDeleted = window.confirm("確定是否刪除選取的物件?");
-                                    if(isDeleted){
-                                        $('#note-preview-content').find('.highlight').remove();
-                                    }
+                                    Swal.fire({
+                                        title: '你確定要刪除選取的物件?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: '#3085d6',
+                                        cancelButtonColor: '#d33',
+                                        confirmButtonText: '刪除',
+                                        cancelButtonText: '取消'
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            $('#note-preview-content').find('.highlight').remove();
+                                        }
+                                    })
                                 });
 
                                 // 上傳檔案鍵 ----------------------------
@@ -152,11 +168,61 @@ block content
 
                                     note_name = $('#note-name').val();
                                     note_classification = $('#note-classification').val();
+
                                     let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
+                                    
+                                    //- Swal.fire({
+                                    //-      title: '請輸入此版本名稱',
+                                    //-      input: 'text',
+                                    //-      inputAttributes: {
+                                    //-         autocapitalize: 'off'
+                                    //-     },
+                                    //-      showCancelButton: true,
+                                    //-      confirmButtonText: '確認',
+                                    //-      cancelButtonText: '取消',
+                                    //-    }).then((result) => {
+                                    //-         //- console.log(result);
+                                    //-         ver_name = result.value;
+                                    //-         //- 取消
+                                    //-         if(!result.isConfirmed){
+                                    //-              // Loading釋放
+                                    //-             $('#submit_note').prop('disabled', false);
+                                    //-             $('body').css('cursor', 'default');
+                                    //-             return;
+                                    //-         }
+                                    //-         //- 確認
+                                    //-         else {
+                                    //-             //- const ver_name = result.value;
+                                    //-             if(ver_name == null || ver_name == '' ){
+                                    //-                 Swal.fire('版本名不能為空白');
+                                    //-                 // Loading釋放
+                                    //-                 $('#submit_note').prop('disabled', false);
+                                    //-                 $('body').css('cursor', 'default');
+                                    //-                 return;
+                                    //-             }
+                                    //-             if(note_name == '' || note_classification == '' ){
+                                    //-                 Swal.fire('筆記名稱或筆記分類不能為空白');
+                                    //-                 // Loading釋放
+                                    //-                 $('#submit_note').prop('disabled', false);
+                                    //-                 $('body').css('cursor', 'default');
+                                    //-                 return;
+                                    //-             }
+                                    //-         }
+                                    //-     });
 
                                     // // 檢查版本名
                                     if (ver_name == null || ver_name == '') {
-                                        alert('版本名不能為空');
+                                        Swal.fire('版本名不能為空');
+                                        // Loading釋放
+                                        $('#submit_note').prop('disabled', false);
+                                        $('body').css('cursor', 'default');
+                                        return;
+                                    }
+                                    if(note_name == '' || note_classification == '' ){
+                                        Swal.fire('筆記名稱或筆記分類不能為空白');
+                                        // Loading釋放
+                                        $('#submit_note').prop('disabled', false);
+                                        $('body').css('cursor', 'default');
                                         return;
                                     }
 
@@ -217,8 +283,43 @@ block content
                                     // Loading釋放
                                     $('#submit_note').prop('disabled', false);
                                     $('body').css('cursor', 'default');
+                                });
 
-                                    window.location.assign('/note');
+                                // 監聽圖形刪除事件
+                                $(document).on('dblclick', '.contour-pic', function(e){
+                                    // 一次只能選一個
+                                    let click_element = $('#' + e.currentTarget.id);
+                                    if (click_element.hasClass('highlight')) {
+                                    $('.contour-pic').removeClass('highlight');
+                                    $('.div_addtextarea').removeClass('highlight');
+                                    } else {
+                                    $('.contour-pic').removeClass('highlight');
+                                    $('.div_addtextarea').removeClass('highlight');
+                                    click_element.addClass('highlight');
+                                    }
+                                });
+
+                                // 監聽文字框刪除事件
+                                $(document).on('dblclick', '.addtextarea', function(e){
+                                    let click_element = e.currentTarget.parentNode;
+                                    let click_id = e.target.id;
+
+                                    // 取消框選
+                                    if (click_element.classList.contains('highlight')) {
+                                    // 一次只能選一個
+                                    $('.contour-pic').removeClass('highlight');
+                                    $('.div_addtextarea').removeClass('highlight');
+                                    if (OCR_delete_ids.indexOf(click_id) !== -1) {
+                                        OCR_delete_ids.splice(click_id, 1);
+                                    }
+                                    // 框選
+                                    } else {
+                                    // 一次只能選一個
+                                    $('.contour-pic').removeClass('highlight');
+                                    $('.div_addtextarea').removeClass('highlight');
+                                    click_element.classList.add('highlight');
+                                    OCR_delete_ids.push(click_id);
+                                    }
                                 });
 
 

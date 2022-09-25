@@ -446,18 +446,18 @@ const deleteShareToOther = async (note_id, delete_email, user_name) => {
       { $pull: { sharing_user: { user_email: delete_email } } },
       false,
       true
-    ).toArray();
+    );
 
     console.log('delete_email', delete_email, 'user_name', user_name);
 
-    // await MessageCollection.insertOne({
-    //   notify_user_email: delete_email,
-    //   type: '刪除分享',
-    //   content: `${user_name}停止分享一篇筆記給您`,
-    //   created_time: new Date(),
-    // });
+    await MessageCollection.insertOne({
+      notify_user_email: delete_email,
+      type: '分享取消',
+      content: `${user_name}停止分享一篇筆記給您`,
+      created_time: new Date(),
+    });
 
-    console.log('noteResult:', noteResult);
+    // console.log('noteResult:', noteResult);
 
     return `${delete_email} 刪除成功`;
   } catch (error) {
@@ -707,7 +707,6 @@ const getComments = async (note_id) => {
 
 // 收藏功能 - 更新資料庫
 const createSave = async (note_id, user_id, user_email) => {
-  console.log('aaaaaaaaaaaaaa');
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   const MessageCollection = Mongo.db(MONGO_DB).collection('message');
   try {
@@ -720,11 +719,8 @@ const createSave = async (note_id, user_id, user_email) => {
       { $project: { saved_count: { $size: '$saved_user_id' } } },
     ]).toArray();
 
-    console.log(saved_count_previous);
-
-    console.log('bbbbbbbbbbb');
     // 更新筆記內的 saved_user_id ----------------------------
-    const update_saved_id = await NotesCollection.updateOne(
+    await NotesCollection.updateOne(
       {
         _id: ObjectId(note_id),
       },
@@ -747,9 +743,8 @@ const createSave = async (note_id, user_id, user_email) => {
           },
         },
       ]
-    ).toArray();
+    );
 
-    console.log('cccccccccccc');
     // 更新收藏數字
     const saved_count = await NotesCollection.aggregate([
       {
@@ -760,9 +755,7 @@ const createSave = async (note_id, user_id, user_email) => {
 
     const note_saved_conut = saved_count[0].saved_count;
     const note_saved_count_previous = saved_count_previous[0].saved_count;
-    console.log('saved_count', saved_count);
 
-    console.log('dddddddddddddddddd');
     // 更新筆記被收藏的數字 ----------------------------
     await NotesCollection.updateOne(
       {
@@ -775,7 +768,6 @@ const createSave = async (note_id, user_id, user_email) => {
       ]
     );
 
-    console.log('eeeeeeeeeeeeeee');
     // 撈出被收藏的使用者名稱 -------------------------------
     const result = await NotesCollection.aggregate([
       {
@@ -794,17 +786,10 @@ const createSave = async (note_id, user_id, user_email) => {
       },
     ]).toArray();
 
-    console.log('fffffffffffffffff');
     // 更新使用者Massage數字 ----------------------------
-    const addSaved = +note_saved_conut - +note_saved_count_previous;
-    console.log(
-      'note_saved_conut',
-      note_saved_conut,
-      'note_saved_count_previous',
-      note_saved_count_previous
-    );
+    const addSaved = note_saved_conut - note_saved_count_previous;
 
-    if (addSaved === 1) {
+    if (addSaved == 1) {
       const saved_user_email = result[0].user_info[0].email;
       await MessageCollection.insertOne({
         'notify_user_email': saved_user_email,
