@@ -361,13 +361,19 @@ const shareToOther = async (data) => {
   const insert_data = { 'user_email': user_email, 'permission': permission };
 
   try {
-    // 確認user存在
+    // 確認加入的user是否存在
     const checkUserExist = await UserCollection.find({
       'email': user_email,
     }).toArray();
 
+    const getShareUser = await UserCollection.find({
+      'email': shareUser_email,
+    }).toArray();
+
+    const shareUser_name = getShareUser[0].name;
+
     if (checkUserExist.length === 0) {
-      return '此使用者不存在';
+      return '此用戶不存在';
     }
 
     // 更新note資料
@@ -384,7 +390,7 @@ const shareToOther = async (data) => {
     const msg_result = await MessageCollection.insertOne({
       'notify_user_email': user_email,
       'type': '筆記分享',
-      'content': `${shareUser_email}分享一篇筆記給您`,
+      'content': `${shareUser_name}分享一篇筆記給您`,
       'created_time': new Date(),
     });
 
@@ -597,9 +603,6 @@ const getShareNotes = async (
     if (allCards_count.length != 0) {
       allPages_count = Math.ceil(allCards_count[0].isSharing / cards_ToOnePage);
     }
-    // console.log('allPages_count: ', allPages_count);
-
-    // console.log('allPages_count: ', allPages_count);
 
     // 顯示符合條件的Sharing Cards
     const cards_result = await NotesCollection.aggregate([
@@ -706,7 +709,7 @@ const getComments = async (note_id) => {
 };
 
 // 收藏功能 - 更新資料庫
-const createSave = async (note_id, user_id, user_email) => {
+const createSave = async (note_id, user_id, user_email, user_name) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   const MessageCollection = Mongo.db(MONGO_DB).collection('message');
   try {
@@ -794,7 +797,7 @@ const createSave = async (note_id, user_id, user_email) => {
       await MessageCollection.insertOne({
         'notify_user_email': saved_user_email,
         'type': '收藏',
-        'content': `${user_email}收藏了您的一篇筆記`,
+        'content': `${user_name}收藏了您的一篇筆記`,
         'created_time': new Date(),
       }).toArray();
     }

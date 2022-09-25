@@ -95,48 +95,6 @@ async function signIn(email, password) {
     });
 }
 
-async function showProfile() {
-  $('#signin-dialog').dialog('close');
-  $('#signup-dialog').dialog('close');
-  $('#profile-dialog').dialog('open');
-  $('#user_picture > img')
-    .attr('src', `${S3_HOST}user_picture/${user_picture}`)
-    .addClass('profile-pic');
-  $('#user_email').text(user_email);
-  $('#user_name').text(user_name);
-}
-
-// signIn頁面 ---------------------------------
-$('#signin-btn').click(function (e) {
-  if (user_email) {
-    showProfile();
-  } else {
-    $('#signin-dialog').dialog('open');
-    $('#signup-dialog').dialog('close');
-    $('#profile-dialog').dialog('close');
-  }
-});
-
-// signUp頁面 ---------------------------------
-$('#signup-btn').click(function () {
-  if (user_email) {
-    showProfile();
-  } else {
-    $('#signin-dialog').dialog('close');
-    $('#signup-dialog').dialog('open');
-    $('#profile-dialog').dialog('close');
-  }
-});
-
-// profile頁面 ---------------------------------
-$('#profile-btn').click(async function () {
-  if (!user_email) {
-    Swal.fire('請先登入');
-  } else {
-    await showProfile();
-  }
-});
-
 // [分享頁面] 分享toggle元件 ---------------------------------
 $('#share-btn').click(async function () {
   if (!current_note_id) {
@@ -215,14 +173,14 @@ $('#signup-form-btn').click(async function (e) {
     await signUp(picture, username, email, password, filename);
 
     Swal.fire({
-      icon: 'error',
+      icon: 'success',
       title: '註冊成功',
       showConfirmButton: false,
       timer: 1500,
+    }).then(function () {
+      window.location.assign('/signin');
     });
   }
-  await showProfile();
-  // window.location.assign('/note');
 });
 
 // 登入鍵 -------------------------------------

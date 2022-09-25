@@ -160,6 +160,13 @@ block content
                 //--- 同步 ---
                 //- socket.emit('create_annotation_icon', item);
 
+                //- <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">
+                //-   鎖定
+                //- </a>
+                //- <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
+                //-   修改
+                //- </a>
+
                 // 組合annotation
                 let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
                       <a
@@ -174,24 +181,16 @@ block content
                         <i class="bi bi-three-dots" style="margin-top: -0.16rem; "></i>
                       </a>
                       <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">
-                          鎖定
-                        </a>
-                        <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
-                          修改
-                        </a>
                         <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
                           移除
                         </a>
                       </div>
                     </div>`;
 
-
-
                 let annotation_html = `
                                 <div class="form-group" id="form-group-${annotation_id}">
                                   <span class="badge bg-dark rounded-pill">${current_annotation_num}</span>
-                                  <span class="badge bg-info rounded-pill">${annotion_user_name}</span>
+                                  <span style="font-size:15px;"class="badge bg-info rounded-pill">${annotion_user_name}</span>
                                   <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..."></textarea>
                                   ${annotation_menu_html}
                                 </div>`;

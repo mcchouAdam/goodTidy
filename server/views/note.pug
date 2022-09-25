@@ -139,15 +139,9 @@ block content
                                       i.fa.fa-clipboard(aria-hidden="true")
                                     br
                                     br
-                                      //- .form-check.form-switch
-                                      //- label.form-check-label(for='flexSwitchCheckDefault') 開放編輯
-                                      //- input#allowWrite-toggle.form-check-input(type='checkbox', role='switch', disabled='')
                                     .form-check
                                       label.form-check-label(for='flexSwitchCheckDefault') 開放留言
                                       input#allowComment-toggle.form-check-input(type='checkbox')
-                                    //- .form-check.form-switch
-                                    //-   label.form-check-label(for='flexSwitchCheckDefault') 開放觀看
-                                    //-   input#allowWatch-toggle.form-check-input(type='checkbox', role='switch')
                                     br
                                     .form-floating
                                       textarea#share_description.form-control(style="height:100px;" placeholder='你會向大家怎麼介紹你的筆記?')
@@ -264,29 +258,6 @@ block content
           })
         });
 
-
-
-        //-   const isDeleted = window.confirm("確定是否刪除選取的物件?");
-        //-   OCR_ids = OCR_ids.filter(n => !OCR_delete_ids.includes(n)); // 更新OCR_ids剩餘的物件
-          
-        //-   //- console.log("OCR_delete_ids: ", OCR_delete_ids);
-        //-   if(isDeleted){
-            
-        //-     // 刪除: 上一步&下一步
-        //-     const delete_items = $('.highlight');
-        //-     delete_items.map((i, delete_id) => { 
-        //-       const top = delete_items.get(i).style.top;
-        //-       const left = delete_items.get(i).style.left;
-        //-       const item = delete_items.get(i);
-        //-       console.log("delete-item:", item, top, left);
-        //-       stepAppend(item, 'delete', top, left);
-        //-     })
-
-        //-     // 刪除所有被標記的物件
-        //-     $('#update-note-content').find('.highlight').remove();
-        //-   }
-        //- });
-
         // 回復自動儲存最新版鍵 ------------------------------
         $('#newest-version-btn').click(function (e) {
           e.preventDefault();
@@ -372,6 +343,7 @@ block content
 
         let online_user;
         // 拿取目前在線上的名單
+        // 因為只有筆記編輯頁裡的上下線資訊，故放在筆記編輯頁面
         $(document).ready(function() {
           socket.on("users", async (users) => {
             online_user = users;

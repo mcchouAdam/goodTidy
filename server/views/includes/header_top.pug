@@ -27,7 +27,7 @@ body
 
           //- 社群頁面 Icon
           li.nav-item
-            a.nav-link.nav-icon(href='/socialPage?paging=1&sorting=created_time')
+            a.nav-link.nav-icon(href='/socialPage?paging=1&sorting=sharing_time')
                 i.bi.bi-people
 
           //- //- 小鈴鐺 Icon
@@ -146,9 +146,9 @@ body
           li.nav-item.dropdown.pe-3
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
               if picture
-                img.rounded-circle(src=picture, alt='Profile', style="width: 50px;height: 50px;")
+                img.rounded-circle(src=picture, alt='Profile')
               else
-                img.rounded-circle(src="/assets/img/user.png", alt='Profile', style="width: 50px;height: 50px;")
+                img.rounded-circle(src="/assets/img/user.png", alt='Profile')
               if name
                 span.d-none.d-md-block.dropdown-toggle.ps-2=name
               else
@@ -236,27 +236,26 @@ body
       socket.on('saved_msg', async function(msg){
         await getUserMsg();
         await showUserMsg();
-        Swal.fire(msg)
+        //- Swal.fire(msg)
       })
 
       //- Socket 有人分享筆記給你
       socket.on('shareToyou_msg', async function(shareUserEmail){
-        // TODO: 更新上方推播通知
-        Swal.fire(`${shareUserEmail}分享筆記給您`);
         await getUserMsg();
         await showUserMsg();
         await getUserNotes();
+        //- Swal.fire(`${shareUserEmail}分享筆記給您`);
         
       })
 
       //- Socket 有人刪除他的分享筆記
       socket.on('delete_shareToyou_msg', async function(delete_user_email){
-        // TODO: 換成上方推播通知
-        Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
         await getUserMsg();
         await showUserMsg();
         await getUserNotes();
+        //- Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
       });
+
 
       $(document).on('click', '.msg-close', async function(e){
           const msg_id = e.target.id;

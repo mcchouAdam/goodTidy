@@ -140,7 +140,11 @@ const shareToOther = async (req, res) => {
   const data = req.body;
 
   const share = await Notes.shareToOther(data);
-  return res.json(share);
+  if (share === '此用戶不存在') {
+    return res.status(403).json({ 'msg': '此用戶不存在' });
+  }
+
+  return res.status(200).json(share);
 };
 
 // 刪除對特定人的分享
@@ -168,8 +172,14 @@ const saveNote = async (req, res) => {
   const note_id = req.body.note_id;
   const user_id = req.session.user.id;
   const user_email = req.session.user.email;
+  const user_name = req.session.user.name;
 
-  const saveResult = await Notes.createSave(note_id, user_id, user_email);
+  const saveResult = await Notes.createSave(
+    note_id,
+    user_id,
+    user_email,
+    user_name
+  );
   // const shareList_html = await showShareToOtherList(shareList, note_id);
   return res.status(200).json(saveResult);
 };
