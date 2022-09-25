@@ -2,6 +2,7 @@ const app = require('./app.js');
 const Notes = require('./server/models/note_model');
 require('dotenv').config();
 const port = process.env.SERVER_PORT;
+const online_users = [];
 
 const server = app.listen(port, () => {
   console.log(`listening on *:${port}`);
@@ -26,7 +27,15 @@ io.on('connection', async (socket) => {
     console.log(`authentication : ${user_email}`);
     console.log(`socket id : ${socket.id}`);
     user_online_socketId[user_email] = socket.id;
-    console.log('user_online_socketId: ', user_online_socketId);
+    await io.emit('users', user_online_socketId);
+
+    // 有人斷線，更新上線資訊
+    socket.on('disconnect', async () => {
+      console.log('user_email:', user_email);
+      console.log(`disconnect : ${user_email}`);
+      user_online_socketId[user_email] = '';
+      await io.emit('users', user_online_socketId);
+    });
   });
 
   // 有人收藏貼文
@@ -78,12 +87,12 @@ io.on('connection', async (socket) => {
   });
 
   // 註釋功能同步
-  socket.on('create_annotation_icon', async (obj) => {
-    // const delete_user_email = obj.user_email;
-    // const deleted_user_email = obj.delete_email;
-    // const deletedShareUser_socket_id = user_online_socketId[deleted_user_email];
-    // console.log('deletedShareUser_socket_id', deletedShareUser_socket_id);
+  // socket.on('create_annotation_icon', async (obj) => {
+  // const delete_user_email = obj.user_email;
+  // const deleted_user_email = obj.delete_email;
+  // const deletedShareUser_socket_id = user_online_socketId[deleted_user_email];
+  // console.log('deletedShareUser_socket_id', deletedShareUser_socket_id);
 
-    socket.broadcast.emit('create_annotation_icon', obj);
-  });
+  //   socket.broadcast.emit('create_annotation_icon', obj);
+  // });
 });

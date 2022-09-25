@@ -83,8 +83,8 @@ let current_annotation_element;
 // 筆記preview資訊
 let upload_preview_element = [];
 
-// Socket
-let socket = io();
+// // Socket
+// let socket = io();
 
 // // Loading
 // $('body').addClass('cover-loading');
