@@ -133,8 +133,10 @@ const getShareToAll = async (req, res) => {
   return res.status(200).send(share);
 };
 
+// 分享對特定人的分享
 const shareToOther = async (req, res) => {
   req.body.user_id = req.session.user.id;
+  req.body.shareUser_email = req.session.user.email;
   const data = req.body;
 
   const share = await Notes.shareToOther(data);
@@ -143,10 +145,11 @@ const shareToOther = async (req, res) => {
 
 // 刪除對特定人的分享
 const deleteShareToOther = async (req, res) => {
+  const user_name = req.session.user.name;
   const note_id = req.body.note_id;
   const delete_email = req.body.delete_email;
 
-  await Notes.deleteShareToOther(note_id, delete_email);
+  await Notes.deleteShareToOther(note_id, delete_email, user_name);
   return res.status(200).json({ 'msg': `${delete_email}刪除成功` });
 };
 
@@ -164,8 +167,9 @@ const getShareToOther = async (req, res) => {
 const saveNote = async (req, res) => {
   const note_id = req.body.note_id;
   const user_id = req.session.user.id;
+  const user_email = req.session.user.email;
 
-  const saveResult = await Notes.createSave(note_id, user_id);
+  const saveResult = await Notes.createSave(note_id, user_id, user_email);
   // const shareList_html = await showShareToOtherList(shareList, note_id);
   return res.status(200).json(saveResult);
 };

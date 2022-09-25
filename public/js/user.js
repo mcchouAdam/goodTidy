@@ -73,12 +73,25 @@ async function signIn(email, password) {
       user_picture = response.data.data.user.picture;
       user_name = response.data.data.user.name;
       user_email = response.data.data.user.email;
-      alert(`${user_name}您好！登入成功`);
-      window.location.assign('/profile');
+      Swal.fire({
+        icon: 'success',
+        title: `${user_name}您好！`,
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(function () {
+        window.location.assign('/profile');
+      });
     })
     .catch((error) => {
       console.log(error);
-      alert('登入失敗，請重新登入');
+      Swal.fire({
+        icon: 'error',
+        title: `登入失敗，請重新登入`,
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(function () {
+        window.location.assign('/signin');
+      });
     });
 }
 
@@ -118,7 +131,7 @@ $('#signup-btn').click(function () {
 // profile頁面 ---------------------------------
 $('#profile-btn').click(async function () {
   if (!user_email) {
-    alert('請先登入');
+    Swal.fire('請先登入');
   } else {
     await showProfile();
   }
@@ -131,7 +144,7 @@ $('#share-btn').click(async function () {
       backdrop: 'static',
       keyboard: false,
     });
-    alert('請先選擇筆記');
+    Swal.fire('請先選擇筆記');
 
     // $('#shareToAllModal').modal('hide');
     return 0;
@@ -200,7 +213,13 @@ $('#signup-form-btn').click(async function (e) {
     }
 
     await signUp(picture, username, email, password, filename);
-    alert('註冊成功');
+
+    Swal.fire({
+      icon: 'error',
+      title: '註冊成功',
+      showConfirmButton: false,
+      timer: 1500,
+    });
   }
   await showProfile();
   // window.location.assign('/note');
@@ -215,9 +234,43 @@ $('#signin-form-btn').click(async function (e) {
     const password = $('#signin_password').val();
 
     await signIn(email, password);
-    // alert('登入成功');
-    // location.reload(true);
   }
 });
 
+// 顯示User所有通知 ----------------------------
+async function showUserMsg() {
+  const msg_count = current_user_msg.length;
+  $('#msg_count').text(msg_count);
+  if (msg_count === 0) {
+    return;
+  }
 
+  $('ul.notifications').html('');
+  current_user_msg.map((m) => {
+    let icon_html = '';
+    switch (m.type) {
+      case '收藏':
+        icon_html = '<i class="bi bi-heart-fill" style="color:red;"></i>';
+        break;
+      case '筆記分享':
+        icon_html = '<i class="bi bi-share" style="color:blue;"></i>';
+        break;
+      case '分享取消':
+        icon_html = '<i class="bi bi-x-circle" style="color:#ffbf00;"></i> ';
+        break;
+    }
+    let item = `
+      <button class="btn msg-close" style="display:inline;float:right;cursor:pointer">
+        <i id="${m._id}" class="bi bi-x-circle-fill" style="float:right;cursor:pointer"></i>
+      </button>
+      <li class="notification-item" style="cursor:pointer;">
+        ${icon_html}
+        <div>
+          <h4>${m.type}</h4>
+          <p>${m.content}</p>
+          <p>${m.created_time}</p>
+          </div>
+      </li>`;
+    $('ul.notifications').append(item);
+  });
+}

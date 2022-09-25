@@ -350,15 +350,18 @@ const shareToOther = async (data) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   const UserCollection = Mongo.db(MONGO_DB).collection('user');
+  const MessageCollection = Mongo.db(MONGO_DB).collection('message');
 
   // console.log(data);
   const note_id = data.note_id;
   let permission = data.permission;
   permission = authorizationList[permission];
   const user_email = data.addPerson;
+  const shareUser_email = data.shareUser_email;
   const insert_data = { 'user_email': user_email, 'permission': permission };
 
   try {
+    // 確認user存在
     const checkUserExist = await UserCollection.find({
       'email': user_email,
     }).toArray();
@@ -367,6 +370,7 @@ const shareToOther = async (data) => {
       return '此使用者不存在';
     }
 
+    // 更新note資料
     const result = await NotesCollection.updateOne(
       {
         '_id': ObjectId(note_id),
@@ -375,6 +379,15 @@ const shareToOther = async (data) => {
         $addToSet: { 'sharing_user': insert_data },
       }
     );
+
+    // 更新使用者通知資料
+    const msg_result = await MessageCollection.insertOne({
+      'notify_user_email': user_email,
+      'type': '筆記分享',
+      'content': `${shareUser_email}分享一篇筆記給您`,
+      'created_time': new Date(),
+    });
+
     return `${user_email} 新增成功`;
   } catch (error) {
     return { error };
@@ -421,18 +434,31 @@ const getShareToOther = async (note_id) => {
   }
 };
 
+// TODO: 刪除對特定人分享更新資料庫
 // 刪除對特定人分享
-const deleteShareToOther = async (note_id, delete_email) => {
+const deleteShareToOther = async (note_id, delete_email, user_name) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-
+  const MessageCollection = Mongo.db(MONGO_DB).collection('message');
   try {
-    await NotesCollection.updateOne(
+    const noteResult = await NotesCollection.updateOne(
       { '_id': ObjectId(note_id) },
       { $pull: { sharing_user: { user_email: delete_email } } },
       false,
       true
-    ).toArray();
+    );
+
+    console.log('delete_email', delete_email, 'user_name', user_name);
+
+    await MessageCollection.insertOne({
+      notify_user_email: delete_email,
+      type: '分享取消',
+      content: `${user_name}停止分享一篇筆記給您`,
+      created_time: new Date(),
+    });
+
+    // console.log('noteResult:', noteResult);
+
     return `${delete_email} 刪除成功`;
   } catch (error) {
     return { error };
@@ -680,13 +706,20 @@ const getComments = async (note_id) => {
 };
 
 // 收藏功能 - 更新資料庫
-const createSave = async (note_id, user_id) => {
+const createSave = async (note_id, user_id, user_email) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-  const UserCollection = Mongo.db(MONGO_DB).collection('user');
+  const MessageCollection = Mongo.db(MONGO_DB).collection('message');
   try {
     // 檢查User是否已經點過這個
-    // 更新saved_user_id
-    // Update the Note saved_user_id ----------------------------
+    // 拿取原本收藏數字
+    const saved_count_previous = await NotesCollection.aggregate([
+      {
+        '$match': { _id: ObjectId(note_id) },
+      },
+      { $project: { saved_count: { $size: '$saved_user_id' } } },
+    ]).toArray();
+
+    // 更新筆記內的 saved_user_id ----------------------------
     await NotesCollection.updateOne(
       {
         _id: ObjectId(note_id),
@@ -721,9 +754,9 @@ const createSave = async (note_id, user_id) => {
     ]).toArray();
 
     const note_saved_conut = saved_count[0].saved_count;
-    console.log('saved_count', saved_count);
+    const note_saved_count_previous = saved_count_previous[0].saved_count;
 
-    // Update the User save Count ----------------------------
+    // 更新筆記被收藏的數字 ----------------------------
     await NotesCollection.updateOne(
       {
         _id: ObjectId(note_id),
@@ -735,7 +768,38 @@ const createSave = async (note_id, user_id) => {
       ]
     );
 
-    return 'save successfully!';
+    // 撈出被收藏的使用者名稱 -------------------------------
+    const result = await NotesCollection.aggregate([
+      {
+        '$match': {
+          '_id': ObjectId(note_id),
+        },
+      },
+      { '$addFields': { 'user_id': { '$toObjectId': '$user_id' } } },
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'user_id',
+          foreignField: '_id',
+          as: 'user_info',
+        },
+      },
+    ]).toArray();
+
+    // 更新使用者Massage數字 ----------------------------
+    const addSaved = note_saved_conut - note_saved_count_previous;
+
+    if (addSaved == 1) {
+      const saved_user_email = result[0].user_info[0].email;
+      await MessageCollection.insertOne({
+        'notify_user_email': saved_user_email,
+        'type': '收藏',
+        'content': `${user_email}收藏了您的一篇筆記`,
+        'created_time': new Date(),
+      }).toArray();
+    }
+
+    return note_saved_conut;
   } catch (error) {
     return { error };
   } finally {

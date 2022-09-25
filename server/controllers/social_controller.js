@@ -17,7 +17,9 @@ const {
   deleteComment,
   getComments,
 } = require('../models/note_model');
-Notes = require('../models/note_model');
+
+const { getMessages, deleteUserMessage } = require('../models/user_model');
+
 const {
   showShareDetail,
   showSocialCards,
@@ -53,8 +55,6 @@ const socialPage = async (req, res) => {
 
   const allPages_count = socialcards_result.allPages_count;
   const currentPage = socialcards_result.currentPage;
-
-  const cards_html = await showSocialCards(socialcards_result, user_id);
   const paging_html = await showPagination(
     paging,
     sorting,
@@ -62,12 +62,34 @@ const socialPage = async (req, res) => {
     currentPage
   );
 
+  if (currentPage > allPages_count || currentPage < 0 || isNaN(currentPage)) {
+    const card_html = `
+        <div id="noMatchResult" style="padding: 0 0 0 30vw;">
+          <i class="bi bi-exclamation-circle" style="font-size:100px;color:#ffc107;margin: 0 0 0 15vw;"></i>
+          <h1>無相關搜尋內容，請您重新查詢</h1>
+        </div>`;
+
+    return res.render('socialPage', {
+      id: id,
+      provider: provider,
+      name: name,
+      email: email,
+      picture: picture,
+      sorting: sorting,
+      cards_html: JSON.stringify(card_html),
+      paging_html: JSON.stringify(paging_html),
+    });
+  }
+
+  const cards_html = await showSocialCards(socialcards_result, user_id);
+
   return res.render('socialPage', {
     id: id,
     provider: provider,
     name: name,
     email: email,
     picture: picture,
+    sorting: sorting,
     cards_html: JSON.stringify(cards_html),
     paging_html: JSON.stringify(paging_html),
   });
@@ -164,7 +186,7 @@ const showSharedNote = async (req, res) => {
     email: email,
     picture: picture,
     note_id: note_id,
-    user_name: noteDetails.user_name,
+    ShareUser_name: noteDetails.user_name,
     user_email: noteDetails.user_email,
     user_picture: noteDetails.user_picture,
     note_name: noteDetails.note_name,
@@ -174,6 +196,32 @@ const showSharedNote = async (req, res) => {
   });
 };
 
+// 拿取使用者的所有通知
+const showUserMessage = async (req, res) => {
+  req.body.user_id = req.session.user.id;
+  req.body.user_email = req.session.user.email;
+  const data = req.body;
+  const UserMsg = await getMessages(data);
+
+  console.log('UserMsg:', UserMsg);
+  return res.status(200).json({ 'data': UserMsg });
+  // if (result === 0) {
+  //   return res.status(403).json({ 'msg': '您無權刪除別人留言' });
+  // } else {
+  //   return res.status(200).json({ 'msg': '成功刪除留言' });
+  // }
+};
+
+// 刪除使用者通知
+const deleteMessage = async (req, res) => {
+  req.body.user_id = req.session.user.id;
+  req.body.user_email = req.session.user.email;
+  const data = req.body;
+  await deleteUserMessage(data);
+
+  return res.status(200).json({ 'data': '成功刪除' });
+};
+
 module.exports = {
   socialPage,
   shareNotePage,
@@ -181,4 +229,6 @@ module.exports = {
   updateComments,
   deleteComments,
   showSharedNote,
+  showUserMessage,
+  deleteMessage,
 };

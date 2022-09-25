@@ -31,54 +31,68 @@ body
                 i.bi.bi-people
 
           //- //- 小鈴鐺 Icon
-          //- li.nav-item.dropdown
-          //-   a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
-          //-     i.bi.bi-bell
-          //-     span.badge.bg-primary.badge-number 4
-          //-   // End Notification Icon
-          //-   ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications
-          //-     li.dropdown-header
-          //-       | You have 4 new notifications
-          //-       a(href='#')
-          //-         span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-exclamation-circle.text-warning
-          //-       div
-          //-         h4 Lorem Ipsum
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 30 min. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-x-circle.text-danger
-          //-       div
-          //-         h4 Atque rerum nesciunt
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 1 hr. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-check-circle.text-success
-          //-       div
-          //-         h4 Sit rerum fuga
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 2 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.notification-item
-          //-       i.bi.bi-info-circle.text-primary
-          //-       div
-          //-         h4 Dicta reprehenderit
-          //-         p Quae dolorem earum veritatis oditseno
-          //-         p 4 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.dropdown-footer
-          //-       a(href='#') Show all notifications
-          //-   // End Notification Dropdown Items
-          //- // End Notification Nav
+          li.nav-item.dropdown
+            a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
+              i.bi.bi-bell
+              span#msg_count.badge.bg-primary.badge-number 0
+            // End Notification Icon
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
+              //- li.dropdown-header
+              //-   | You have 4 new notifications
+              //-   a(href='#')
+              //-     span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
+              //- li
+              li.dropdown-header
+                | 您無新訊息
+                //- a(href='#')
+                //-   span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
+              li
+                hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-exclamation-circle.text-warning
+              //-   div
+              //-     h4 Lorem Ipsum
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 30 min. ago
+
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-x-circle.text-danger
+              //-   div
+              //-     h4 Atque rerum nesciunt
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 1 hr. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-check-circle.text-success
+              //-   div
+              //-     h4 Sit rerum fuga
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 2 hrs. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-info-circle.text-primary
+              //-   div
+              //-     h4 Dicta reprehenderit
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 4 hrs. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.notification-item
+              //-   i.bi.bi-info-circle.text-primary
+              //-   div
+              //-     h4 Dicta reprehenderit
+              //-     p Quae dolorem earum veritatis oditseno
+              //-     p 4 hrs. ago
+              //- li
+              //-   hr.dropdown-divider
+              //- li.dropdown-footer
+              //-   a(href='#') Show all notifications
+            // End Notification Dropdown Items
+          // End Notification Nav
           //- li.nav-item.dropdown
           //-   a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
           //-     i.bi.bi-chat-left-text
@@ -132,9 +146,9 @@ body
           li.nav-item.dropdown.pe-3
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
               if picture
-                img.rounded-circle(src=picture, alt='Profile')
+                img.rounded-circle(src=picture, alt='Profile', style="width: 50px;height: 50px;")
               else
-                img.rounded-circle(src="/assets/img/user.png", alt='Profile')
+                img.rounded-circle(src="/assets/img/user.png", alt='Profile', style="width: 50px;height: 50px;")
               if name
                 span.d-none.d-md-block.dropdown-toggle.ps-2=name
               else
@@ -187,11 +201,61 @@ body
         await axios(config)
           .then(function (response) {
             console.log(response);
-            alert('登出成功');
-            window.location.assign('/signin');
+            Swal.fire({
+              icon: 'success',
+              title: '登出成功',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(function() {
+                window.location.assign('/signin');
+            });
           })
           .catch(function (error) {
             console.log(error);
-            alert('登出失敗');
+            Swal.fire({
+              icon: 'error',
+              title: '登出失敗',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(function() {
+                window.location.assign('/signin');
+            });
           });
       });
+
+      // Socket ------------------------------------------
+
+      // Socket 被喜歡的推播
+      socket.on('saved_msg', async function(msg){
+        await getUserMsg();
+        await showUserMsg();
+        Swal.fire(msg)
+      })
+
+      //- Socket 有人分享筆記給你
+      socket.on('shareToyou_msg', async function(shareUserEmail){
+        // TODO: 更新上方推播通知
+        Swal.fire(`${shareUserEmail}分享筆記給您`);
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+        
+      })
+
+      //- Socket 有人刪除他的分享筆記
+      socket.on('delete_shareToyou_msg', async function(delete_user_email){
+        // TODO: 換成上方推播通知
+        Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      });
+
+      $(document).on('click', '.msg-close', async function(e){
+          const msg_id = e.target.id;
+          await deleteMsg(msg_id);
+          await getUserMsg();
+          await showUserMsg();
+      })
+
+      

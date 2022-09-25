@@ -45,15 +45,39 @@ let AutoSave = (function () {
     }
   }
 
-  function restore() {
+  function restore(type) {
     // 清空原先的東西
     $('#update-note-content').html('');
-    let saved_img_elements = localStorage.getItem(
-      'AUTOSAVEIMAGE_' + current_note_id
-    );
-    let saved_text_elements = localStorage.getItem(
-      'AUTOSAVETEXT_' + current_note_id
-    );
+    let saved_img_elements;
+    let saved_text_elements;
+
+    // 給自動儲存回復使用
+    if (type == 'AUTOSAVE') {
+      saved_img_elements = localStorage.getItem(
+        'AUTOSAVEIMAGE_' + current_note_id
+      );
+      saved_text_elements = localStorage.getItem(
+        'AUTOSAVETEXT_' + current_note_id
+      );
+      localStorage.setItem(
+        'INITIALSAVEIMAGE_' + current_note_id,
+        saved_img_elements
+      );
+      localStorage.setItem(
+        'INITIALSAVETEXT_' + current_note_id,
+        saved_text_elements
+      );
+      // 給剛開始初始使用
+    } else if (type == 'INITIALSAVE') {
+      saved_img_elements = localStorage.getItem(
+        'INITIALSAVEIMAGE_' + current_note_id
+      );
+      saved_text_elements = localStorage.getItem(
+        'INITIALSAVETEXT_' + current_note_id
+      );
+    }
+
+    // 給上一步的最初始狀態使用
 
     // 圖形render draggable
     $('#update-note-content').append(saved_img_elements);
@@ -145,15 +169,20 @@ const timeConverter = (date) => {
 async function getlatestNode() {
   current_note_id = localStorage.getItem('CURRENTNOTEID');
 
+  if (!showNote_note_obj[current_note_id]) {
+    return;
+  }
+
   // 筆記編輯頁面上方連結
   const note_name = showNote_note_obj[current_note_id].note_name;
+  note_bg = showNote_note_obj[current_note_id].note_file_name;
   const note_classification =
     showNote_note_obj[current_note_id].note_classification;
   $('#click_note_classification').html(note_classification);
   $('#click_note_name').html(note_name);
 
   // 自動Reload
-  AutoSave.restore();
+  AutoSave.restore('AUTOSAVE');
 
   // 打開自動儲存
   $('#autoSave-toggle').prop('checked', true);

@@ -5,7 +5,7 @@ block content
         main
             .container(style='margin: 75px 0 0 0')
                 .row.justify-center
-                    .col-12
+                    .col-8(style="margin: 0 auto;")
                         header
                         .input-group.mb-3
                             button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 搜尋
@@ -27,24 +27,16 @@ block content
                             input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2', onKeyDown="if(event.keyCode==13) javascript:socialSearch();")
                             button#socialSearchBar.btn
                                 i.fa.fa-search
+                            input#daterange(type="text", name="daterange", value="", hidden)
 
-
-                            button#searchCalendar.btn
-                                i.fa.fa-calendar
-                            input#daterange(type="text", name="daterange", value="09/20/2022 - 09/22/2022")
-
-
-            //- .input-group.rounded
-            //-     input.form-control.rounded(type='search', placeholder='Search', aria-label='Search', aria-describedby='search-addon')
-            //-     span#search-addon.input-group-text.border-0
-            //-         i.fa.fa-search
             //- 排序搜尋法
-            button#time_sorting-btn.btn
-                i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
-            button#heart_sorting-btn.btn
-                i.fa.fa-heart(aria-hidden='true', style='color:grey')
-            button#comments_sorting-btn.btn 
-                i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
+            .col-8(style="margin: 0 auto;")
+                button#time_sorting-btn.btn
+                    i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
+                button#heart_sorting-btn.btn
+                    i.fa.fa-heart(aria-hidden='true', style='color:grey')
+                button#comments_sorting-btn.btn 
+                    i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
             //- 分享筆記卡片
             #sharing-cards
             br
@@ -72,14 +64,29 @@ block content
 
                 cards_html = !{cards_html};
                 paging_html = !{paging_html};
-                
+                sorting = !{JSON.stringify(sorting)};
+
+                // sorting決定變色
+                switch(sorting){
+                    case 'created_time': 
+                        $('.fa-clock-o').css('color','blue');
+                        break;
+                    case 'saved_count': 
+                        $('.fa-heart').css('color','red');
+                        break;
+                    case 'comment_count':
+                        $('.fa-comments').css('color','blue');
+                        break;
+                }
+
                 const elements_html = $.parseHTML(cards_html);
                 $('#sharing-cards').append(elements_html);
                 const pagings_html = $.parseHTML(paging_html);
                 $('#paging-block').append(pagings_html);
 
+                // 第一頁與最後一頁的警告
                 function alert_paging(str) {
-                    alert('已經是' + str);
+                    Swal.fire('已經是' + str);
                 }
 
                 // [func] 輸入分頁跳轉
@@ -94,7 +101,35 @@ block content
                 // [UI] 點選搜尋畫面
                 $('.dropdown-item').css("cursor", "pointer")
 
+                // 日曆點選去點dateRanger
+               $('#searchCalendar').click(function(){$('#daterange').click()});
 
+                // 按讚推播 Socket -----
+                $('.btn-heart').click(function(){
+                    const save_note_id = $(this).get(0).id;
+                    const heart_color = $(this).children().get(0).style.color;
+                    let heart_count = +$(this).children().get(1).innerHTML;
+                    if(heart_color == 'grey'){
+                        $(this).children("i").css("color", "red");
+                        heart_count++;
+                        // 按讚socket
+                        socket.emit('save_note', {
+                            "save_note_id": save_note_id,
+                            "heart_count": heart_count,
+                            "user_name": user_name,
+                            "user_email": user_email,
+                            "note_savedStatus": JSON.stringify(note_savedStatus)
+                        });
+                    }else{  
+                        $(this).children("i").css("color", "grey");
+                        heart_count--;
+                    }
+
+                    // 改愛心數
+                    $(this).children("span").text(`${heart_count}`)
+                });
+
+                
         script(src='/js/user.js')
         script(src='/js/windowLoad.js')
         script(src='/js/note.js')
@@ -107,5 +142,12 @@ block content
         script(src='/js/search.js')
         script(src='/js/autoSave.js')
         script(src='/js/annotationBar.js')
+
+
+        //- //- 監聽別人是否有更新收藏
+        //- socket.on('saved_count_update', function(note_savedStatus){
+        //-     console.log("sssssssssssss");
+        //-     alert(note_savedStatus);;
+        //- })
 
 

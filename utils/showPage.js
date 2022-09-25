@@ -54,7 +54,6 @@ const showSocialCards = async function (data, user_id) {
     const sharing_descrition = data[i].sharing_descrition;
     const sharing_time = data[i].sharing_time;
     const note_id = data[i]._id.toString();
-    // const show_time = timeConverter(+sharing_time);
     const show_time = timeConverter(sharing_time);
     const tags = data[i].tags;
     const comments_info = data[i].comments_info;
@@ -111,7 +110,7 @@ const showSocialCards = async function (data, user_id) {
                 <span id="comments_num">${comments_num}</span>
             </i>
         </button>
-        <button class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
+        <button id="${note_id}" class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
             <i class="fa fa-heart" aria-hidden="true" style="color:${heart_color}"></i>
             <span class="saved_num">${saved_num}</span>
         </button>
@@ -119,12 +118,6 @@ const showSocialCards = async function (data, user_id) {
         ${tags_html}
         </div>
     </div>`;
-
-    // <button class="btn">
-    //     <a href="${SERVER_HOST}/shareNotePage?id=${note_id}" target="blank">
-    //         <i class="fa fa-eye" aria-hidden="true"></i>
-    //     </a>
-    // </button>
 
     change_cardGroup--;
     // 三個一分
@@ -213,7 +206,8 @@ const showPagination = async function (
   // 判斷第一頁&最後一頁的前後頁
   if (currentPage == allPages_count) {
     nextPage_href = `javascript:alert_paging('最後一頁')`;
-  } else if (currentPage == 1) {
+  }
+  if (currentPage == 1) {
     prevPage_href = `javascript:alert_paging('第一頁')`;
   }
 
@@ -226,9 +220,9 @@ const showPagination = async function (
 
   currentPage_html = `
       <li class="page-item"></li>
-      <input id="setPage" style="width:30px;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
-      <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1"> of ${allPages_count}</a>
+      <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+      <li class="page-item disabled" style="border: white;">
+        <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
       </li>
     `;
 
@@ -270,7 +264,11 @@ const showShareToOtherList = async function (shareList, note_id) {
       shareList_html += `<li class="list-group-item d-flex justify-content-between align-items-center">
                             ${p.user_email}
                           <span class="badge bg-primary rounded-pill">${permission}</span>
-                          <button class="btn"><a href="javascript:deleteShareToOther('${note_id}','${p.user_email}')"><span class='bi bi-x-circle'></span></a></button>
+                          <button id="${p.user_email}" class="deleteShareToOther-btn btn">
+                            <a href="javascript:deleteShareToOther('${note_id}','${p.user_email}')">
+                              <span class='bi bi-x-circle'></span>
+                            </a>
+                          </button>
                         </li>`;
     });
   } catch (error) {
