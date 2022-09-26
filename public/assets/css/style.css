@@ -1303,6 +1303,7 @@ h6 {
   border: none;
   padding: 0px;
   margin: 0px;
+  background: white;
 }
 
 .addtextarea:focus {

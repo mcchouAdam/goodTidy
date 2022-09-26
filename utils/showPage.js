@@ -63,7 +63,7 @@ const showSocialCards = async function (data, user_id) {
     let tags_html = '';
     if (tags) {
       tags.map((t) => {
-        tags_html += `<span class="badge bg-primary rounded-pill">${t}</span>`;
+        tags_html += `<span class="badge bg-primary rounded-pill" style="margin:0 10px 0 0">${t}</span>`;
       });
     }
 

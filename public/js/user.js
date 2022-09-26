@@ -145,11 +145,15 @@ $('#share-btn').click(async function () {
   // sharing_url 輸入Bar
   $('#share_url').val(`${server}${sharing_url}`);
 
-  $('.badge.bg-success.rounded-pill').remove();
+  // 清空所有原tags
+  $('.tags').remove();
+
+  // 重新渲染tags
   tags.map((t) => {
-    $('.note_tags').append(
-      `<span class="badge bg-success rounded-pill">${t}</span>`
-    );
+    $('.note_tags').append(`
+    <span class="tags badge bg-info rounded-pill" style="color:white;">${t}&nbsp
+      <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
+    </span>`);
   });
 });
 
