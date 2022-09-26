@@ -36,7 +36,7 @@ $('#shareToAll_confirm-btn').click(async function () {
   const isComment = $('#allowComment-toggle').is(':checked');
   const isWatch = $('#shareToAll-toggle').is(':checked');
 
-  let tags = $('.badge.bg-success.rounded-pill')
+  let tags = $('.tags')
     .map((i, e) => e.outerText)
     .get();
   tags = $.grep(tags, (n) => n == 0 || n);

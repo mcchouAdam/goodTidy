@@ -368,12 +368,11 @@ async function getSharedNote(sharedNote_obj, div_append) {
     } else {
       user_online_status_html = `<span id="online_${shared_uer_email}" class="badge bg-success rounded-pill">上線</span>`;
     }
-
+    // <button class="btn"><i class="bi bi-chat-dots"></i></button>
     shareNote_html += `
             <div>
               <span class="badge bg-dark rounded-pill" style="color:white;">${num++}</span>
               ${user_online_status_html}
-              <button class="btn"><i class="bi bi-chat-dots"></i></button>
               <img class="profile-pic mr-3" src="${S3_HOST}user_picture/${user_picture}">
               <span>${user_name}</span>
               <input type="radio" class="btn-check btn" name="shareNote_options" id="${id}" value="${id}" autocomplete="off">
