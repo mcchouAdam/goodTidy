@@ -133,6 +133,16 @@ const getShareToAll = async (req, res) => {
   return res.status(200).send(share);
 };
 
+// 刪除對所有人的分享
+const deleteShareToAll = async (req, res) => {
+  const { note_id } = req.body;
+  console.log('asdfasdf', note_id);
+
+  const share_result = await Notes.deleteShareToAll(note_id);
+
+  return res.status(200).json(share_result);
+};
+
 // 分享對特定人的分享
 const shareToOther = async (req, res) => {
   req.body.user_id = req.session.user.id;
@@ -234,6 +244,7 @@ module.exports = {
   getUserNotes,
   shareToAll,
   getShareToAll,
+  deleteShareToAll,
   shareToOther,
   deleteShareToOther,
   getShareToOther,

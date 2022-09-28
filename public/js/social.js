@@ -10,13 +10,15 @@ $('#shareToOther-toggle').click(function () {
 });
 
 // 打開分享給所有人隱藏內容
-$('#shareToAll-toggle').click(function () {
+$('#shareToAll-toggle').click(async function () {
   const checked = $(this).is(':checked');
   if (checked) {
     $('#shareToAllDetail').css('visibility', 'visible');
     $('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
   } else {
     $('#shareToAllDetail').css('visibility', 'hidden');
+    // TODO: 寫刪除分享
+    await deleteShareAll();
   }
 });
 
@@ -536,6 +538,34 @@ async function deleteMsg(msg_id) {
       Swal.fire('刪除成功');
       // 刪除該list
       $(`li:contains("${msg_id}")`).remove();
+    })
+    .catch((error) => {
+      console.log(error);
+      Swal.fire(error.response.data.msg);
+    });
+}
+
+// 刪除分享給所有人
+async function deleteShareAll() {
+  const isDeleted = confirm(`確定要關閉此篇文章的分享`);
+  if (!isDeleted) {
+    return;
+  }
+
+  let data = {
+    'note_id': current_note_id,
+  };
+
+  let config = {
+    method: 'DELETE',
+    url: `/api/${API_VERSION}/note/shareToAll`,
+    data: data,
+  };
+
+  await axios(config)
+    .then((response) => {
+      console.log(response);
+      Swal.fire('關閉成功');
     })
     .catch((error) => {
       console.log(error);

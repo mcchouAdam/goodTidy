@@ -34,18 +34,29 @@ async function signUp(picture, username, email, password, filename) {
     data: data,
   };
 
+  let isSuccess = false;
+  let msg;
   await axios(config)
     .then(function (response) {
-      console.log(response);
-      user_id = response.data.data.user.id;
-      user_picture = response.data.data.user.picture;
-      user_name = response.data.data.user.name;
-      user_email = response.data.data.user.email;
+      // console.log('註冊成功');
+      // console.log('user_signup_success:', response);
+      user_id = response.data.id;
+      user_picture = response.data.picture;
+      user_name = response.data.name;
+      user_email = response.data.email;
+      isSuccess = true;
+      msg = '註冊成功';
     })
     .catch(function (error) {
-      console.log(error);
-      console.log('註冊失敗');
+      // console.log('註冊失敗');
+      // console.log('user_signup_error:', error.response.data.error);
+      isSuccess = false;
+      msg = error.response.data.error;
     });
+
+  let result = { 'isSuccess': isSuccess, 'msg': msg };
+
+  return result;
 }
 
 // axios signIn API
@@ -86,11 +97,9 @@ async function signIn(email, password) {
       console.log(error);
       Swal.fire({
         icon: 'error',
-        title: `登入失敗，請重新登入`,
+        title: error.response.data.error,
         showConfirmButton: false,
         timer: 1500,
-      }).then(function () {
-        window.location.assign('/signin');
       });
     });
 }
@@ -140,8 +149,6 @@ $('#share-btn').click(async function () {
   // share_description
   $('#share_description').html(sharing_descrition);
 
-  console.log('sharing_descrition: ', sharing_descrition);
-
   // sharing_url 輸入Bar
   $('#share_url').val(`${server}${sharing_url}`);
 
@@ -161,6 +168,10 @@ $('#share-btn').click(async function () {
 $('#signup-form-btn').click(async function (e) {
   e.preventDefault();
 
+  // Loading圖示
+  $('#signup-form-btn').prop('disabled', true);
+  $('body').css('cursor', 'progress');
+
   if (!user_email) {
     const email = $('#signup_useremail').val();
     const password = $('#signup_password').val();
@@ -174,15 +185,37 @@ $('#signup-form-btn').click(async function (e) {
       filename = picture.name;
     }
 
-    await signUp(picture, username, email, password, filename);
+    const signUp_result = await signUp(
+      picture,
+      username,
+      email,
+      password,
+      filename
+    );
 
+    // 釋放Loading圖示
+    $('#signup-form-btn').prop('disabled', false);
+    $('body').css('cursor', 'default');
+
+    // 註冊失敗
+    if (!signUp_result.isSuccess) {
+      Swal.fire({
+        icon: 'error',
+        title: signUp_result.msg,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      return;
+    }
+
+    // 註冊成功
     Swal.fire({
       icon: 'success',
-      title: '註冊成功',
+      title: signUp_result.msg,
       showConfirmButton: false,
       timer: 1500,
     }).then(function () {
-      window.location.assign('/signin');
+      window.location.assign('/profile');
     });
   }
 });
@@ -198,6 +231,29 @@ $('#signin-form-btn').click(async function (e) {
     await signIn(email, password);
   }
 });
+
+// 拿取User所有通知 ----------------------------
+async function getUserMsg() {
+  let data = {
+    'user_email': user_email,
+  };
+
+  let config = {
+    method: 'GET',
+    url: `/api/${API_VERSION}/message`,
+    data: data,
+  };
+
+  // 抓取通知資訊
+  await axios(config)
+    .then((response) => {
+      current_user_msg = response.data.data;
+      console.log('user_notification:', current_user_msg);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 
 // 顯示User所有通知 ----------------------------
 async function showUserMsg() {

@@ -127,6 +127,9 @@ const showSocialCards = async function (data, user_id) {
     }
 
     comments_info.map((comment) => {
+      const commen_content_jsInjection = comment.contents
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
       comment_cards_html += `
           <div class="card">
             <div class="comment-card-body">
@@ -150,7 +153,7 @@ const showSocialCards = async function (data, user_id) {
                   </div>
                 </div>
               </div>
-              <p style="margin: 10px 0;">${comment.contents}</p>
+              <p style="margin: 10px 0;">${commen_content_jsInjection}</p>
               <p style="font-size: 8px;margin: 10px 0;">${timeConverter(
                 comment.created_time
               )}</p>

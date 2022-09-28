@@ -20,19 +20,19 @@ block content
                       //- p.text-center.small Enter your personal details to create account
                     form.row.g-3.needs-validation(novalidate='')
                       .col-12
-                        label.form-label(for='yourName') 使用者名稱
-                        input#signup_username.form-control(type='text', name='name', required)
+                        label.form-label(for='name') 使用者名稱
+                        input#signup_username.form-control(type='text', name='name', required='')
                         .invalid-feedback 請您輸入使用者名稱
                       .col-12
-                        label.form-label(for='yourEmail') 信箱
-                        input#signup_useremail.form-control(type='email', name='email', required)
+                        label.form-label(for='email') 信箱
+                        input#signup_useremail.form-control(type='email', name='email', required='')
                         .invalid-feedback 請您輸入Email
                       .col-12
-                        label.form-label(for='yourPassword') 密碼
-                        input#signup_password.form-control(type='password', name='password', required)
+                        label.form-label(for='password') 密碼
+                        input#signup_password.form-control(type='password', name='password', required='')
                         .invalid-feedback 請您輸入密碼
                       .col-12
-                        label.form-label(for='yourPicture') 大頭貼
+                        label.form-label(for='yourPicture') 大頭貼(非必要)
                         br
                         input#user_picture.form-control(type='file')
                         br
@@ -57,6 +57,7 @@ block content
 
       script(src='/js/user.js')
       script(src='/js/windowLoad.js')
+        
       //- script(src='/js/note.js')
       //- script(src='/js/draggable.js')
       //- script(src='/js/btn.js')
