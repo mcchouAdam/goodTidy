@@ -3,6 +3,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const multer = require('multer');
 
 require('dotenv').config();
 const { MONGO_DB_URL, SESSION_SECRET } = process.env;
@@ -57,7 +58,16 @@ app.get('/sharedNote/:note_id', async (req, res) => {
   return res.render('sharedNote');
 });
 
-// 404 handling
+// error handling
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    err.status = 400;
+    err.message = '檔案超過2MB';
+  }
+  return res.status(err.status).send({ error: err.message });
+});
+
+// 404 error
 app.all('*', (req, res) => {
   return res.status(404).render('404');
 });

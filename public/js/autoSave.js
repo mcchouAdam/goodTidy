@@ -40,7 +40,8 @@ let AutoSave = (function () {
       );
 
       // 更新時間
-      let now_time = timeConverter(new Date());
+      let current = new Date();
+      let now_time = current.toLocaleTimeString();
       $('#auto-save-time').text(`最新儲存: ${now_time}`);
     }
   }
@@ -137,7 +138,7 @@ let AutoSave = (function () {
         timer = null;
       }
 
-      timer = setInterval(save, 2000);
+      timer = setInterval(save, 1000);
     },
 
     stop: function () {

@@ -131,6 +131,10 @@ const createComments = async (req, res) => {
     return res.status(403).json({ 'msg': '您無權限留言' });
   }
 
+  if (data.contents == '') {
+    return res.status(400).json({ 'msg': '留言不可空白' });
+  }
+
   const result = await createComment(data);
 
   return res.status(200).json(`comment_id ${result} created successfully!`);

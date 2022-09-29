@@ -11,7 +11,7 @@ block content
         nav(style="--bs-breadcrumb-divider: '|';")
           ol.breadcrumb
             li.breadcrumb-item
-              a(href='/note') Home
+              a(href='/') Home
             li.breadcrumb-item 註釋頁面
             li.breadcrumb-item
               span 筆記名稱:
@@ -37,10 +37,10 @@ block content
                     button.openbtn#annotation-btn.btn
                         i.fa.fa-solid.fa-comments
 
-                    //- 觀看留言鍵
-                    .form-check.form-switch(style="margin:7px 10px;")
-                      label.form-check-label(for='flexSwitchCheckDefault') 觀看註釋
-                      input#annotation-watch-toggle.form-check-input(type='checkbox', role='switch')
+                    //- //- 觀看留言鍵
+                    //- .form-check.form-switch(style="margin:7px 10px;")
+                    //-   label.form-check-label(for='flexSwitchCheckDefault') 觀看註釋
+                    //-   input#annotation-watch-toggle.form-check-input(type='checkbox', role='switch')
 
                   //- 畫面位置
                   .col-12#update-note-content(width='600px', height='500px', style="margin:40px 0 0 0 ")
@@ -151,7 +151,7 @@ block content
                   `<i class="fa fa-solid fa-comments"><span class="badge bg-dark rounded-pill">${current_annotation_num}</span></i>`
                 )
                   .draggable({ containment: '#update-note-content' })
-                  .css({ 'color': 'red', 'position': 'absolute', 'font-size': '24px' })
+                  .css({ 'color': 'blue', 'position': 'absolute', 'font-size': '24px' })
                   .offset({ top: 0, left: 0 })
                   //- .on('drag', stepDrag);
 
@@ -207,37 +207,52 @@ block content
               })
               
               // 沒打開觀看留言時，關閉存檔與移除
-              $('#annotation-btn').prop('disabled',true);
-              $('#saveAnnotation').prop('disabled',true);
+              //- $('#annotation-btn').prop('disabled',true);
+              //- $('#saveAnnotation').prop('disabled',true);
 
               // 觀看註釋鍵
-              $('#annotation-watch-toggle').change(async function () {
-                  if (this.checked) {
+              //- $('#annotation-watch-toggle').change(async function () {
+              //-     if (this.checked) {
 
-                    await getAnnotation(note_id);
-                    await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element, user_permission);
+              //-       await getAnnotation(note_id);
+              //-       await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element, user_permission);
                   
-                   if(user_permission == 1){
-                      // 不能用註釋icon也不能用textarea
-                      $('button').prop('disabled', true);
-                      $('.form-control').prop('disabled', true);
-                    }else if(user_permission >= 2){
-                      $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
-                          .css('position', 'absolute')
-                          .draggable({ containment: '#update-note-content' });
-                      $('button').prop('disabled', false);
-                      $('.form-control').prop('disabled', false);
-                    }
-                  } else {
-                      $('#annotation-btn').prop('disabled',true);
-                      $('#saveAnnotation').prop('disabled',true);
-                      $('#sidebar-comment').html('');
-                      $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').remove();
-                  }
-              });
+              //-      if(user_permission == 1){
+              //-         // 不能用註釋icon也不能用textarea
+              //-         $('button').prop('disabled', true);
+              //-         $('.form-control').prop('disabled', true);
+              //-       }else if(user_permission >= 2){
+              //-         $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
+              //-             .css('position', 'absolute')
+              //-             .draggable({ containment: '#update-note-content' });
+              //-         $('button').prop('disabled', false);
+              //-         $('.form-control').prop('disabled', false);
+              //-       }
+              //-     } else {
+              //-         $('#annotation-btn').prop('disabled',true);
+              //-         $('#saveAnnotation').prop('disabled',true);
+              //-         $('#sidebar-comment').html('');
+              //-         $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle').remove();
+              //-     }
+              //- });
 
-
-
+              $(document).ready(async function(){
+                await getAnnotation(note_id);
+                await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element, user_permission);
+              
+                if(user_permission == 1){
+                  // 不能用註釋icon也不能用textarea
+                  $('button').prop('disabled', true);
+                  $('.form-control').prop('disabled', true);
+                }
+                else if(user_permission >= 2){
+                    $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
+                        .css('position', 'absolute')
+                        .draggable({ containment: '#update-note-content' });
+                    $('button').prop('disabled', false);
+                    $('.form-control').prop('disabled', false);
+                }
+              })
 
       script(src='/js/user.js')
       script(src='/js/windowLoad.js')

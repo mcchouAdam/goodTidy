@@ -391,6 +391,7 @@ const shareToOther = async (data) => {
     // 更新使用者通知資料
     const msg_result = await MessageCollection.insertOne({
       'notify_user_email': user_email,
+      'note_id': note_id,
       'type': '筆記分享',
       'content': `${shareUser_name}分享一篇筆記給您`,
       'created_time': new Date(),
@@ -791,18 +792,19 @@ const createSave = async (note_id, user_id, user_email, user_name) => {
       },
     ]).toArray();
 
+    // ※ 目前收藏不用進入通知
     // 更新使用者Massage數字 ----------------------------
-    const addSaved = note_saved_conut - note_saved_count_previous;
+    // const addSaved = note_saved_conut - note_saved_count_previous;
 
-    if (addSaved == 1) {
-      const saved_user_email = result[0].user_info[0].email;
-      await MessageCollection.insertOne({
-        'notify_user_email': saved_user_email,
-        'type': '收藏',
-        'content': `${user_name}收藏了您的一篇筆記`,
-        'created_time': new Date(),
-      }).toArray();
-    }
+    // if (addSaved == 1) {
+    //   const saved_user_email = result[0].user_info[0].email;
+    //   await MessageCollection.insertOne({
+    //     'notify_user_email': saved_user_email,
+    //     'type': '收藏',
+    //     'content': `${user_name}收藏了您的一篇筆記`,
+    //     'created_time': new Date(),
+    //   }).toArray();
+    // }
 
     return note_saved_conut;
   } catch (error) {

@@ -17,9 +17,9 @@ const signUp = async (req, res) => {
     return res.status(400).send({ error: '錯誤的Email格式' });
   }
 
-  if (!validator.isLength(email, { min: 0, max: 16 })) {
-    return res.status(400).send({ error: 'Email字數最多16' });
-  }
+  // if (!validator.isLength(email, { min: 0, max: 16 })) {
+  //   return res.status(400).send({ error: 'Email字數最多16' });
+  // }
 
   if (!validator.isLength(name, { min: 0, max: 16 })) {
     return res.status(400).send({ error: '名字字數最多16' });

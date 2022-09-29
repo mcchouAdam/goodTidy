@@ -3,6 +3,28 @@ const form = document.querySelector('#form-preview');
 form.addEventListener('change', async (e) => {
   // e.preventDefault();
 
+  // 檢查檔名
+  const filetype = $('#file-preview')[0].files[0].name.split('.').pop();
+  if (filetype != 'jpeg' && filetype != 'jpg' && filetype != 'png') {
+    Swal.fire({
+      icon: 'error',
+      title: '請您上傳jpeg, jpg, png檔',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+  const file_size = $('#file-preview')[0].files[0].size / 1024 / 1024; //MB
+  if (file_size > 2) {
+    Swal.fire({
+      icon: 'error',
+      title: '檔案超過2MB',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return;
+  }
+
   // 每次新Load一張圖片，清掉preview視窗
   $('#note-preview-content').html('');
 

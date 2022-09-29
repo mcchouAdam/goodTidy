@@ -164,6 +164,11 @@ async function createComments(note_id) {
     'user_picture': user_picture,
   };
 
+  // if (data.contents == '') {
+  //   alert('留言不能空白！');
+  //   return;
+  // }
+
   var config = {
     method: 'POST',
     url: `/api/1.0/comment`,
@@ -218,13 +223,23 @@ async function shareToAlluser(data) {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
-      Swal.fire('更改設定成功');
-      window.location.assign('/socialPage?paging=1&sorting=sharing_time');
+      Swal.fire({
+        icon: 'success',
+        title: '更改設定成功',
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(function () {
+        window.location.assign('/socialPage?paging=1&sorting=sharing_time');
+      });
     })
     .catch((error) => {
       console.log(error);
-      Swal.fire('更改設定失敗');
+      Swal.fire({
+        icon: 'error',
+        title: error.response.data.error,
+        showConfirmButton: false,
+        timer: 1500,
+      });
     });
 }
 

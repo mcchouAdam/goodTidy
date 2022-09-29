@@ -48,8 +48,7 @@ async function signUp(picture, username, email, password, filename) {
       msg = '註冊成功';
     })
     .catch(function (error) {
-      // console.log('註冊失敗');
-      // console.log('user_signup_error:', error.response.data.error);
+      console.log('註冊失敗');
       isSuccess = false;
       msg = error.response.data.error;
     });
@@ -271,15 +270,19 @@ async function showUserMsg() {
   $('ul.notifications').html('');
   current_user_msg.map((m) => {
     let icon_html = '';
+    let createdTime = timeConverter(new Date(m.created_time));
     switch (m.type) {
       case '收藏':
         icon_html = '<i class="bi bi-heart-fill" style="color:red;"></i>';
+        content_html = `<p>${m.content}</p>`;
         break;
       case '筆記分享':
         icon_html = '<i class="bi bi-share" style="color:blue;"></i>';
+        content_html = `<p><a href="${server}/sharedToOtherNote/${m.note_id}">${m.content}</a></p>`;
         break;
       case '分享取消':
-        icon_html = '<i class="bi bi-x-circle" style="color:#ffbf00;"></i> ';
+        icon_html = '<i class="bi bi-x-circle" style="color:#ffbf00;"></i>';
+        content_html = `<p>${m.content}</p>`;
         break;
     }
     let item = `
@@ -290,8 +293,8 @@ async function showUserMsg() {
         ${icon_html}
         <div>
           <h4>${m.type}</h4>
-          <p>${m.content}</p>
-          <p>${m.created_time}</p>
+          ${content_html}
+          <p>${createdTime}</p>
           </div>
       </li>`;
     $('ul.notifications').append(item);
