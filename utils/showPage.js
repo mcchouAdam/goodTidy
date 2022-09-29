@@ -38,7 +38,7 @@ const showShareDetail = async function (data) {
 // 分享筆記卡片
 const showSocialCards = async function (data, user_id) {
   // console.log('req.session.user.id', req.session.user.id);
-  // console.log('showSocialCards: ', data);
+  console.log('showSocialCards: ', data);
 
   let sharingNote_cards_html = '';
   let comment_modal_html = '';
@@ -58,6 +58,7 @@ const showSocialCards = async function (data, user_id) {
     const tags = data[i].tags;
     const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
+    const url_permission = data[i].url_permission;
 
     // 畫tags
     let tags_html = '';
@@ -92,6 +93,25 @@ const showSocialCards = async function (data, user_id) {
       sharingNote_cards_html += '<div class="card-group">';
     }
 
+    let comment_icon_html;
+    if (url_permission == 1) {
+      // 只允許觀看
+      comment_icon_html = `
+        <button class="btn" type="button" style="font-size:16px">
+            <i class="fa fa-solid fa-comments" style="color:grey">
+                <span id="comments_num">無開放留言</span>
+            </i>
+        </button>`;
+    } else if (url_permission == 2) {
+      // 允許留言
+      comment_icon_html = `
+        <button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
+            <i class="fa fa-solid fa-comments" style="color:green">
+                <span id="comments_num">${comments_num}</span>
+            </i>
+        </button>`;
+    }
+
     sharingNote_cards_html += `
       <div class="card card-social">
         <div class="card-header"><img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${user_picture}"/>
@@ -104,12 +124,7 @@ const showSocialCards = async function (data, user_id) {
         <p class="card-text">${sharing_descrition}</p>
         <br />
         <p class="card-text"><small class="text-muted">發文時間: ${show_time}</small></p>
-
-        <button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
-            <i class="fa fa-solid fa-comments" style="color:green">
-                <span id="comments_num">${comments_num}</span>
-            </i>
-        </button>
+        ${comment_icon_html}
         <button id="${note_id}" class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
             <i class="fa fa-heart" aria-hidden="true" style="color:${heart_color}"></i>
             <span class="saved_num">${saved_num}</span>
@@ -127,38 +142,47 @@ const showSocialCards = async function (data, user_id) {
     }
 
     comments_info.map((comment) => {
+      // javascript injection
       const commen_content_jsInjection = comment.contents
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;');
+
+      // 檢查是否為自己的留言
+      let comment_menu_html;
+      if (current_user != comment.user_id) {
+        comment_menu_html = '';
+      } else {
+        comment_menu_html = `
+        <div class="d-flex flex-row align-items-center">
+          <a class="btn" id="dropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <a class="dropdown-item" href="javascript:deleteComment('${comment._id}', '${comment.note_id}')">刪除</a>
+            <a class="dropdown-item" href="javascript:updateComment('${comment._id}', '${comment.note_id}')">修改</a>
+          </div>
+        </div>
+        `;
+      }
+
       comment_cards_html += `
           <div class="card">
             <div class="comment-card-body">
               <div class="d-flex justify-content-between">
-                <div class="d-flex flex-row align-items-center"><img class="comment-pic" src="${S3_HOST}/user_picture/${
+                <div class="d-flex flex-row align-items-center">
+                  <img class="comment-pic" src="${S3_HOST}/user_picture/${
         comment.user_picture
       }"/>
                   <p class="small mb-0 ms-2">${comment.user_name}</p>
                 </div>
-                <div class="d-flex flex-row align-items-center">
-                    <a class="btn" id="dropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-                    </a>
-                  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <a class="dropdown-item" href="javascript:deleteComment('${
-                      comment._id
-                    }', '${comment.note_id}')">刪除</a>
-                    <a class="dropdown-item" href="javascript:updateComment('${
-                      comment._id
-                    }', '${comment.note_id}')">修改</a>
-                  </div>
-                </div>
+                ${comment_menu_html}
               </div>
               <p style="margin: 10px 0;">${commen_content_jsInjection}</p>
-              <p style="font-size: 8px;margin: 10px 0;">${timeConverter(
-                comment.created_time
-              )}</p>
+              <p style="font-size: 8px;margin: 10px 0;">
+              ${timeConverter(comment.created_time)}
+              </p>
             </div>
-        </div>`;
+          </div>`;
     });
 
     comment_modal_html += `

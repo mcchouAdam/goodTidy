@@ -120,48 +120,53 @@ $('#share-btn').click(async function () {
   // PreLoad the 特定人士清單
   await getShareToOther(current_note_id);
 
-  // 全域變數
+  // assign到全域變數
   await getShareAll(current_note_id);
   const shareOtherList_content = $('#shareOtherList li').text();
 
-  // 向特定人士分享
-  if (shareOtherList_content) {
-    $('#shareToOther-toggle').prop('checked', true);
-    $('#shareToOhterDetail').css('visibility', 'visible');
+  // 分享到社群的狀態
+  if (note_isSharing == 1) {
+    // share_description (javacript injection)
+    sharing_descrition = sharing_descrition
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
+    $('#share_description').html(sharing_descrition);
+
+    // sharing_url 輸入Bar
+    $('#share_url').show();
+    $('#copy_shareUrl').show();
+    $('#share_url').val(`${server}${sharing_url}`);
+
+    // 分享狀態
+    $('#shareToAll-status').text('分享中');
+    $('#shareToAll-status').removeClass('bg-secondary');
+    $('#shareToAll-status').addClass('bg-success');
+    $('share_url').prop('disabled', false);
+
+    // 清空所有原tags
+    // 重新渲染tags
+    $('.tags').remove();
+    tags.map((t) => {
+      $('.note_tags').append(`
+        <span class="tags badge bg-info rounded-pill" style="color:white;">${t}&nbsp
+          <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
+        </span>`);
+    });
+  } else {
+    // 分享狀態
+    $('#shareToAll-status').text('關閉中');
+    $('#shareToAll-status').removeClass('bg-success');
+    $('#shareToAll-status').addClass('bg-secondary');
+    $('#share_url').hide();
+    $('#copy_shareUrl').hide();
+    $('#share_url').val('');
+    $('share_url').prop('disabled', true);
   }
+});
 
-  // 分享社群頁面
-  if (note_isSharing === 1) {
-    $('#shareToAll-toggle').prop('checked', true);
-    $('#shareToAllDetail').css('visibility', 'visible');
-  }
-
-  switch (note_url_permission) {
-    case 1:
-      $('#shareToAll-toggle').prop('checked', true);
-      break;
-    case 2:
-      $('#shareToAll-toggle').prop('checked', true);
-      $('#allowComment-toggle').prop('checked', true);
-      break;
-  }
-
-  // share_description
-  $('#share_description').html(sharing_descrition);
-
-  // sharing_url 輸入Bar
-  $('#share_url').val(`${server}${sharing_url}`);
-
-  // 清空所有原tags
-  $('.tags').remove();
-
-  // 重新渲染tags
-  tags.map((t) => {
-    $('.note_tags').append(`
-    <span class="tags badge bg-info rounded-pill" style="color:white;">${t}&nbsp
-      <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
-    </span>`);
-  });
+$('#shareToAll_cancel-btn').click(async function () {
+  await deleteShareAll();
+  await getShareAll(current_note_id);
 });
 
 // 註冊鍵 -------------------------------------

@@ -12,7 +12,8 @@ previewBlah.onload = () => canvasBackground();
 
 // Draw the upload image to canvas
 function canvasBackground() {
-  clearContext(c, ctx);
+  // clearContext(c, ctx);
+  ctx.clearRect(0, 0, c.width, c.height);
   ctx.drawImage(previewBlah, 0, 0);
   canvas = $('#fontOCRCanvas')[0];
   context = canvas.getContext('2d');
@@ -20,6 +21,28 @@ function canvasBackground() {
 
 function clearContext(canvas, context) {
   context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// 去除圖形的重畫
+function canvasPartialRedraw(Rx1, Ry1, Rx2, Ry2) {
+  let Xstart = Math.min(Rx1, Rx2);
+  let Ystart = Math.min(Ry1, Ry2);
+  let redrawWidth = Math.abs(Rx1 - Rx2);
+  let redrawHeight = Math.abs(Ry1 - Ry2);
+  ctx.clearRect(Xstart, Ystart, redrawWidth, redrawHeight);
+  ctx.drawImage(
+    previewBlah,
+    Xstart,
+    Ystart,
+    redrawWidth,
+    redrawHeight,
+    Xstart,
+    Ystart,
+    redrawWidth,
+    redrawHeight
+  );
+  canvas = $('#fontOCRCanvas')[0];
+  context = canvas.getContext('2d');
 }
 
 // 魔術曲線圈選 ---------------------
@@ -95,49 +118,80 @@ function startPosition(e) {
   console.log(parseInt(positionX), parseInt(positionY));
 }
 
-function finishedPosition(e) {
-  // painting = false;
-  // ctx.moveTo(e.clientX - 15, e.clientY - 135);
-}
-
 // 去除文字方塊遮蔽 ----------------------------------------
+// function mouseDown(e) {
+//   rect.startX = e.offsetX;
+//   rect.startY = e.offsetY;
+//   drag = true;
+// }
+
+// function mouseUp() {
+//   drag = false;
+// }
+
+// function mouseMove(e) {
+//   if (drag) {
+//     rect.w = e.offsetX - rect.startX;
+//     rect.h = e.offsetY - rect.startY;
+//     context.fillStyle = 'rgba(0,0,0)';
+//     drawMarker();
+//   }
+// }
+
+// function drawMarker() {
+//   context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
+// }
+
+let Rx1;
+let Rx2;
+let Ry1;
+let Ry2;
+let Rx;
+let Ry;
+let width;
+let height;
+// let RemoveContour_params = [];
+
 function mouseDown(e) {
-  rect.startX = e.offsetX;
-  rect.startY = e.offsetY;
   drag = true;
-
-  // console.log('prev_context: ', prev_context[0]);
-  // context.fillRect(
-  //   prev_context[0],
-  //   prev_context[1],
-  //   prev_context[2],
-  //   prev_context[3]
-  // );
+  // RemoveContour_params = [];
+  Rx1 = e.offsetX;
+  Ry1 = e.offsetY;
+  // RemoveContour_params.push(Rx1, Ry1);
 }
 
-function mouseUp() {
+function mouseUp(e) {
   drag = false;
+  Rx2 = e.offsetX;
+  Ry2 = e.offsetY;
+  // RemoveContour_params.push(Rx2 - Rx1, Ry2 - Ry1);
+  // 防止使用從左下、右下、右上開始拉
+  // RemoveContour_params.push(Rx2, Ry2);
+
+  Rx = Math.min(Rx1, Rx2);
+  Ry = Math.min(Ry1, Ry2);
+  width = Math.abs(Rx2 - Rx1);
+  height = Math.abs(Ry2 - Ry1);
+
+  context.fillStyle = 'black';
+  context.fillRect(Rx, Ry, width, height);
 }
 
-// let removeNotWantRect = [];
 function mouseMove(e) {
   if (drag) {
-    rect.w = e.offsetX - rect.startX;
-    rect.h = e.offsetY - rect.startY;
-    context.fillStyle = 'rgba(0,0,0)';
+    Rx2 = e.offsetX;
+    Ry2 = e.offsetY;
     drawMarker();
   }
 }
 
-// let prev_context;
 function drawMarker() {
-  context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-  // let obj = {};
+  // context.clearRect(Rx, Ry, width, height);
+  canvasPartialRedraw(Rx1, Ry1, Rx2, Ry2);
 
-  // context.clearRect(0, 0, canvas_width, canvas_height);
-  // canvasBackground();
-
-  // prev_context = [rect.startX, rect.startY, rect.w, rect.h];
+  context.beginPath();
+  context.rect(Rx1, Ry1, Rx2 - Rx1, Ry2 - Ry1);
+  context.stroke();
 }
 
 // 方形圈選 ----------------------------------------
@@ -159,11 +213,16 @@ function rectContour_mousedown(e) {
 
 function rectContour_mouseup(e) {
   mousedown = false;
+  // 長方形的長寬
   rectContour_params.push(
     e.offsetX - rectContour_params[0],
     e.offsetY - rectContour_params[1]
   );
 
+  // 防止使用從左下、右下、右上開始拉
+  x2 = e.offsetX;
+  y2 = e.offsetY;
+  rectContour_params.push(x2, y2);
   // 直接擷取圖形
   shapeSnapShot();
 }
@@ -177,7 +236,7 @@ function rectContour_mousemove(e) {
 }
 
 function redraw_rectContour() {
-  context.clearRect(0, 0, canvas_width, canvas_height);
+  // context.clearRect(0, 0, canvas_width, canvas_height);
   canvasBackground();
 
   context.beginPath();

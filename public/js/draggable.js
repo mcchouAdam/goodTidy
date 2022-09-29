@@ -5,7 +5,7 @@ function addDragTextarea(div_id, text, textTop, textLeft) {
   let timestamp = Date.now();
   let textarea_id = `${timestamp}_textarea`;
   let newElement = $(
-    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text}</textarea></div>`
+    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" placeholder="新增文字方塊">${text}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)

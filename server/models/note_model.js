@@ -296,6 +296,8 @@ const shareToAll = async (data) => {
   const tags = JSON.parse(data.tags);
   const sharing_time = new Date();
 
+  console.log('url_permission', url_permission);
+
   try {
     const result = await NotesCollection.updateOne(
       {
