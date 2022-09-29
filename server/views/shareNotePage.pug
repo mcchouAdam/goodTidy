@@ -79,6 +79,10 @@ block content
             ) {
             textLeft = +textLeft.replaceAll('px', '');
             textTop = +textTop.replaceAll('px', '');
+            
+            let text_jsInjection = text.replaceAll('<','&lt;').replaceAll('>','&gt;');
+            
+            console.log("text_jsInjection:", text_jsInjection);
 
             let new_offset = { top: textTop, left: textLeft };
             let new_width = width;
@@ -86,7 +90,7 @@ block content
             let timestamp = Date.now();
             let textarea_id = `${timestamp}_textarea`;
             let newElement = $(
-                `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" disabled>${text}</textarea></div>`
+                `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" disabled>${text_jsInjection}</textarea></div>`
             )
                 .width(new_width)
                 .height(new_height)

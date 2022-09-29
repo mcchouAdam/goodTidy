@@ -9,7 +9,8 @@ const provider = defaultProvider({
   roleAssumerWithWebIdentity: getDefaultRoleAssumerWithWebIdentity,
 });
 
-const { AWS_ACCESS_KEY_ID, AWS_BUCKETNAME } = process.env;
+// const { AWS_ACCESS_KEY_ID, AWS_BUCKETNAME } = process.env;
+const { AWS_BUCKETNAME } = process.env;
 
 const s3 = new S3Client({
   credentialDefaultProvider: provider,

@@ -133,11 +133,25 @@ const getShareToAll = async (req, res) => {
   return res.status(200).send(share);
 };
 
+// 刪除對所有人的分享
+const deleteShareToAll = async (req, res) => {
+  const { note_id } = req.body;
+  const share_result = await Notes.deleteShareToAll(note_id);
+
+  return res.status(200).json(share_result);
+};
+
 // 分享對特定人的分享
 const shareToOther = async (req, res) => {
-  req.body.user_id = req.session.user.id;
-  req.body.shareUser_email = req.session.user.email;
   const data = req.body;
+  const user_email = data.addPerson;
+  const shareUser_email = req.session.user.email;
+  req.body.user_id = req.session.user.id;
+  req.body.shareUser_email = shareUser_email;
+
+  if (user_email == shareUser_email) {
+    return res.status(403).json({ 'msg': '您是此篇筆記的使用者' });
+  }
 
   const share = await Notes.shareToOther(data);
   if (share === '此用戶不存在') {
@@ -234,6 +248,7 @@ module.exports = {
   getUserNotes,
   shareToAll,
   getShareToAll,
+  deleteShareToAll,
   shareToOther,
   deleteShareToOther,
   getShareToOther,

@@ -49,7 +49,7 @@ const signUp = async (name, email, password, picture) => {
     return response;
   } catch (error) {
     return {
-      error: 'Email Already Exists',
+      error: '此Email已存在',
       status: 403,
     };
   } finally {
@@ -68,9 +68,8 @@ const nativeSignIn = async (email, password) => {
     user.id = user_id;
 
     const pw_compare = await bcrypt.compare(password.toString(), user.password);
-    // console.log('askdjfoasijdfoaijdof');
     if (!pw_compare) {
-      return { error: 'Your email or password is wrong' };
+      return { error: '您的密碼錯誤！' };
     }
 
     const loginAt = new Date();

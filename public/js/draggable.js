@@ -5,7 +5,7 @@ function addDragTextarea(div_id, text, textTop, textLeft) {
   let timestamp = Date.now();
   let textarea_id = `${timestamp}_textarea`;
   let newElement = $(
-    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text}</textarea></div>`
+    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" placeholder="新增文字方塊">${text}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)
@@ -23,9 +23,9 @@ function addDragTextarea(div_id, text, textTop, textLeft) {
     .css({
       'position': 'absolute',
     })
-    .offset(new_offset)
-    // .on('drag', stepDrag)
-    // .on('input', stepInput);
+    .offset(new_offset);
+  // .on('drag', stepDrag)
+  // .on('input', stepInput);
   // .on('input', checkTextNull);
 
   // 儲存所有textarea_id，以便取得更改值 .html()取不到
@@ -49,8 +49,10 @@ function Textarea_draggable_html(
   let new_height = height;
   let timestamp = Date.now();
   let textarea_id = `${timestamp}_textarea`;
+  let text_jsInjection = text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
   let newElement = $(
-    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text}</textarea></div>`
+    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text_jsInjection}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)
@@ -68,9 +70,9 @@ function Textarea_draggable_html(
     .css({
       'position': 'absolute',
     })
-    .offset(new_offset)
-    // .on('drag', stepDrag)
-    // .on('input', stepInput);
+    .offset(new_offset);
+  // .on('drag', stepDrag)
+  // .on('input', stepInput);
   // .on('input', checkTextNull);
 
   OCR_ids.push(textarea_id);
@@ -94,8 +96,10 @@ function textarea_nondraggable_html(
   let new_height = height;
   let timestamp = Date.now();
   let textarea_id = `${timestamp}_textarea`;
+  let text_jsInjection = text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
   let newElement = $(
-    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text}</textarea></div>`
+    `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text_jsInjection}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)

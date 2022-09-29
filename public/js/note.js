@@ -238,29 +238,6 @@ async function getUserNotes() {
     });
 }
 
-// 剛進入畫面時拿取User的通知資訊
-async function getUserMsg() {
-  let data = {
-    'user_email': user_email,
-  };
-
-  let config = {
-    method: 'GET',
-    url: `/api/${API_VERSION}/message`,
-    data: data,
-  };
-
-  // 抓取筆記資料
-  await axios(config)
-    .then((response) => {
-      current_user_msg = response.data.data;
-      console.log('user_notification:', current_user_msg);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
 // 筆記導覽列
 async function showNoteList(note_obj, div_append) {
   console.log('note_obj: ', note_obj);

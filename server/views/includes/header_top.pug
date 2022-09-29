@@ -145,43 +145,49 @@ body
             
           li.nav-item.dropdown.pe-3
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
-              if picture
-                img.rounded-circle(src=picture, alt='Profile')
+              if id
+                if name && picture
+                  img.rounded-circle(src=picture, alt='Profile')
+                  span.d-none.d-md-block.dropdown-toggle.ps-2=name
+                else
+                  img.rounded-circle(src="/assets/img/user.png", alt='Profile')
+                  span.d-none.d-md-block.dropdown-toggle.ps-2 登入
               else
                 img.rounded-circle(src="/assets/img/user.png", alt='Profile')
-              if name
-                span.d-none.d-md-block.dropdown-toggle.ps-2=name
-              else
-                span.d-none.d-md-block.dropdown-toggle.ps-2 Sign in
             // End Profile Iamge Icon
             ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
-              li.dropdown-header
-                h6=name
-                span=email
-              li
-                hr.dropdown-divider
-              li
-                a.dropdown-item.d-flex.align-items-center(href='/profile')
-                  i.bi.bi-person
-                  span My Profile
-              li
-                hr.dropdown-divider
-              li
-                a.dropdown-item.d-flex.align-items-center(href='/signin')
-                  i.bi.bi-box-arrow-in-right
-                  span Sign in
-              li
-                hr.dropdown-divider
-              li
-                a.dropdown-item.d-flex.align-items-center(href='/signup')
-                  i.bi.bi-journal
-                  span Sign up
-              li
-                hr.dropdown-divider
-              li
-                a#logout-btn.dropdown-item.d-flex.align-items-center(style="cursor:pointer")
-                  i.bi.bi-box-arrow-right
-                  span Log Out
+              if id
+                li.dropdown-header
+                  h6=name
+                  span=email
+                li
+                  hr.dropdown-divider
+                li
+                  a.dropdown-item.d-flex.align-items-center(href='/profile')
+                    i.bi.bi-person
+                    span 個人資訊
+                li
+                  hr.dropdown-divider
+                li
+                  a#logout-btn.dropdown-item.d-flex.align-items-center(style="cursor:pointer")
+                    i.bi.bi-box-arrow-right
+                    span 登出
+              else 
+                li.dropdown-header
+                  h6 請先登入/註冊
+                li
+                  hr.dropdown-divider
+                li
+                  a.dropdown-item.d-flex.align-items-center(href='/signin')
+                    i.bi.bi-box-arrow-in-right
+                    span 登入
+                li
+                  hr.dropdown-divider
+                li
+                  a.dropdown-item.d-flex.align-items-center(href='/signup')
+                    i.bi.bi-journal
+                    span 註冊
+
             // End Profile Dropdown Items
           // End Profile Nav
       // End Icons Navigation
@@ -191,9 +197,6 @@ body
 
       // Socket
       let socket = io();
-
-      //- // 發送socket上線
-      //- socket.emit('authentication', user_email);
 
       // 登出鍵
       $('#logout-btn').click(async function () {
@@ -231,6 +234,8 @@ body
       });
 
       // Socket ------------------------------------------
+
+      
 
       // Socket 被喜歡的推播
       socket.on('saved_msg', async function(msg){

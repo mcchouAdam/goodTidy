@@ -21,14 +21,21 @@ $('#rectContour').click(async function (e) {
 async function shapeSnapShot() {
   // removeCanvasListener(canvas);
   // removeRectContourRemoveListener(canvas);
-  clearContext(canvas, context);
+  // clearContext(canvas, context);
   canvasBackground();
 
-  console.log(rectContour_params);
+  // console.log(rectContour_params);
   let item_x1 = rectContour_params[0];
   let item_y1 = rectContour_params[1];
-  let item_width = rectContour_params[2];
-  let item_height = rectContour_params[3];
+  let item_width = Math.abs(rectContour_params[2]);
+  let item_height = Math.abs(rectContour_params[3]);
+
+  // 防止使用從左下、右下、右上開始拉
+  let item_x2 = rectContour_params[4];
+  let item_y2 = rectContour_params[5];
+
+  item_x1 = Math.min(item_x1, item_x2);
+  item_y1 = Math.min(item_y1, item_y2);
 
   const item_img = $(`<img src="${previewBlah.src}" />`)
     .css('width', previewBlah.width)
@@ -94,7 +101,7 @@ $('#reDraw').click(function () {
 
 // 新增文字方塊鍵 ---------------------------------
 $('#addfont').click(async function () {
-  addDragTextarea('#update-note-content', '新增文字方塊', 25, 25);
+  addDragTextarea('#update-note-content', '', 25, 25);
 });
 
 // 儲存鍵 --------------------------------------

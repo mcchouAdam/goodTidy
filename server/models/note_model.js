@@ -104,29 +104,6 @@ const createNoteVersion = async (version_info) => {
   }
 };
 
-// const getNoteVersion = async (version_info) => {
-//   await Mongo.connect();
-//   const versionCollection = Mongo.db(MONGO_DB).collection('note_version');
-//   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
-//   try {
-//     // add new version_info to the collection [note_version]
-//     await versionCollection.insertOne(version_info);
-//     const note_id = version_info.note_id;
-//     const version_name = version_info.version_name;
-
-//     // change the attribute lastVersion in collection [note]
-//     await NotesCollection.findOneAndUpdate(
-//       { '_id': ObjectId(note_id) },
-//       { $set: { 'lastVersion': version_name } }
-//     );
-//     return res.status(200).send('update note version successfully!');
-//   } catch (error) {
-//     return { error };
-//   } finally {
-//     await Mongo.close();
-//   }
-// };
-
 const getUserNotes = async (user_id, note_permission) => {
   // await Mongo.connect();
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
@@ -319,6 +296,8 @@ const shareToAll = async (data) => {
   const tags = JSON.parse(data.tags);
   const sharing_time = new Date();
 
+  console.log('url_permission', url_permission);
+
   try {
     const result = await NotesCollection.updateOne(
       {
@@ -337,6 +316,29 @@ const shareToAll = async (data) => {
       }
     );
     console.log(result);
+    return result;
+  } catch (error) {
+    return { error };
+  } finally {
+    // await Mongo.close();
+  }
+};
+
+const deleteShareToAll = async (note_id) => {
+  const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
+  try {
+    const result = await NotesCollection.updateOne(
+      {
+        '_id': ObjectId(note_id),
+      },
+      {
+        $set: {
+          'isSharing': 0,
+          'url_permission': 0,
+        },
+      }
+    );
+
     return result;
   } catch (error) {
     return { error };
@@ -1248,6 +1250,7 @@ module.exports = {
   getUserNotes,
   shareToAll,
   getShareToAll,
+  deleteShareToAll,
   shareToOther,
   deleteShareToOther,
   getShareToOther,

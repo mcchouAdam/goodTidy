@@ -29,6 +29,7 @@ const {
   updateAnnotation,
   getAnnotation,
   showUploadNote,
+  deleteShareToAll,
 } = require('../controllers/note_controller');
 const { OCRupload, noteUpload, shareImgUpload } = require('../models/s3');
 const { OCR_google } = require('../../utils/OCR');
@@ -102,7 +103,6 @@ router
   .post(OCRImgupload, wrapAsync(OCR_google));
 
 // [分享] -----------------------------------------------
-
 // 筆記分享給所有人
 router
   .route(`/api/${API_VERSION}/note/shareToAll`)
@@ -111,6 +111,10 @@ router
 router
   .route(`/api/${API_VERSION}/note/shareToAll/:note_id`)
   .get(authentication(), wrapAsync(getShareToAll));
+
+router
+  .route(`/api/${API_VERSION}/note/shareToAll`)
+  .delete(authentication(), wrapAsync(deleteShareToAll));
 
 // 筆記分享給特定人
 router

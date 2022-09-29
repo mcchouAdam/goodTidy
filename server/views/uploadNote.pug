@@ -23,22 +23,19 @@ block content
                         //- <button id="magicContour">圖形圈選</button>
                         br
                         //- 圖形擷取
-                        button#rectContour.btn(style='font-size:25px')
+                        button#rectContour.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='框選您想截圖的區域')
                             i.bi.bi-bounding-box-circles
-                        //- button#shapeView.button-55 擷取
                         
                         //- 去除圖形
-                        button#removeNotWant.btn(style='font-size:25px')
+                        button#removeNotWant.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='遮蔽不執行OCR的區域')
                             i.bi.bi-x-square-fill
-                            //- i.fa.fa-times-circle(style="margin-left:-3px;" aria-hidden="true")
                         
                         //- OCR
                         button#OCR.btn
-                            img(src="/assets/img/ocr.png" style="width:25px;height:25px;")
-                        //- button#reDraw.button-55 復原
+                            img(src="/assets/img/ocr.png" style="width:25px;height:25px;", data-toggle='tooltip', data-placement='bottom', title='圖形文字辨識')
 
                         //- 復原
-                        button#reDraw.btn(style='font-size:25px')
+                        button#reDraw.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='復原此版面')
                             i.fa.fa-rotate-left
                         br
                     .OCR-preview
@@ -63,10 +60,10 @@ block content
                                 .row.mb-3
                                     .col-sm-1
                                         //- 刪除鍵
-                                        button#deleteElement.btn(style='font-size:25px')
+                                        button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:25px')
                                             i.fa.fa-solid.fa-trash
                                     .col-sm
-                                        button#submit_note.btn(style='font-size:25px')
+                                        button#submit_note.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', style='font-size:25px')
                                             i.fa.fa-solid.fa-upload
                             
                             #note-preview-content.note-edit-block
@@ -90,7 +87,7 @@ block content
 
                                     let config = {
                                         method: 'POST',
-                                        url: `/api/1.0/OCR`,
+                                        url: 'api/1.0/OCR',
                                         data: data,
                                     };
 
@@ -125,6 +122,7 @@ block content
                                         addDragTextarea('#note-preview-content', text, textTop, textLeft);
                                         })
                                         .catch(function (error) {
+                                            //- console.log("error", error);
                                             Swal.fire({
                                                 icon: 'error',
                                                 title: error.response.data.msg,

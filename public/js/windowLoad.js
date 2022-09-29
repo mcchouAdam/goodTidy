@@ -99,12 +99,12 @@ $(window).on('load', async function () {
   // 發送socket上線
   socket.emit('authentication', user_email);
 
-  // 拿取User所有note的資訊;
-  await getUserNotes();
-
   // 拿取User所有通知
   await getUserMsg();
   await showUserMsg();
+
+  // 拿取User所有note的資訊;
+  await getUserNotes();
 
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();

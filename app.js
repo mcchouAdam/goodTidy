@@ -3,6 +3,7 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+
 require('dotenv').config();
 const { MONGO_DB_URL, SESSION_SECRET } = process.env;
 
@@ -36,6 +37,7 @@ const API_VERSION = process.env.API_VERSION;
 app.set('view engine', 'pug');
 app.set('views', './server/views');
 app.use(express.static('public'));
+
 app.use(express.json());
 
 app.use([
@@ -46,11 +48,6 @@ app.use([
 
 // TODO: 搬家
 // Index
-app.get('/', async (req, res) => {
-  return res.render('Home');
-});
-
-// Index
 app.get('/notes', async (req, res) => {
   return res.render('notes');
 });
@@ -60,7 +57,7 @@ app.get('/sharedNote/:note_id', async (req, res) => {
   return res.render('sharedNote');
 });
 
-// error handling
+// 404 handling
 app.all('*', (req, res) => {
   return res.status(404).render('404');
 });

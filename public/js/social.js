@@ -1,24 +1,7 @@
 // 分享筆記 ------------------------------------------------------------
-// 打開分享給特定人隱藏內容
-$('#shareToOther-toggle').click(function () {
-  const checked = $(this).is(':checked');
-  if (checked) {
-    $('#shareToOhterDetail').css('visibility', 'visible');
-  } else {
-    $('#shareToOhterDetail').css('visibility', 'hidden');
-  }
-});
 
 // 打開分享給所有人隱藏內容
-$('#shareToAll-toggle').click(function () {
-  const checked = $(this).is(':checked');
-  if (checked) {
-    $('#shareToAllDetail').css('visibility', 'visible');
-    $('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
-  } else {
-    $('#shareToAllDetail').css('visibility', 'hidden');
-  }
-});
+$('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
 
 // 分享給特定人的權限設定的按鈕
 $('#shareToOtherMenu li').on('click', function () {
@@ -27,14 +10,11 @@ $('#shareToOtherMenu li').on('click', function () {
   $('#shareToOtherMethod-btn').text($(this).text());
 });
 
-// 分享鍵 ----------------------------------
+// 分享社群鍵 ----------------------------------
 $('#shareToAll_confirm-btn').click(async function () {
   // Loading圖示
   $('#shareToAll_confirm-btn').prop('disabled', true);
   $('body').css('cursor', 'progress');
-
-  const isComment = $('#allowComment-toggle').is(':checked');
-  const isWatch = $('#shareToAll-toggle').is(':checked');
 
   let tags = $('.tags')
     .map((i, e) => e.outerText)
@@ -45,6 +25,7 @@ $('#shareToAll_confirm-btn').click(async function () {
   const file = $('#shareNote_image')[0].files[0];
   let share_image;
 
+  // 照片
   if (!file) {
     share_image = '';
   } else {
@@ -54,18 +35,16 @@ $('#shareToAll_confirm-btn').click(async function () {
   let url_permission;
   let isSharing;
 
-  if (isWatch && !isComment) {
+  const isComment = $('#allowComment-toggle').is(':checked');
+  if (!isComment) {
     url_permission = 'read';
     isSharing = 1;
-  } else if (!isWatch && !isComment) {
-    url_permission = 'forbidden';
-    isSharing = 0;
   } else {
     url_permission = 'comment';
     isSharing = 1;
   }
 
-  console.log(url_permission);
+  // alert(url_permission);
   let data = new FormData();
   data.append('isSharing', isSharing);
   data.append('url_permission', url_permission);
@@ -74,7 +53,6 @@ $('#shareToAll_confirm-btn').click(async function () {
   data.append('share_ImgUpload', file);
   data.append('sharing_url', `/shareNotePage?id=${current_note_id}`);
   data.append('tags', JSON.stringify(tags));
-
   await shareToAlluser(data);
 
   // 釋放Loading圖示
@@ -107,7 +85,11 @@ $('#addShareOther-btn').click(async function () {
     'note_id': current_note_id,
   };
 
-  // 確認使用者存在
+  // 確認使用者是否已存在
+  if ($('#' + CSS.escape(addOther)).length > 0) {
+    alert('此用戶已加入過');
+    return;
+  }
   const user_notExist = await shareToOther(data);
   if (user_notExist) {
     return;
@@ -115,15 +97,16 @@ $('#addShareOther-btn').click(async function () {
 
   // 渲染畫面
   let list_html = `
-              <li class="list-group-item d-flex justify-content-between align-items-center">
-                  ${addOther}
-                  <span class="badge bg-primary rounded-pill">${permission}</span>
-                  <button id="${addOther}" class="deleteShareToOther-btn btn">
-                    <a href="javascript:deleteShareToOther('${current_note_id}','${addOther}')">
-                      <span class='bi bi-x-circle'></span>
-                    </a>
-                  </button>
-              </li>`;
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+          ${addOther}
+          <span class="badge bg-primary rounded-pill">${permission}</span>
+          <button id="${addOther}" class="deleteShareToOther-btn btn">
+            <a href="javascript:deleteShareToOther('${current_note_id}','${addOther}')">
+              <span class='bi bi-x-circle'></span>
+            </a>
+          </button>
+      </li>`;
+
   $('#shareOtherList').append(list_html);
 
   // 推播給該用戶
@@ -146,12 +129,13 @@ $('#tag_input').on('keyup', function (e) {
 
 // [Tag加入function]
 function add_tag() {
-  const tag_name = $('#tag_input').val();
+  let tag_name = $('#tag_input').val();
+  tag_name = tag_name.replaceAll('<', '&lt').replaceAll('>', '&gt');
   if (!tag_name) {
     return;
   }
-  if ($('.badge.bg-success.rounded-pill').length === 5) {
-    Swal.fire('標籤不能超過5個');
+  if ($('.badge.bg-info.rounded-pill').length === 5) {
+    alert('標籤不能超過5個');
     return;
   }
   let tag_html = `
@@ -256,11 +240,11 @@ async function shareToOther(data) {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       Swal.fire(response.data);
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       user_notExist = true;
       Swal.fire(error.response.data.msg);
     });
@@ -297,7 +281,7 @@ async function getShareAll(note_id) {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       note_isSharing = response.data[0].isSharing;
       note_url_permission = response.data[0].url_permission;
       sharing_descrition = response.data[0].sharing_descrition;
@@ -309,7 +293,7 @@ async function getShareAll(note_id) {
     })
     .catch((error) => {
       console.log(error);
-      Swal.fire('拿取特定人士權限失敗');
+      Swal.fire('拿取分享資訊失敗');
     });
 }
 
@@ -342,7 +326,6 @@ $('#comments_sorting-btn').click(function (e) {
 async function updateComment(comment_id, note_id) {
   const new_content = window.prompt('您要修改的內容?');
   if (!new_content) {
-    Swal.fire('內容不能為空');
     return;
   }
 
@@ -437,7 +420,7 @@ async function socialSearch() {
   const search_method = $('#socialPageSearch-btn').text();
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const paging = urlParams.get('paging');
+  const paging = 1; // 搜尋頁都從第一頁開始
   const sorting = urlParams.get('sorting');
   let startDate;
   let endDate;
@@ -536,6 +519,34 @@ async function deleteMsg(msg_id) {
       Swal.fire('刪除成功');
       // 刪除該list
       $(`li:contains("${msg_id}")`).remove();
+    })
+    .catch((error) => {
+      console.log(error);
+      Swal.fire(error.response.data.msg);
+    });
+}
+
+// 刪除分享給所有人
+async function deleteShareAll() {
+  const isDeleted = confirm(`確定要關閉此篇文章的分享`);
+  if (!isDeleted) {
+    return;
+  }
+
+  let data = {
+    'note_id': current_note_id,
+  };
+
+  let config = {
+    method: 'DELETE',
+    url: `/api/${API_VERSION}/note/shareToAll`,
+    data: data,
+  };
+
+  await axios(config)
+    .then((response) => {
+      console.log(response);
+      Swal.fire('關閉成功');
     })
     .catch((error) => {
       console.log(error);

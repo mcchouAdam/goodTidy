@@ -77,7 +77,7 @@ const socialPage = async (req, res) => {
       picture: picture,
       sorting: sorting,
       cards_html: JSON.stringify(card_html),
-      paging_html: JSON.stringify(paging_html),
+      paging_html: JSON.stringify(''),
     });
   }
 

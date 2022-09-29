@@ -27,16 +27,27 @@ block content
                             input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2', onKeyDown="if(event.keyCode==13) javascript:socialSearch();")
                             button#socialSearchBar.btn
                                 i.fa.fa-search
+                            button.btn#sorting-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false')
+                                i.bi.bi-filter
+                            ul#sortingMenu.dropdown-menu.dropdown-menu-end
+                                li
+                                    a#comments_sorting-btn.dropdown-item 留言數(多→少)
+                                li
+                                    a#heart_sorting-btn.dropdown-item 收藏數(多→少)
+                                li
+                                    a#time_sorting-btn.dropdown-item 分享時間(新→舊)
+                            //- button#sorting-btn.btn
+                            //-     i.bi.bi-filter
                             input#daterange(type="text", name="daterange", value="", hidden)
 
-            //- 排序搜尋法
-            .col-8(style="margin: 0 auto;")
-                button#time_sorting-btn.btn
-                    i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
-                button#heart_sorting-btn.btn
-                    i.fa.fa-heart(aria-hidden='true', style='color:grey')
-                button#comments_sorting-btn.btn 
-                    i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
+            //- //- 排序搜尋法
+            //- .col-8(style="margin: 0 auto;")
+            //-     button#time_sorting-btn.btn
+            //-         i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
+            //-     button#heart_sorting-btn.btn
+            //-         i.fa.fa-heart(aria-hidden='true', style='color:grey')
+            //-     button#comments_sorting-btn.btn 
+            //-         i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
             //- 分享筆記卡片
             #sharing-cards
             br
@@ -99,8 +110,11 @@ block content
                     const setPage = $('#setPage').val();
                     const protocol = document.location.protocol;
                     const server = document.location.host;
-                    const sorting = new URLSearchParams(document.location.search).get("sorting");
-                    window.location.assign(`${protocol}//${server}/socialPage?paging=${setPage}&sorting=${sorting}`);
+                    let queryParams = new URLSearchParams(window.location.search);
+                    queryParams.set('paging', setPage);
+                    history.replaceState(null, null, "?" + queryParams.toString());
+                    //- const sorting = new URLSearchParams(document.location.search).get("sorting");
+                    //- window.location.assign(`${protocol}//${server}/socialPage?paging=${setPage}&sorting=${sorting}`);
                 }
 
                 // [UI] 點選搜尋畫面

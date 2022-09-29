@@ -3,56 +3,72 @@ const validator = require('validator');
 const User = require('../models/user_model');
 const { S3_HOST } = process.env;
 
+// 註冊
 const signUp = async (req, res) => {
-  let { name } = req.body;
   const { email, password } = req.body;
+  let { name } = req.body; // name 在後面有去除特殊符號
   const userpicture = req.filename;
 
   if (!name || !email || !password) {
-    res
-      .status(400)
-      .send({ error: 'Request Error: name, email and password are required.' });
-    return;
+    return res.status(400).send({ error: '請填寫使用者名稱、信箱、密碼。' });
   }
 
   if (!validator.isEmail(email)) {
-    res.status(400).send({ error: 'Request Error: Invalid email format' });
-    return;
+    return res.status(400).send({ error: '錯誤的Email格式' });
+  }
+
+  if (!validator.isLength(email, { min: 0, max: 16 })) {
+    return res.status(400).send({ error: 'Email字數最多16' });
+  }
+
+  if (!validator.isLength(name, { min: 0, max: 16 })) {
+    return res.status(400).send({ error: '名字字數最多16' });
+  }
+
+  if (!validator.isAlphanumeric(name)) {
+    return res.status(400).send({ error: '名字只能是(a-z A-Z 0-9)' });
+  }
+
+  if (!validator.isLength(name, { min: 0, max: 16 })) {
+    return res.status(400).send({ error: '名字字數最多16' });
+  }
+
+  if (!validator.isLength(password, { min: 3, max: 10 })) {
+    return res.status(400).send({ error: '密碼字數最少3，最多10' });
   }
 
   name = validator.escape(name);
 
   const result = await User.signUp(name, email, password, userpicture);
+
   console.log('result in user_controller signup', result);
   if (result.error) {
     res.status(403).send({ error: result.error });
     return;
   }
 
-  res.status(200).send(result);
+  const signIn_result = await User.nativeSignIn(email, password);
+
+  // 紀錄Session登入
+  const user = signIn_result.user;
+  req.session.user = user;
+
+  res.status(200).send(user);
 };
 
-const nativeSignIn = async (email, password) => {
-  if (!email || !password) {
-    return {
-      error: 'Request Error: email and password are required.',
-      status: 400,
-    };
-  }
-  try {
-    return await User.nativeSignIn(email, password);
-  } catch (error) {
-    return { error };
-  }
-};
-
+// 登入
 const signIn = async (req, res) => {
   const data = req.body;
+  const { email, password } = req.body;
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).send({ error: '錯誤的Email格式' });
+  }
 
   let result;
   switch (data.provider) {
     case 'native':
-      result = await nativeSignIn(data.email, data.password);
+      result = await nativeSignIn(email, password);
       break;
     // case 'facebook':
     //   result = await facebookSignIn(data.access_token);
@@ -73,7 +89,7 @@ const signIn = async (req, res) => {
   req.session.user = user;
 
   if (!user) {
-    res.status(500).send({ error: 'Database Query Error' });
+    res.status(500).send({ error: '您沒有' });
     return;
   }
 
@@ -91,6 +107,21 @@ const signIn = async (req, res) => {
   });
 };
 
+// nativeSignIn
+const nativeSignIn = async (email, password) => {
+  if (!email || !password) {
+    return {
+      error: '請您輸入信箱與密碼',
+      status: 400,
+    };
+  }
+  try {
+    return await User.nativeSignIn(email, password);
+  } catch (error) {
+    return { error };
+  }
+};
+
 const getUserProfile = async (req, res) => {
   const data = {
     id: req.session.user.id,
@@ -104,13 +135,18 @@ const getUserProfile = async (req, res) => {
 };
 
 const showUserProfile = async (req, res) => {
+  const page = 'profile';
   const id = req.session.user.id;
   const provider = req.session.user.provider;
   const name = req.session.user.name;
   const email = req.session.user.email;
+  if (!req.session.user.picture) {
+    req.session.user.picture = 'user.png';
+  }
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   return res.status(200).render('profile', {
+    page: page,
     id: id,
     provider: provider,
     name: name,
@@ -120,14 +156,19 @@ const showUserProfile = async (req, res) => {
 };
 
 const showSignIn = async (req, res) => {
+  const page = 'signin';
   if (req.session.user) {
     const id = req.session.user.id;
     const provider = req.session.user.provider;
     const name = req.session.user.name;
     const email = req.session.user.email;
+    if (!req.session.user.picture) {
+      req.session.user.picture = 'user.png';
+    }
     const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
     return res.status(200).render('profile', {
+      page: page,
       id: id,
       provider: provider,
       name: name,
@@ -136,18 +177,23 @@ const showSignIn = async (req, res) => {
     });
   }
 
-  return res.status(200).render('signin');
+  return res.status(200).render('signin', { page: 'signin' });
 };
 
 const showSignUp = async (req, res) => {
+  const page = 'signup';
   if (req.session.user) {
     const id = req.session.user.id;
     const provider = req.session.user.provider;
     const name = req.session.user.name;
     const email = req.session.user.email;
+    if (!req.session.user.picture) {
+      req.session.user.picture = 'user.png';
+    }
     const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
     return res.status(200).render('profile', {
+      page: page,
       id: id,
       provider: provider,
       name: name,
@@ -156,12 +202,36 @@ const showSignUp = async (req, res) => {
     });
   }
 
-  return res.status(200).render('signup');
+  return res.status(200).render('signup', { page: page });
 };
 
+// 登出
 const logOut = async (req, res) => {
   req.session.destroy();
   return res.status(200).send({ 'msg': '登出成功' });
+};
+
+// 首頁
+const showHome = async (req, res) => {
+  const page = 'Home';
+  if (req.session.user) {
+    const id = req.session.user.id;
+    const provider = req.session.user.provider;
+    const name = req.session.user.name;
+    const email = req.session.user.email;
+    const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
+
+    return res.status(200).render('Home', {
+      page: page,
+      id: id,
+      provider: provider,
+      name: name,
+      email: email,
+      picture: picture,
+    });
+  }
+
+  return res.status(200).render('Home', { page: page });
 };
 
 module.exports = {
@@ -172,4 +242,5 @@ module.exports = {
   showUserProfile,
   showSignIn,
   showSignUp,
+  showHome,
 };
