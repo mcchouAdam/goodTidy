@@ -83,17 +83,17 @@ block content
                 sorting = !{JSON.stringify(sorting)};
 
                 // sorting決定變色
-                switch(sorting){
-                    case 'sharing_time': 
-                        $('.fa-clock-o').css('color','blue');
-                        break;
-                    case 'saved_count': 
-                        $('.fa-heart').css('color','red');
-                        break;
-                    case 'comment_count':
-                        $('.fa-comments').css('color','blue');
-                        break;
-                }
+                //- switch(sorting){
+                //-     case 'sharing_time': 
+                //-         $('.fa-clock-o').css('color','blue');
+                //-         break;
+                //-     case 'saved_count': 
+                //-         $('.fa-heart').css('color','red');
+                //-         break;
+                //-     case 'comment_count':
+                //-         $('.fa-comments').css('color','blue');
+                //-         break;
+                //- }
 
                 const elements_html = $.parseHTML(cards_html);
                 $('#sharing-cards').append(elements_html);
@@ -148,6 +148,8 @@ block content
                     $(this).children("span").text(`${heart_count}`)
                 });
 
+
+
                 
         script(src='/js/user.js')
         script(src='/js/windowLoad.js')
@@ -161,12 +163,13 @@ block content
         script(src='/js/search.js')
         script(src='/js/autoSave.js')
         script(src='/js/annotationBar.js')
+                
+                //- 監聽別人是否有更新收藏
+                socket.on('saved_count_update', function(note_savedStatus){
+                    alert(note_savedStatus);
+                })
 
 
-        //- //- 監聽別人是否有更新收藏
-        //- socket.on('saved_count_update', function(note_savedStatus){
-        //-     console.log("sssssssssssss");
-        //-     alert(note_savedStatus);;
-        //- })
+
 
 

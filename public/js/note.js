@@ -48,7 +48,7 @@ async function noteUpload(
       console.log(error);
       Swal.fire({
         icon: 'error',
-        title: '上傳筆記失敗',
+        title: error.response.data.error,
         showConfirmButton: false,
         timer: 1500,
       });
@@ -387,9 +387,15 @@ async function getVersionList(version_obj, div_append) {
           };
           name_html += `
                 <span class="badge bg-primary rounded-pill">${num}</span>
-                <input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
-                <label class="btn btn-light" for="${v.version_name}">${v.version_name}</label>
-                <span class="small" style="float:right; margin:8px;">${v.created_time}</span>
+                <input type="radio" class="btn-check" name="version_options" id="${
+                  v.version_name
+                }" value="${v.version_name}" autocomplete="off">
+                <label class="btn btn-light" for="${v.version_name}">${
+            v.version_name
+          }</label>
+                <span class="small" style="float:right; margin:8px;">${timeConverter(
+                  new Date(v.created_time)
+                )}</span>
                 <br />
               `;
           num++;
@@ -527,20 +533,6 @@ async function moveNote(note_id) {
 // 改名分類
 async function renameclassification(user_id, old_classificationName) {
   const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
-  //   Swal.fire({
-  //     title: 'Submit your Github username',
-  //     input: 'text',
-  //     inputAttributes: {
-  //     autocapitalize: 'off'
-  //   },
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Look up',
-  //     showLoaderOnConfirm: true,
-  //   }).then((result) => {
-  //   if (!result.isConfirmed) {
-  //     Swal.fire("QQ")
-  //   }
-  // })}
 
   if (!new_classificationName) {
     Swal.fire('分類名字不能為空');
@@ -704,6 +696,10 @@ async function saveAnnotation(annotion_user_id, note_id) {
 
   // 儲存註釋 textarea的值
   for (let i = 0; i < annotation_textare_count; i++) {
+    if ($(annotation_textarea_class).get(i).value == '') {
+      alert('註釋不能空白！');
+      return;
+    }
     annotation_textarea.push($(annotation_textarea_class).get(i).value);
   }
 
@@ -735,7 +731,7 @@ async function saveAnnotation(annotion_user_id, note_id) {
     })
     .catch(function (error) {
       console.log(error);
-      Swal.fire('儲存註釋失敗');
+      Swal.fire(error.response.data.msg);
     });
 }
 

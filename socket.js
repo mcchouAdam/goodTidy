@@ -46,6 +46,8 @@ io.on('connection', async (socket) => {
     const user_name = obj.user_name;
     const note_savedStatus = JSON.parse(obj.note_savedStatus);
 
+    // console.log('note_savedStatus:', note_savedStatus);
+
     const getNoteOwner = await Notes.getNoteById(note_id);
     // console.log('getNoteOwner: ', getNoteOwner[0].user_info[0].email);
 
@@ -54,13 +56,13 @@ io.on('connection', async (socket) => {
     const Owner_user_socket_id = user_online_socketId[Owner_user_email];
 
     // 送出推播
-    io.to(Owner_user_socket_id).emit(
-      'saved_msg',
-      `${user_name}收藏您的筆記: ${note_name} ！`
-    );
+    // io.to(Owner_user_socket_id).emit(
+    //   'saved_msg',
+    //   `${user_name}收藏您的筆記: ${note_name} ！`
+    // );
 
     // 更新對方save數字
-    io.to(Owner_user_socket_id).emit('saved_count_update', note_savedStatus);
+    io.emit('saved_count_update', note_savedStatus);
   });
 
   // 特定人分享給你
