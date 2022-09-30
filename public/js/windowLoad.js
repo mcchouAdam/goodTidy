@@ -106,6 +106,9 @@ $(window).on('load', async function () {
   // 拿取User所有note的資訊;
   await getUserNotes();
 
+  // 畫出NavList資訊
+  await showNoteList(note_list_obj, $('#sidebar-nav'));
+
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();
 

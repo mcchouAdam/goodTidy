@@ -3,6 +3,7 @@ let AutoSave = (function () {
 
   function save() {
     let editor = $('#update-note-content').html();
+
     if (editor) {
       // 圖形擷取資訊
       let contourImg_count = $('.contour-pic').length;

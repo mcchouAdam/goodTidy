@@ -211,6 +211,7 @@ async function getUserNotes() {
       // Deep copy the note_obj
       // 筆記列表呈現的內容
       note_list_obj = $.extend(true, [], note_obj);
+      console.log('note_list_obj', note_list_obj);
 
       // 列表筆記搜尋欄需呈現的內容
       search_note_list_obj = $.extend(true, [], search_list_obj);
@@ -222,9 +223,6 @@ async function getUserNotes() {
       shared_note_obj = $.extend(true, [], sharedNote_obj);
       // 呈現有分享給你的文章數
       $('#sharedNoteCount').text(Object.keys(shared_note_obj).length);
-
-      // Show the NoteListNav
-      showNoteList(note_obj, $('#sidebar-nav'));
 
       // Loading -----------------------------------
       // $('.wrapper-loading').remove();

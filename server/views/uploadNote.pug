@@ -16,7 +16,7 @@ block content
                             //-     button#form-prview-btn.button-55 預覽
                     br
                     img#img-preview(hidden='')
-                    .OCR-nav(style="margin:40px 0 18px 0px;")
+                    .OCR-nav(style="margin:50px 0 8px 0px;")
                         //- <button id="pre">上一步</button>
                         //- <button id="next">下一步</button>
                         //- button#shapeRemoveBG(disabled='') 圖形去背
@@ -30,14 +30,15 @@ block content
                         button#removeNotWant.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='遮蔽不執行OCR的區域')
                             i.bi.bi-x-square-fill
                         
-                        //- OCR
-                        button#OCR.btn
-                            img(src="/assets/img/ocr.png" style="width:25px;height:25px;", data-toggle='tooltip', data-placement='bottom', title='圖形文字辨識')
-
                         //- 復原
                         button#reDraw.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='復原此版面')
                             i.fa.fa-rotate-left
-                        br
+                        
+                        //- OCR
+                        button#OCR.btn(style="float:right;")
+                            img(src="/assets/img/ocr.png" style="width:25px;height:25px;", data-toggle='tooltip', data-placement='bottom', title='圖形文字辨識')
+
+
                     .OCR-preview
                         canvas#fontOCRCanvas(width="600" height="500")
             .col

@@ -197,6 +197,13 @@ $('#storeNote').click(async function () {
         showConfirmButton: false,
         timer: 1500,
       });
+
+      // 重抓使用者資料
+      await getUserNotes();
+      current_version_obj = await getVersionList(
+        version_obj,
+        $('#modal-version-main')
+      );
       // window.location.assign('/note');
     }
   });
