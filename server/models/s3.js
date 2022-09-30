@@ -74,7 +74,7 @@ const noteUpload = multer({
   }),
   limits: { fileSize: 1024 * 1024 * 2 }, // 2MB
   fileFilter: function (req, file, cb) {
-    const filetypes = /jpeg|jpg|png/;
+    const filetypes = /jpeg|jpg|png|/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
     );

@@ -16,7 +16,7 @@ block content
                             //-     button#form-prview-btn.button-55 預覽
                     br
                     img#img-preview(hidden='')
-                    .OCR-nav(style="margin:10px 0 15px 0px;")
+                    .OCR-nav(style="margin:40px 0 18px 0px;")
                         //- <button id="pre">上一步</button>
                         //- <button id="next">下一步</button>
                         //- button#shapeRemoveBG(disabled='') 圖形去背
@@ -50,14 +50,13 @@ block content
                         .note-preview-block
                             .processed-content-nav
                                 .row.mb-3
-                                    label.col-sm-2.col-form-label 筆記名稱
-                                    .col-sm-10
+                                    .input-group.mb-3
+                                        button.btn.btn-outline-secondary 筆記名稱
                                         input#note-name.form-control(type='text')
                                 .row.mb-3
                                     .input-group.mb-3
-                                        label.col-sm-2.col-form-label 筆記分類
-                                        input#note-classification.form-control(type='text') 
-                                        button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 您的分類
+                                        button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 選擇分類
+                                        input#note-classification.form-control(type='text')
                                         ul#classMenu.dropdown-menu.dropdown-menu-end
                                 .row.mb-3
                                     .col-sm-1
@@ -71,24 +70,48 @@ block content
                             #note-preview-content.note-edit-block
 
                             script.
+
+                                let check_note_name = [];
                                 // 呈現筆記分類頁面
                                 $(document).ready(async function(){
+                                    // 選擇分類的dropdown item
                                     await getUserNotes();
                                     note_classes = Object.keys(note_list_obj);
-                                    let classed_html = '';
+                                    
+                                    Object.values(note_list_obj).map( note => {
+                                        check_note_name.push(...note.note_name);
+                                    })
+
+                                    let classed_html = '<li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle"></i>新增分類</a></li><hr class="dropdown-divider"></hr>';
                                     note_classes.map( c => {
                                         classed_html += `<li><a class="dropdown-item" href="#">${c}</a></li>`;
                                     })
                                     $('#classMenu').append(classed_html);
+
+                                    // 選擇分類的dropdown
+                                    $('#classMenu li a').on('click', function(e){ 
+                                        
+                                        
+                                        if(e.target.text == '新增分類'){
+                                            $('#ownNoteClass-btn').text('新增分類');
+                                            $('#note-classification').val('');
+                                            $('#note-classification').prop('disabled', false);
+                                        }
+                                        else{
+                                            $('#ownNoteClass-btn').text('筆記分類');
+                                            $('#note-classification').val(e.target.text);
+                                            $('#note-classification').prop('disabled', true);
+                                        }
+                                    })
                                 })
                                 
-                                // 選擇分類的dropdown
 
-                                $('#ownNoteClass-btn li').on('click', function () {
-                                    console.log($(this).text());
-                                    console.log($('#shareToOtherMethod-btn').text());
-                                    $('#ownNoteClass-btn').text($(this).text());
-                                });
+
+                                //- $('#ownNoteClass-btn li').on('click', function () {
+                                //-     console.log($(this).text());
+                                //-     console.log($('#ownNoteClass-btn').text());
+                                //-     $('#ownNoteClass-btn').text($(this).text());
+                                //- });
 
 
                                 // 文字辨識鍵 --------------------------------------
@@ -196,47 +219,29 @@ block content
                                     note_name = $('#note-name').val();
                                     note_classification = $('#note-classification').val();
 
-                                    let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
-                                    
-                                    //- let ver_name;
-                                    //- Swal.fire({
-                                    //-      title: '請輸入此版本名稱',
-                                    //-      input: 'text',
-                                    //-      inputAttributes: {
-                                    //-         autocapitalize: 'off'
-                                    //-     },
-                                    //-      showCancelButton: true,
-                                    //-      confirmButtonText: '確認',
-                                    //-      cancelButtonText: '取消',
-                                    //-    }).then((result) => {
-                                    //-         if(result.isConfirmed){
-                                    //-             ver_name = result.value;
-                                    //-              // Loading釋放
-                                    //-             $('#submit_note').prop('disabled', false);
-                                    //-             $('body').css('cursor', 'default');
-                                    //-             if(ver_name == null || ver_name == '' ){
-                                    //-                 Swal.fire('版本名不能為空白');
-                                    //-             }
-                                    //-             if(note_name == '' || note_classification == '' ){
-                                    //-                  Swal.fire('筆記名稱或筆記分類不能為空白');
-                                    //-             }
-                                    //-         }
-                                    //-         //- 取消
-                                    //-         //- else {
-                                    //-         //-    return;
-                                    //-         //- }
-                                    //-     });
+                                    let ver_name = new Date();
 
-                                    //- 檢查版本名
-                                    if (ver_name == null || ver_name == '') {
-                                        Swal.fire('版本名不能為空');
+                                    if(note_name == '' || note_classification == '' ){
+                                        Swal.fire({
+                                                icon: 'error',
+                                                title: '筆記名稱或筆記分類不能為空白',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                        });
                                         // Loading釋放
                                         $('#submit_note').prop('disabled', false);
                                         $('body').css('cursor', 'default');
                                         return;
                                     }
-                                    if(note_name == '' || note_classification == '' ){
-                                        Swal.fire('筆記名稱或筆記分類不能為空白');
+
+                                    // 筆記名稱重複
+                                    if(check_note_name.indexOf(note_name) != -1){
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: '您的筆記名稱有重複',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
                                         // Loading釋放
                                         $('#submit_note').prop('disabled', false);
                                         $('body').css('cursor', 'default');

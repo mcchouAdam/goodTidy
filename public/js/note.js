@@ -384,19 +384,18 @@ async function getVersionList(version_obj, div_append) {
             'text_elements': v.text_elements,
             'created_time': v.created_time,
           };
+
+          vName_timeFormat = timeConverter(new Date(v.version_name));
           name_html += `
                 <span class="badge bg-primary rounded-pill">${num}</span>
-                <input type="radio" class="btn-check" name="version_options" id="${
-                  v.version_name
-                }" value="${v.version_name}" autocomplete="off">
-                <label class="btn btn-light" for="${v.version_name}">${
-            v.version_name
-          }</label>
-                <span class="small" style="float:right; margin:8px;">${timeConverter(
-                  new Date(v.created_time)
-                )}</span>
+                <input type="radio" class="btn-check" name="version_options" id="${v.version_name}" value="${v.version_name}" autocomplete="off">
+                <label class="btn btn-light" for="${v.version_name}">${vName_timeFormat}</label>
                 <br />
               `;
+
+          // <span class="small" style="float:right; margin:8px;">
+          //   ${timeConverter(new Date(v.created_time))}
+          // </span>;
           num++;
         });
         div_append.append(name_html);

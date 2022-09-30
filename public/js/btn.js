@@ -106,90 +106,100 @@ $('#addfont').click(async function () {
 
 // 儲存鍵 --------------------------------------
 $('#storeNote').click(async function () {
-  // 確認儲存 & 輸入版本名稱
-  let version_name = prompt('請輸入此版本名稱:', '');
+  Swal.fire({
+    title: '你確定要儲存檔案嗎?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      let version_name = new Date();
 
-  if (version_name === null || version_name === '') {
-    Swal.fire('版本名不能為空');
-    return;
-  }
+      // 圖形擷取資訊
+      let contourImg_count = $('.contour-pic').length;
+      let element_html = '';
+      for (let i = 0; i < contourImg_count; i++) {
+        element_html += $('.contour-pic').get(i).outerHTML;
+      }
+      const file_name = `${S3_HOST}notes/${note_bg}`;
+      let removeSrc_element = element_html.replaceAll(file_name, '');
 
-  // 圖形擷取資訊
-  let contourImg_count = $('.contour-pic').length;
-  let element_html = '';
-  for (let i = 0; i < contourImg_count; i++) {
-    element_html += $('.contour-pic').get(i).outerHTML;
-  }
-  const file_name = `${S3_HOST}notes/${note_bg}`;
-  console.log(element_html);
-  let removeSrc_element = element_html.replaceAll(file_name, '');
+      // OCR的draggable文字方塊資訊
+      // OCR_elements = [];
+      // if (OCR_ids.length != 0) {
+      //   OCR_ids.map((id) => {
+      //     const OCR_top = $(`#${id}`).parent().get(0).style.top;
+      //     const OCR_left = $(`#${id}`).parent().get(0).style.left;
+      //     const OCR_width = $(`#${id}`).parent().get(0).style.width;
+      //     const OCR_height = $(`#${id}`).parent().get(0).style.height;
+      //     const OCR_text = $(`#${id}`).val();
+      //     const OCR_obj = {
+      //       'text': OCR_text,
+      //       'textTop': OCR_top,
+      //       'textLeft': OCR_left,
+      //       'height': OCR_height,
+      //       'width': OCR_width,
+      //     };
+      //     OCR_elements.push(OCR_obj);
+      //   });
+      // }
 
-  // OCR的draggable文字方塊資訊
-  // OCR_elements = [];
-  // if (OCR_ids.length != 0) {
-  //   OCR_ids.map((id) => {
-  //     const OCR_top = $(`#${id}`).parent().get(0).style.top;
-  //     const OCR_left = $(`#${id}`).parent().get(0).style.left;
-  //     const OCR_width = $(`#${id}`).parent().get(0).style.width;
-  //     const OCR_height = $(`#${id}`).parent().get(0).style.height;
-  //     const OCR_text = $(`#${id}`).val();
-  //     const OCR_obj = {
-  //       'text': OCR_text,
-  //       'textTop': OCR_top,
-  //       'textLeft': OCR_left,
-  //       'height': OCR_height,
-  //       'width': OCR_width,
-  //     };
-  //     OCR_elements.push(OCR_obj);
-  //   });
-  // }
+      // 文字擷取
+      const text_elements = $('.div_addtextarea');
+      let OCR_elements = [];
+      if (text_elements.length != 0) {
+        text_elements.map((i, e) => {
+          let obj = {};
+          const OCR_top = e.style.top;
+          const OCR_left = e.style.left;
+          const OCR_width = e.style.width;
+          const OCR_height = e.style.height;
+          const OCR_text = e.firstChild.value;
+          obj = {
+            'text': OCR_text,
+            'textTop': OCR_top,
+            'textLeft': OCR_left,
+            'height': OCR_height,
+            'width': OCR_width,
+          };
+          OCR_elements.push(obj);
+        });
+      }
 
-  // 文字擷取
-  const text_elements = $('.div_addtextarea');
-  let OCR_elements = [];
-  if (text_elements.length != 0) {
-    text_elements.map((i, e) => {
-      let obj = {};
-      const OCR_top = e.style.top;
-      const OCR_left = e.style.left;
-      const OCR_width = e.style.width;
-      const OCR_height = e.style.height;
-      const OCR_text = e.firstChild.value;
-      obj = {
-        'text': OCR_text,
-        'textTop': OCR_top,
-        'textLeft': OCR_left,
-        'height': OCR_height,
-        'width': OCR_width,
+      // 搜尋使用的keywords，將全部的字串串起來
+      let ek = $('.addtextarea')
+        .map((_, el) => el.value)
+        .get();
+      let keywords = ek.join('').replaceAll('\n', '').replace(/\s/g, '');
+
+      let data = {
+        'note_id': current_note_id,
+        'created_time': '',
+        'version_img': '123_coolthing_ver3.png',
+        'version_name': version_name,
+        'elements': removeSrc_element,
+        'keywords': keywords,
+        'text_elements': JSON.stringify(OCR_elements),
       };
-      OCR_elements.push(obj);
-    });
-  }
 
-  // 搜尋使用的keywords，將全部的字串串起來
-  let ek = $('.addtextarea')
-    .map((_, el) => el.value)
-    .get();
-  let keywords = ek.join('').replaceAll('\n', '').replace(/\s/g, '');
+      await axios({
+        method: 'POST',
+        url: '/api/1.0/noteVersion',
+        data: data,
+      });
 
-  let data = {
-    'note_id': current_note_id,
-    'created_time': '',
-    'version_img': '123_coolthing_ver3.png',
-    'version_name': version_name,
-    'elements': removeSrc_element,
-    'keywords': keywords,
-    'text_elements': JSON.stringify(OCR_elements),
-  };
-
-  await axios({
-    method: 'POST',
-    url: '/api/1.0/noteVersion',
-    data: data,
+      Swal.fire({
+        icon: 'success',
+        title: '存檔成功',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      // window.location.assign('/note');
+    }
   });
-
-  Swal.fire(`版本: ${version_name} 儲存成功!`);
-  window.location.assign('/note');
 });
 
 // // 復原版本鍵 --------------------------------------
