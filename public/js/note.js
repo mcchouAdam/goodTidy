@@ -233,7 +233,6 @@ async function getUserNotes() {
     .catch((error) => {
       // Loading取消
       $body.removeClass('loading');
-
       console.log(error);
     });
 }

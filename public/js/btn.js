@@ -6,12 +6,12 @@ $('#magicContour').click(async function () {
 
 // 方形圈選
 $('#rectContour').click(async function (e) {
-  const isfile_upload = $('#file-preview').get(0).files.length;
-  if (isfile_upload == 0) {
-    // Swal.fire('請先選擇檔案');
-    Swal.fire('請先選擇檔案');
-    return;
-  }
+  // const isfile_upload = $('#file-preview').get(0).files.length;
+  // if (isfile_upload == 0) {
+  //   // Swal.fire('請先選擇檔案');
+  //   Swal.fire('請先選擇檔案');
+  //   return;
+  // }
 
   $('#fontOCRCanvas').css('cursor', 'crosshair');
   initRectContourListener(canvas);

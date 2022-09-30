@@ -89,7 +89,7 @@ async function signIn(email, password) {
         showConfirmButton: false,
         timer: 1500,
       }).then(function () {
-        window.location.assign('/profile');
+        window.location.assign('/note');
       });
     })
     .catch((error) => {

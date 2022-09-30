@@ -54,9 +54,11 @@ block content
                                     .col-sm-10
                                         input#note-name.form-control(type='text')
                                 .row.mb-3
-                                    label.col-sm-2.col-form-label 筆記分類
-                                    .col-sm-10
-                                        input#note-classification.form-control(type='text')
+                                    .input-group.mb-3
+                                        label.col-sm-2.col-form-label 筆記分類
+                                        input#note-classification.form-control(type='text') 
+                                        button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 您的分類
+                                        ul#classMenu.dropdown-menu.dropdown-menu-end
                                 .row.mb-3
                                     .col-sm-1
                                         //- 刪除鍵
@@ -69,10 +71,37 @@ block content
                             #note-preview-content.note-edit-block
 
                             script.
+                                // 呈現筆記分類頁面
+                                $(document).ready(async function(){
+                                    await getUserNotes();
+                                    note_classes = Object.keys(note_list_obj);
+                                    let classed_html = '';
+                                    note_classes.map( c => {
+                                        classed_html += `<li><a class="dropdown-item" href="#">${c}</a></li>`;
+                                    })
+                                    $('#classMenu').append(classed_html);
+                                })
+                                
+                                // 選擇分類的dropdown
+
+                                $('#ownNoteClass-btn li').on('click', function () {
+                                    console.log($(this).text());
+                                    console.log($('#shareToOtherMethod-btn').text());
+                                    $('#ownNoteClass-btn').text($(this).text());
+                                });
 
 
                                 // 文字辨識鍵 --------------------------------------
                                 $('#OCR').click(async function () {
+                                    
+                                    // 檢查已經有附檔
+                                    const isfile_upload = $('#file-preview').get(0).files.length;
+                                    if (isfile_upload == 0) {
+                                        // Swal.fire('請先選擇檔案');
+                                        Swal.fire('請先選擇檔案');
+                                        return;
+                                    }
+                                    
                                     // Loading圖示
                                     $('#OCR').prop('disabled', true);
                                     $('body').css('cursor', 'progress');
