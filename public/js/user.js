@@ -87,7 +87,7 @@ async function signIn(email, password) {
         icon: 'success',
         title: `${user_name}您好！`,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       }).then(function () {
         window.location.assign('/note');
       });
@@ -98,30 +98,23 @@ async function signIn(email, password) {
         icon: 'error',
         title: error.response.data.error,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       });
     });
 }
 
-// [分享頁面] 分享toggle元件 ---------------------------------
+// [分享頁面] 分享鍵 ---------------------------------
 $('#share-btn').click(async function () {
-  if (!current_note_id) {
-    $('#shareToAllModal').modal({
-      backdrop: 'static',
-      keyboard: false,
-    });
-    Swal.fire('請先選擇筆記');
+  await showShareToAll();
+});
 
-    // $('#shareToAllModal').modal('hide');
-    return 0;
-  }
-
+async function showShareToAll() {
   // PreLoad the 特定人士清單
   await getShareToOther(current_note_id);
 
   // assign到全域變數
   await getShareAll(current_note_id);
-  const shareOtherList_content = $('#shareOtherList li').text();
+  // const shareOtherList_content = $('#shareOtherList li').text();
 
   // 分享到社群的狀態
   if (note_isSharing == 1) {
@@ -147,7 +140,7 @@ $('#share-btn').click(async function () {
     $('.tags').remove();
     tags.map((t) => {
       $('.note_tags').append(`
-        <span class="tags badge bg-info rounded-pill" style="color:white;">${t}&nbsp
+        <span class="tags badge bg-info rounded-pill" style="color:white;">${t}
           <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
         </span>`);
     });
@@ -161,11 +154,15 @@ $('#share-btn').click(async function () {
     $('#share_url').val('');
     $('share_url').prop('disabled', true);
   }
-});
+}
 
+// 取消分享鍵 ---------------------------------
 $('#shareToAll_cancel-btn').click(async function () {
   await deleteShareAll();
   await getShareAll(current_note_id);
+  await showShareToAll();
+  // await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+  // $('#share-btn').click();
 });
 
 // 註冊鍵 -------------------------------------
@@ -207,7 +204,7 @@ $('#signup-form-btn').click(async function (e) {
         icon: 'error',
         title: signUp_result.msg,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       });
       return;
     }
@@ -217,7 +214,7 @@ $('#signup-form-btn').click(async function (e) {
       icon: 'success',
       title: signUp_result.msg,
       showConfirmButton: false,
-      timer: 1500,
+      timer: 1000,
     }).then(function () {
       window.location.assign('/profile');
     });

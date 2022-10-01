@@ -195,7 +195,7 @@ $('#storeNote').click(async function () {
         icon: 'success',
         title: '存檔成功',
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       });
 
       // 重抓使用者資料

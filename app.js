@@ -61,8 +61,10 @@ app.get('/sharedNote/:note_id', async (req, res) => {
 // error handling
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
-    err.status = 400;
-    err.message = '檔案超過2MB';
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      err.status = 400;
+      err.message = '檔案超過2MB';
+    }
   }
   return res.status(err.status).send({ error: err.message });
 });

@@ -39,7 +39,7 @@ async function noteUpload(
         icon: 'success',
         title: '上傳筆記成功',
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       }).then(function () {
         window.location.assign('/note');
       });
@@ -50,7 +50,7 @@ async function noteUpload(
         icon: 'error',
         title: error.response.data.error,
         showConfirmButton: false,
-        timer: 1500,
+        timer: 1000,
       });
     });
 }
@@ -251,19 +251,6 @@ async function showNoteList(note_obj, div_append) {
 
     // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {
-      // 筆記修改/刪除/移動清單
-      // note_menu_html = `
-      //         <div class="d-flex flex-row align-items-center">
-      //           <a class="btn" id="dropdownMenuLink" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      //             <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
-      //           </a>
-      //           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-      //             <a class="dropdown-item" href="javascript:renameNote('${ids[i]}')">修改名稱</a>
-      //             <a class="dropdown-item" href="javascript:deleteNote('${ids[i]}')">刪除</a>
-      //             <a class="dropdown-item" href="javascript:moveNote('${ids[i]}')">搬移</a>
-      //           </div>
-      //         </div>`;
-
       note_menu_html = '';
       notes_html += `
         <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
@@ -328,7 +315,12 @@ async function getSharedNote(sharedNote_obj, div_append) {
   div_append.html('');
   let shareNote_html = '';
   const note_names = Object.keys(sharedNote_obj);
-  // sharedNote_obj.map((s) => {});
+  if (note_names.length === 0) {
+    shareNote_html = '<p>沒有人分享筆記給您</p>';
+    div_append.append(shareNote_html);
+    return;
+  }
+
   let num = 1;
   note_names.map((id) => {
     const permission = sharedNote_obj[id].user_permission;
@@ -357,7 +349,7 @@ async function getSharedNote(sharedNote_obj, div_append) {
             </div>
               `;
   });
-  console.log(shareNote_html);
+  // console.log(shareNote_html);
   div_append.append(shareNote_html);
 }
 
@@ -618,117 +610,150 @@ async function modifyAnnotation(annotation_id) {
 
 // 刪除註釋
 async function deleteAnnotation(annotation_id) {
-  const isDeleted = window.confirm('確定刪除此註釋?');
-  if (!isDeleted) {
-    return;
-  }
+  Swal.fire({
+    title: '您確定刪除此註釋?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '刪除',
+    cancelButtonText: '取消',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $('#icon-' + annotation_id).remove();
+      $('#form-group-' + annotation_id).remove();
 
-  $('#icon-' + annotation_id).remove();
-  $('#form-group-' + annotation_id).remove();
+      // icon的id與編碼要重新排順序
+      const icon_count = $('.fa-comments').length - 1; // 第一個是工具列的工具icon
+      for (let i = 1; i <= icon_count; i++) {
+        let comments_arr = $('.fa-comments')[i].id.split('_');
+        comments_arr[comments_arr.length - 1] = i;
+        let new_id = comments_arr.join('_');
+        $('.fa-comments')[i].id = new_id;
+        $('.fa-comments')[
+          i
+        ].innerHTML = `<span class="badge bg-dark rounded-pill">${i}</span>`;
+      }
 
-  // icon的id與編碼要重新排順序
-  const icon_count = $('.fa-comments').length - 1; // 第一個是工具列的工具icon
-  for (let i = 1; i <= icon_count; i++) {
-    let comments_arr = $('.fa-comments')[i].id.split('_');
-    comments_arr[comments_arr.length - 1] = i;
-    let new_id = comments_arr.join('_');
-    $('.fa-comments')[i].id = new_id;
-    $('.fa-comments')[
-      i
-    ].innerHTML = `<span class="badge bg-dark rounded-pill">${i}</span>`;
-  }
+      //textarea的id與編碼要重新排序
+      const textarea_count = $('.form-control').length;
+      for (let i = 1; i <= textarea_count; i++) {
+        let textarea_arr = $('.form-control')[i - 1].id.split('_');
+        textarea_arr[textarea_arr.length - 1] = i;
+        let new_id = textarea_arr.join('_');
+        $('.form-control')[i - 1].id = new_id;
+      }
 
-  //textarea的id與編碼要重新排序
-  const textarea_count = $('.form-control').length;
-  for (let i = 1; i <= textarea_count; i++) {
-    let textarea_arr = $('.form-control')[i - 1].id.split('_');
-    textarea_arr[textarea_arr.length - 1] = i;
-    let new_id = textarea_arr.join('_');
-    $('.form-control')[i - 1].id = new_id;
-  }
+      //formgroup的id與編碼要重新排序
+      const formgroup_count = $('.form-group').length;
+      for (let i = 1; i <= formgroup_count; i++) {
+        let formgroup_arr = $('.form-group')[i - 1].id.split('_');
+        formgroup_arr[formgroup_arr.length - 1] = i;
+        let new_id = formgroup_arr.join('_');
+        console.log('new_id', new_id);
+        $('.form-group')[i - 1].id = new_id;
+        $('.form-group span.bg-dark')[i - 1].innerHTML = i;
+      }
 
-  //formgroup的id與編碼要重新排序
-  const formgroup_count = $('.form-group').length;
-  for (let i = 1; i <= formgroup_count; i++) {
-    let formgroup_arr = $('.form-group')[i - 1].id.split('_');
-    formgroup_arr[formgroup_arr.length - 1] = i;
-    let new_id = formgroup_arr.join('_');
-    console.log('new_id', new_id);
-    $('.form-group')[i - 1].id = new_id;
-    $('.form-group span.bg-dark')[i - 1].innerHTML = i;
-  }
-
-  //href也要重新排序
-  const href_count = $('div.dropdown-menu a.dropdown-item').length;
-  for (let i = 1; i <= href_count; i++) {
-    let href = $('div.dropdown-menu a.dropdown-item')[i - 1].href;
-    let new_id = annotation_id.substring(0, annotation_id.length - 1) + i;
-    let new_href = `javascript:deleteAnnotation('${new_id}')`;
-    $('div.dropdown-menu a.dropdown-item')[i - 1].href = new_href;
-  }
+      //href也要重新排序
+      const href_count = $('div.dropdown-menu a.dropdown-item').length;
+      for (let i = 1; i <= href_count; i++) {
+        let href = $('div.dropdown-menu a.dropdown-item')[i - 1].href;
+        let new_id = annotation_id.substring(0, annotation_id.length - 1) + i;
+        let new_href = `javascript:deleteAnnotation('${new_id}')`;
+        $('div.dropdown-menu a.dropdown-item')[i - 1].href = new_href;
+      }
+    }
+  });
 }
 
 // 儲存註釋 ---
 async function saveAnnotation(annotion_user_id, note_id) {
-  const isSaved = window.confirm('確定要儲存全部的註釋?');
-  if (!isSaved) {
-    return;
-  }
-  let annotation_icon_html = '';
-  let annotation_textarea = [];
-  let annotation_user_name = [];
-  let annotation_icon_class =
-    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
-  let annotation_textarea_class = 'textarea.form-control';
-  let annotation_user_name_class = '.bg-info';
-  let annotation_icon_count = $(annotation_icon_class).length;
-  let annotation_textare_count = $(annotation_textarea_class).length;
-  let annotation_user_name_count = $(annotation_user_name_class).length;
+  Swal.fire({
+    title: '您確定要儲存全部的註釋?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '儲存',
+    cancelButtonText: '取消',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      let annotation_icon_html = '';
+      let annotation_textarea = [];
+      let annotation_user_name = [];
+      let annotation_icon_class =
+        '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
+      let annotation_textarea_class = 'textarea.form-control';
+      let annotation_user_name_class = '.bg-info';
+      let annotation_icon_count = $(annotation_icon_class).length;
+      let annotation_textare_count = $(annotation_textarea_class).length;
+      let annotation_user_name_count = $(annotation_user_name_class).length;
 
-  // 儲存註釋 icon的html
-  for (let i = 0; i < annotation_icon_count; i++) {
-    annotation_icon_html += $(annotation_icon_class).get(i).outerHTML;
-  }
+      // 儲存註釋 icon的html
+      for (let i = 0; i < annotation_icon_count; i++) {
+        annotation_icon_html += $(annotation_icon_class).get(i).outerHTML;
+      }
 
-  // 儲存註釋 textarea的值
-  for (let i = 0; i < annotation_textare_count; i++) {
-    if ($(annotation_textarea_class).get(i).value == '') {
-      alert('註釋不能空白！');
-      return;
+      // 儲存註釋 textarea的值
+      for (let i = 0; i < annotation_textare_count; i++) {
+        if ($(annotation_textarea_class).get(i).value == '') {
+          Swal.fire({
+            icon: 'error',
+            title: '註釋不能為空白',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+          return;
+        }
+        annotation_textarea.push($(annotation_textarea_class).get(i).value);
+      }
+
+      // 儲存註釋 留言人名
+      for (let i = 0; i < annotation_user_name_count; i++) {
+        annotation_user_name.push(
+          $(annotation_user_name_class).get(i).innerHTML
+        );
+      }
+
+      // axios儲存資料庫
+      let data = {
+        'note_id': note_id,
+        'annotion_user_id': annotion_user_id,
+        'annotation_icon_html': annotation_icon_html,
+        'annotation_textarea': JSON.stringify(annotation_textarea),
+        'annotation_user_name': JSON.stringify(annotation_user_name),
+      };
+
+      let config = {
+        method: 'POST',
+        url: '/api/1.0/annotation',
+        data: data,
+      };
+
+      await axios(config)
+        .then(function (response) {
+          console.log(response);
+          Swal.fire({
+            icon: 'success',
+            title: '儲存註釋成功',
+            showConfirmButton: false,
+            timer: 1000,
+          }).then((result) => {
+            location.reload();
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.msg,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
     }
-    annotation_textarea.push($(annotation_textarea_class).get(i).value);
-  }
-
-  // 儲存註釋 留言人名
-  for (let i = 0; i < annotation_user_name_count; i++) {
-    annotation_user_name.push($(annotation_user_name_class).get(i).innerHTML);
-  }
-
-  // axios儲存資料庫
-  let data = {
-    'note_id': note_id,
-    'annotion_user_id': annotion_user_id,
-    'annotation_icon_html': annotation_icon_html,
-    'annotation_textarea': JSON.stringify(annotation_textarea),
-    'annotation_user_name': JSON.stringify(annotation_user_name),
-  };
-
-  let config = {
-    method: 'POST',
-    url: '/api/1.0/annotation',
-    data: data,
-  };
-
-  await axios(config)
-    .then(function (response) {
-      console.log(response);
-      Swal.fire('儲存註釋成功');
-      location.reload();
-    })
-    .catch(function (error) {
-      console.log(error);
-      Swal.fire(error.response.data.msg);
-    });
+  });
 }
 
 // 拿取註釋資料 ---

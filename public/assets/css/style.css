@@ -1412,9 +1412,9 @@ h6 {
   overflow-y: auto;
 }
 
-.badge {
+/* .badge {
   cursor: pointer;
-}
+} */
 
 /* Loading 特效 */
 .cover-loading {

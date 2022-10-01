@@ -97,17 +97,17 @@ const showSocialCards = async function (data, user_id) {
     if (url_permission == 1) {
       // 只允許觀看
       comment_icon_html = `
-        <button class="btn" type="button" style="font-size:16px">
+        <button class="btn" type="button" style="font-size:16px;padding: 0 10px 10px 0;">
             <i class="fa fa-solid fa-comments" style="color:grey">
-                <span id="comments_num">無開放留言</span>
+                <span id="comments-num-${note_id}">無開放留言</span>
             </i>
         </button>`;
     } else if (url_permission == 2) {
       // 允許留言
       comment_icon_html = `
-        <button class="btn" id="comment-btn" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px">
+        <button class="btn" id="comment-btn-${note_id}" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px; padding: 0 10px 10px 0;">
             <i class="fa fa-solid fa-comments" style="color:green">
-                <span id="comments_num">${comments_num}</span>
+                <span id="comments-num-${note_id}">${comments_num}</span>
             </i>
         </button>`;
     }
@@ -120,12 +120,12 @@ const showSocialCards = async function (data, user_id) {
             <img class="card-img-top" style="width:100%;height:200px;"src="${S3_HOST}/sharing_image/${sharing_image}" alt="Card image cap">
           </a>
         <div class="card-body">
-        <h5 class="card-title">${note_name}</h5>
-        <p class="card-text">${sharing_descrition}</p>
+        <h5 class="card-title" style="height: 50px;">${note_name}</h5>
+        <p class="card-text" style="height: 50px;">${sharing_descrition}</p>
         <br />
         <p class="card-text"><small class="text-muted">發文時間: ${show_time}</small></p>
         ${comment_icon_html}
-        <button id="${note_id}" class="btn btn-heart" onclick="javascript:createSave('${note_id}')">
+        <button id="${note_id}" class="btn btn-heart" onclick="javascript:createSave('${note_id}')" style="padding: 0 10px 10px 0;">
             <i class="fa fa-heart" aria-hidden="true" style="color:${heart_color}"></i>
             <span class="saved_num">${saved_num}</span>
         </button>
@@ -166,7 +166,7 @@ const showSocialCards = async function (data, user_id) {
       }
 
       comment_cards_html += `
-          <div class="card">
+          <div id="comment-card-${comment._id}" class="card">
             <div class="comment-card-body">
               <div class="d-flex justify-content-between">
                 <div class="d-flex flex-row align-items-center">
@@ -177,8 +177,12 @@ const showSocialCards = async function (data, user_id) {
                 </div>
                 ${comment_menu_html}
               </div>
-              <p style="margin: 10px 0;">${commen_content_jsInjection}</p>
-              <p style="font-size: 8px;margin: 10px 0;">
+              <p id="comment-content-${
+                comment._id
+              }" style="margin: 10px 0;">${commen_content_jsInjection}</p>
+              <p id="comment-time-${
+                comment._id
+              }" style="font-size: 8px;margin: 10px 0;">
               ${timeConverter(comment.created_time)}
               </p>
             </div>
@@ -195,10 +199,12 @@ const showSocialCards = async function (data, user_id) {
               </div>
               ${comment_cards_html}
             <div class="modal-footer">
-              <div class="form-outline">
-                <input class="form-control" id="textarea_${note_id}" onKeyDown="if(event.keyCode==13) javascript:createComments('${note_id}');" style="width:400px" type="text" placeholder="向作者講句話吧..."/>
+              <div class="input-group">
+                <div class="form-outline">
+                  <input class="form-control" id="textarea_${note_id}" onKeyDown="if(event.keyCode==13) javascript:createComments('${note_id}');" style="width:400px" type="text" placeholder="向作者講句話吧..."/>
+                </div>
+                <button class="btn" type="button" onclick="javascript:createComments('${note_id}')"><i class="bi bi-send"></i></button>
               </div>
-              <button class="btn" type="button" onclick="javascript:createComments('${note_id}')"><i class="bi bi-send"></i></button>
             </div>
           </div>
         </div>
@@ -230,22 +236,27 @@ const showPagination = async function (
     paging + 1
   }&sorting=${sorting}`;
 
-  // 判斷第一頁&最後一頁的前後頁
-  if (currentPage == allPages_count) {
-    nextPage_href = `javascript:alert_paging('最後一頁')`;
-  }
-  if (currentPage == 1) {
-    prevPage_href = `javascript:alert_paging('第一頁')`;
-  }
-
-  prevPage_html = `
+  // 最後一頁
+  if (currentPage == allPages_count && allPages_count != 1) {
+    prevPage_html = `
       <li class="page-item"></li>
       <a class="page-link" href="${prevPage_href}" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
       </a>
       `;
-
-  currentPage_html = `
+    currentPage_html = `
+      <li class="page-item"></li>
+      <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+      <li class="page-item disabled" style="border: white;">
+        <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+      </li>
+    `;
+    nextPage_html = '';
+  }
+  // 第一頁
+  else if (currentPage == 1 && allPages_count != 1) {
+    prevPage_html = '';
+    currentPage_html = `
       <li class="page-item"></li>
       <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
       <li class="page-item disabled" style="border: white;">
@@ -253,12 +264,77 @@ const showPagination = async function (
       </li>
     `;
 
-  nextPage_html = `
+    nextPage_html = `
         <li class="page-item"></li>
         <a class="page-link" href="${nextPage_href}" aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
           <span class="sr-only">Next</span>
         </a>`;
+  }
+  // 只有一頁且第一頁
+  else if (currentPage == 1 && allPages_count == 1) {
+    prevPage_html = '';
+    currentPage_html = `
+      <li class="page-item"></li>
+      <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+      <li class="page-item disabled" style="border: white;">
+        <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+      </li>
+    `;
+    nextPage_html = '';
+  }
+  // 中間頁
+  else {
+    prevPage_html = `
+      <li class="page-item"></li>
+      <a class="page-link" href="${prevPage_href}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+      </a>
+      `;
+    currentPage_html = `
+      <li class="page-item"></li>
+      <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+      <li class="page-item disabled" style="border: white;">
+        <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+      </li>
+    `;
+    nextPage_html = `
+        <li class="page-item"></li>
+        <a class="page-link" href="${nextPage_href}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>`;
+  }
+
+  // // 判斷第一頁&最後一頁的前後頁
+  // if (currentPage == allPages_count) {
+  //   nextPage_href = `javascript:alert_paging('最後一頁')`;
+  // }
+  // if (currentPage == 1) {
+  //   prevPage_href = `javascript:alert_paging('第一頁')`;
+  // }
+
+  // prevPage_html = `
+  //     <li class="page-item"></li>
+  //     <a class="page-link" href="${prevPage_href}" aria-label="Previous">
+  //       <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+  //     </a>
+  //     `;
+
+  // currentPage_html = `
+  //     <li class="page-item"></li>
+  //     <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+  //     <li class="page-item disabled" style="border: white;">
+  //       <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+  //     </li>
+  //   `;
+
+  // nextPage_html = `
+  //       <li class="page-item"></li>
+  //       <a class="page-link" href="${nextPage_href}" aria-label="Next">
+  //         <span aria-hidden="true">&raquo;</span>
+  //         <span class="sr-only">Next</span>
+  //       </a>`;
 
   const paging_html = `
     <nav aria-label="Page navigation">

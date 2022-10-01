@@ -107,15 +107,15 @@ block content
                     ul.list-unstyled.ps-0(width="90%")
 
                         //- 筆記上傳
-                        button#noteUpload-btn.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', type='button', style="font-size:16px")
+                        button#noteUpload-btn.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', type='button', style="font-size:16px", disabled='')
                             i.bi.bi-file-earmark-plus
 
                         //- 儲存筆記鍵
-                        button#storeNote.btn(data-toggle='tooltip', data-placement='bottom', title='存檔', style='font-size:16px')
+                        button#storeNote.btn(data-toggle='tooltip', data-placement='bottom', title='存檔', style='font-size:16px', disabled='')
                             i.fa.fa-floppy-o            
 
                         //- 上一步
-                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='上一步', style='font-size:16px')
+                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='上一步', style='font-size:16px', disabled='')
                             i.fa.fa-rotate-left
 
                         //- 下一步
@@ -123,28 +123,33 @@ block content
                         //-     i.fa.fa-rotate-right
 
                         //- 新增文字方塊
-                        button#addfont.btn(data-toggle='tooltip', data-placement='bottom', title='新增文字方塊', style='font-size:16px')
+                        button#addfont.btn(data-toggle='tooltip', data-placement='bottom', title='新增文字方塊', style='font-size:16px', disabled='')
                             i.fa.fa-font
 
                         //- 刪除鍵
-                        button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:16px')
+                        button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:16px', disabled='')
                             i.fa.fa-solid.fa-trash
 
                         //- 分享鍵
-                        button#share-btn.btn(data-toggle='tooltip', data-placement='bottom', title='分享社群', type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px")
+                        button#share-btn.btn(data-toggle='tooltip', data-placement='bottom', title='分享社群', type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px", disabled='')
                             i.bi.bi-share-fill
 
                         #shareToAllModal.modal.fade(tabindex='-1', aria-labelledby='shareModal', aria-hidden='true')
                           .modal-dialog
                             .modal-content
-                              .modal-header
-                                h5.modal-title 分享社群
-                                button#shareToClose.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
-                              #modal-shareToAll-main.modal-body
-                                #share_note_name
+                              .modal-header(style="padding: 10px 0 0 10px;")
+                                //- h5.modal-title 分享
+                                ul.nav.nav-tabs.nav-tabs-bordered
+                                  li.nav-item
+                                    button.nav-link.active(data-bs-toggle='tab', data-bs-target='#share-to-other-nav') 分享給朋友
+                                  li.nav-item
+                                    button.nav-link(data-bs-toggle='tab', data-bs-target='#share-to-all-nav') 分享社群
+
+                                button#shareToClose.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right" style="margin: 0 5px 0 0;")
+                              #modal-shareToAll-main.modal-body.tab-content.pt-2
+                                #share-to-other-nav.tab-pane.fade.show.active
                                   i.bi.bi-person-fill(style="font-size:25px;")
                                   | 分享您的筆記
-
                                   #shareToOhterDetail
                                     br
                                     .container
@@ -154,8 +159,6 @@ block content
                                           .input-group.mb-3
                                             button.btn.btn-outline-secondary.dropdown-toggle#shareToOtherMethod-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 允許觀看
                                             ul#shareToOtherMenu.dropdown-menu.dropdown-menu-end
-                                              //- li
-                                              //-   a.dropdown-item.disabled(href='#') 允許編輯
                                               li
                                                 a.dropdown-item(href='#') 允許留言
                                               li
@@ -164,11 +167,12 @@ block content
                                             .input-group-append
                                               button#addShareOther-btn.btn.btn-outline-info(type='button') 加入
                                           ul#shareOtherList.list-group
-                                  br
+                                #share-to-all-nav.tab-pane.fade
                                   i.bi.bi-people-fill(style='font-size:25px;')
                                   label.form-check-label(for='flexSwitchCheckDefault') 分享到社群
+                                  button.btn.btn-primary#shareToAll_confirm-btn(style="float: right;margin: 10px 5px;font-size: 15px;") 分享
+                                  button.btn.btn-secondary#shareToAll_cancel-btn(style="float: right;margin: 10px 5px;font-size: 15px;") 取消
                                   span#shareToAll-status.badge.bg-secondary(style="margin: -5px 5px;") 關閉中
-                                    //- input#shareToAll-toggle.form-check-input(type='checkbox', role='switch')
                                   #shareToAllDetail
                                     input#share_url.form-control(type='text', style="width:90%;display:inline;")
                                     button.btn#copy_shareUrl
@@ -198,17 +202,15 @@ block content
                                       br
                                       br
                                     br
-                                    button.btn.btn-primary#shareToAll_confirm-btn(style="float: right") 分享社群
-                                    button.btn.btn-secondary#shareToAll_cancel-btn(style="float: right;margin: 0 10px;") 取消分享
                                 
 
-                        //- 跳轉留言頁面
-                        button.openbtn#annotation-show-btn.btn(data-toggle='tooltip', data-placement='bottom', title='查看此篇文章註釋', type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px")
+                        //- 留言頁面
+                        button.openbtn#annotation-show-btn.btn(data-toggle='tooltip', data-placement='bottom', title='查看此篇文章註釋', type='button', style="font-size:16px", disabled='')
                             i.bi.bi-stickies
 
 
                         //- 特定人分享頁面
-                        button#sharedNote-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px", data-toggle='tooltip', data-placement='bottom', title='其他人分享給您的筆記')
+                        button#sharedNote-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px", data-toggle='tooltip', data-placement='bottom', title='其他人分享給您的筆記', disabled='')
                           i.fa.fa-users
                           span#sharedNoteCount.badge.bg-primary.badge-number(style='font-size: 5px;margin: -10px 0 0 -2px;')
                         #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
@@ -217,7 +219,7 @@ block content
                               .modal-header
                                 h5.modal-title 其他人分享給您的筆記
                                 button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
-                              #modal-sharedNote-main.modal-body
+                              .modal-body#modal-sharedNote-main
                               .modal-footer
                                 button#sharedNote-change.btn.btn-primary(type='button') 查看
                         
@@ -238,6 +240,7 @@ block content
       i.bi.bi-arrow-up-short
 
       script.
+
         // 修改/刪除/搬移筆記
         $('#changeNoteName').click(async function (){
           await renameNote(current_note_id);
@@ -252,11 +255,16 @@ block content
         // 跳轉註解編輯頁鍵
         $('#annotation-show-btn').click(async function () {
             if(!current_note_id){
-              Swal.fire('請先選擇筆記');
+              Swal.fire({
+                icon: 'error',
+                title: '請先選擇筆記',
+                showConfirmButton: false,
+                timer: 1000,
+              });
               return;
             }
 
-            window.open(`/sharedToOtherNote/${current_note_id}`);
+            window.location.assign(`/sharedToOtherNote/${current_note_id}`);
         })
 
         // 上傳筆記鍵
@@ -272,7 +280,7 @@ block content
               icon: 'error',
               title: '請先點選需刪除的物件',
               showConfirmButton: false,
-              timer: 1500,
+              timer: 1000,
             });
             return;
           }
@@ -393,6 +401,10 @@ block content
         // 拿取目前在線上的名單
         // 因為只有筆記編輯頁裡的上下線資訊，故放在筆記編輯頁面
         $(document).ready(function() {
+          
+          // Hover Icon
+          $('#note-page').css('background', '#c2c2c23d').css('border-radius', '50%');
+          
           socket.on("users", async (users) => {
             online_user = users;
             // 重新渲染分享頁面
