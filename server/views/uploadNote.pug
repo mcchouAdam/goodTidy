@@ -16,7 +16,7 @@ block content
                             //-     button#form-prview-btn.button-55 預覽
                     br
                     img#img-preview(hidden='')
-                    .OCR-nav(style="margin:50px 0 8px 0px;")
+                    .OCR-nav(style="margin:35px 0 8px 0px;")
                         //- <button id="pre">上一步</button>
                         //- <button id="next">下一步</button>
                         //- button#shapeRemoveBG(disabled='') 圖形去背
@@ -51,9 +51,13 @@ block content
                         .note-preview-block
                             .processed-content-nav
                                 .row.mb-3
-                                    .input-group.mb-3
-                                        button.btn.btn-outline-secondary 筆記名稱
+                                    .input-group
+                                        .input-group-prepend
+                                            span#inputGroupPrepend.input-group-text 筆記名稱
                                         input#note-name.form-control(type='text')
+                                    //- .input-group.mb-3
+                                    //-     button.btn.btn-outline-secondary 筆記名稱
+                                    //-     input#note-name.form-control(type='text')
                                 .row.mb-3
                                     .input-group.mb-3
                                         button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 選擇分類
@@ -150,7 +154,7 @@ block content
                                             icon: 'success',
                                             title: 'OCR成功',
                                             showConfirmButton: false,
-                                            timer: 1500
+                                            timer: 1000
                                         })
                                         // Loading圖示釋放
                                         $('#OCR').prop('disabled', false);
@@ -180,7 +184,7 @@ block content
                                                 icon: 'error',
                                                 title: error.response.data.msg,
                                                 showConfirmButton: false,
-                                                timer: 1500
+                                                timer: 1000
                                             })
                                             // Loading釋放
                                             $('#OCR').prop('disabled', false);
@@ -227,7 +231,7 @@ block content
                                                 icon: 'error',
                                                 title: '筆記名稱或筆記分類不能為空白',
                                                 showConfirmButton: false,
-                                                timer: 1500
+                                                timer: 1000
                                         });
                                         // Loading釋放
                                         $('#submit_note').prop('disabled', false);
@@ -241,7 +245,7 @@ block content
                                             icon: 'error',
                                             title: '您的筆記名稱有重複',
                                             showConfirmButton: false,
-                                            timer: 1500
+                                            timer: 1000
                                         });
                                         // Loading釋放
                                         $('#submit_note').prop('disabled', false);

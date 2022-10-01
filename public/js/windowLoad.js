@@ -93,6 +93,8 @@ let upload_preview_element = [];
 // TODO: 只在有需求的頁面Load相對應的function
 // 預先讀取
 $(window).on('load', async function () {
+  // $('#share-btn').prop('disabled', true);
+
   // 拿取User的Profile;
   await profile();
 
@@ -111,6 +113,17 @@ $(window).on('load', async function () {
 
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();
+
+  // 將所有的按鍵打開
+  $('#noteUpload-btn').prop('disabled', false);
+  $('#storeNote').prop('disabled', false);
+  $('#prev').prop('disabled', false);
+  $('#addfont').prop('disabled', false);
+  $('#deleteElement').prop('disabled', false);
+  $('#shareToAllModal').prop('disabled', false);
+  $('#annotation-show-btn').prop('disabled', false);
+  $('#sharedNote-btn').prop('disabled', false);
+  $('#share-btn').prop('disabled', false);
 
   // Loading結束
   // $('.wrapper-loading').remove();

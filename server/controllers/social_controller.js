@@ -31,8 +31,8 @@ const socialPage = async (req, res) => {
   const user_id = req.session.user.id;
   const paging = +req.query.paging;
   const sorting = req.query.sorting;
-  const startDate = req.query.startDate;
-  const endDate = req.query.endDate;
+  // const startDate = req.query.startDate;
+  // const endDate = req.query.endDate;
   const search_text = req.query.search_text;
   const search_method = req.query.search_method;
 
@@ -48,9 +48,9 @@ const socialPage = async (req, res) => {
     sorting,
     search_text,
     search_method,
-    user_id,
-    startDate,
-    endDate
+    user_id
+    // startDate,
+    // endDate
   );
 
   const allPages_count = socialcards_result.allPages_count;
@@ -137,7 +137,7 @@ const createComments = async (req, res) => {
 
   const result = await createComment(data);
 
-  return res.status(200).json(`comment_id ${result} created successfully!`);
+  return res.status(200).json({ 'data': result });
 };
 
 const updateComments = async (req, res) => {

@@ -482,15 +482,18 @@ const getShareNotes = async (
   sorting,
   search_text,
   search_method,
-  user_id,
-  startDate,
-  endDate
+  user_id
+  // startDate,
+  // endDate
 ) => {
   const NotesCollection = Mongo.db(MONGO_DB).collection('notes');
   let startIsoDate;
   let endIsoDate;
 
-  if (startDate && endDate) {
+  if (search_method == '時間') {
+    let startDate = search_text.split('-')[0];
+    let endDate = search_text.split('-')[1];
+
     const startYear = startDate.split('/')[2];
     const startMon = startDate.split('/')[0];
     const startDay = startDate.split('/')[1];
@@ -868,7 +871,8 @@ const createComment = async (data) => {
     );
 
     console.log('update_result', update_result);
-    return comment_id;
+    const obj = { 'comment_id': comment_id, 'created_time': data.created_time };
+    return obj;
   } catch (error) {
     return { error };
   } finally {
@@ -926,8 +930,8 @@ const deleteComment = async (data) => {
       'note_id': note_id,
     });
 
-    console.log('delete_comment_count', comment_count);
-    console.log('note_id', note_id);
+    // console.log('delete_comment_count', comment_count);
+    // console.log('note_id', note_id);
 
     const updateResult = await NotesCollection.findOneAndUpdate(
       { '_id': ObjectId(note_id) },

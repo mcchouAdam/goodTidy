@@ -10,7 +10,7 @@ form.addEventListener('change', async (e) => {
       icon: 'error',
       title: '請您上傳jpeg, jpg, png檔',
       showConfirmButton: false,
-      timer: 1500,
+      timer: 1000,
     });
     return;
   }
@@ -20,7 +20,7 @@ form.addEventListener('change', async (e) => {
       icon: 'error',
       title: '檔案超過2MB',
       showConfirmButton: false,
-      timer: 1500,
+      timer: 1000,
     });
     return;
   }

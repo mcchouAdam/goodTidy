@@ -39,15 +39,8 @@ block content
                             //- button#sorting-btn.btn
                             //-     i.bi.bi-filter
                             input#daterange(type="text", name="daterange", value="", hidden)
+                        span#search_result
 
-            //- //- 排序搜尋法
-            //- .col-8(style="margin: 0 auto;")
-            //-     button#time_sorting-btn.btn
-            //-         i.fa.fa-clock-o(aria-hidden='true', style='color:grey')
-            //-     button#heart_sorting-btn.btn
-            //-         i.fa.fa-heart(aria-hidden='true', style='color:grey')
-            //-     button#comments_sorting-btn.btn 
-            //-         i.fa.fa-solid.fa-comments(aria-hidden='true', style='color:grey')
             //- 分享筆記卡片
             #sharing-cards
             br
@@ -59,7 +52,22 @@ block content
 
                 // 預先選擇內容
                 $(document).ready(function() {  
+                    // 使用者目前在在哪個頁面
+                    $('#social-page').css('background', '#c2c2c23d').css('border-radius', '50%');
+                    
+                    // 搜尋Bar預選內容
                     $(".dropdown-menu li a")[4].click();
+
+                    // href
+                    const protocol = document.location.protocol;
+                    const server = document.location.host;
+                    let queryParams = new URLSearchParams(window.location.search);
+                    let search_text = queryParams.get('search_text');
+                    let search_method = queryParams.get('search_method');
+                    if(search_text && search_method){
+                        let search_string = `搜尋${search_method} : ${search_text}`;
+                        $('#search_result').text(search_string).show();
+                    }
                 });
 
                 $(function () {
