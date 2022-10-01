@@ -42,10 +42,8 @@ const createNote = async (req, res) => {
   const note = req.body;
   note.file_name = req.filename;
 
-  const result = await Notes.writeNote(note);
-  // const { note_id } = req.params;
-
-  return res.status(200).json('upload note successfully.');
+  const note_id = await Notes.writeNote(note);
+  return res.status(200).json({ 'data': note_id });
 };
 
 // 改名筆記

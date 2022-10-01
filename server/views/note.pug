@@ -6,7 +6,7 @@ block content
       .pagetitle
         h1 筆記編輯
           //- 搜尋bar --------------------
-          button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='搜尋筆記內容')
+          button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='搜尋筆記內容' disabled='')
             i.fa.fa-search
           //- 修改筆記分類 ----------------
           //- button#updateNoteClassModal-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#updateNoteClassModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='修改筆記分類')
@@ -58,22 +58,22 @@ block content
                 #modal-main.modal-body
                   //- 筆記名稱
                 .modal-footer
-                  //- .input-group
-                  input#search_note_list.form-control(type='search', placeholder='search...')
-                  button.btn(type='button')
-                    i.fa.fa-search
+                  .input-group
+                    input#search_note_list.form-control(type='search', placeholder='search...')
+                    button.btn(type='button')
+                      i.fa.fa-search
                   //- TODO: 復原時間搜尋功能
                   //- button.btn(type='button')
                   //-   i.fa.fa-calendar
                   //- input#daterange(type="text", name="daterange")
-        nav
-          ol.breadcrumb
-            li.breadcrumb-item
-              a(href='/') Home
-            li.breadcrumb-item
-              a(href='/note') 筆記編輯
-            li.breadcrumb-item.active#click_note_classification
-            li.breadcrumb-item.active#click_note_name
+        //- nav
+        //-   ol.breadcrumb
+        //-     li.breadcrumb-item
+        //-       a(href='/') Home
+        //-     li.breadcrumb-item
+        //-       a(href='/note') 筆記編輯
+        //-     li.breadcrumb-item.active#click_note_classification
+        //-     li.breadcrumb-item.active#click_note_name
       // End Page Title
       section.section.dashboard
         .row
@@ -188,14 +188,15 @@ block content
                                       label(for='floatingTextarea') 你會向大家怎麼介紹你的筆記?
                                     br
                                     .mb-3
-                                      label.form-label(for='formFile') 封面照片
-                                      input#shareNote_image.form-control(type='file')
+                                      label.form-label(for='formFile') 封面照片(非必要)
+                                      input#shareNote_image.form-control(type='file', onchange="previewFile('sharePic_preview')")
+                                      img#sharePic_preview(src="", alt="Image preview", style="display: none;")
                                     br
                                     .note_tags
                                       i.fa.fa-tags(style="color:blue;margin:0 10px 0 0;")
                                       | 標籤 (最多不能超過5個)
                                       br
-                                      input#tag_input.form-control(type='text', style="width:70%;display:inline;")
+                                      input#tag_input.form-control(type='text', style="width:90%;display:inline;")
                                       button.btn#add_note_tag-btn
                                         i.fa.fa-plus(aria-hidden='true')
                                         span.small 
@@ -235,7 +236,8 @@ block content
                               .modal-footer
                                 button#version-change.btn.btn-primary(type='button') 回復
 
-                        .col-12#update-note-content(width='600px', height='500px')
+                        //- .col-12#update-note-content(width='600px', height='500px')
+                        .col-12#update-note-content(style="height:600px;")
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
 
@@ -400,11 +402,12 @@ block content
         let online_user;
         // 拿取目前在線上的名單
         // 因為只有筆記編輯頁裡的上下線資訊，故放在筆記編輯頁面
-        $(document).ready(function() {
-          
-          // Hover Icon
+        $(document).ready(async function() {
+
+          // header Icon的點選效果
           $('#note-page').css('background', '#c2c2c23d').css('border-radius', '50%');
           
+          // 拿取每個使用者的線上狀態
           socket.on("users", async (users) => {
             online_user = users;
             // 重新渲染分享頁面
@@ -415,6 +418,7 @@ block content
 
       script(src='/js/user.js')
       script(src='/js/windowLoad.js')
+      script(src='/js/notePreClick.js')
       script(src='/js/note.js')
       script(src='/js/draggable.js')
       script(src='/js/btn.js')

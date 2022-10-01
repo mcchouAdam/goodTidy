@@ -60,7 +60,7 @@ block content
                                     //-     input#note-name.form-control(type='text')
                                 .row.mb-3
                                     .input-group.mb-3
-                                        button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 選擇分類
+                                        button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 新增分類
                                         input#note-classification.form-control(type='text')
                                         ul#classMenu.dropdown-menu.dropdown-menu-end
                                 .row.mb-3
@@ -92,10 +92,10 @@ block content
                                         classed_html += `<li><a class="dropdown-item" href="#">${c}</a></li>`;
                                     })
                                     $('#classMenu').append(classed_html);
+                                    //- $('#classMenu li a').click();
 
                                     // 選擇分類的dropdown
                                     $('#classMenu li a').on('click', function(e){ 
-                                        
                                         
                                         if(e.target.text == '新增分類'){
                                             $('#ownNoteClass-btn').text('新增分類');
@@ -308,8 +308,8 @@ block content
                                     );
 
                                     // Loading釋放
-                                    $('#submit_note').prop('disabled', false);
-                                    $('body').css('cursor', 'default');
+                                    //- $('#submit_note').prop('disabled', false);
+                                    //- $('body').css('cursor', 'default');
                                 });
 
                                 // 監聽圖形刪除事件
