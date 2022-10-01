@@ -467,43 +467,75 @@ $('#comments_sorting-btn').click(function (e) {
 
 // 留言 修改/刪除
 async function updateComment(comment_id, note_id) {
-  const new_content = window.prompt('您要修改的內容?');
-  if (!new_content) {
-    return;
-  }
+  const content_id = `comment-content-${comment_id}`;
+  const old_content = $('#' + content_id).text();
 
-  let data = {
-    'new_content': new_content,
-    'comment_id': comment_id,
-    'note_id': note_id,
-  };
+  const update_textarea = $(
+    `
+    <div id="${content_id}">
+      <textarea style="width: 100%;" id="textarea-${content_id}">${old_content}</textarea></br>
+      <div style="float:right;">
+        <button class="btn updateComment-confirm-btn" id="${comment_id}" value="${note_id}">修改</button>
+        <button class="btn updateComment-cancel-btn" id="${comment_id}" value="${old_content}">取消</button>
+      </div>
+    </div>
+    `
+  );
 
-  let config = {
-    method: 'PATCH',
-    url: `/api/1.0/comment`,
-    data: data,
-  };
+  $('#' + content_id).replaceWith(update_textarea);
 
-  await axios(config)
-    .then((response) => {
-      console.log(response);
-      Swal.fire({
-        icon: 'success',
-        title: '修改留言成功',
-        showConfirmButton: false,
-        timer: 1000,
+  // 取消鍵
+  $('.updateComment-cancel-btn').click(async function (e) {
+    const content_id = `comment-content-${e.target.id}`;
+    const old_content = e.target.value;
+
+    $('#' + content_id).replaceWith(
+      `<p id="${content_id}" style="margin: 10px 0;">${old_content}</p>`
+    );
+  });
+
+  // 修改鍵
+  $('.updateComment-confirm-btn').click(async function (e) {
+    const comment_id = e.target.id;
+    const note_id = e.target.value;
+    const new_content = $('#textarea-comment-content-' + comment_id).val();
+
+    // alert(comment_id);
+    // alert(note_id);
+    // alert(new_content);
+
+    let data = {
+      'new_content': new_content,
+      'comment_id': comment_id,
+      'note_id': note_id,
+    };
+
+    let config = {
+      method: 'PATCH',
+      url: `/api/1.0/comment`,
+      data: data,
+    };
+
+    await axios(config)
+      .then((response) => {
+        console.log(response);
+        const comment_id = config.data.comment_id;
+        const new_content = config.data.new_content;
+
+        $('#' + content_id).replaceWith(
+          `<p id="${content_id}" style="margin: 10px 0;">${new_content}</p>`
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.msg,
+          showConfirmButton: false,
+          timer: 1000,
+        });
       });
-      location.reload();
-    })
-    .catch((error) => {
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: error.response.data.msg,
-        showConfirmButton: false,
-        timer: 1000,
-      });
-    });
+  });
 }
 
 // 刪除留言
