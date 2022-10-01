@@ -147,13 +147,13 @@ body
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
               if id
                 if name && picture
-                  img.rounded-circle(src=picture, alt='Profile')
+                  img.profile-pic(src=picture, alt='Profile')
                   span.d-none.d-md-block.dropdown-toggle.ps-2=name
                 else
-                  img.rounded-circle(src="/assets/img/user.png", alt='Profile')
+                  img.profile-pic(src="/assets/img/user.png", alt='Profile')
                   span.d-none.d-md-block.dropdown-toggle.ps-2 登入
               else
-                img.rounded-circle(src="/assets/img/user.png", alt='Profile')
+                img.profile-pic(src="/assets/img/user.png", alt='Profile')
             // End Profile Iamge Icon
             ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
               if id
@@ -210,13 +210,15 @@ body
 
         await axios(config)
           .then(function (response) {
-            console.log(response);
             Swal.fire({
               icon: 'success',
               title: '登出成功',
               showConfirmButton: false,
               timer: 1000
             }).then(function() {
+                //TODO: 登出時，如果切換使用者，其他使用者可能會沒有current_note_id
+                current_note_id = undefined;
+                localStorage.removeItem('CURRENTNOTEID');
                 window.location.assign('/signin');
             });
           })

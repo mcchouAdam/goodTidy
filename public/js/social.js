@@ -10,6 +10,29 @@ $('#shareToOtherMenu li').on('click', function () {
   $('#shareToOtherMethod-btn').text($(this).text());
 });
 
+// 封面照預覽
+async function previewFile(preview_id) {
+  const preview = document.getElementById(preview_id);
+  // const preview = $('#sharePic_preview');
+  const file = $('input[type=file]')[0].files[0];
+  const reader = new FileReader();
+
+  reader.addEventListener(
+    'load',
+    () => {
+      // convert image file to base64 string
+      preview.src = reader.result;
+    },
+    false
+  );
+
+  if (file) {
+    reader.readAsDataURL(file);
+  }
+
+  $('#' + preview_id).show();
+}
+
 // 分享社群鍵 ----------------------------------
 $('#shareToAll_confirm-btn').click(async function () {
   // Loading圖示
@@ -211,19 +234,12 @@ async function createComments(note_id) {
   await axios(config)
     .then((response) => {
       console.log(response);
-      Swal.fire({
-        icon: 'success',
-        title: '留言成功',
-        showConfirmButton: false,
-        timer: 1000,
-      }).then((result) => {
-        const comment_id = response.data.data.comment_id;
-        const created_time = response.data.data.created_time;
-        const comment = config.data;
-        comment.comment_id = comment_id;
-        comment.created_time = created_time;
-        addComments(comment);
-      });
+      const comment_id = response.data.data.comment_id;
+      const created_time = response.data.data.created_time;
+      const comment = config.data;
+      comment.comment_id = comment_id;
+      comment.created_time = created_time;
+      addComments(comment);
     })
     .catch((error) => {
       console.log(error.response.data.msg);
@@ -257,8 +273,8 @@ async function addComments(comment) {
             <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="javascript:deleteComment('${comment.comment_id}', '${comment.note_id}')">刪除</a>
-            <a class="dropdown-item" href="javascript:updateComment('${comment.comment_id}', '${comment.note_id}')">修改</a>
+            <a id="deleteComment_${comment._id}" class="dropdown-item" href="javascript:deleteComment('${comment.comment_id}', '${comment.note_id}')">刪除</a>
+            <a id="updateComment_${comment._id}" class="dropdown-item" href="javascript:updateComment('${comment.comment_id}', '${comment.note_id}')">修改</a>
           </div>
         </div>
         `;
@@ -277,10 +293,10 @@ async function addComments(comment) {
                 ${comment_menu_html}
               </div>
               <p id="comment-content-${
-                comment._id
+                comment.comment_id
               }" style="margin: 10px 0;">${commen_content_jsInjection}</p>
               <p id="comment-time-${
-                comment._id
+                comment.comment_id
               }" style="font-size: 8px;margin: 10px 0;">
               ${timeConverter(new Date(comment.created_time))}
               </p>
@@ -467,6 +483,7 @@ $('#comments_sorting-btn').click(function (e) {
 
 // 留言 修改/刪除
 async function updateComment(comment_id, note_id) {
+  $('#updateComment_' + comment_id).addClass('disabled');
   const content_id = `comment-content-${comment_id}`;
   const old_content = $('#' + content_id).text();
 
@@ -492,6 +509,8 @@ async function updateComment(comment_id, note_id) {
     $('#' + content_id).replaceWith(
       `<p id="${content_id}" style="margin: 10px 0;">${old_content}</p>`
     );
+
+    $('#updateComment_' + comment_id).removeClass('disabled');
   });
 
   // 修改鍵
@@ -535,6 +554,8 @@ async function updateComment(comment_id, note_id) {
           timer: 1000,
         });
       });
+
+    $('#updateComment_' + comment_id).removeClass('disabled');
   });
 }
 

@@ -15,6 +15,7 @@ let current_user_msg;
 // note info --------------------------------------
 let ver_info; // 筆記版本資料
 let current_note_id;
+let current_note_class;
 let note_name;
 let note_bg;
 let note_names = [];
@@ -83,6 +84,22 @@ let current_annotation_element;
 // 筆記preview資訊
 let upload_preview_element = [];
 
+// 轉換時間格式
+const timeConverter = (date) => {
+  dataValues = [
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds(),
+  ];
+  let timeFormat = `${date.getFullYear()}/${
+    date.getMonth() + 1
+  }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  return timeFormat;
+};
+
 // // Socket
 // let socket = io();
 
@@ -114,16 +131,10 @@ $(window).on('load', async function () {
   // 剛開始讀取使用者最近剛編輯的文章
   await getlatestNode();
 
-  // 將所有的按鍵打開
-  $('#noteUpload-btn').prop('disabled', false);
-  $('#storeNote').prop('disabled', false);
-  $('#prev').prop('disabled', false);
-  $('#addfont').prop('disabled', false);
-  $('#deleteElement').prop('disabled', false);
-  $('#shareToAllModal').prop('disabled', false);
-  $('#annotation-show-btn').prop('disabled', false);
-  $('#sharedNote-btn').prop('disabled', false);
-  $('#share-btn').prop('disabled', false);
+  // 剛開始就點選筆記
+  await notePreClick();
+
+  // 讀取完頁面後，Note Nav點開目前的note
 
   // Loading結束
   // $('.wrapper-loading').remove();

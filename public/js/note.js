@@ -35,12 +35,15 @@ async function noteUpload(
   await axios(config)
     .then(function (response) {
       // console.log(response);
+      const note_id = response.data.data;
       Swal.fire({
         icon: 'success',
         title: '上傳筆記成功',
         showConfirmButton: false,
         timer: 1000,
       }).then(function () {
+        // localStorage.setItem('PREVPAGE', 'uploadPage');
+        localStorage.setItem('UPLOADNOTEID', note_id);
         window.location.assign('/note');
       });
     })
@@ -57,8 +60,12 @@ async function noteUpload(
 
 // [編輯頁面] 點選筆記，顯示內容
 async function noteShow(note_id) {
-  // Assign Global Variable
+  // 指定全域變數
   current_note_id = note_id;
+
+  // 移除nav list裡面的active
+  $('.nav-content a.active').removeClass('active');
+  $(`#noteList_${note_id}`).addClass('active');
 
   // 筆記已被刪除
   if (!showNote_note_obj[note_id]) {
@@ -237,7 +244,9 @@ async function getUserNotes() {
 
 // 筆記導覽列
 async function showNoteList(note_obj, div_append) {
-  console.log('note_obj: ', note_obj);
+  // console.log('note_obj: ', note_obj);
+
+  div_append.html('');
   const classifications = Object.keys(note_obj);
   let all_html = '';
   let classification_html = '';
@@ -255,7 +264,7 @@ async function showNoteList(note_obj, div_append) {
       notes_html += `
         <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
           <li>
-            <a href="javascript:noteShow('${ids[i]}', $('#update-note-content'))">
+            <a id="noteList_${ids[i]}" href="javascript:noteShow('${ids[i]}', $('#update-note-content'))">
               <i class="bi bi-circle"></i>
               <span>${names[i]}</span>
               ${note_menu_html}
@@ -267,7 +276,7 @@ async function showNoteList(note_obj, div_append) {
     // 分類的tag html
     classification_html = `
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
+        <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i>
             <span>${classfi}</span>
           <i class="bi bi-chevron-down ms-auto"></i>
@@ -305,12 +314,24 @@ async function showSearchList(note_obj, div_append) {
     }
   });
 
+  if (classification.length == 0) {
+    name_html = `
+            <div style="font-size:16px; font-weight:500; margin:5px 0;">
+              <span>您目前還沒有上傳筆記</span>
+            </div>
+          `;
+  }
+
   div_append.append(name_html);
 }
 
 // [其他人分享給您的筆記] 特定人分享List的內容
 async function getSharedNote(sharedNote_obj, div_append) {
   console.log('sharedNote_obj', sharedNote_obj);
+
+  if (!sharedNote_obj) {
+    return;
+  }
 
   div_append.html('');
   let shareNote_html = '';
@@ -343,7 +364,7 @@ async function getSharedNote(sharedNote_obj, div_append) {
               <span>${user_name}</span>
               <input type="radio" class="btn-check btn" name="shareNote_options" id="${id}" value="${id}" autocomplete="off">
               <label class="btn" for="${id}" style="margin:0 0 0 20px;">${id}</label>
-              <span class="badge bg-warning rounded-pill" style="color:black;float:right;margin:25px 0 0 0;"">${
+              <span class="badge bg-warning rounded-pill" style="color:black;float:right;margin:15px 0 0 0;"">${
                 permissionToName[permission]
               }</span><br \>
             </div>
@@ -432,90 +453,197 @@ async function sharedNoteShow(name, Obj) {
 
 // 改名筆記 ------------------------------------------------------------
 async function renameNote(note_id) {
-  const new_noteName = window.prompt('請問您的筆記要改什麼名字?');
-  if (!new_noteName) {
-    Swal.fire('名字不能為空');
-    return;
-  }
-  data = {
-    'note_id': note_id,
-    'new_noteName': new_noteName,
-  };
+  Swal.fire({
+    title: '您的筆記要改什麼名稱?',
+    input: 'text',
+    inputAttributes: {
+      autocapitalize: 'off',
+    },
+    showCancelButton: true,
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    showLoaderOnConfirm: true,
+    preConfirm: (new_noteName) => {
+      return new_noteName;
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const new_noteName = result.value;
+      if (new_noteName == '') {
+        Swal.fire({
+          icon: 'error',
+          title: '筆記名稱不能空白',
+          showConfirmButton: false,
+          timer: 1000,
+        });
+      } else {
+        data = {
+          'note_id': note_id,
+          'new_noteName': new_noteName,
+        };
 
-  let config = {
-    method: 'PATCH',
-    url: `/api/1.0/note`,
-    data: data,
-  };
+        let config = {
+          method: 'PATCH',
+          url: `/api/1.0/note`,
+          data: data,
+        };
 
-  await axios(config)
-    .then(function (response) {
-      console.log(response);
-      Swal.fire('改名筆記成功');
-      location.reload();
-    })
-    .catch(function (error) {
-      console.log(error);
-      Swal.fire('改名筆記失敗');
-    });
+        await axios(config)
+          .then(async function (response) {
+            console.log(response);
+            // 拿取User所有note的資訊;
+            await getUserNotes();
+            // 畫出NavList資訊
+            await showNoteList(note_list_obj, $('#sidebar-nav'));
+            // 重新點選該筆記
+            await notePreClick();
+
+            Swal.fire({
+              icon: 'success',
+              title: `筆記名稱已修改成 ${new_noteName}`,
+              showConfirmButton: false,
+              timer: 1000,
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: error.response.data.error,
+              showConfirmButton: false,
+              timer: 1000,
+            });
+          });
+      }
+    }
+  });
 }
 
 // 刪除筆記
 async function deleteNote(note_id) {
-  const isdeleted = window.confirm(`確定修改刪除?`);
-  if (isdeleted) {
-    data = {
-      'note_id': note_id,
-    };
+  Swal.fire({
+    title: '您確定要刪除此篇筆記?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '刪除',
+    cancelButtonText: '取消',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      data = {
+        'note_id': note_id,
+      };
 
-    let config = {
-      method: 'DELETE',
-      url: `/api/1.0/note`,
-      data: data,
-    };
+      let config = {
+        method: 'DELETE',
+        url: `/api/1.0/note`,
+        data: data,
+      };
 
-    await axios(config)
-      .then(function (response) {
-        console.log(response);
-        Swal.fire('刪除筆記成功');
-        location.reload();
-      })
-      .catch(function (error) {
-        console.log(error);
-        Swal.fire('刪除筆記失敗');
-      });
-  }
+      await axios(config)
+        .then(async function (response) {
+          console.log(response);
+          current_note_id = undefined;
+          // 拿取User所有note的資訊;
+          await getUserNotes();
+          // 畫出NavList資訊
+          await showNoteList(note_list_obj, $('#sidebar-nav'));
+          // 剛開始就點選筆記
+          await notePreClick();
+
+          Swal.fire({
+            icon: 'success',
+            title: '刪除筆記成功',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+
+          // 清空現在的current_note_id
+          localStorage.removeItem('CURRENTNOTEID');
+
+        })
+        .catch(function (error) {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: '刪除筆記失敗',
+            // title: error.response.data.error,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
+    }
+  });
 }
 
 // 搬移筆記
 async function moveNote(note_id) {
-  const MoveToClass = window.prompt('您要搬移到哪個分類?');
-  if (!MoveToClass) {
-    Swal.fire('分類不能為空');
-    return;
-  } else {
-    data = {
-      'note_id': note_id,
-      'MoveToClass': MoveToClass,
-    };
+  const note_classes = Object.keys(note_list_obj);
+  let class_index;
+  await Swal.fire({
+    title: '搬移筆記至不同的分類',
+    input: 'select',
+    inputOptions: note_classes,
+    inputPlaceholder: '選擇一個分類',
+    showCancelButton: true,
+    cancelButtonText: '取消',
+    inputValidator: (value) => {
+      if (!value) {
+        Swal.fire({
+          icon: 'error',
+          title: '請選擇分類',
+          showConfirmButton: false,
+          timer: 1000,
+        });
+        return;
+      } else {
+        class_index = value;
+      }
+    },
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const MoveToClass = note_classes[class_index];
+      data = {
+        'note_id': note_id,
+        'MoveToClass': MoveToClass,
+      };
 
-    let config = {
-      method: 'PATCH',
-      url: `/api/1.0/noteClass`,
-      data: data,
-    };
+      let config = {
+        method: 'PATCH',
+        url: `/api/1.0/noteClass`,
+        data: data,
+      };
 
-    await axios(config)
-      .then(function (response) {
-        console.log(response);
-        Swal.fire('搬移筆記成功');
-        location.reload();
-      })
-      .catch(function (error) {
-        console.log(error);
-        Swal.fire('搬移筆記失敗');
-      });
-  }
+      await axios(config)
+        .then(async function (response) {
+          console.log(response);
+          Swal.fire({
+            icon: 'success',
+            title: '搬移筆記成功',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+          // location.reload();
+          // 拿取User所有note的資訊;
+          await getUserNotes();
+          // 畫出NavList資訊
+          await showNoteList(note_list_obj, $('#sidebar-nav'));
+          // 剛開始就點選筆記
+          await notePreClick();
+        })
+        .catch(function (error) {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: '搬移筆記失敗',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
+    }
+  });
 }
 
 // 改名分類

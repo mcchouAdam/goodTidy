@@ -34,7 +34,8 @@ block content
                       .col-12
                         label.form-label(for='yourPicture') 大頭貼(非必要)
                         br
-                        input#user_picture.form-control(type='file')
+                        input#user_picture.form-control(type='file', onchange="previewFile('userPic_preview')")
+                        img#userPic_preview(src="", alt="Image preview", style="display: none;")
                         br
                         //- .invalid-feedback Please upload your user picture.
                       //- .col-12
@@ -57,6 +58,7 @@ block content
 
       script(src='/js/user.js')
       script(src='/js/windowLoad.js')
+      script(src='/js/social.js')
         
       //- script(src='/js/note.js')
       //- script(src='/js/draggable.js')
@@ -64,7 +66,7 @@ block content
       //- script(src='/js/restore.js')
       //- script(src='/js/preview.js')
       //- script(src='/js/canvas.js')
-      //- script(src='/js/social.js')
+      
       //- script(src='/js/search.js')
       //- script(src='/js/autoSave.js')
       //- script(src='/js/annotationBar.js')

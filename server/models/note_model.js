@@ -31,6 +31,7 @@ const writeNote = async (note) => {
 
     // Step 3: Use withTransaction to start a transaction, execute the callback, and commit (or abort on error)
     // Note: The callback for withTransaction MUST be async and/or return a Promise.
+    let note_id;
     await session.withTransaction(async () => {
       const note_obj = {
         'user_id': note.user_id,
@@ -47,7 +48,7 @@ const writeNote = async (note) => {
       };
 
       const note_result = await NotesCollection.insertOne(note_obj);
-      const note_id = note_result.insertedId.toString();
+      note_id = note_result.insertedId.toString();
 
       console.log('note_result', note_result);
 
@@ -63,13 +64,11 @@ const writeNote = async (note) => {
       };
 
       const version_result = await NoteVerCollection.insertOne(version_obj);
-
       //TODO: 目前
     }, transactionOptions);
 
     //  ------------------------------------------
-
-    return result;
+    return note_id;
   } catch (error) {
     return { error };
   } finally {

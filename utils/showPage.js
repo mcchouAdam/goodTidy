@@ -117,7 +117,7 @@ const showSocialCards = async function (data, user_id) {
         <div class="card-header"><img class="profile-pic mr-3" src="${S3_HOST}/user_picture/${user_picture}"/>
           <span>${user_name}</span></div>
           <a href="${SERVER_HOST}/shareNotePage?id=${note_id}" target="blank">
-            <img class="card-img-top" style="width:100%;height:200px;"src="${S3_HOST}/sharing_image/${sharing_image}" alt="Card image cap">
+            <img class="card-img-top" style="width:100%;height:200px;object-fit: contain;"src="${S3_HOST}/sharing_image/${sharing_image}" alt="Card image cap">
           </a>
         <div class="card-body">
         <h5 class="card-title" style="height: 50px;">${note_name}</h5>
@@ -158,8 +158,8 @@ const showSocialCards = async function (data, user_id) {
             <i class="bi bi-three-dots" style="margin-top: -0.16rem;"></i>
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="javascript:deleteComment('${comment._id}', '${comment.note_id}')">刪除</a>
-            <a class="dropdown-item" href="javascript:updateComment('${comment._id}', '${comment.note_id}')">修改</a>
+            <a id="deleteComment_${comment._id}" class="dropdown-item deleteComment" href="javascript:deleteComment('${comment._id}', '${comment.note_id}')">刪除</a>
+            <a id="updateComment_${comment._id}" class="dropdown-item" href="javascript:updateComment('${comment._id}', '${comment.note_id}')">修改</a>
           </div>
         </div>
         `;

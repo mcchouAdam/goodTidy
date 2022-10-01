@@ -152,21 +152,6 @@ let AutoSave = (function () {
   };
 })();
 
-const timeConverter = (date) => {
-  dataValues = [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds(),
-  ];
-  let timeFormat = `${date.getFullYear()}/${
-    date.getMonth() + 1
-  }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  return timeFormat;
-};
-
 // 進入note頁面後，抓取使用者最近編輯的筆記
 async function getlatestNode() {
   current_note_id = localStorage.getItem('CURRENTNOTEID');
