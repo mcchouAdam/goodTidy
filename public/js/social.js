@@ -316,6 +316,9 @@ async function addComments(comment) {
   // 外面的Comment數字修改
   let comment_count = +$(`#comment-btn-${comment.note_id} span`).text();
   $(`#comment-btn-${comment.note_id} span`).text(comment_count + 1);
+
+  //清空原本的留言
+  $('#textarea_' + comment.note_id).val('');
 }
 
 // 發出收藏
