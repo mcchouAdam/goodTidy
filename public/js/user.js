@@ -108,6 +108,7 @@ $('#share-btn').click(async function () {
   await showShareToAll();
 });
 
+// [分享頁面] 顯示分享頁面資料
 async function showShareToAll() {
   // PreLoad the 特定人士清單
   await getShareToOther(current_note_id);
@@ -123,7 +124,15 @@ async function showShareToAll() {
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;');
     $('#share_description').html(sharing_descrition);
-
+    // 確定開放留言
+    if (note_url_permission >= 2) {
+      $('#allowComment-toggle').prop('checked', true);
+    }
+    if (sharing_image) {
+      let href = S3_HOST + 'sharing_image/' + sharing_image;
+      $('#sharePic_preview').attr('src', href);
+      $('#sharePic_preview').show();
+    }
     // sharing_url 輸入Bar
     $('#share_url').show();
     $('#copy_shareUrl').show();
