@@ -758,42 +758,58 @@ async function deleteShareToOther(note_id, delete_email) {
 
 // 刪除推播資訊
 async function deleteMsg(msg_id) {
-  const isDeleted = confirm(`確定要刪除此則留言?`);
-  if (!isDeleted) {
-    return;
-  }
+  Swal.fire({
+    title: '確定要刪除此則通知?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '刪除',
+    cancelButtonText: '取消',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      let data = {
+        'msg_id': msg_id,
+      };
 
-  let data = {
-    'msg_id': msg_id,
-  };
+      let config = {
+        method: 'DELETE',
+        url: `/api/${API_VERSION}/message`,
+        data: data,
+      };
 
-  let config = {
-    method: 'DELETE',
-    url: `/api/${API_VERSION}/message`,
-    data: data,
-  };
+      await axios(config)
+        .then((response) => {
+          console.log(response);
+          Swal.fire({
+            icon: 'success',
+            title: '刪除成功',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+          // 刪除該list
+          $(`li:contains("${msg_id}")`).remove();
+          // 修改原通知值
+          let msg_count = $('#msg_count').text();
+          msg_count--;
+          $('#msg_count').text(msg_count);
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.error,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
+    }
+  });
 
-  await axios(config)
-    .then((response) => {
-      console.log(response);
-      Swal.fire({
-        icon: 'success',
-        title: '刪除成功',
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      // 刪除該list
-      $(`li:contains("${msg_id}")`).remove();
-    })
-    .catch((error) => {
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: error.response.data.error,
-        showConfirmButton: false,
-        timer: 1000,
-      });
-    });
+  // const isDeleted = confirm(`確定要刪除此則通知?`);
+  // if (!isDeleted) {
+  //   return;
+  // }
 }
 
 // 刪除分享給所有人
