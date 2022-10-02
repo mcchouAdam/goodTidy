@@ -179,7 +179,7 @@ block content
                                         addDragTextarea('#note-preview-content', text, textTop, textLeft);
                                         })
                                         .catch(function (error) {
-                                            //- console.log("error", error);
+                                            console.log("error", error);
                                             Swal.fire({
                                                 icon: 'error',
                                                 title: error.response.data.msg,
