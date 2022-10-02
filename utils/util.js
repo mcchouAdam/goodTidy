@@ -108,9 +108,32 @@ const timeConverter = (date) => {
     date.getMinutes(),
     date.getSeconds(),
   ];
-  let timeFormat = `${date.getFullYear()}/${
-    date.getMonth() + 1
-  }/${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+  let year = date.getFullYear().toString();
+  let month = (date.getMonth() + 1).toString();
+  let day = date.getDate().toString();
+  let hours = date.getHours().toString();
+  let minute = date.getMinutes().toString();
+  let second = date.getSeconds().toString();
+
+  if (day.length == 1) {
+    day = '0' + day;
+  }
+  if (month.length == 1) {
+    month = '0' + month;
+  }
+  if (hours.length == 1) {
+    hours = '0' + hours;
+  }
+  if (minute.length == 1) {
+    minute = '0' + minute;
+  }
+  if (second.length == 1) {
+    second = '0' + second;
+  }
+
+  let timeFormat = `${year}/${month}/${day} - ${hours}:${minute}:${second}`;
+
   return timeFormat;
 };
 
