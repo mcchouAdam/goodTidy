@@ -69,6 +69,7 @@ app.use((err, req, res, next) => {
   return res.status(err.status).send({ error: err.message });
 });
 
+
 // 404 error
 app.all('*', (req, res) => {
   return res.status(404).render('404');

@@ -44,7 +44,7 @@ const noteAuthorization = () => {
 };
 
 // 社群的Authorization
-const socialComment_auth = () => {
+const commentAuth = () => {
   return async function (req, res, next) {
     try {
       const user_email = req.session.user.email;
@@ -65,7 +65,7 @@ const socialComment_auth = () => {
 };
 
 // 註解的Authorization
-const annotation_auth = () => {
+const annotationAuth = () => {
   return async function (req, res, next) {
     try {
       const user_email = req.session.user.email;
@@ -142,6 +142,6 @@ module.exports = {
   authentication,
   noteAuthorization,
   timeConverter,
-  socialComment_auth,
-  annotation_auth,
+  commentAuth,
+  annotationAuth,
 };

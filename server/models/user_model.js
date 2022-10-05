@@ -12,7 +12,7 @@ const signUp = async (name, email, password, picture) => {
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
-    const checkEmail = await userCollection.find({ 'email': email }).toArray();
+    const checkEmail = await userCollection.find({ email }).toArray();
     // check user email Exist
     if (checkEmail.length != 0) {
       throw error;
@@ -21,11 +21,11 @@ const signUp = async (name, email, password, picture) => {
     const loginAt = new Date();
     const provider = 'native';
     const user = {
-      provider: provider,
-      email: email,
+      provider,
+      email,
       password: await bcrypt.hash(password.toString(), salt),
-      name: name,
-      picture: picture,
+      name,
+      picture,
       login_at: loginAt,
       saved_note_id: [],
     };
@@ -35,13 +35,13 @@ const signUp = async (name, email, password, picture) => {
     user.id = user_id;
 
     const response = {
-      'data': {
-        'user': {
-          'id': user.id,
-          'provider': user.provider,
-          'name': user.name,
-          'email': user.email,
-          'picture': user.picture,
+      data: {
+        user: {
+          id: user.id,
+          provider: user.provider,
+          name: user.name,
+          email: user.email,
+          picture: user.picture,
         },
       },
     };
@@ -62,7 +62,7 @@ const nativeSignIn = async (email, password) => {
 
   try {
     // console.log(email);
-    const users = await userCollection.find({ 'email': email }).toArray();
+    const users = await userCollection.find({ email }).toArray();
     const user = users[0];
     const user_id = user._id.toString();
     user.id = user_id;
@@ -87,7 +87,7 @@ const getUserDetail = async (email) => {
   // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
   try {
-    const [user] = await userCollection.find({ 'email': email }).toArray();
+    const [user] = await userCollection.find({ email }).toArray();
     return user;
   } catch (e) {
     return null;
@@ -100,7 +100,7 @@ const shareToAll = async (data) => {
   // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
   try {
-    const [user] = await userCollection.find({ 'email': email }).toArray();
+    const [user] = await userCollection.find({ email }).toArray();
     return user;
   } catch (e) {
     return null;
@@ -110,11 +110,11 @@ const shareToAll = async (data) => {
 };
 
 const getMessages = async (data) => {
-  const user_email = data.user_email;
+  const { user_email } = data;
   const MsgCollection = Mongo.db(MONGO_DB).collection('message');
   try {
     const msg_result = await MsgCollection.find({
-      'notify_user_email': user_email,
+      notify_user_email: user_email,
     }).toArray();
 
     return msg_result;
@@ -126,11 +126,11 @@ const getMessages = async (data) => {
 };
 
 const deleteUserMessage = async (data) => {
-  const msg_id = data.msg_id;
+  const { msg_id } = data;
   const MsgCollection = Mongo.db(MONGO_DB).collection('message');
   try {
     const msg_result = await MsgCollection.deleteOne({
-      '_id': ObjectId(msg_id),
+      _id: ObjectId(msg_id),
     }).toArray();
 
     return msg_result;

@@ -1,27 +1,27 @@
 function addDragTextarea(div_id, text, textTop, textLeft) {
-  let new_offset = { top: textTop, left: textLeft };
-  let new_width = 200;
-  let new_height = 150;
-  let timestamp = Date.now();
-  let textarea_id = `${timestamp}_textarea`;
-  let newElement = $(
+  const new_offset = { top: textTop, left: textLeft };
+  const new_width = 200;
+  const new_height = 150;
+  const timestamp = Date.now();
+  const textarea_id = `${timestamp}_textarea`;
+  const newElement = $(
     `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" placeholder="新增文字方塊">${text}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)
     .draggable({
       cancel: 'text',
-      start: function () {
+      start() {
         $(`#${textarea_id}`).focus();
       },
-      stop: function () {
+      stop() {
         $(`#${textarea_id}`).focus();
       },
       containment: div_id,
     })
     .resizable()
     .css({
-      'position': 'absolute',
+      position: 'absolute',
     })
     .offset(new_offset);
   // .on('drag', stepDrag)
@@ -29,7 +29,7 @@ function addDragTextarea(div_id, text, textTop, textLeft) {
   // .on('input', checkTextNull);
 
   // 儲存所有textarea_id，以便取得更改值 .html()取不到
-  OCR_ids.push(textarea_id);
+  // OCR_ids.push(textarea_id);
   $(div_id).append(newElement);
 }
 
@@ -44,38 +44,38 @@ function Textarea_draggable_html(
   textLeft = +textLeft.replaceAll('px', '');
   textTop = +textTop.replaceAll('px', '');
 
-  let new_offset = { top: textTop, left: textLeft };
-  let new_width = width;
-  let new_height = height;
-  let timestamp = Date.now();
-  let textarea_id = `${timestamp}_textarea`;
-  let text_jsInjection = text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+  const new_offset = { top: textTop, left: textLeft };
+  const new_width = width;
+  const new_height = height;
+  const timestamp = Date.now();
+  const textarea_id = `${timestamp}_textarea`;
+  const text_jsInjection = text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
-  let newElement = $(
+  const newElement = $(
     `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text_jsInjection}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)
     .draggable({
       cancel: 'text',
-      start: function () {
+      start() {
         $(`#${textarea_id}`).focus();
       },
-      stop: function () {
+      stop() {
         $(`#${textarea_id}`).focus();
       },
       containment: div_id,
     })
     .resizable()
     .css({
-      'position': 'absolute',
+      position: 'absolute',
     })
     .offset(new_offset);
   // .on('drag', stepDrag)
   // .on('input', stepInput);
   // .on('input', checkTextNull);
 
-  OCR_ids.push(textarea_id);
+  // OCR_ids.push(textarea_id);
 
   return newElement;
 }
@@ -91,20 +91,20 @@ function textarea_nondraggable_html(
   textLeft = +textLeft.replaceAll('px', '');
   textTop = +textTop.replaceAll('px', '');
 
-  let new_offset = { top: textTop, left: textLeft };
-  let new_width = width;
-  let new_height = height;
-  let timestamp = Date.now();
-  let textarea_id = `${timestamp}_textarea`;
-  let text_jsInjection = text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+  const new_offset = { top: textTop, left: textLeft };
+  const new_width = width;
+  const new_height = height;
+  const timestamp = Date.now();
+  const textarea_id = `${timestamp}_textarea`;
+  const text_jsInjection = text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 
-  let newElement = $(
+  const newElement = $(
     `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea">${text_jsInjection}</textarea></div>`
   )
     .width(new_width)
     .height(new_height)
     .css({
-      'position': 'absolute',
+      position: 'absolute',
     })
     .offset(new_offset);
 
@@ -112,9 +112,9 @@ function textarea_nondraggable_html(
 }
 
 function Img_elements_arr(note_Imgcontent) {
-  let Img_elements = [];
-  let elements = $.parseHTML(note_Imgcontent);
-  let img_background = `${S3_HOST}notes/${note_bg}`;
+  const Img_elements = [];
+  const elements = $.parseHTML(note_Imgcontent);
+  const img_background = `${S3_HOST}notes/${note_bg}`;
 
   elements.map((s) => {
     $(s).find('img').attr('src', img_background);
@@ -124,9 +124,9 @@ function Img_elements_arr(note_Imgcontent) {
   return Img_elements;
 }
 
-//draggable 文字方塊
+// draggable 文字方塊
 function text_elements_arr(append_div, note_textContent) {
-  let text_elements = [];
+  const text_elements = [];
   if (!note_textContent) {
     return [];
   }
@@ -147,7 +147,7 @@ function text_elements_arr(append_div, note_textContent) {
 
 // Textarea只畫出來，不可以拖動
 function textarea_nondraggable_arr(append_div, note_textContent) {
-  let text_elements = [];
+  const text_elements = [];
   if (!note_textContent) {
     return [];
   }
@@ -167,7 +167,7 @@ function textarea_nondraggable_arr(append_div, note_textContent) {
 }
 
 function elements_init(append_div, Img_elements, text_elements) {
-  let elements = Img_elements.concat(text_elements);
+  const elements = Img_elements.concat(text_elements);
   elements.map((e) => {
     append_div.append(e);
   });

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const validator = require('validator');
 const User = require('../models/user_model');
+
 const { S3_HOST } = process.env;
 
 // 註冊
@@ -50,7 +51,7 @@ const signUp = async (req, res) => {
   const signIn_result = await User.nativeSignIn(email, password);
 
   // 紀錄Session登入
-  const user = signIn_result.user;
+  const { user } = signIn_result;
   req.session.user = user;
 
   res.status(200).send(user);
@@ -85,7 +86,7 @@ const signIn = async (req, res) => {
   }
 
   // 紀錄Session登入
-  const user = result.user;
+  const { user } = result;
   req.session.user = user;
 
   if (!user) {
@@ -131,49 +132,49 @@ const getUserProfile = async (req, res) => {
     picture: req.session.user.picture,
   };
 
-  return res.status(200).json({ 'data': data });
+  return res.status(200).json({ data });
 };
 
 const showUserProfile = async (req, res) => {
   const page = 'profile';
-  const id = req.session.user.id;
-  const provider = req.session.user.provider;
-  const name = req.session.user.name;
-  const email = req.session.user.email;
+  const { id } = req.session.user;
+  const { provider } = req.session.user;
+  const { name } = req.session.user;
+  const { email } = req.session.user;
   if (!req.session.user.picture) {
     req.session.user.picture = 'user.png';
   }
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   return res.status(200).render('profile', {
-    page: page,
-    id: id,
-    provider: provider,
-    name: name,
-    email: email,
-    picture: picture,
+    page,
+    id,
+    provider,
+    name,
+    email,
+    picture,
   });
 };
 
 const showSignIn = async (req, res) => {
   const page = 'signin';
   if (req.session.user) {
-    const id = req.session.user.id;
-    const provider = req.session.user.provider;
-    const name = req.session.user.name;
-    const email = req.session.user.email;
+    const { id } = req.session.user;
+    const { provider } = req.session.user;
+    const { name } = req.session.user;
+    const { email } = req.session.user;
     if (!req.session.user.picture) {
       req.session.user.picture = 'user.png';
     }
     const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
     return res.status(200).render('profile', {
-      page: page,
-      id: id,
-      provider: provider,
-      name: name,
-      email: email,
-      picture: picture,
+      page,
+      id,
+      provider,
+      name,
+      email,
+      picture,
     });
   }
 
@@ -183,55 +184,55 @@ const showSignIn = async (req, res) => {
 const showSignUp = async (req, res) => {
   const page = 'signup';
   if (req.session.user) {
-    const id = req.session.user.id;
-    const provider = req.session.user.provider;
-    const name = req.session.user.name;
-    const email = req.session.user.email;
+    const { id } = req.session.user;
+    const { provider } = req.session.user;
+    const { name } = req.session.user;
+    const { email } = req.session.user;
     if (!req.session.user.picture) {
       req.session.user.picture = 'user.png';
     }
     const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
     return res.status(200).render('profile', {
-      page: page,
-      id: id,
-      provider: provider,
-      name: name,
-      email: email,
-      picture: picture,
+      page,
+      id,
+      provider,
+      name,
+      email,
+      picture,
     });
   }
 
-  return res.status(200).render('signup', { page: page });
+  return res.status(200).render('signup', { page });
 };
 
 // 登出
 const logOut = async (req, res) => {
   req.session.destroy();
-  return res.status(200).send({ 'msg': '登出成功' });
+  return res.status(200).send({ msg: '登出成功' });
 };
 
 // 首頁
 const showHome = async (req, res) => {
   const page = 'Home';
   if (req.session.user) {
-    const id = req.session.user.id;
-    const provider = req.session.user.provider;
-    const name = req.session.user.name;
-    const email = req.session.user.email;
+    const { id } = req.session.user;
+    const { provider } = req.session.user;
+    const { name } = req.session.user;
+    const { email } = req.session.user;
     const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
     return res.status(200).render('Home', {
-      page: page,
-      id: id,
-      provider: provider,
-      name: name,
-      email: email,
-      picture: picture,
+      page,
+      id,
+      provider,
+      name,
+      email,
+      picture,
     });
   }
 
-  return res.status(200).render('Home', { page: page });
+  return res.status(200).render('Home', { page });
 };
 
 module.exports = {

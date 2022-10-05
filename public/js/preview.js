@@ -14,7 +14,7 @@ form.addEventListener('change', async (e) => {
     });
     return;
   }
-  const file_size = $('#file-preview')[0].files[0].size / 1024 / 1024; //MB
+  const file_size = $('#file-preview')[0].files[0].size / 1024 / 1024; // MB
   if (file_size > 2) {
     Swal.fire({
       icon: 'error',

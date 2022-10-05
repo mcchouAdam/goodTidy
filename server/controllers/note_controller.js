@@ -1,39 +1,40 @@
 const Notes = require('../models/note_model');
 const { showShareToOtherList } = require('../../utils/showPage');
 require('dotenv').config();
+
 const { S3_HOST } = process.env;
 
 // [頁面呈現] 渲染編輯筆記
 const showNote = async (req, res) => {
-  const id = req.session.user.id;
-  const provider = req.session.user.provider;
-  const name = req.session.user.name;
-  const email = req.session.user.email;
+  const { id } = req.session.user;
+  const { provider } = req.session.user;
+  const { name } = req.session.user;
+  const { email } = req.session.user;
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   return res.status(200).render('note', {
-    id: id,
-    provider: provider,
-    name: name,
-    email: email,
-    picture: picture,
+    id,
+    provider,
+    name,
+    email,
+    picture,
   });
 };
 
 // [頁面呈現] 渲染編輯筆記
 const showUploadNote = async (req, res) => {
-  const id = req.session.user.id;
-  const provider = req.session.user.provider;
-  const name = req.session.user.name;
-  const email = req.session.user.email;
+  const { id } = req.session.user;
+  const { provider } = req.session.user;
+  const { name } = req.session.user;
+  const { email } = req.session.user;
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   return res.status(200).render('uploadNote', {
-    id: id,
-    provider: provider,
-    name: name,
-    email: email,
-    picture: picture,
+    id,
+    provider,
+    name,
+    email,
+    picture,
   });
 };
 
@@ -43,37 +44,38 @@ const createNote = async (req, res) => {
   note.file_name = req.filename;
 
   const note_id = await Notes.writeNote(note);
-  return res.status(200).json({ 'data': note_id });
+  return res.status(200).json({ data: note_id });
 };
 
 // 改名筆記
 const renameNote = async (req, res) => {
-  const note_id = req.body.note_id;
-  const new_noteName = req.body.new_noteName;
+  const { note_id } = req.body;
+  const { new_noteName } = req.body;
   const result = await Notes.renameNote(note_id, new_noteName);
   return res.status(200).json('rename note successfully.');
 };
 
 // 刪除筆記
 const deleteNote = async (req, res) => {
-  const note_id = req.body.note_id;
+  const { note_id } = req.body;
   const result = await Notes.deleteNote(note_id);
   return res.status(200).json('delete note successfully.');
 };
 
 // 搬移筆記
 const moveNote = async (req, res) => {
-  const note_id = req.body.note_id;
-  const MoveToClass = req.body.MoveToClass;
+  const { note_id } = req.body;
+  const { MoveToClass } = req.body;
   const result = await Notes.moveNote(note_id, MoveToClass);
   return res.status(200).json('move note_classification successfully.');
 };
 
 // 改名分類
 const renameNoteClass = async (req, res) => {
-  const user_id = req.body.user_id;
-  const old_classificationName = req.body.old_classificationName;
-  const new_classificationName = req.body.new_classificationName;
+  // const user_id = req.body.user_id;
+  // const old_classificationName = req.body.old_classificationName;
+  // const new_classificationName = req.body.new_classificationName;
+  const { user_id, old_classificationName, new_classificationName } = req.body;
 
   const result = await Notes.renameNoteClass(
     user_id,
@@ -85,31 +87,27 @@ const renameNoteClass = async (req, res) => {
 
 // 刪除分類
 const deleteNoteClass = async (req, res) => {
-  const user_id = req.body.user_id;
-  const classificationName = req.body.classificationName;
+  const { user_id } = req.body;
+  const { classificationName } = req.body;
 
   const result = await Notes.deleteNoteClass(user_id, classificationName);
   return res.status(200).json('rename note successfully.');
 };
 
 const createNoteVersion = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const version_info = req.body;
   const result = await Notes.createNoteVersion(version_info);
 
   return res.status(200).json(result);
 };
 
-const getNote = async (req, res) => {
-  return res.render('note');
-};
+const getNote = async (req, res) => res.render('note');
 
 const getUserNotes = async (req, res) => {
-  const user_id = req.user.id;
-  const note_permission = req.note_permission;
-  const result = await Notes.getUserNotes(user_id, note_permission);
-
-  console.log('note_permission: ', note_permission);
+  // const user_id = req.user.id;
+  const { note_permission } = req;
+  const result = await Notes.getUserNotes(note_permission);
 
   return res.status(200).json(result);
 };
@@ -126,7 +124,7 @@ const shareToAll = async (req, res) => {
 };
 
 const getShareToAll = async (req, res) => {
-  const note_id = req.params.note_id;
+  const { note_id } = req.params;
   const share = await Notes.getShareToAll(note_id);
   return res.status(200).send(share);
 };
@@ -148,12 +146,12 @@ const shareToOther = async (req, res) => {
   req.body.shareUser_email = shareUser_email;
 
   if (user_email == shareUser_email) {
-    return res.status(403).json({ 'msg': '您是此篇筆記的使用者' });
+    return res.status(403).json({ msg: '您是此篇筆記的使用者' });
   }
 
   const share = await Notes.shareToOther(data);
   if (share === '此用戶不存在') {
-    return res.status(403).json({ 'msg': '此用戶不存在' });
+    return res.status(403).json({ msg: '此用戶不存在' });
   }
 
   return res.status(200).json(share);
@@ -162,17 +160,17 @@ const shareToOther = async (req, res) => {
 // 刪除對特定人的分享
 const deleteShareToOther = async (req, res) => {
   const user_name = req.session.user.name;
-  const note_id = req.body.note_id;
-  const delete_email = req.body.delete_email;
+  const { note_id } = req.body;
+  const { delete_email } = req.body;
 
   await Notes.deleteShareToOther(note_id, delete_email, user_name);
-  return res.status(200).json({ 'msg': `${delete_email}刪除成功` });
+  return res.status(200).json({ msg: `${delete_email}刪除成功` });
 };
 
 // 印出該使用者分享給特定人的資訊
 const getShareToOther = async (req, res) => {
   // const user_id = req.session.user.id;
-  const note_id = req.params.note_id;
+  const { note_id } = req.params;
   const current_user_id = req.session.user.id;
 
   const shareList = await Notes.getShareToOther(note_id, current_user_id);
@@ -181,7 +179,7 @@ const getShareToOther = async (req, res) => {
 };
 
 const saveNote = async (req, res) => {
-  const note_id = req.body.note_id;
+  const { note_id } = req.body;
   const user_id = req.session.user.id;
   const user_email = req.session.user.email;
   const user_name = req.session.user.name;
@@ -200,16 +198,16 @@ const saveNote = async (req, res) => {
 // 新增註釋
 const updateAnnotation = async (req, res) => {
   // 檢查權限
-  const permission = req.permission;
+  const { permission } = req;
   console.log('permission:', permission);
 
   if (permission < 2) {
-    return res.status(403).json({ 'msg': '您無權限新增/修改/刪除/註釋' });
+    return res.status(403).json({ msg: '您無權限新增/修改/刪除/註釋' });
   }
 
-  const note_id = req.body.note_id;
-  const annotion_user_id = req.body.annotion_user_id;
-  const annotation_icon_html = req.body.annotation_icon_html;
+  const { note_id } = req.body;
+  const { annotion_user_id } = req.body;
+  const { annotation_icon_html } = req.body;
   const annotation_textarea = JSON.parse(req.body.annotation_textarea);
   const annotation_user_name = JSON.parse(req.body.annotation_user_name);
 
@@ -221,13 +219,13 @@ const updateAnnotation = async (req, res) => {
     annotation_user_name
   );
 
-  return res.status(200).json({ 'msg': '新增註釋成功' });
+  return res.status(200).json({ msg: '新增註釋成功' });
 };
 
 // 拿取註釋
 const getAnnotation = async (req, res) => {
-  const note_id = req.params.note_id;
-  const annotion_user_id = req.params.annotion_user_id;
+  const { note_id } = req.params;
+  const { annotion_user_id } = req.params;
 
   const getResult = await Notes.getAnnotation(note_id, annotion_user_id);
   return res.status(200).json(getResult);

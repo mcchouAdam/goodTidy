@@ -1,11 +1,11 @@
 // 圖形圈選 ---------------------------
 // 魔術
-$('#magicContour').click(async function () {
+$('#magicContour').click(async () => {
   initCanvasListener(canvas);
 });
 
 // 方形圈選
-$('#rectContour').click(async function (e) {
+$('#rectContour').click(async (e) => {
   // const isfile_upload = $('#file-preview').get(0).files.length;
   // if (isfile_upload == 0) {
   //   // Swal.fire('請先選擇檔案');
@@ -27,12 +27,12 @@ async function shapeSnapShot() {
   // console.log(rectContour_params);
   let item_x1 = rectContour_params[0];
   let item_y1 = rectContour_params[1];
-  let item_width = Math.abs(rectContour_params[2]);
-  let item_height = Math.abs(rectContour_params[3]);
+  const item_width = Math.abs(rectContour_params[2]);
+  const item_height = Math.abs(rectContour_params[3]);
 
   // 防止使用從左下、右下、右上開始拉
-  let item_x2 = rectContour_params[4];
-  let item_y2 = rectContour_params[5];
+  const item_x2 = rectContour_params[4];
+  const item_y2 = rectContour_params[5];
 
   item_x1 = Math.min(item_x1, item_x2);
   item_y1 = Math.min(item_y1, item_y2);
@@ -92,7 +92,7 @@ async function shapeSnapShot() {
 // });
 
 // 回復鍵 ------------------------------------
-$('#reDraw').click(function () {
+$('#reDraw').click(() => {
   clearContext(canvas, context);
   canvasBackground();
   removeRectRemoveListener(canvas);
@@ -100,12 +100,12 @@ $('#reDraw').click(function () {
 });
 
 // 新增文字方塊鍵 ---------------------------------
-$('#addfont').click(async function () {
+$('#addfont').click(async () => {
   addDragTextarea('#update-note-content', '', 25, 25);
 });
 
 // 儲存鍵 --------------------------------------
-$('#storeNote').click(async function () {
+$('#storeNote').click(async () => {
   Swal.fire({
     title: '你確定要儲存檔案嗎?',
     icon: 'warning',
@@ -116,16 +116,16 @@ $('#storeNote').click(async function () {
     cancelButtonText: '取消',
   }).then(async (result) => {
     if (result.isConfirmed) {
-      let version_name = new Date();
+      const version_name = new Date();
 
       // 圖形擷取資訊
-      let contourImg_count = $('.contour-pic').length;
+      const contourImg_count = $('.contour-pic').length;
       let element_html = '';
       for (let i = 0; i < contourImg_count; i++) {
         element_html += $('.contour-pic').get(i).outerHTML;
       }
       const file_name = `${S3_HOST}notes/${note_bg}`;
-      let removeSrc_element = element_html.replaceAll(file_name, '');
+      const removeSrc_element = element_html.replaceAll(file_name, '');
 
       // OCR的draggable文字方塊資訊
       // OCR_elements = [];
@@ -149,7 +149,7 @@ $('#storeNote').click(async function () {
 
       // 文字擷取
       const text_elements = $('.div_addtextarea');
-      let OCR_elements = [];
+      const OCR_elements = [];
       if (text_elements.length != 0) {
         text_elements.map((i, e) => {
           let obj = {};
@@ -159,36 +159,36 @@ $('#storeNote').click(async function () {
           const OCR_height = e.style.height;
           const OCR_text = e.firstChild.value;
           obj = {
-            'text': OCR_text,
-            'textTop': OCR_top,
-            'textLeft': OCR_left,
-            'height': OCR_height,
-            'width': OCR_width,
+            text: OCR_text,
+            textTop: OCR_top,
+            textLeft: OCR_left,
+            height: OCR_height,
+            width: OCR_width,
           };
           OCR_elements.push(obj);
         });
       }
 
       // 搜尋使用的keywords，將全部的字串串起來
-      let ek = $('.addtextarea')
+      const ek = $('.addtextarea')
         .map((_, el) => el.value)
         .get();
-      let keywords = ek.join('').replaceAll('\n', '').replace(/\s/g, '');
+      const keywords = ek.join('').replaceAll('\n', '').replace(/\s/g, '');
 
-      let data = {
-        'note_id': current_note_id,
-        'created_time': '',
-        'version_img': '123_coolthing_ver3.png',
-        'version_name': version_name,
-        'elements': removeSrc_element,
-        'keywords': keywords,
-        'text_elements': JSON.stringify(OCR_elements),
+      const data = {
+        note_id: current_note_id,
+        created_time: '',
+        version_img: '123_coolthing_ver3.png',
+        version_name,
+        elements: removeSrc_element,
+        keywords,
+        text_elements: JSON.stringify(OCR_elements),
       };
 
       await axios({
         method: 'POST',
         url: '/api/1.0/noteVersion',
-        data: data,
+        data,
       });
 
       Swal.fire({
@@ -209,17 +209,6 @@ $('#storeNote').click(async function () {
   });
 });
 
-// // 復原版本鍵 --------------------------------------
-// $('#recovery-btn').click(function () {
-//   // 清空原div上的物件
-//   $('#update-note-content').html('');
-//   // 初始化drag elements
-//   const version_chosen = +$('input[name=version]:checked').val();
-//   let $note_content = $('#update-note-content');
-
-//   drag_elements_init($note_content, [ver_info[version_chosen]]);
-// });
-
 // 自動儲存鍵 ---------------------------------------------
 $('#autoSave-toggle').change(function () {
   if (this.checked) {
@@ -230,7 +219,7 @@ $('#autoSave-toggle').change(function () {
 });
 
 // 版本列表鍵 -------------------------------------------
-$('#version_list-btn').click(async function () {
+$('#version_list-btn').click(async () => {
   current_version_obj = await getVersionList(
     version_obj,
     $('#modal-version-main')
@@ -238,92 +227,19 @@ $('#version_list-btn').click(async function () {
 });
 
 // 版本回復鍵
-$('#version-change').click(function () {
+$('#version-change').click(() => {
   const version_chosen = $('input[name="version_options"]:checked').val();
   noteShowFromVer(version_chosen, current_version_obj);
 });
 
 // --------------------------------------------------------
 // 特定人分享清單鍵
-$('#sharedNote-btn').click(async function () {
+$('#sharedNote-btn').click(async () => {
   await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
 });
 
 // 特定人分享查看鍵
-$('#sharedNote-change').click(function () {
+$('#sharedNote-change').click(() => {
   const note_chosen = $('input[name="shareNote_options"]:checked').val();
   window.open(`/sharedToOtherNote/${shared_note_obj[note_chosen].note_id}`);
 });
-
-// 上傳檔案鍵 ----------------------------
-// $('#submit_note').click(async function () {
-//   // Loading圖示
-//   $('#submit_note').prop('disabled', true);
-//   $('body').css('cursor', 'progress');
-
-//   note_name = $('#note-name').val();
-//   note_classification = $('#note-classification').val();
-//   let ver_name = prompt('請輸入此版本名稱:', `${note_name}_第一版`);
-
-//   // // 檢查版本名
-//   if (ver_name == null || ver_name == '') {
-//     Swal.fire('版本名不能為空');
-//     return;
-//   }
-
-//   // blob url to file
-//   let blob = await fetch(previewBlah.src).then((r) => r.blob());
-//   let filetype = $('input[type=file]').val().split('.').pop();
-//   let timestamp = Date.now();
-//   let filename = `${user_id}_${timestamp}.${filetype}`;
-
-//   // 圖形擷取資訊
-//   let contourImg_count = $('.contour-pic').length;
-//   let element_html = '';
-//   for (let i = 0; i < contourImg_count; i++) {
-//     element_html += $('.contour-pic').get(i).outerHTML;
-//   }
-//   let removeSrc_element = element_html.replaceAll(previewBlah.src, '');
-
-//   // 儲存時需要按照順序append
-//   // OCR的draggable文字方塊資訊
-//   OCR_ids.map((id) => {
-//     const OCR_top = $(`#${id}`).parent().get(0).style.top;
-//     const OCR_left = $(`#${id}`).parent().get(0).style.left;
-//     const OCR_width = $(`#${id}`).parent().get(0).style.width;
-//     const OCR_height = $(`#${id}`).parent().get(0).style.height;
-//     const OCR_text = $(`#${id}`).val();
-//     const OCR_obj = {
-//       'text': OCR_text,
-//       'textTop': OCR_top,
-//       'textLeft': OCR_left,
-//       'height': OCR_height,
-//       'width': OCR_width,
-//     };
-//     OCR_elements.push(OCR_obj);
-//   });
-
-//   let keywords = $('#note-preview-content')
-//     .text()
-//     .replaceAll('\n', '')
-//     .replace(/\s/g, '');
-
-//   await noteUpload(
-//     blob,
-//     filename,
-//     user_id,
-//     note_name,
-//     timestamp,
-//     removeSrc_element,
-//     note_classification,
-//     ver_name,
-//     keywords,
-//     OCR_elements
-//   );
-
-//   // Loading釋放
-//   $('#submit_note').prop('disabled', false);
-//   $('body').css('cursor', 'default');
-
-//   window.location.assign('/note');
-// });

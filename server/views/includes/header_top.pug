@@ -36,14 +36,12 @@ body
               i.bi.bi-bell
               span#msg_count.badge.bg-primary.badge-number 0
             // End Notification Icon
-            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications.userMsgNotifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
               //- li.dropdown-header
               //-   | You have 4 new notifications
               //-   a(href='#')
               //-     span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
               //- li
-              li.dropdown-header
-                | 您無新訊息
                 //- a(href='#')
                 //-   span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
               li
@@ -260,12 +258,5 @@ body
         //- Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
       });
 
-
-      $(document).on('click', '.msg-close', async function(e){
-          const msg_id = e.target.id;
-          await deleteMsg(msg_id);
-          await getUserMsg();
-          await showUserMsg();
-      })
 
       

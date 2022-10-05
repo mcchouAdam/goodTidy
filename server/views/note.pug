@@ -9,39 +9,39 @@ block content
           button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='搜尋筆記內容' disabled='')
             i.fa.fa-search
           //- 修改筆記分類 ----------------
-          //- button#updateNoteClassModal-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#updateNoteClassModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='修改筆記分類')
-          //-   i.bi.bi-pencil-square
+          button#updateNoteClassModal-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#updateNoteClassModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='修改筆記分類')
+            i.bi.bi-pencil-square
           
 
           //- 修改分類Modal-------------------
-          #updateNoteClassModal.modal.fade(tabindex='-1', aria-labelledby='updateNoteClassModal', aria-hidden='true')
-            .modal-dialog
-              .modal-content
-                .modal-header
-                  h5.modal-title 修改筆記分類
-                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position='right')
-                #modal-updateNoteClass.modal-body
-                  //- 筆記分類名稱
-                  span.small 修改分類名稱
-                    .input-group.mb-3
-                      .input-group-prepend
-                        button.btn.btn-outline-secondary(type='button') Button
-                      select#inputGroupSelect03.custom-select
-                        option(selected='') Choose...
-                        option(value='1') One
-                        option(value='2') Two
-                        option(value='3') Three
-                      i.bi.bi-arrow-right
-                      input#newClassName.form-control(type='text', placeholder='新的筆記分類名稱')
-                  span.small 刪除分類
-                    .input-group.mb-3
-                      .input-group-prepend
-                        button.btn.btn-outline-secondary(type='button') Button
-                      select#inputGroupSelect03.custom-select
-                        option(selected='') Choose...
-                        option(value='1') One
-                        option(value='2') Two
-                        option(value='3') Three
+          //- #updateNoteClassModal.modal.fade(tabindex='-1', aria-labelledby='updateNoteClassModal', aria-hidden='true')
+          //-   .modal-dialog
+          //-     .modal-content
+          //-       .modal-header
+          //-         h5.modal-title 修改筆記分類
+          //-         button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position='right')
+          //-       #modal-updateNoteClass.modal-body
+          //-         //- 筆記分類名稱
+          //-         span.small 修改分類名稱
+          //-           .input-group.mb-3
+          //-             .input-group-prepend
+          //-               button.btn.btn-outline-secondary(type='button') Button
+          //-             select#inputGroupSelect03.custom-select
+          //-               option(selected='') Choose...
+          //-               option(value='1') One
+          //-               option(value='2') Two
+          //-               option(value='3') Three
+          //-             i.bi.bi-arrow-right
+          //-             input#newClassName.form-control(type='text', placeholder='新的筆記分類名稱')
+          //-         span.small 刪除分類
+          //-           .input-group.mb-3
+          //-             .input-group-prepend
+          //-               button.btn.btn-outline-secondary(type='button') Button
+          //-             select#inputGroupSelect03.custom-select
+          //-               option(selected='') Choose...
+          //-               option(value='1') One
+          //-               option(value='2') Two
+          //-               option(value='3') Three
 
                   
                 .modal-footer
@@ -297,7 +297,7 @@ block content
               cancelButtonText: '取消'
           }).then((result) => {
               if (result.isConfirmed) {
-                  OCR_ids = OCR_ids.filter(n => !OCR_delete_ids.includes(n)); // 更新OCR_ids剩餘的物件
+                  //- OCR_ids = OCR_ids.filter(n => !OCR_delete_ids.includes(n)); // 更新OCR_ids剩餘的物件
                   const delete_items = $('.highlight');
                   delete_items.map((i, delete_id) => { 
                     const top = delete_items.get(i).style.top;

@@ -1,31 +1,31 @@
 // TODO: 第一步會記不到
 let step = 1; // 步驟變數
 let last_step = step;
-let initialObject = [];
-let stepObject = []; // 需復原的物件
+const initialObject = [];
+const stepObject = []; // 需復原的物件
 
 function stepAppend(item, event, top, left, val) {
   let obj;
   if (event === 'drag') {
     obj = {
-      'item': item,
-      'event': event,
-      'top': top,
-      'left': left,
+      item,
+      event,
+      top,
+      left,
     };
   } else if (event === 'input') {
     obj = {
-      'item': item,
-      'event': event,
-      'val': val,
+      item,
+      event,
+      val,
     };
   } else if (event === 'delete') {
     obj = {
-      'item': item,
-      'event': event,
-      'top': top,
-      'left': left,
-      'val': val,
+      item,
+      event,
+      top,
+      left,
+      val,
     };
   }
 
@@ -48,7 +48,7 @@ prev.onclick = function () {
     let obj = stepObject[step];
     console.log('上一步obj: ', obj);
 
-    let item = obj.item;
+    let { item } = obj;
     if (obj.event === 'drag') {
       // input上一個記到的是最新的狀態，所以要在上一步
       if (step - 1 == 0) {
@@ -71,11 +71,11 @@ prev.onclick = function () {
       const restore_id = item.id;
       if (restore_id.split('_')[1] === 'contour-pic') {
         $('#update-note-content').append(item);
-        $('#' + restore_id).draggable({ containment: '#update-note-content' });
+        $(`#${restore_id}`).draggable({ containment: '#update-note-content' });
       } else {
         // 文字需另外處理才能draggable
-        let top = +obj.top.replaceAll('px', '');
-        let left = +obj.left.replaceAll('px', '');
+        const top = +obj.top.replaceAll('px', '');
+        const left = +obj.left.replaceAll('px', '');
         addDragTextarea($('#update-note-content'), obj.val, top, left);
       }
     }

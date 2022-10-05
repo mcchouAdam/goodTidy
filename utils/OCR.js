@@ -7,7 +7,7 @@ const client = new vision.ImageAnnotatorClient({
   keyFilename: GOOGLE_API_KEY,
 });
 
-const OCR_google = async (req, res) => {
+const getOCR = async (req, res) => {
   const filename = req.filename;
   const [result] = await client.textDetection(`${S3_HOST}/OCR/${filename}`);
   const detections = result.textAnnotations;
@@ -22,4 +22,4 @@ const OCR_google = async (req, res) => {
   return res.status(200).json(detections);
 };
 
-module.exports = { OCR_google };
+module.exports = { getOCR };

@@ -12,7 +12,7 @@ async function noteUpload(
   OCR_elements
 ) {
   // 檔案上傳s3
-  let data = new FormData();
+  const data = new FormData();
   data.append('user_note_upload', blob, filename);
   data.append('user_id', user_id);
   data.append('note_name', note_name);
@@ -24,16 +24,16 @@ async function noteUpload(
   data.append('keywords', keywords);
   data.append('text_elements', JSON.stringify(OCR_elements));
 
-  let config = {
+  const config = {
     method: 'post',
-    url: `/api/1.0/note`,
-    data: data,
+    url: '/api/1.0/note',
+    data,
   };
 
   // console.log('upload data:', data);
 
   await axios(config)
-    .then(function (response) {
+    .then((response) => {
       // console.log(response);
       const note_id = response.data.data;
       Swal.fire({
@@ -41,13 +41,13 @@ async function noteUpload(
         title: '上傳筆記成功',
         showConfirmButton: false,
         timer: 1000,
-      }).then(function () {
+      }).then(() => {
         // localStorage.setItem('PREVPAGE', 'uploadPage');
         localStorage.setItem('UPLOADNOTEID', note_id);
         window.location.assign('/note');
       });
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
       Swal.fire({
         icon: 'error',
@@ -72,18 +72,18 @@ async function noteShow(note_id) {
     return;
   }
 
-  let note_ImgContent = showNote_note_obj[note_id].note_elements;
-  let note_textContent = showNote_note_obj[note_id].note_textElements;
-  let note_filename = showNote_note_obj[note_id].note_file_name;
-  let note_classification = showNote_note_obj[note_id].note_classification;
-  let click_notename = showNote_note_obj[note_id].note_name;
-  let $note_div = $('#update-note-content');
+  const note_ImgContent = showNote_note_obj[note_id].note_elements;
+  const note_textContent = showNote_note_obj[note_id].note_textElements;
+  const note_filename = showNote_note_obj[note_id].note_file_name;
+  const { note_classification } = showNote_note_obj[note_id];
+  const click_notename = showNote_note_obj[note_id].note_name;
+  const $note_div = $('#update-note-content');
 
   $('#click_note_classification').html(note_classification);
   $('#click_note_name').html(click_notename);
 
   // 每次更換筆記都要洗掉之前的OCR物件
-  OCR_ids = [];
+  // OCR_ids = [];
 
   $note_div.html('');
   note_bg = note_filename;
@@ -109,7 +109,7 @@ async function getUserNotes() {
   // $('body').addClass('cover-loading');
   // $('body').append(loading_html);
 
-  let config = {
+  const config = {
     method: 'get',
     url: `/api/${API_VERSION}/notes`,
     data: '',
@@ -118,31 +118,31 @@ async function getUserNotes() {
   // 抓取筆記資料
   await axios(config)
     .then((response) => {
-      const data = response.data;
+      const { data } = response;
       version_obj = data;
 
       // console.log('version', version_obj);
 
-      let note_obj = {};
-      let search_list_obj = {};
-      let showNote_obj = {};
-      let sharedNote_obj = {};
+      const note_obj = {};
+      const search_list_obj = {};
+      const showNote_obj = {};
+      const sharedNote_obj = {};
 
       // console.log('version_obj', version_obj);
 
       version_obj.map((s) => {
         // console.log(s);
-        const note_classification = s.note_classification;
+        const { note_classification } = s;
         const note_file_name = s.file_name;
-        const note_name = s.note_name;
+        const { note_name } = s;
         const note_lastVersion = s.lastVersion;
-        const note_verInfo = s.version_info[s.version_info.length - 1]; //取最新版
+        const note_verInfo = s.version_info[s.version_info.length - 1]; // 取最新版
         const note_elements = note_verInfo.elements;
         const note_keywords = note_verInfo.keywords;
         const note_id = s._id;
-        const lastEdit_time = s.lastEdit_time;
+        const { lastEdit_time } = s;
         const note_textElements = note_verInfo.text_elements;
-        const user_permission = s.user_permission;
+        const { user_permission } = s;
         const user_picture = s.user_info[0].picture;
         const user_name = s.user_info[0].name;
         const user_email = s.user_info[0].email;
@@ -151,31 +151,31 @@ async function getUserNotes() {
         // console.log(user_id);
 
         // 只要自己不是筆記的admin就是別人分享給你的
-        if (user_permission !== authorizationList['admin']) {
+        if (user_permission !== authorizationList.admin) {
           // 別人分享給你的筆記
           if (!sharedNote_obj[note_name]) {
             sharedNote_obj[note_name] = {
-              'note_id': note_id,
-              'note_elements': note_elements,
-              'note_textElements': note_textElements,
-              'note_file_name': note_file_name,
-              'user_permission': user_permission,
-              'user_picture': user_picture,
-              'user_name': user_name,
-              'user_email': user_email,
+              note_id,
+              note_elements,
+              note_textElements,
+              note_file_name,
+              user_permission,
+              user_picture,
+              user_name,
+              user_email,
             };
           }
           // 自己的筆記
         } else {
           if (!note_obj[note_classification]) {
             note_obj[note_classification] = {
-              'note_name': [note_name],
-              'note_elements': [note_elements],
-              'note_textElements': [note_textElements],
-              'note_keywords': [note_keywords],
-              'note_lastVersion': [note_lastVersion],
-              'note_id': [note_id],
-              'lastEdit_time': [lastEdit_time],
+              note_name: [note_name],
+              note_elements: [note_elements],
+              note_textElements: [note_textElements],
+              note_keywords: [note_keywords],
+              note_lastVersion: [note_lastVersion],
+              note_id: [note_id],
+              lastEdit_time: [lastEdit_time],
             };
           } else {
             note_obj[note_classification].note_name.push(note_name);
@@ -205,11 +205,11 @@ async function getUserNotes() {
           // 筆記呈現頁
           if (!showNote_obj[note_id]) {
             showNote_obj[note_id] = {
-              'note_classification': note_classification,
-              'note_name': note_name,
-              'note_elements': note_elements,
-              'note_textElements': note_textElements,
-              'note_file_name': note_file_name,
+              note_classification,
+              note_name,
+              note_elements,
+              note_textElements,
+              note_file_name,
             };
           }
         }
@@ -237,7 +237,7 @@ async function getUserNotes() {
     })
     .catch((error) => {
       // Loading取消
-      $body.removeClass('loading');
+      // $body.removeClass('loading');
       console.log(error);
     });
 }
@@ -255,8 +255,8 @@ async function showNoteList(note_obj, div_append) {
 
   classifications.map((classfi) => {
     // console.log('classfi: ', classfi);
-    let ids = note_obj[classfi].note_id;
-    let names = note_obj[classfi].note_name;
+    const ids = note_obj[classfi].note_id;
+    const names = note_obj[classfi].note_name;
 
     // 相同分類的筆記 全部串一起
     for (let i = 0; i < names.length; i++) {
@@ -279,6 +279,7 @@ async function showNoteList(note_obj, div_append) {
         <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i>
             <span>${classfi}</span>
+          <i class="bi bi-pencil-square" id="modify_${classfi}" onclick="modify_class()" style="margin-left: 80px;"></i>
           <i class="bi bi-chevron-down ms-auto"></i>
         </a>
         ${notes_html}
@@ -300,8 +301,8 @@ async function showSearchList(note_obj, div_append) {
 
   let num = 1;
   classification.map((c) => {
-    let ids = note_obj[c].note_id;
-    let names = note_obj[c].note_name;
+    const ids = note_obj[c].note_id;
+    const names = note_obj[c].note_name;
 
     for (let i = 0; i < names.length; i++) {
       name_html += `
@@ -345,8 +346,8 @@ async function getSharedNote(sharedNote_obj, div_append) {
   let num = 1;
   note_names.map((id) => {
     const permission = sharedNote_obj[id].user_permission;
-    const user_picture = sharedNote_obj[id].user_picture;
-    const user_name = sharedNote_obj[id].user_name;
+    const { user_picture } = sharedNote_obj[id];
+    const { user_name } = sharedNote_obj[id];
     const shared_uer_email = sharedNote_obj[id].user_email;
 
     let user_online_status_html = '';
@@ -379,21 +380,20 @@ async function getVersionList(version_obj, div_append) {
   div_append.html('');
   if (!current_note_id) {
     div_append.text('請先選擇一個筆記');
-    return;
   } else {
-    let showVerObj = {};
+    const showVerObj = {};
     let name_html = '';
 
     let num = 1;
     version_obj.map((o) => {
       if (o.note_id == current_note_id) {
-        const version_info = o.version_info;
+        const { version_info } = o;
 
         version_info.map((v) => {
           showVerObj[v.version_name] = {
-            'elements': v.elements,
-            'text_elements': v.text_elements,
-            'created_time': v.created_time,
+            elements: v.elements,
+            text_elements: v.text_elements,
+            created_time: v.created_time,
           };
 
           vName_timeFormat = timeConverter(new Date(v.version_name));
@@ -440,7 +440,7 @@ async function sharedNoteShow(name, Obj) {
   $('#update-note-content').html('');
   console.log('name:', name, 'Obj: ', Obj);
   note_bg = Obj[name].note_file_name;
-  const user_permission = Obj[name].user_permission;
+  const { user_permission } = Obj[name];
   const Img_elements = Img_elements_arr(Obj[name].note_elements);
   const text_elements = textarea_nondraggable_arr(
     $('#update-note-content'),
@@ -448,7 +448,7 @@ async function sharedNoteShow(name, Obj) {
   );
   elements_init($('#update-note-content'), Img_elements, text_elements);
   $('textarea').prop('disabled', true);
-  $('textarea').draggable({ 'disable': true });
+  $('textarea').draggable({ disable: true });
 }
 
 // 改名筆記 ------------------------------------------------------------
@@ -463,9 +463,7 @@ async function renameNote(note_id) {
     confirmButtonText: '確定',
     cancelButtonText: '取消',
     showLoaderOnConfirm: true,
-    preConfirm: (new_noteName) => {
-      return new_noteName;
-    },
+    preConfirm: (new_noteName) => new_noteName,
     allowOutsideClick: () => !Swal.isLoading(),
   }).then(async (result) => {
     if (result.isConfirmed) {
@@ -479,18 +477,18 @@ async function renameNote(note_id) {
         });
       } else {
         data = {
-          'note_id': note_id,
-          'new_noteName': new_noteName,
+          note_id,
+          new_noteName,
         };
 
-        let config = {
+        const config = {
           method: 'PATCH',
-          url: `/api/1.0/note`,
-          data: data,
+          url: '/api/1.0/note',
+          data,
         };
 
         await axios(config)
-          .then(async function (response) {
+          .then(async (response) => {
             console.log(response);
             // 拿取User所有note的資訊;
             await getUserNotes();
@@ -506,7 +504,7 @@ async function renameNote(note_id) {
               timer: 1000,
             });
           })
-          .catch(function (error) {
+          .catch((error) => {
             console.log(error);
             Swal.fire({
               icon: 'error',
@@ -533,17 +531,17 @@ async function deleteNote(note_id) {
   }).then(async (result) => {
     if (result.isConfirmed) {
       data = {
-        'note_id': note_id,
+        note_id,
       };
 
-      let config = {
+      const config = {
         method: 'DELETE',
-        url: `/api/1.0/note`,
-        data: data,
+        url: '/api/1.0/note',
+        data,
       };
 
       await axios(config)
-        .then(async function (response) {
+        .then(async (response) => {
           console.log(response);
           current_note_id = undefined;
           // 拿取User所有note的資訊;
@@ -562,9 +560,8 @@ async function deleteNote(note_id) {
 
           // 清空現在的current_note_id
           localStorage.removeItem('CURRENTNOTEID');
-
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
           Swal.fire({
             icon: 'error',
@@ -597,7 +594,6 @@ async function moveNote(note_id) {
           showConfirmButton: false,
           timer: 1000,
         });
-        return;
       } else {
         class_index = value;
       }
@@ -606,18 +602,18 @@ async function moveNote(note_id) {
     if (result.isConfirmed) {
       const MoveToClass = note_classes[class_index];
       data = {
-        'note_id': note_id,
-        'MoveToClass': MoveToClass,
+        note_id,
+        MoveToClass,
       };
 
-      let config = {
+      const config = {
         method: 'PATCH',
-        url: `/api/1.0/noteClass`,
-        data: data,
+        url: '/api/1.0/noteClass',
+        data,
       };
 
       await axios(config)
-        .then(async function (response) {
+        .then(async (response) => {
           console.log(response);
           Swal.fire({
             icon: 'success',
@@ -633,7 +629,7 @@ async function moveNote(note_id) {
           // 剛開始就點選筆記
           await notePreClick();
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
           Swal.fire({
             icon: 'error',
@@ -647,37 +643,38 @@ async function moveNote(note_id) {
 }
 
 // 改名分類
-async function renameclassification(user_id, old_classificationName) {
-  const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
+// async function renameclassification(user_id, old_classificationName) {
 
-  if (!new_classificationName) {
-    Swal.fire('分類名字不能為空');
-    return;
-  }
+// const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
 
-  data = {
-    'user_id': user_id,
-    'old_classificationName': old_classificationName,
-    'new_classificationName': new_classificationName,
-  };
+// if (!new_classificationName) {
+//   Swal.fire('分類名字不能為空');
+//   return;
+// }
 
-  let config = {
-    method: 'PATCH',
-    url: `/api/1.0/noteClass`,
-    data: data,
-  };
+// data = {
+//   user_id,
+//   old_classificationName,
+//   new_classificationName,
+// };
 
-  await axios(config)
-    .then(function (response) {
-      console.log(response);
-      Swal.fire('改名分類成功');
-      location.reload();
-    })
-    .catch(function (error) {
-      console.log(error);
-      Swal.fire('改名分類失敗');
-    });
-}
+// const config = {
+//   method: 'PATCH',
+//   url: '/api/1.0/noteClass',
+//   data,
+// };
+
+// await axios(config)
+//   .then((response) => {
+//     console.log(response);
+//     Swal.fire('改名分類成功');
+//     location.reload();
+//   })
+//   .catch((error) => {
+//     console.log(error);
+//     Swal.fire('改名分類失敗');
+//   });
+// }
 
 // 刪除分類
 async function deleteclassification(user_id, classificationName) {
@@ -686,23 +683,23 @@ async function deleteclassification(user_id, classificationName) {
   );
   if (isdeleted) {
     data = {
-      'user_id': user_id,
-      'classificationName': classificationName,
+      user_id,
+      classificationName,
     };
 
-    let config = {
+    const config = {
       method: 'DELETE',
-      url: `/api/1.0/noteClass`,
-      data: data,
+      url: '/api/1.0/noteClass',
+      data,
     };
 
     await axios(config)
-      .then(function (response) {
+      .then((response) => {
         console.log(response);
         Swal.fire('刪除分類成功');
         location.reload();
       })
-      .catch(function (error) {
+      .catch((error) => {
         console.log(error);
         Swal.fire('刪除分類失敗');
       });
@@ -713,10 +710,11 @@ async function deleteclassification(user_id, classificationName) {
 // 鎖定註釋
 async function lockAnnotation(annotation_id) {
   let annotation_icon_html = '';
-  let icon_class = '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
-  let annotation_icon_count = $(icon_class).length;
-  $('#textarea-' + annotation_id).prop('disabled', true);
-  $('#icon-' + annotation_id).draggable('disable');
+  const icon_class =
+    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
+  const annotation_icon_count = $(icon_class).length;
+  $(`#textarea-${annotation_id}`).prop('disabled', true);
+  $(`#icon-${annotation_id}`).draggable('disable');
 
   for (let i = 0; i < annotation_icon_count; i++) {
     annotation_icon_html += $(icon_class).get(i).outerHTML;
@@ -732,8 +730,8 @@ async function modifyAnnotation(annotation_id) {
     return;
   }
   // Swal.fire($('#' + annotation_id).val());
-  $('#textarea-' + annotation_id).prop('disabled', false);
-  $('#icon-' + annotation_id).draggable({ disabled: false });
+  $(`#textarea-${annotation_id}`).prop('disabled', false);
+  $(`#icon-${annotation_id}`).draggable({ disabled: false });
 }
 
 // 刪除註釋
@@ -748,47 +746,47 @@ async function deleteAnnotation(annotation_id) {
     cancelButtonText: '取消',
   }).then((result) => {
     if (result.isConfirmed) {
-      $('#icon-' + annotation_id).remove();
-      $('#form-group-' + annotation_id).remove();
+      $(`#icon-${annotation_id}`).remove();
+      $(`#form-group-${annotation_id}`).remove();
 
       // icon的id與編碼要重新排順序
       const icon_count = $('.fa-comments').length - 1; // 第一個是工具列的工具icon
       for (let i = 1; i <= icon_count; i++) {
-        let comments_arr = $('.fa-comments')[i].id.split('_');
+        const comments_arr = $('.fa-comments')[i].id.split('_');
         comments_arr[comments_arr.length - 1] = i;
-        let new_id = comments_arr.join('_');
+        const new_id = comments_arr.join('_');
         $('.fa-comments')[i].id = new_id;
         $('.fa-comments')[
           i
         ].innerHTML = `<span class="badge bg-dark rounded-pill">${i}</span>`;
       }
 
-      //textarea的id與編碼要重新排序
+      // textarea的id與編碼要重新排序
       const textarea_count = $('.form-control').length;
       for (let i = 1; i <= textarea_count; i++) {
-        let textarea_arr = $('.form-control')[i - 1].id.split('_');
+        const textarea_arr = $('.form-control')[i - 1].id.split('_');
         textarea_arr[textarea_arr.length - 1] = i;
-        let new_id = textarea_arr.join('_');
+        const new_id = textarea_arr.join('_');
         $('.form-control')[i - 1].id = new_id;
       }
 
-      //formgroup的id與編碼要重新排序
+      // formgroup的id與編碼要重新排序
       const formgroup_count = $('.form-group').length;
       for (let i = 1; i <= formgroup_count; i++) {
-        let formgroup_arr = $('.form-group')[i - 1].id.split('_');
+        const formgroup_arr = $('.form-group')[i - 1].id.split('_');
         formgroup_arr[formgroup_arr.length - 1] = i;
-        let new_id = formgroup_arr.join('_');
+        const new_id = formgroup_arr.join('_');
         console.log('new_id', new_id);
         $('.form-group')[i - 1].id = new_id;
         $('.form-group span.bg-dark')[i - 1].innerHTML = i;
       }
 
-      //href也要重新排序
+      // href也要重新排序
       const href_count = $('div.dropdown-menu a.dropdown-item').length;
       for (let i = 1; i <= href_count; i++) {
-        let href = $('div.dropdown-menu a.dropdown-item')[i - 1].href;
-        let new_id = annotation_id.substring(0, annotation_id.length - 1) + i;
-        let new_href = `javascript:deleteAnnotation('${new_id}')`;
+        const { href } = $('div.dropdown-menu a.dropdown-item')[i - 1];
+        const new_id = annotation_id.substring(0, annotation_id.length - 1) + i;
+        const new_href = `javascript:deleteAnnotation('${new_id}')`;
         $('div.dropdown-menu a.dropdown-item')[i - 1].href = new_href;
       }
     }
@@ -808,15 +806,15 @@ async function saveAnnotation(annotion_user_id, note_id) {
   }).then(async (result) => {
     if (result.isConfirmed) {
       let annotation_icon_html = '';
-      let annotation_textarea = [];
-      let annotation_user_name = [];
-      let annotation_icon_class =
+      const annotation_textarea = [];
+      const annotation_user_name = [];
+      const annotation_icon_class =
         '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
-      let annotation_textarea_class = 'textarea.form-control';
-      let annotation_user_name_class = '.bg-info';
-      let annotation_icon_count = $(annotation_icon_class).length;
-      let annotation_textare_count = $(annotation_textarea_class).length;
-      let annotation_user_name_count = $(annotation_user_name_class).length;
+      const annotation_textarea_class = 'textarea.form-control';
+      const annotation_user_name_class = '.bg-info';
+      const annotation_icon_count = $(annotation_icon_class).length;
+      const annotation_textare_count = $(annotation_textarea_class).length;
+      const annotation_user_name_count = $(annotation_user_name_class).length;
 
       // 儲存註釋 icon的html
       for (let i = 0; i < annotation_icon_count; i++) {
@@ -845,22 +843,22 @@ async function saveAnnotation(annotion_user_id, note_id) {
       }
 
       // axios儲存資料庫
-      let data = {
-        'note_id': note_id,
-        'annotion_user_id': annotion_user_id,
-        'annotation_icon_html': annotation_icon_html,
-        'annotation_textarea': JSON.stringify(annotation_textarea),
-        'annotation_user_name': JSON.stringify(annotation_user_name),
+      const data = {
+        note_id,
+        annotion_user_id,
+        annotation_icon_html,
+        annotation_textarea: JSON.stringify(annotation_textarea),
+        annotation_user_name: JSON.stringify(annotation_user_name),
       };
 
-      let config = {
+      const config = {
         method: 'POST',
         url: '/api/1.0/annotation',
-        data: data,
+        data,
       };
 
       await axios(config)
-        .then(function (response) {
+        .then((response) => {
           console.log(response);
           Swal.fire({
             icon: 'success',
@@ -871,7 +869,7 @@ async function saveAnnotation(annotion_user_id, note_id) {
             location.reload();
           });
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.log(error);
           Swal.fire({
             icon: 'error',
@@ -886,18 +884,18 @@ async function saveAnnotation(annotion_user_id, note_id) {
 
 // 拿取註釋資料 ---
 async function getAnnotation(note_id) {
-  let config = {
+  const config = {
     method: 'GET',
     url: `/api/1.0/annotation/${note_id}`,
     data: '',
   };
 
   await axios(config)
-    .then(function (response) {
+    .then((response) => {
       current_annotation_element = response.data[0];
       console.log('拿取註釋成功');
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
       console.log('拿取註釋失敗');
     });
@@ -916,13 +914,13 @@ async function showAnnotation(
   }
 
   // 註釋icon
-  const annotation_icon_html = annotation_element.annotation_icon_html;
+  const { annotation_icon_html } = annotation_element;
   const annotation_icon = $.parseHTML(annotation_icon_html);
 
   // 顯示註釋textarea
   const annotation_text = annotation_element.annotation_textarea;
-  const annotation_user_name = annotation_element.annotation_user_name;
-  const note_id = annotation_element.note_id;
+  const { annotation_user_name } = annotation_element;
+  const { note_id } = annotation_element;
   const annotation_count = annotation_text.length;
   let annotation_id;
   let textarea_html = '';
@@ -930,7 +928,7 @@ async function showAnnotation(
   for (id = 1; id <= annotation_count; id++) {
     annotation_id = `${note_id}_annotation_${id}`;
 
-    //重新換掉icon的id與標記數字
+    // 重新換掉icon的id與標記數字
     annotation_icon[id - 1].id = `icon-${annotation_id}`;
     annotation_icon[
       id - 1
@@ -952,7 +950,7 @@ async function showAnnotation(
         </div>`;
     }
 
-    let annotation_menu_html = `
+    const annotation_menu_html = `
         <div class="d-flex flex-row align-items-center">
           <a
             class="btn"
@@ -968,7 +966,7 @@ async function showAnnotation(
           </a>
         </div>`;
 
-    let annotation_html = `
+    const annotation_html = `
         <div class="form-group" id="form-group-${annotation_id}">
           <span class="badge bg-dark rounded-pill">${id}</span>
           <span style="font-size:15px;" class="badge bg-info rounded-pill">${
@@ -992,4 +990,8 @@ async function showAnnotation(
     .css('position', 'absolute')
     .draggable({ containment: '#update-note-content' });
   // console.log(annotation_element);
+}
+
+async function modify_class() {
+  alert('aaaa');
 }

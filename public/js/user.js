@@ -1,8 +1,8 @@
 // axios profile API
 async function profile() {
-  let config = {
+  const config = {
     method: 'get',
-    url: `/api/1.0/user/profile`,
+    url: '/api/1.0/user/profile',
     data: '',
   };
 
@@ -21,23 +21,23 @@ async function profile() {
 
 // axios signUp API
 async function signUp(picture, username, email, password, filename) {
-  let data = new FormData();
+  const data = new FormData();
   data.append('user_pic_upload', picture);
   data.append('name', username);
   data.append('email', email);
   data.append('password', password);
   data.append('filename', filename);
 
-  let config = {
+  const config = {
     method: 'POST',
-    url: `/api/1.0/user/signup`,
-    data: data,
+    url: '/api/1.0/user/signup',
+    data,
   };
 
   let isSuccess = false;
   let msg;
   await axios(config)
-    .then(function (response) {
+    .then((response) => {
       // console.log('註冊成功');
       // console.log('user_signup_success:', response);
       user_id = response.data.id;
@@ -47,32 +47,32 @@ async function signUp(picture, username, email, password, filename) {
       isSuccess = true;
       msg = '註冊成功';
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log('註冊失敗');
       isSuccess = false;
       msg = error.response.data.error;
     });
 
-  let result = { 'isSuccess': isSuccess, 'msg': msg };
+  const result = { isSuccess, msg };
 
   return result;
 }
 
 // axios signIn API
 async function signIn(email, password) {
-  let data = {
-    'provider': 'native',
-    'email': email,
-    'password': password,
+  const data = {
+    provider: 'native',
+    email,
+    password,
   };
 
-  let config = {
+  const config = {
     method: 'POST',
-    url: `/api/1.0/user/signIn`,
+    url: '/api/1.0/user/signIn',
     headers: {
       'Content-Type': 'application/json',
     },
-    data: data,
+    data,
   };
 
   // 登入
@@ -88,7 +88,7 @@ async function signIn(email, password) {
         title: `${user_name}您好！`,
         showConfirmButton: false,
         timer: 1000,
-      }).then(function () {
+      }).then(() => {
         window.location.assign('/note');
       });
     })
@@ -104,7 +104,7 @@ async function signIn(email, password) {
 }
 
 // [分享頁面] 分享鍵 ---------------------------------
-$('#share-btn').click(async function () {
+$('#share-btn').click(async () => {
   await showShareToAll();
 });
 
@@ -129,7 +129,7 @@ async function showShareToAll() {
       $('#allowComment-toggle').prop('checked', true);
     }
     if (sharing_image) {
-      let href = S3_HOST + 'sharing_image/' + sharing_image;
+      const href = `${S3_HOST}sharing_image/${sharing_image}`;
       $('#sharePic_preview').attr('src', href);
       $('#sharePic_preview').show();
     }
@@ -166,7 +166,7 @@ async function showShareToAll() {
 }
 
 // 取消分享鍵 ---------------------------------
-$('#shareToAll_cancel-btn').click(async function () {
+$('#shareToAll_cancel-btn').click(async () => {
   await deleteShareAll();
   await getShareAll(current_note_id);
   await showShareToAll();
@@ -175,7 +175,7 @@ $('#shareToAll_cancel-btn').click(async function () {
 });
 
 // 註冊鍵 -------------------------------------
-$('#signup-form-btn').click(async function (e) {
+$('#signup-form-btn').click(async (e) => {
   e.preventDefault();
 
   // Loading圖示
@@ -224,14 +224,14 @@ $('#signup-form-btn').click(async function (e) {
       title: signUp_result.msg,
       showConfirmButton: false,
       timer: 1000,
-    }).then(function () {
+    }).then(() => {
       window.location.assign('/profile');
     });
   }
 });
 
 // 登入鍵 -------------------------------------
-$('#signin-form-btn').click(async function (e) {
+$('#signin-form-btn').click(async (e) => {
   e.preventDefault();
 
   if (!user_email) {
@@ -244,21 +244,21 @@ $('#signin-form-btn').click(async function (e) {
 
 // 拿取User所有通知 ----------------------------
 async function getUserMsg() {
-  let data = {
-    'user_email': user_email,
+  const data = {
+    user_email,
   };
 
-  let config = {
+  const config = {
     method: 'GET',
     url: `/api/${API_VERSION}/message`,
-    data: data,
+    data,
   };
 
   // 抓取通知資訊
   await axios(config)
     .then((response) => {
       current_user_msg = response.data.data;
-      console.log('user_notification:', current_user_msg);
+      // console.log('delete_current_user_msg', current_user_msg);
     })
     .catch((error) => {
       console.log(error);
@@ -267,16 +267,21 @@ async function getUserMsg() {
 
 // 顯示User所有通知 ----------------------------
 async function showUserMsg() {
-  const msg_count = current_user_msg.length;
-  $('#msg_count').text(msg_count);
-  if (msg_count === 0) {
+  console.log('current_user_msg', current_user_msg);
+  const msgCount = current_user_msg.length;
+  // console.log('msgCount', current_user_msg.length);
+  $('#msg_count').text(msgCount);
+  if (msgCount === 0) {
+    $('.userMsgNotifications').html(
+      '<li class="dropdown-header">您無新訊息</li>'
+    );
     return;
   }
 
   $('ul.notifications').html('');
   current_user_msg.map((m) => {
     let icon_html = '';
-    let createdTime = timeConverter(new Date(m.created_time));
+    const createdTime = timeConverter(new Date(m.created_time));
     switch (m.type) {
       case '收藏':
         icon_html = '<i class="bi bi-heart-fill" style="color:red;"></i>';
@@ -291,18 +296,78 @@ async function showUserMsg() {
         content_html = `<p>${m.content}</p>`;
         break;
     }
-    let item = `
-      <button class="btn msg-close" style="display:inline;float:right;cursor:pointer">
-        <i id="${m._id}" class="bi bi-x-circle-fill" style="float:right;cursor:pointer"></i>
+    const item = `
+      <button id="userMsg-closebtn-${m._id}" onclick="clickDeleteUserMsg('${m._id}')" class="btn msg-close" style="display:inline;float:right;cursor:pointer">
+        <i class="bi bi-x-circle-fill" value="${m._id}" style="float:right;cursor:pointer"></i>
       </button>
-      <li class="notification-item" style="cursor:pointer;">
+      <li id="userMsg_${m._id}" class="notification-item" style="cursor:pointer;">
         ${icon_html}
         <div>
           <h4>${m.type}</h4>
           ${content_html}
           <p>${createdTime}</p>
-          </div>
+        </div>
       </li>`;
     $('ul.notifications').append(item);
   });
+}
+
+// 刪除推播資訊
+async function deleteMsg(msg_id) {
+  Swal.fire({
+    title: '確定要刪除此則通知?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '刪除',
+    cancelButtonText: '取消',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const data = {
+        msg_id,
+      };
+
+      const config = {
+        method: 'DELETE',
+        url: `/api/${API_VERSION}/message`,
+        data,
+      };
+
+      await axios(config)
+        .then((response) => {
+          console.log(response);
+          Swal.fire({
+            icon: 'success',
+            title: '刪除成功',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+
+          // 刪除該list
+          $(`#userMsg_${config.data.msg_id}`).remove();
+          $(`#userMsg-closebtn-${config.data.msg_id}`).remove();
+
+          // 修改原通知值
+          let msg_count = $('#msg_count').text();
+          msg_count--;
+          $('#msg_count').text(msg_count);
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.error,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
+    }
+  });
+}
+
+async function clickDeleteUserMsg(msgId) {
+  await deleteMsg(msgId);
+  await getUserMsg();
+  await showUserMsg();
 }

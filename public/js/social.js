@@ -30,11 +30,11 @@ async function previewFile(preview_id) {
     reader.readAsDataURL(file);
   }
 
-  $('#' + preview_id).show();
+  $(`#${preview_id}`).show();
 }
 
 // 分享社群鍵 ----------------------------------
-$('#shareToAll_confirm-btn').click(async function () {
+$('#shareToAll_confirm-btn').click(async () => {
   // Loading圖示
   $('#shareToAll_confirm-btn').prop('disabled', true);
   $('body').css('cursor', 'progress');
@@ -44,7 +44,7 @@ $('#shareToAll_confirm-btn').click(async function () {
     .get();
   tags = $.grep(tags, (n) => n == 0 || n);
 
-  let share_description = $('#share_description').val();
+  const share_description = $('#share_description').val();
 
   // 檢查簡介不得為空
   if (share_description == '') {
@@ -96,7 +96,7 @@ $('#shareToAll_confirm-btn').click(async function () {
   }
 
   // alert(url_permission);
-  let data = new FormData();
+  const data = new FormData();
   data.append('isSharing', isSharing);
   data.append('url_permission', url_permission);
   data.append('note_id', current_note_id);
@@ -112,9 +112,9 @@ $('#shareToAll_confirm-btn').click(async function () {
 });
 
 // 加入分享特定的人按鍵
-$('#addShareOther-btn').click(async function () {
-  let permission = $('#shareToOtherMethod-btn').text();
-  let addOther = $('#addShareOther-input').val();
+$('#addShareOther-btn').click(async () => {
+  const permission = $('#shareToOtherMethod-btn').text();
+  const addOther = $('#addShareOther-input').val();
 
   if (!addOther) {
     Swal.fire({
@@ -136,13 +136,13 @@ $('#addShareOther-btn').click(async function () {
   }
 
   const data = {
-    'permission': user_permission,
-    'addPerson': addOther,
-    'note_id': current_note_id,
+    permission: user_permission,
+    addPerson: addOther,
+    note_id: current_note_id,
   };
 
   // 確認使用者是否已存在
-  if ($('#' + CSS.escape(addOther)).length > 0) {
+  if ($(`#${CSS.escape(addOther)}`).length > 0) {
     Swal.fire({
       icon: 'error',
       title: '此用戶已經加入過',
@@ -157,7 +157,7 @@ $('#addShareOther-btn').click(async function () {
   }
 
   // 渲染畫面
-  let list_html = `
+  const list_html = `
       <li class="list-group-item d-flex justify-content-between align-items-center">
           ${addOther}
           <span class="badge bg-primary rounded-pill">${permission}</span>
@@ -172,17 +172,17 @@ $('#addShareOther-btn').click(async function () {
 
   // 推播給該用戶
   socket.emit('shareToyou', {
-    'user_email': user_email,
-    'addOther': addOther,
+    user_email,
+    addOther,
   });
 });
 
 // [筆記分享] 加入筆記tag鍵
-$('#add_note_tag-btn').click(function () {
+$('#add_note_tag-btn').click(() => {
   add_tag();
 });
 
-$('#tag_input').on('keyup', function (e) {
+$('#tag_input').on('keyup', (e) => {
   if (e.key === 'Enter' || e.keyCode === 13) {
     add_tag();
   }
@@ -199,7 +199,7 @@ function add_tag() {
     alert('標籤不能超過5個');
     return;
   }
-  let tag_html = `
+  const tag_html = `
     <span class="tags badge bg-info rounded-pill" style="color:white;">${tag_name}
       <i class="fa fa-times-circle" style="margin-left:-3px;" aria-hidden="true"></i>
     </span>
@@ -215,27 +215,27 @@ $(document).on('click', '.tags', function () {
 
 // 發出留言
 async function createComments(note_id) {
-  let data = {
-    'user_id': user_id,
-    'note_id': note_id,
-    'contents': $(`#textarea_${note_id}`).val(),
-    'created_time': '',
-    'updated_time': '',
-    'user_name': user_name,
-    'user_picture': user_picture,
+  const data = {
+    user_id,
+    note_id,
+    contents: $(`#textarea_${note_id}`).val(),
+    created_time: '',
+    updated_time: '',
+    user_name,
+    user_picture,
   };
 
-  var config = {
+  const config = {
     method: 'POST',
-    url: `/api/1.0/comment`,
-    data: data,
+    url: '/api/1.0/comment',
+    data,
   };
 
   await axios(config)
     .then((response) => {
       console.log(response);
-      const comment_id = response.data.data.comment_id;
-      const created_time = response.data.data.created_time;
+      const { comment_id } = response.data.data;
+      const { created_time } = response.data.data;
       const comment = config.data;
       comment.comment_id = comment_id;
       comment.created_time = created_time;
@@ -262,7 +262,7 @@ async function addComments(comment) {
   // 檢查是否為自己的留言，來決定是否需要有三個點的設定
   let comment_menu_html = '';
   let comment_cards_html = '';
-  let current_user = user_id;
+  const current_user = user_id;
 
   if (current_user != comment.user_id) {
     comment_menu_html = '';
@@ -304,34 +304,34 @@ async function addComments(comment) {
           </div>`;
 
   // 加到Comment底下
-  let comment_div = $('#msgModal-' + comment.note_id + ' .modal-content .card');
+  let comment_div = $(`#msgModal-${comment.note_id} .modal-content .card`);
   if (comment_div.length != 0) {
     comment_div.last().after(comment_cards_html);
   } else {
     // 還沒有留言
-    comment_div = $('#msgModal-' + comment.note_id + ' .modal-header');
+    comment_div = $(`#msgModal-${comment.note_id} .modal-header`);
     comment_div.last().after(comment_cards_html);
   }
 
   // 外面的Comment數字修改
-  let comment_count = +$(`#comment-btn-${comment.note_id} span`).text();
+  const comment_count = +$(`#comment-btn-${comment.note_id} span`).text();
   $(`#comment-btn-${comment.note_id} span`).text(comment_count + 1);
 
-  //清空原本的留言
-  $('#textarea_' + comment.note_id).val('');
+  // 清空原本的留言
+  $(`#textarea_${comment.note_id}`).val('');
 }
 
 // 發出收藏
 async function createSave(note_id) {
-  let data = {
-    'user_id': user_id,
-    'note_id': note_id,
+  const data = {
+    user_id,
+    note_id,
   };
 
-  let config = {
+  const config = {
     method: 'POST',
-    url: `/api/1.0/note/save`,
-    data: data,
+    url: '/api/1.0/note/save',
+    data,
   };
 
   await axios(config)
@@ -354,10 +354,10 @@ async function createSave(note_id) {
 
 // 分享給所有人 -------------------------------------------------------------
 async function shareToAlluser(data) {
-  let config = {
+  const config = {
     method: 'POST',
     url: `/api/${API_VERSION}/note/shareToAll`,
-    data: data,
+    data,
   };
 
   await axios(config)
@@ -367,7 +367,7 @@ async function shareToAlluser(data) {
         title: '更改設定成功',
         showConfirmButton: false,
         timer: 1000,
-      }).then(function () {
+      }).then(() => {
         window.location.assign('/socialPage?paging=1&sorting=sharing_time');
       });
     })
@@ -384,10 +384,10 @@ async function shareToAlluser(data) {
 
 // 分享給特定的人 -------------------------------------------------------------
 async function shareToOther(data) {
-  let config = {
+  const config = {
     method: 'POST',
     url: `/api/${API_VERSION}/note/shareToOther`,
-    data: data,
+    data,
   };
 
   let user_notExist = false;
@@ -416,7 +416,7 @@ async function shareToOther(data) {
 
 // 拿取特定人士權限 -------------------------------------------------------------
 async function getShareToOther(note_id) {
-  let config = {
+  const config = {
     method: 'GET',
     url: `/api/${API_VERSION}/note/ShareToOther/${note_id}`,
     data: '',
@@ -435,7 +435,7 @@ async function getShareToOther(note_id) {
 
 // 拿取所有人士權限 -------------------------------------------------------------
 async function getShareAll(note_id) {
-  let config = {
+  const config = {
     method: 'GET',
     url: `/api/${API_VERSION}/note/shareToAll/${note_id}`,
     data: '',
@@ -461,34 +461,34 @@ async function getShareAll(note_id) {
 
 // 愛心、時間、留言數 排序 --------------------------------------
 // heart_sorting -------
-$('#heart_sorting-btn').click(function (e) {
-  let heart_color = e.target.style.color;
-  let params = new URL(document.location).searchParams;
-  let paging = params.get('paging');
+$('#heart_sorting-btn').click((e) => {
+  const heart_color = e.target.style.color;
+  const params = new URL(document.location).searchParams;
+  const paging = params.get('paging');
   window.location = `/socialPage?paging=${paging}&sorting=saved_count`;
 });
 
 // time_sorting -------
-$('#time_sorting-btn').click(function (e) {
-  let time_color = e.target.style.color;
-  let params = new URL(document.location).searchParams;
-  let paging = params.get('paging');
+$('#time_sorting-btn').click((e) => {
+  const time_color = e.target.style.color;
+  const params = new URL(document.location).searchParams;
+  const paging = params.get('paging');
   window.location = `/socialPage?paging=${paging}&sorting=sharing_time`;
 });
 
 // comments_sorting -------
-$('#comments_sorting-btn').click(function (e) {
-  let comments_color = e.target.style.color;
-  let params = new URL(document.location).searchParams;
-  let paging = params.get('paging');
+$('#comments_sorting-btn').click((e) => {
+  const comments_color = e.target.style.color;
+  const params = new URL(document.location).searchParams;
+  const paging = params.get('paging');
   window.location = `/socialPage?paging=${paging}&sorting=comment_count`;
 });
 
 // 留言 修改/刪除
 async function updateComment(comment_id, note_id) {
-  $('#updateComment_' + comment_id).addClass('disabled');
+  $(`#updateComment_${comment_id}`).addClass('disabled');
   const content_id = `comment-content-${comment_id}`;
-  const old_content = $('#' + content_id).text();
+  const old_content = $(`#${content_id}`).text();
 
   const update_textarea = $(
     `
@@ -502,49 +502,49 @@ async function updateComment(comment_id, note_id) {
     `
   );
 
-  $('#' + content_id).replaceWith(update_textarea);
+  $(`#${content_id}`).replaceWith(update_textarea);
 
   // 取消鍵
-  $('.updateComment-cancel-btn').click(async function (e) {
+  $('.updateComment-cancel-btn').click(async (e) => {
     const content_id = `comment-content-${e.target.id}`;
     const old_content = e.target.value;
 
-    $('#' + content_id).replaceWith(
+    $(`#${content_id}`).replaceWith(
       `<p id="${content_id}" style="margin: 10px 0;">${old_content}</p>`
     );
 
-    $('#updateComment_' + comment_id).removeClass('disabled');
+    $(`#updateComment_${comment_id}`).removeClass('disabled');
   });
 
   // 修改鍵
-  $('.updateComment-confirm-btn').click(async function (e) {
+  $('.updateComment-confirm-btn').click(async (e) => {
     const comment_id = e.target.id;
     const note_id = e.target.value;
-    const new_content = $('#textarea-comment-content-' + comment_id).val();
+    const new_content = $(`#textarea-comment-content-${comment_id}`).val();
 
     // alert(comment_id);
     // alert(note_id);
     // alert(new_content);
 
-    let data = {
-      'new_content': new_content,
-      'comment_id': comment_id,
-      'note_id': note_id,
+    const data = {
+      new_content,
+      comment_id,
+      note_id,
     };
 
-    let config = {
+    const config = {
       method: 'PATCH',
-      url: `/api/1.0/comment`,
-      data: data,
+      url: '/api/1.0/comment',
+      data,
     };
 
     await axios(config)
       .then((response) => {
         console.log(response);
-        const comment_id = config.data.comment_id;
-        const new_content = config.data.new_content;
+        const { comment_id } = config.data;
+        const { new_content } = config.data;
 
-        $('#' + content_id).replaceWith(
+        $(`#${content_id}`).replaceWith(
           `<p id="${content_id}" style="margin: 10px 0;">${new_content}</p>`
         );
       })
@@ -558,7 +558,7 @@ async function updateComment(comment_id, note_id) {
         });
       });
 
-    $('#updateComment_' + comment_id).removeClass('disabled');
+    $(`#updateComment_${comment_id}`).removeClass('disabled');
   });
 }
 
@@ -574,21 +574,21 @@ async function deleteComment(comment_id, note_id) {
     cancelButtonText: '取消',
   }).then(async (result) => {
     if (result.isConfirmed) {
-      let data = {
-        'comment_id': comment_id,
-        'note_id': note_id,
+      const data = {
+        comment_id,
+        note_id,
       };
 
-      let config = {
+      const config = {
         method: 'DELETE',
-        url: `/api/1.0/comment`,
-        data: data,
+        url: '/api/1.0/comment',
+        data,
       };
 
       await axios(config)
         .then((response) => {
-          const comment_id = config.data.comment_id;
-          const note_id = config.data.note_id;
+          const { comment_id } = config.data;
+          const { note_id } = config.data;
           Swal.fire({
             icon: 'success',
             title: '刪除留言成功',
@@ -614,10 +614,10 @@ async function deleteComment(comment_id, note_id) {
 
 // 刪除留言 - 前端刪除留言小板板
 async function deleteComments(comment_id, note_id) {
-  $('#comment-card-' + comment_id).remove();
+  $(`#comment-card-${comment_id}`).remove();
 
   // 外面的Comment數字修改
-  let comment_count = +$(`#comment-btn-${note_id} span`).text();
+  const comment_count = +$(`#comment-btn-${note_id} span`).text();
   $(`#comment-btn-${note_id} span`).text(comment_count - 1);
 }
 
@@ -645,7 +645,7 @@ $('#socialPageSearchMenu li').on('click', function () {
 });
 
 // [社群頁面]
-$('#socialSearchBar').on('click', async function () {
+$('#socialSearchBar').on('click', async () => {
   await socialSearch();
 });
 
@@ -666,7 +666,7 @@ async function socialSearch() {
   let endDate;
   let search_url;
 
-  //- 時間搜尋
+  // - 時間搜尋
   if (search_method == '時間') {
     startDate = $('#daterange').val().split('-')[0].replace(/\s/g, '');
     endDate = $('#daterange').val().split('-')[1].replace(/\s/g, '');
@@ -676,17 +676,17 @@ async function socialSearch() {
     search_url = `/socialPage?paging=${paging}&sorting=${sorting}&search_text=${search_text}&search_method=${search_method}`;
   }
 
-  let data = {
-    'search_input': search_text,
-    'search_method': search_method,
+  const data = {
+    search_input: search_text,
+    search_method,
     // 'startDate': startDate,
     // 'endDate': endDate,
   };
 
-  let config = {
+  const config = {
     method: 'GET',
     url: search_url,
-    data: data,
+    data,
   };
 
   await axios(config)
@@ -717,15 +717,15 @@ async function deleteShareToOther(note_id, delete_email) {
     cancelButtonText: '取消',
   }).then(async (result) => {
     if (result.isConfirmed) {
-      let data = {
-        'note_id': note_id,
-        'delete_email': delete_email,
+      const data = {
+        note_id,
+        delete_email,
       };
 
-      let config = {
+      const config = {
         method: 'DELETE',
         url: `/api/${API_VERSION}/note/shareToOther`,
-        data: data,
+        data,
       };
 
       await axios(config)
@@ -742,8 +742,8 @@ async function deleteShareToOther(note_id, delete_email) {
 
           // 推播
           socket.emit('delete_ShareToYou', {
-            'user_email': user_email,
-            'delete_email': delete_email,
+            user_email,
+            delete_email,
           });
         })
         .catch((error) => {
@@ -759,77 +759,21 @@ async function deleteShareToOther(note_id, delete_email) {
   // }
 }
 
-// 刪除推播資訊
-async function deleteMsg(msg_id) {
-  Swal.fire({
-    title: '確定要刪除此則通知?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: '刪除',
-    cancelButtonText: '取消',
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      let data = {
-        'msg_id': msg_id,
-      };
-
-      let config = {
-        method: 'DELETE',
-        url: `/api/${API_VERSION}/message`,
-        data: data,
-      };
-
-      await axios(config)
-        .then((response) => {
-          console.log(response);
-          Swal.fire({
-            icon: 'success',
-            title: '刪除成功',
-            showConfirmButton: false,
-            timer: 1000,
-          });
-          // 刪除該list
-          $(`li:contains("${msg_id}")`).remove();
-          // 修改原通知值
-          let msg_count = $('#msg_count').text();
-          msg_count--;
-          $('#msg_count').text(msg_count);
-        })
-        .catch((error) => {
-          console.log(error);
-          Swal.fire({
-            icon: 'error',
-            title: error.response.data.error,
-            showConfirmButton: false,
-            timer: 1000,
-          });
-        });
-    }
-  });
-
-  // const isDeleted = confirm(`確定要刪除此則通知?`);
-  // if (!isDeleted) {
-  //   return;
-  // }
-}
-
 // 刪除分享給所有人
 async function deleteShareAll() {
-  const isDeleted = confirm(`確定要關閉此篇文章的分享`);
+  const isDeleted = confirm('確定要關閉此篇文章的分享');
   if (!isDeleted) {
     return;
   }
 
-  let data = {
-    'note_id': current_note_id,
+  const data = {
+    note_id: current_note_id,
   };
 
-  let config = {
+  const config = {
     method: 'DELETE',
     url: `/api/${API_VERSION}/note/shareToAll`,
-    data: data,
+    data,
   };
 
   await axios(config)

@@ -1,5 +1,5 @@
 // 查找筆記List內容 -------------------------
-$('#search_note_list').change(function () {
+$('#search_note_list').change(() => {
   // 清空搜尋標記
   $('#modal-main').find('.searchHighlight').removeClass('searchHighlight');
 
@@ -8,7 +8,7 @@ $('#search_note_list').change(function () {
     const search_text = $('#search_note_list').val();
     if (search_text) {
       const pattern = new RegExp(search_text, 'i');
-      let result = text.match(pattern);
+      const result = text.match(pattern);
       if (result) {
         markSearchText(key);
       }
@@ -16,17 +16,17 @@ $('#search_note_list').change(function () {
   });
 });
 
-$('#search_note_list-btn').click(function () {
+$('#search_note_list-btn').click(() => {
   showSearchList(note_list_obj, $('#modal-main'));
   // $('input[name="daterange"]').daterangepicker();
 });
 
 // mark search_note_list
 function markSearchText(match) {
-  var searchword = match;
+  const searchword = match;
 
-  var custfilter = new RegExp(searchword, 'ig');
-  var repstr = "<span class='searchHighlight'>" + searchword + '</span>';
+  const custfilter = new RegExp(searchword, 'ig');
+  const repstr = `<span class='searchHighlight'>${searchword}</span>`;
 
   if (searchword != '') {
     $('#modal-main').each(function () {

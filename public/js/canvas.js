@@ -1,13 +1,13 @@
 // Canvas ----------------------------------------------------------------
-let rect = {};
+const rect = {};
 let drag = false;
 let canvas;
 let context;
-let c = $('#fontOCRCanvas')[0];
-let ctx = c.getContext('2d');
+const c = $('#fontOCRCanvas')[0];
+const ctx = c.getContext('2d');
 
 // hidden& previewBlash
-let previewBlah = document.getElementById('img-preview');
+const previewBlah = document.getElementById('img-preview');
 previewBlah.onload = () => canvasBackground();
 
 // Draw the upload image to canvas
@@ -25,10 +25,10 @@ function clearContext(canvas, context) {
 
 // 去除圖形的重畫
 function canvasPartialRedraw(Rx1, Ry1, Rx2, Ry2) {
-  let Xstart = Math.min(Rx1, Rx2);
-  let Ystart = Math.min(Ry1, Ry2);
-  let redrawWidth = Math.abs(Rx1 - Rx2);
-  let redrawHeight = Math.abs(Ry1 - Ry2);
+  const Xstart = Math.min(Rx1, Rx2);
+  const Ystart = Math.min(Ry1, Ry2);
+  const redrawWidth = Math.abs(Rx1 - Rx2);
+  const redrawHeight = Math.abs(Ry1 - Ry2);
   ctx.clearRect(Xstart, Ystart, redrawWidth, redrawHeight);
   ctx.drawImage(
     previewBlah,
@@ -88,22 +88,22 @@ let clientX_percent;
 let clientY_percent;
 
 // 魔術曲線使用的高寬
-let Screen_width = 600;
-let Screen_height = 300;
+const Screen_width = 600;
+const Screen_height = 300;
 
 // clip-path的參數
 let X_percent;
 let Y_percent;
-let Screen_percent_arr = [];
+const Screen_percent_arr = [];
 
 // 魔術曲線 ---------------------------------------------------------------------------
 function startPosition(e) {
   // painting = true;
 
   // 圈選的座標
-  let bounding = c.getBoundingClientRect();
-  let positionX = e.clientX - bounding.left;
-  let positionY = e.clientY - bounding.top;
+  const bounding = c.getBoundingClientRect();
+  const positionX = e.clientX - bounding.left;
+  const positionY = e.clientY - bounding.top;
 
   // 畫小方形
   ctx.fillStyle = 'green';

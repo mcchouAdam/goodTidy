@@ -1,7 +1,7 @@
 // HOST
-let S3_HOST = 'https://d3it5ttaa2apin.cloudfront.net/';
-let server = 'http://localhost:3001';
-let API_VERSION = '1.0';
+const S3_HOST = 'https://d3it5ttaa2apin.cloudfront.net/';
+const server = 'http://localhost:3001';
+const API_VERSION = '1.0';
 
 // user info --------------------------------------
 let user_id;
@@ -18,10 +18,10 @@ let current_note_id;
 let current_note_class;
 let note_name;
 let note_bg;
-let note_names = [];
-let note_classifications = [];
-let note_all_elements = [];
-let note_ids = [];
+const note_names = [];
+const note_classifications = [];
+const note_all_elements = [];
+const note_ids = [];
 let note_list_obj;
 let search_note_list_obj;
 let showNote_note_obj;
@@ -29,22 +29,22 @@ let current_version_obj;
 let shared_note_obj;
 
 // OCR info ----------------------------------------
-let OCR_ids = [];
-let OCR_delete_ids = [];
-let OCR_elements = [];
+// const OCR_ids = [];
+const OCR_delete_ids = [];
+const OCR_elements = [];
 
 // Canvas ------------------------------------------
-let canvas_width = 600;
-let canvas_height = 500;
+const canvas_width = 600;
+const canvas_height = 500;
 
 // Sharing Permission ------------------------------
 const authorizationList = {
-  'forbidden': 0,
-  'read': 1,
-  'comment': 2,
-  'update': 4,
-  'delete': 8,
-  'admin': 16,
+  forbidden: 0,
+  read: 1,
+  comment: 2,
+  update: 4,
+  delete: 8,
+  admin: 16,
 };
 
 const permissionToName = {
@@ -53,7 +53,7 @@ const permissionToName = {
 };
 
 // Loading div ------------------------------------
-let loading_html = `
+const loading_html = `
       <div class="wrapper-loading">
         <span class="dot-loading"></span>
         <div class="dots-loading">
@@ -76,13 +76,13 @@ let tags;
 let current_delete_element;
 
 // 按蒐藏的狀態
-let note_savedStatus = {};
+const note_savedStatus = {};
 
 // 註釋資訊
 let current_annotation_element;
 
 // 筆記preview資訊
-let upload_preview_element = [];
+const upload_preview_element = [];
 
 // 轉換時間格式
 const timeConverter = (date) => {
@@ -95,7 +95,7 @@ const timeConverter = (date) => {
     date.getSeconds(),
   ];
 
-  let year = date.getFullYear().toString();
+  const year = date.getFullYear().toString();
   let month = (date.getMonth() + 1).toString();
   let day = date.getDate().toString();
   let hours = date.getHours().toString();
@@ -103,22 +103,22 @@ const timeConverter = (date) => {
   let second = date.getSeconds().toString();
 
   if (day.length == 1) {
-    day = '0' + day;
+    day = `0${day}`;
   }
   if (month.length == 1) {
-    month = '0' + month;
+    month = `0${month}`;
   }
   if (hours.length == 1) {
-    hours = '0' + hours;
+    hours = `0${hours}`;
   }
   if (minute.length == 1) {
-    minute = '0' + minute;
+    minute = `0${minute}`;
   }
   if (second.length == 1) {
-    second = '0' + second;
+    second = `0${second}`;
   }
 
-  let timeFormat = `${year}/${month}/${day} - ${hours}:${minute}:${second}`;
+  const timeFormat = `${year}/${month}/${day} - ${hours}:${minute}:${second}`;
 
   return timeFormat;
 };
@@ -132,7 +132,7 @@ const timeConverter = (date) => {
 
 // TODO: 只在有需求的頁面Load相對應的function
 // 預先讀取
-$(window).on('load', async function () {
+$(window).on('load', async () => {
   // $('#share-btn').prop('disabled', true);
 
   // 拿取User的Profile;

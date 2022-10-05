@@ -1,15 +1,15 @@
 async function notePreClick() {
   // 點選預設筆記
   let currentNotes;
-  let upload_note_id = localStorage.getItem('UPLOADNOTEID');
+  const upload_note_id = localStorage.getItem('UPLOADNOTEID');
 
   // 從upload頁面跳轉進來，先點選上傳的筆記
   if (upload_note_id) {
     current_note_id = upload_note_id;
-    $('#noteList_' + current_note_id)[0].click();
+    $(`#noteList_${current_note_id}`)[0].click();
     current_note_class = showNote_note_obj[current_note_id].note_classification;
-    $('#noteList_' + current_note_id).addClass('active');
-    $('#noteClass_' + current_note_class)[0].click();
+    $(`#noteList_${current_note_id}`).addClass('active');
+    $(`#noteClass_${current_note_class}`)[0].click();
 
     localStorage.removeItem('UPLOADNOTEID');
   } else {
@@ -23,19 +23,20 @@ async function notePreClick() {
     if (currentNotes.length > 0) {
       // 沒有current_note_id但有其他筆記，預設先點選第一篇筆記
       if (
-        (current_note_id == 'undefined' || !current_note_id) &&
+        (current_note_id == 'undefined' ||
+          !current_note_id ||
+          !showNote_note_obj[current_note_id]) &&
         currentNotes[0]
       ) {
         current_note_id = currentNotes[0];
         console.log('current_note_id', current_note_id);
-        $('#noteList_' + current_note_id)[0].click();
+        $(`#noteList_${current_note_id}`)[0].click();
       }
-      //   console.log('current_note_id', current_note_id);
-      //   console.log('showNote_note_obj', showNote_note_obj);
+
       current_note_class =
         showNote_note_obj[current_note_id].note_classification;
-      $('#noteList_' + current_note_id).addClass('active');
-      $('#noteClass_' + current_note_class)[0].click();
+      $(`#noteList_${current_note_id}`).addClass('active');
+      $(`#noteClass_${current_note_class}`)[0].click();
     }
   }
 
