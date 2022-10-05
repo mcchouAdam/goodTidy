@@ -1,6 +1,8 @@
 require('dotenv').config();
+
 const { S3_HOST, SERVER_HOST } = process.env;
 const { timeConverter } = require('./util');
+const { authorizationList } = require('./authorization');
 
 const showShareDetail = async function (data) {
   const note_version_info = data[0].version_info;
@@ -10,7 +12,7 @@ const showShareDetail = async function (data) {
     note_version_info[note_version_info.length - 1].version_name;
   const newest_version_text_elements =
     note_version_info[note_version_info.length - 1].text_elements;
-  const note_name = data[0].note_name;
+  const { note_name } = data[0];
   const file_name = `${S3_HOST}/notes/${data[0].file_name}`;
   const user_name = data[0].user_info[0].name;
   const user_picture = `${S3_HOST}/user_picture/${data[0].user_info[0].picture}`;
@@ -21,15 +23,15 @@ const showShareDetail = async function (data) {
   }
 
   const result = {
-    'note_name': note_name,
-    'version_name': newest_version_name,
-    'file_name': file_name,
-    'elements': newest_version_elements,
-    'text_elements': newest_version_text_elements,
-    'user_name': user_name,
-    'user_picture': user_picture,
-    'user_email': user_email,
-    'sharing_time': sharing_time,
+    note_name,
+    version_name: newest_version_name,
+    file_name,
+    elements: newest_version_elements,
+    text_elements: newest_version_text_elements,
+    user_name,
+    user_picture,
+    user_email,
+    sharing_time,
   };
 
   return result;
@@ -50,21 +52,23 @@ const showSocialCards = async function (data, user_id) {
     const user_name = data[i].user_info[0].name;
     const user_picture = data[i].user_info[0].picture;
     const sharing_image = data[i].sharing_image || 'share_image_default.jpg';
-    const note_name = data[i].note_name;
-    const sharing_descrition = data[i].sharing_descrition;
-    const sharing_time = data[i].sharing_time;
+    const {
+      note_name,
+      sharing_descrition,
+      sharing_time,
+      tags,
+      comments_info,
+      url_permission,
+    } = data[i];
     const note_id = data[i]._id.toString();
     const show_time = timeConverter(sharing_time);
-    const tags = data[i].tags;
-    const comments_info = data[i].comments_info;
     const comments_num = comments_info.length;
-    const url_permission = data[i].url_permission;
 
     // 畫tags
     let tags_html = '';
     if (tags) {
       tags.map((t) => {
-        tags_html += `<span class="badge bg-primary rounded-pill" style="margin:0 10px 0 0">${t}</span>`;
+        tags_html += `<span class="badge bg-primary rounded-pill" style="margin:0 10px 0 0;">${t}</span>`;
       });
     }
 
@@ -89,12 +93,12 @@ const showSocialCards = async function (data, user_id) {
 
     // 好看照片 https://i.imgur.com/6tPhTUn.jpg
 
-    if (change_cardGroup == 3) {
+    if (change_cardGroup === 3) {
       sharingNote_cards_html += '<div class="card-group">';
     }
 
     let comment_icon_html;
-    if (url_permission == 1) {
+    if (url_permission === 1) {
       // 只允許觀看
       comment_icon_html = `
         <button class="btn" type="button" style="font-size:16px;padding: 0 10px 10px 0;">
@@ -102,7 +106,7 @@ const showSocialCards = async function (data, user_id) {
                 <span id="comments-num-${note_id}">無開放留言</span>
             </i>
         </button>`;
-    } else if (url_permission == 2) {
+    } else if (url_permission === 2) {
       // 允許留言
       comment_icon_html = `
         <button class="btn" id="comment-btn-${note_id}" type="button" data-bs-toggle="modal" data-bs-target="#msgModal-${note_id}" style="font-size:16px; padding: 0 10px 10px 0;">
@@ -136,7 +140,7 @@ const showSocialCards = async function (data, user_id) {
 
     change_cardGroup--;
     // 三個一分
-    if (change_cardGroup == 0) {
+    if (change_cardGroup === 0) {
       change_cardGroup = 3;
       sharingNote_cards_html += '</div>';
     }
@@ -228,16 +232,16 @@ const showPagination = async function (
   let currentPage_html = '';
   let nextPage_html = '';
 
-  let prevPage_href = `${SERVER_HOST}/socialPage?paging=${
+  const prevPage_href = `${SERVER_HOST}/socialPage?paging=${
     paging - 1
   }&sorting=${sorting}`;
 
-  let nextPage_href = `${SERVER_HOST}/socialPage?paging=${
+  const nextPage_href = `${SERVER_HOST}/socialPage?paging=${
     paging + 1
   }&sorting=${sorting}`;
 
   // 最後一頁
-  if (currentPage == allPages_count && allPages_count != 1) {
+  if (currentPage === allPages_count && allPages_count !== 1) {
     prevPage_html = `
       <li class="page-item"></li>
       <a class="page-link" href="${prevPage_href}" aria-label="Previous">
@@ -254,7 +258,7 @@ const showPagination = async function (
     nextPage_html = '';
   }
   // 第一頁
-  else if (currentPage == 1 && allPages_count != 1) {
+  else if (currentPage === 1 && allPages_count !== 1) {
     prevPage_html = '';
     currentPage_html = `
       <li class="page-item"></li>
@@ -272,7 +276,7 @@ const showPagination = async function (
         </a>`;
   }
   // 只有一頁且第一頁
-  else if (currentPage == 1 && allPages_count == 1) {
+  else if (currentPage === 1 && allPages_count === 1) {
     prevPage_html = '';
     currentPage_html = `
       <li class="page-item"></li>
@@ -306,36 +310,6 @@ const showPagination = async function (
         </a>`;
   }
 
-  // // 判斷第一頁&最後一頁的前後頁
-  // if (currentPage == allPages_count) {
-  //   nextPage_href = `javascript:alert_paging('最後一頁')`;
-  // }
-  // if (currentPage == 1) {
-  //   prevPage_href = `javascript:alert_paging('第一頁')`;
-  // }
-
-  // prevPage_html = `
-  //     <li class="page-item"></li>
-  //     <a class="page-link" href="${prevPage_href}" aria-label="Previous">
-  //       <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
-  //     </a>
-  //     `;
-
-  // currentPage_html = `
-  //     <li class="page-item"></li>
-  //     <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
-  //     <li class="page-item disabled" style="border: white;">
-  //       <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
-  //     </li>
-  //   `;
-
-  // nextPage_html = `
-  //       <li class="page-item"></li>
-  //       <a class="page-link" href="${nextPage_href}" aria-label="Next">
-  //         <span aria-hidden="true">&raquo;</span>
-  //         <span class="sr-only">Next</span>
-  //       </a>`;
-
   const paging_html = `
     <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
@@ -357,11 +331,13 @@ const showShareToOtherList = async function (shareList, note_id) {
   try {
     shareList.map((p) => {
       switch (p.permission) {
-        case 1:
+        case authorizationList.read:
           permission = '允許觀看';
           break;
-        case 2:
+        case authorizationList.comment:
           permission = '允許留言';
+          break;
+        default:
           break;
       }
       shareList_html += `<li class="list-group-item d-flex justify-content-between align-items-center">

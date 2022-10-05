@@ -1,14 +1,7 @@
 require('dotenv').config();
 
 const { S3_HOST } = process.env;
-const authorizationList = {
-  forbidden: 0,
-  read: 1,
-  comment: 2,
-  update: 4,
-  delete: 8,
-  admin: 16,
-};
+const { authorizationList } = require('../../utils/authorization');
 
 const {
   getShareNotes,
@@ -16,7 +9,6 @@ const {
   createComment,
   updateComment,
   deleteComment,
-  getComments,
 } = require('../models/note_model');
 
 const { getMessages, deleteUserMessage } = require('../models/user_model');
@@ -31,17 +23,12 @@ const {
 const socialPage = async (req, res) => {
   const user_id = req.session.user.id;
   const paging = +req.query.paging;
-  const { sorting } = req.query;
+  const { sorting, search_text, search_method } = req.query;
   // const startDate = req.query.startDate;
   // const endDate = req.query.endDate;
-  const { search_text } = req.query;
-  const { search_method } = req.query;
 
   // 呈現右上Profile的資訊
-  const { id } = req.session.user;
-  const { provider } = req.session.user;
-  const { name } = req.session.user;
-  const { email } = req.session.user;
+  const { id, provider, name, email } = req.session.user;
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
   const socialcards_result = await getShareNotes(
@@ -50,12 +37,9 @@ const socialPage = async (req, res) => {
     search_text,
     search_method,
     user_id
-    // startDate,
-    // endDate
   );
 
-  const { allPages_count } = socialcards_result;
-  const { currentPage } = socialcards_result;
+  const { allPages_count, currentPage } = socialcards_result;
   const paging_html = await showPagination(
     paging,
     sorting,
@@ -63,7 +47,11 @@ const socialPage = async (req, res) => {
     currentPage
   );
 
-  if (currentPage > allPages_count || currentPage < 0 || isNaN(currentPage)) {
+  if (
+    currentPage > allPages_count ||
+    currentPage < 0 ||
+    Number.isNaN(currentPage)
+  ) {
     const card_html = `
         <div id="noMatchResult" style="padding: 0 0 0 30vw;">
           <i class="bi bi-exclamation-circle" style="font-size:100px;color:#ffc107;margin: 0 0 0 15vw;"></i>
@@ -98,21 +86,15 @@ const socialPage = async (req, res) => {
 
 const shareNotePage = async (req, res) => {
   const note_id = req.query.id;
-  const { id } = req.session.user;
-  const { provider } = req.session.user;
-  const { name } = req.session.user;
-  const { email } = req.session.user;
-  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
-
   const result = await getNoteById(note_id);
   const noteDetails = await showShareDetail(result);
 
   return res.render('shareNotePage', {
-    id,
-    provider,
-    name,
-    email,
-    picture,
+    id: req.session.user.id,
+    provider: req.session.user.provider,
+    name: req.session.user.name,
+    email: req.session.user.email,
+    picture: `${S3_HOST}/user_picture/${req.session.user.picture}`,
     user_name: noteDetails.user_name,
     user_picture: noteDetails.user_picture,
     note_name: noteDetails.note_name,
@@ -129,16 +111,22 @@ const createComments = async (req, res) => {
   data.permission = req.permission;
 
   if (data.permission < authorizationList.comment) {
-    return res.status(403).json({ msg: '您無權限留言' });
+    return res.status(403).json({
+      msg: '您無權限留言',
+    });
   }
 
-  if (data.contents == '') {
-    return res.status(400).json({ msg: '留言不可空白' });
+  if (data.contents === '') {
+    return res.status(400).json({
+      msg: '留言不可空白',
+    });
   }
 
   const result = await createComment(data);
 
-  return res.status(200).json({ data: result });
+  return res.status(200).json({
+    data: result,
+  });
 };
 
 const updateComments = async (req, res) => {
@@ -147,9 +135,13 @@ const updateComments = async (req, res) => {
   const result = await updateComment(data);
 
   if (result === 0) {
-    return res.status(403).json({ msg: '您無權修改別人留言' });
+    return res.status(403).json({
+      msg: '您無權修改別人留言',
+    });
   }
-  return res.status(200).json({ msg: '修改留言成功' });
+  return res.status(200).json({
+    msg: '修改留言成功',
+  });
 };
 
 const deleteComments = async (req, res) => {
@@ -158,36 +150,32 @@ const deleteComments = async (req, res) => {
   const result = await deleteComment(data);
 
   if (result === 0) {
-    return res.status(403).json({ msg: '您無權刪除別人留言' });
+    return res.status(403).json({
+      msg: '您無權刪除別人留言',
+    });
   }
-  return res.status(200).json({ msg: '成功刪除留言' });
+  return res.status(200).json({
+    msg: '成功刪除留言',
+  });
 };
 
-// 呈現特定人分享的網頁資訊
+// 呈現註釋頁面
 const showSharedNote = async (req, res) => {
-  const annotion_user_id = req.session.user.id;
-  const annotion_user_name = req.session.user.name;
   const { note_id } = req.params;
 
   // profile資訊
-  const { id } = req.session.user;
-  const { provider } = req.session.user;
-  const { name } = req.session.user;
-  const { email } = req.session.user;
-  const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
-
   const result = await getNoteById(note_id);
   const noteDetails = await showShareDetail(result);
 
   return res.render('sharedToOtherNote', {
     permission: req.permission,
-    annotion_user_id,
-    annotion_user_name,
-    id,
-    provider,
-    name,
-    email,
-    picture,
+    annotion_user_id: req.session.user.id,
+    annotion_user_name: req.session.user.name,
+    id: req.session.user.id,
+    provider: req.session.user.provider,
+    name: req.session.user.name,
+    email: req.session.user.email,
+    picture: `${S3_HOST}/user_picture/${req.session.user.picture}`,
     note_id,
     ShareUser_name: noteDetails.user_name,
     user_email: noteDetails.user_email,
@@ -206,13 +194,10 @@ const showUserMessage = async (req, res) => {
   const data = req.body;
   const UserMsg = await getMessages(data);
 
-  console.log('UserMsg:', UserMsg);
-  return res.status(200).json({ data: UserMsg });
-  // if (result === 0) {
-  //   return res.status(403).json({ 'msg': '您無權刪除別人留言' });
-  // } else {
-  //   return res.status(200).json({ 'msg': '成功刪除留言' });
-  // }
+  // console.log('UserMsg:', UserMsg);
+  return res.status(200).json({
+    data: UserMsg,
+  });
 };
 
 // 刪除使用者通知
@@ -222,7 +207,9 @@ const deleteMessage = async (req, res) => {
   const data = req.body;
   await deleteUserMessage(data);
 
-  return res.status(200).json({ data: '成功刪除' });
+  return res.status(200).json({
+    data: '成功刪除',
+  });
 };
 
 module.exports = {

@@ -8,45 +8,6 @@ block content
           //- 搜尋bar --------------------
           button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='搜尋筆記內容' disabled='')
             i.fa.fa-search
-          //- 修改筆記分類 ----------------
-          button#updateNoteClassModal-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#updateNoteClassModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='修改筆記分類')
-            i.bi.bi-pencil-square
-          
-
-          //- 修改分類Modal-------------------
-          //- #updateNoteClassModal.modal.fade(tabindex='-1', aria-labelledby='updateNoteClassModal', aria-hidden='true')
-          //-   .modal-dialog
-          //-     .modal-content
-          //-       .modal-header
-          //-         h5.modal-title 修改筆記分類
-          //-         button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position='right')
-          //-       #modal-updateNoteClass.modal-body
-          //-         //- 筆記分類名稱
-          //-         span.small 修改分類名稱
-          //-           .input-group.mb-3
-          //-             .input-group-prepend
-          //-               button.btn.btn-outline-secondary(type='button') Button
-          //-             select#inputGroupSelect03.custom-select
-          //-               option(selected='') Choose...
-          //-               option(value='1') One
-          //-               option(value='2') Two
-          //-               option(value='3') Three
-          //-             i.bi.bi-arrow-right
-          //-             input#newClassName.form-control(type='text', placeholder='新的筆記分類名稱')
-          //-         span.small 刪除分類
-          //-           .input-group.mb-3
-          //-             .input-group-prepend
-          //-               button.btn.btn-outline-secondary(type='button') Button
-          //-             select#inputGroupSelect03.custom-select
-          //-               option(selected='') Choose...
-          //-               option(value='1') One
-          //-               option(value='2') Two
-          //-               option(value='3') Three
-
-                  
-                .modal-footer
-                  button.btn.btn-primary#noteClass_confirm-btn(style="float: right") 確定修改
-
           
           //- 搜尋Modal-------------------
           #searchModal.modal.fade(tabindex='-1', aria-labelledby='searchModalLabel', aria-hidden='true')
@@ -83,26 +44,24 @@ block content
               // Reports
               .col-12
                 .card
-                  .filter
-                    a.icon(href='#', data-bs-toggle='dropdown', style="padding: 10px;")
-                      i.bi.bi-three-dots
-                    ul#note_menu.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
-                      li.dropdown-header.text-start
-                        .form-check.form-switch
-                          label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
-                          input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
-                      //- li
-                      //-   button#newest-version-btn.btn.dropdown-item 本地最新
-                      li
-                        button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 讀檔
-                      li
+                  //- a.icon(href='#', data-bs-toggle='dropdown', style="padding: 10px;")
+                  //-   i.bi.bi-gear
+                  //- ul#note_menu.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
+                  //-   li.dropdown-header.text-start
+                  //-     .form-check.form-switch
+                  //-       label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
+                  //-       input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
+                  //-   li
+                  //-     button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 讀取版本
+                  //-   li
+                  //-     button#modifyClass.btn.dropdown-item 修改分類名稱
+                  //-   li
+                  //-     button#changeNoteName.btn.dropdown-item 修改筆記名稱
+                  //-   li
+                  //-     button#moveNote.btn.dropdown-item 搬移筆記
+                  //-   li
+                  //-     button#deleteNote.btn.dropdown-item 刪除筆記
 
-                      li
-                        button#changeNoteName.btn.dropdown-item 修改筆記名稱
-                      li
-                        button#moveNote.btn.dropdown-item 搬移筆記
-                      li
-                        button#deleteNote.btn.dropdown-item 刪除筆記
                   .card-body(style="padding:0px;")
                     ul.list-unstyled.ps-0(width="90%")
 
@@ -223,7 +182,26 @@ block content
                               .modal-body#modal-sharedNote-main
                               .modal-footer
                                 button#sharedNote-change.btn.btn-primary(type='button') 查看
-                        
+
+                        //- 自動儲存/筆記修改選單
+                        button.btn(href='#', data-bs-toggle='dropdown' style="float: right;")
+                          i.bi.bi-gear
+                        ul#note_menu.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
+                          li.dropdown-header.text-start
+                            .form-check.form-switch
+                              label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
+                              input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
+                          li
+                            button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 讀取版本
+                          li
+                            button#modifyClass.btn.dropdown-item 修改分類名稱
+                          li
+                            button#changeNoteName.btn.dropdown-item 修改筆記名稱
+                          li
+                            button#moveNote.btn.dropdown-item 搬移筆記
+                          li
+                            button#deleteNote.btn.dropdown-item 刪除筆記
+
                         p#auto-save-time.small(style="float: right;margin: 10px 30px 0 0;")
 
                         #versionModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
@@ -252,6 +230,9 @@ block content
         })
         $('#moveNote').click(async function (){
           await moveNote(current_note_id);
+        })
+        $('#modifyClass').click(async function (){
+          await renameclassification(user_id);
         })
 
         // 跳轉註解編輯頁鍵

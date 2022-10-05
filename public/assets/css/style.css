@@ -1291,6 +1291,10 @@ h6 {
   height: 504px;
 }
 
+#note-preview-content {
+  margin-top: -10px;
+}
+
 .update-note-content {
   border: 1px solid;
   width: 600px;

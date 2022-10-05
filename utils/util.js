@@ -1,19 +1,15 @@
-const { TOKEN_SECRET } = process.env; // 30 days by seconds
-const jwt = require('jsonwebtoken');
-const { promisify } = require('util'); // util from native nodejs library
-const User = require('../server/models/user_model');
 const Note = require('../server/models/note_model');
+const { authorizationList } = require('./authorization');
 
-const wrapAsync = (fn) => {
-  return function (req, res, next) {
+const wrapAsync = (fn) =>
+  function (req, res, next) {
     // Make sure to `.catch()` any errors and pass them along to the `next()`
     // middleware in the chain, in this case the error handler.
     fn(req, res, next).catch(next);
   };
-};
 
-const authentication = () => {
-  return async function (req, res, next) {
+const authentication = () =>
+  async function (req, res, next) {
     if (req.session.user) {
       console.log('authenticated');
       req.user = req.session.user;
@@ -23,13 +19,12 @@ const authentication = () => {
       return res.status(403).render('NotSignIn');
     }
   };
-};
 
 // 筆記的Authorization
-const noteAuthorization = () => {
-  return async function (req, res, next) {
+const noteAuthorization = () =>
+  async function (req, res, next) {
     try {
-      const user = req.user;
+      const { user } = req;
       const note_permission = await Note.getNoteAuth(user);
       req.note_permission = note_permission;
       next();
@@ -41,11 +36,10 @@ const noteAuthorization = () => {
       return res.status(403).render('NoAuth');
     }
   };
-};
 
 // 社群的Authorization
-const commentAuth = () => {
-  return async function (req, res, next) {
+const commentAuth = () =>
+  async function (req, res, next) {
     try {
       const user_email = req.session.user.email;
       const note_id = req.query.id || req.body.note_id;
@@ -62,11 +56,10 @@ const commentAuth = () => {
       return res.status(403).render('NoAuth');
     }
   };
-};
 
 // 註解的Authorization
-const annotationAuth = () => {
-  return async function (req, res, next) {
+const annotationAuth = () =>
+  async function (req, res, next) {
     try {
       const user_email = req.session.user.email;
       const note_id = req.params.note_id || req.body.note_id;
@@ -80,7 +73,7 @@ const annotationAuth = () => {
 
       console.log('permission_result', permission_result);
       // 無權限
-      if (permission_result == 0) {
+      if (permission_result === authorizationList.forbidden) {
         console.log('Forbidden');
         // res.status(403).send({ error: 'Forbidden' });
         return res.status(403).render('NoAuth');
@@ -97,42 +90,33 @@ const annotationAuth = () => {
       return res.status(403).render('NoAuth');
     }
   };
-};
 
 const timeConverter = (date) => {
-  dataValues = [
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds(),
-  ];
-
-  let year = date.getFullYear().toString();
+  const year = date.getFullYear().toString();
   let month = (date.getMonth() + 1).toString();
   let day = date.getDate().toString();
   let hours = date.getHours().toString();
   let minute = date.getMinutes().toString();
   let second = date.getSeconds().toString();
 
-  if (day.length == 1) {
-    day = '0' + day;
+  // 補零
+  if (day.length === 1) {
+    day = `0${day}`;
   }
-  if (month.length == 1) {
-    month = '0' + month;
+  if (month.length === 1) {
+    month = `0${month}`;
   }
-  if (hours.length == 1) {
-    hours = '0' + hours;
+  if (hours.length === 1) {
+    hours = `0${hours}`;
   }
-  if (minute.length == 1) {
-    minute = '0' + minute;
+  if (minute.length === 1) {
+    minute = `0${minute}`;
   }
-  if (second.length == 1) {
-    second = '0' + second;
+  if (second.length === 1) {
+    second = `0${second}`;
   }
 
-  let timeFormat = `${year}/${month}/${day} - ${hours}:${minute}:${second}`;
+  const timeFormat = `${year}/${month}/${day} - ${hours}:${minute}:${second}`;
 
   return timeFormat;
 };

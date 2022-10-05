@@ -66,13 +66,13 @@ block content
                                 .row.mb-3
                                     .col-sm-1
                                         //- 刪除鍵
-                                        button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:25px')
+                                        button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:25px; margin-top: 10px;')
                                             i.fa.fa-solid.fa-trash
                                     .col-sm
-                                        button#submit_note.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', style='font-size:25px')
+                                        button#submit_note.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', style='font-size:25px; margin-top: 10px;')
                                             i.fa.fa-solid.fa-upload
                             
-                            #note-preview-content.note-edit-block
+                            #note-preview-content.note-edit-block(style="margin-bottom: -10px;")
 
                             script.
 
@@ -244,6 +244,20 @@ block content
                                         Swal.fire({
                                             icon: 'error',
                                             title: '您的筆記名稱有重複',
+                                            showConfirmButton: false,
+                                            timer: 1000
+                                        });
+                                        // Loading釋放
+                                        $('#submit_note').prop('disabled', false);
+                                        $('body').css('cursor', 'default');
+                                        return;
+                                    }
+
+                                    // 筆記名稱長度太長
+                                    if(note_name.length > 16){
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: '您的筆記名稱字數超過16',
                                             showConfirmButton: false,
                                             timer: 1000
                                         });

@@ -43,7 +43,7 @@ const AutoSave = (function () {
       // 更新時間
       const current = new Date();
       const now_time = current.toLocaleTimeString();
-      $('#auto-save-time').text(`最新儲存: ${now_time}`);
+      // $('#auto-save-time').text(`最新儲存: ${now_time}`);
     }
   }
 
@@ -99,7 +99,10 @@ const AutoSave = (function () {
       const textTop = +text_elements[i].OCR_top.replaceAll('px', '');
       const text = text_elements[i].OCR_text;
 
-      const new_offset = { top: textTop, left: textLeft };
+      const new_offset = {
+        top: textTop,
+        left: textLeft,
+      };
       const new_width = +text_elements[i].OCR_width.replaceAll('px', '');
       const new_height = +text_elements[i].OCR_height.replaceAll('px', '');
       const timestamp = Date.now();

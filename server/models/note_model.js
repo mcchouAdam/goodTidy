@@ -8,19 +8,20 @@ const {
   messageCollection,
   userCollection,
 } = require('./mongocon');
+const { authorizationList } = require('../../utils/authorization');
 
 // require('dotenv').config();
 
 // const { MONGO_DB } = process.env;
 
-const authorizationList = {
-  forbidden: 0,
-  read: 1,
-  comment: 2,
-  update: 4,
-  delete: 8,
-  admin: 16,
-};
+// const authorizationList = {
+//   forbidden: 0,
+//   read: 1,
+//   comment: 2,
+//   update: 4,
+//   delete: 8,
+//   admin: 16,
+// };
 
 // [筆記頁面] 上傳筆記
 const writeNote = async (note) => {
@@ -30,8 +31,12 @@ const writeNote = async (note) => {
 
     const transactionOptions = {
       readPreference: 'primary',
-      readConcern: { level: 'local' },
-      writeConcern: { w: 'majority' },
+      readConcern: {
+        level: 'local',
+      },
+      writeConcern: {
+        w: 'majority',
+      },
     };
 
     let noteId;
@@ -72,7 +77,9 @@ const writeNote = async (note) => {
     //  ------------------------------------------
     return noteId;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   } finally {
     await session.endSession();
   }
@@ -89,12 +96,20 @@ const createNoteVersion = async (version_info) => {
 
     // change the attribute lastVersion in collection [note]
     await noteCollection.findOneAndUpdate(
-      { _id: ObjectId(note_id) },
-      { $set: { lastVersion: version_name } }
+      {
+        _id: ObjectId(note_id),
+      },
+      {
+        $set: {
+          lastVersion: version_name,
+        },
+      }
     );
     return res.status(200).send('update note version successfully!');
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -114,9 +129,27 @@ const getUserNotes = async (note_permission) => {
 
     const result = await noteCollection
       .aggregate([
-        { $match: { _id: { $in: note_ids } } },
-        { $addFields: { note_id: { $toString: '$_id' } } },
-        { $addFields: { user_id: { $toObjectId: '$user_id' } } },
+        {
+          $match: {
+            _id: {
+              $in: note_ids,
+            },
+          },
+        },
+        {
+          $addFields: {
+            note_id: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $addFields: {
+            user_id: {
+              $toObjectId: '$user_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'note_version',
@@ -144,7 +177,9 @@ const getUserNotes = async (note_permission) => {
 
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -162,7 +197,9 @@ const deleteNote = async (note_id) => {
     });
     return 'delete successfully';
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -173,11 +210,17 @@ const renameNote = async (note_id, new_noteName) => {
       {
         _id: ObjectId(note_id),
       },
-      { $set: { note_name: new_noteName } }
+      {
+        $set: {
+          note_name: new_noteName,
+        },
+      }
     );
     return 'rename successfully';
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -188,11 +231,17 @@ const moveNote = async (note_id, MoveToClass) => {
       {
         _id: ObjectId(note_id),
       },
-      { $set: { note_classification: MoveToClass } }
+      {
+        $set: {
+          note_classification: MoveToClass,
+        },
+      }
     );
     return 'move note_classification successfully';
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -208,11 +257,17 @@ const renameNoteClass = async (
         note_classification: old_classificationName,
         user_id,
       },
-      { $set: { note_classification: new_classificationName } }
+      {
+        $set: {
+          note_classification: new_classificationName,
+        },
+      }
     );
     return 'rename successfully';
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -227,9 +282,17 @@ const deleteNoteClass = async (user_id, old_classificationName) => {
             note_classification: old_classificationName,
           },
         },
-        { $addFields: { note_id_toString: { $toString: '$_id' } } },
+        {
+          $addFields: {
+            note_id_toString: {
+              $toString: '$_id',
+            },
+          },
+        },
       ])
-      .project({ note_id_toString: 1 })
+      .project({
+        note_id_toString: 1,
+      })
       .toArray();
 
     const note_id_objectId = note_id.map((n) => n._id);
@@ -237,17 +300,25 @@ const deleteNoteClass = async (user_id, old_classificationName) => {
 
     // console.log('note_id_toString', note_id_toString);
     await noteCollection.deleteMany({
-      _id: { $in: note_id_objectId },
+      _id: {
+        $in: note_id_objectId,
+      },
     });
     await noteVersionCollection.deleteMany({
-      note_id: { $in: note_id_toString },
+      note_id: {
+        $in: note_id_toString,
+      },
     });
     await commentCollection.deleteMany({
-      note_id: { $in: note_id_toString },
+      note_id: {
+        $in: note_id_toString,
+      },
     });
     return 'delete note_class successfully';
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -282,7 +353,9 @@ const shareToAll = async (data) => {
     // console.log(result);
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -302,7 +375,9 @@ const deleteShareToAll = async (note_id) => {
 
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -311,7 +386,10 @@ const shareToOther = async (data) => {
   const { note_id, shareUser_email } = data;
   const permission = authorizationList[data.permission];
   const user_email = data.addPerson;
-  const insert_data = { user_email, permission };
+  const insert_data = {
+    user_email,
+    permission,
+  };
 
   try {
     // 確認加入的user是否存在
@@ -339,7 +417,9 @@ const shareToOther = async (data) => {
         _id: ObjectId(note_id),
       },
       {
-        $addToSet: { sharing_user: insert_data },
+        $addToSet: {
+          sharing_user: insert_data,
+        },
       }
     );
 
@@ -354,7 +434,9 @@ const shareToOther = async (data) => {
 
     return `${user_email} 新增成功`;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -365,7 +447,9 @@ const getShareToOther = async (note_id) => {
       .find({
         _id: ObjectId(note_id),
       })
-      .project({ sharing_user: 1 })
+      .project({
+        sharing_user: 1,
+      })
       .toArray();
 
     // console.log('getShareToOther: ', result);
@@ -389,7 +473,9 @@ const getShareToOther = async (note_id) => {
 
     return result_json;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -398,8 +484,16 @@ const getShareToOther = async (note_id) => {
 const deleteShareToOther = async (note_id, delete_email, user_name) => {
   try {
     await noteCollection.updateOne(
-      { _id: ObjectId(note_id) },
-      { $pull: { sharing_user: { user_email: delete_email } } },
+      {
+        _id: ObjectId(note_id),
+      },
+      {
+        $pull: {
+          sharing_user: {
+            user_email: delete_email,
+          },
+        },
+      },
       false,
       true
     );
@@ -417,7 +511,9 @@ const deleteShareToOther = async (note_id, delete_email, user_name) => {
 
     return `${delete_email} 刪除成功`;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -461,18 +557,31 @@ const getShareNotes = async (
     sortObj[sorting] = -1;
 
     // search_method -----------------------------
-    let matchObj = { isSharing: 1 };
+    let matchObj = {
+      isSharing: 1,
+    };
     let matchAterLookup;
     const re = new RegExp(search_text);
 
     switch (search_method) {
       case '標題':
-        matchObj = { isSharing: 1, note_name: { $regex: re } };
+        matchObj = {
+          isSharing: 1,
+          note_name: {
+            $regex: re,
+          },
+        };
         matchAterLookup = {};
         break;
       case '作者':
-        matchObj = { isSharing: 1 };
-        matchAterLookup = { 'user_info.name': { $regex: re } };
+        matchObj = {
+          isSharing: 1,
+        };
+        matchAterLookup = {
+          'user_info.name': {
+            $regex: re,
+          },
+        };
         break;
       case '時間':
         matchObj = {
@@ -485,17 +594,30 @@ const getShareNotes = async (
         matchAterLookup = {};
         break;
       case '簡介':
-        matchObj = { isSharing: 1, sharing_descrition: { $regex: re } };
+        matchObj = {
+          isSharing: 1,
+          sharing_descrition: {
+            $regex: re,
+          },
+        };
         matchAterLookup = {};
         break;
       case '內容':
-        matchObj = { isSharing: 1 };
-        matchAterLookup = { 'note_version_info.keywords': { $regex: re } };
+        matchObj = {
+          isSharing: 1,
+        };
+        matchAterLookup = {
+          'note_version_info.keywords': {
+            $regex: re,
+          },
+        };
         break;
       case '標籤':
         matchObj = {
           isSharing: 1,
-          tags: { $in: [re] },
+          tags: {
+            $in: [re],
+          },
         };
         matchAterLookup = {};
         break;
@@ -507,7 +629,9 @@ const getShareNotes = async (
         matchAterLookup = {};
         break;
       default:
-        matchObj = { isSharing: 1 };
+        matchObj = {
+          isSharing: 1,
+        };
         matchAterLookup = {};
         break;
     }
@@ -520,8 +644,20 @@ const getShareNotes = async (
         {
           $match: matchObj,
         },
-        { $addFields: { foreign_user_id: { $toObjectId: '$user_id' } } },
-        { $addFields: { foreign_note_id: { $toString: '$_id' } } },
+        {
+          $addFields: {
+            foreign_user_id: {
+              $toObjectId: '$user_id',
+            },
+          },
+        },
+        {
+          $addFields: {
+            foreign_note_id: {
+              $toString: '$_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'user',
@@ -546,8 +682,12 @@ const getShareNotes = async (
             as: 'note_version_info',
           },
         },
-        { $match: matchAterLookup },
-        { $count: 'isSharing' },
+        {
+          $match: matchAterLookup,
+        },
+        {
+          $count: 'isSharing',
+        },
       ])
       .toArray();
 
@@ -562,8 +702,20 @@ const getShareNotes = async (
         {
           $match: matchObj,
         },
-        { $addFields: { foreign_user_id: { $toObjectId: '$user_id' } } },
-        { $addFields: { foreign_note_id: { $toString: '$_id' } } },
+        {
+          $addFields: {
+            foreign_user_id: {
+              $toObjectId: '$user_id',
+            },
+          },
+        },
+        {
+          $addFields: {
+            foreign_note_id: {
+              $toString: '$_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'user',
@@ -588,8 +740,12 @@ const getShareNotes = async (
             as: 'note_version_info',
           },
         },
-        { $match: matchAterLookup },
-        { $sort: sortObj },
+        {
+          $match: matchAterLookup,
+        },
+        {
+          $sort: sortObj,
+        },
       ])
       .skip(skip)
       .limit(limit)
@@ -600,7 +756,9 @@ const getShareNotes = async (
 
     return cards_result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -614,8 +772,20 @@ const getNoteById = async (note_id) => {
             _id: ObjectId(note_id),
           },
         },
-        { $addFields: { note_id: { $toString: '$_id' } } },
-        { $addFields: { user_id: { $toObjectId: '$user_id' } } },
+        {
+          $addFields: {
+            note_id: {
+              $toString: '$_id',
+            },
+          },
+        },
+        {
+          $addFields: {
+            user_id: {
+              $toObjectId: '$user_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'note_version',
@@ -637,7 +807,9 @@ const getNoteById = async (note_id) => {
     // console.log(result);
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -646,7 +818,9 @@ const getComments = async (note_id) => {
     const result = await commentCollection
       .aggregate([
         {
-          $match: { note_id },
+          $match: {
+            note_id,
+          },
         },
       ])
       .toArray();
@@ -654,7 +828,9 @@ const getComments = async (note_id) => {
     console.log(result);
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -666,9 +842,17 @@ const createSave = async (note_id, user_id, user_email, user_name) => {
     const saved_count_previous = await noteCollection
       .aggregate([
         {
-          $match: { _id: ObjectId(note_id) },
+          $match: {
+            _id: ObjectId(note_id),
+          },
         },
-        { $project: { saved_count: { $size: '$saved_user_id' } } },
+        {
+          $project: {
+            saved_count: {
+              $size: '$saved_user_id',
+            },
+          },
+        },
       ])
       .toArray();
 
@@ -702,9 +886,17 @@ const createSave = async (note_id, user_id, user_email, user_name) => {
     const saved_count = await noteCollection
       .aggregate([
         {
-          $match: { _id: ObjectId(note_id) },
+          $match: {
+            _id: ObjectId(note_id),
+          },
         },
-        { $project: { saved_count: { $size: '$saved_user_id' } } },
+        {
+          $project: {
+            saved_count: {
+              $size: '$saved_user_id',
+            },
+          },
+        },
       ])
       .toArray();
 
@@ -718,7 +910,9 @@ const createSave = async (note_id, user_id, user_email, user_name) => {
       },
       [
         {
-          $set: { saved_count: note_saved_conut },
+          $set: {
+            saved_count: note_saved_conut,
+          },
         },
       ]
     );
@@ -731,7 +925,13 @@ const createSave = async (note_id, user_id, user_email, user_name) => {
             _id: ObjectId(note_id),
           },
         },
-        { $addFields: { user_id: { $toObjectId: '$user_id' } } },
+        {
+          $addFields: {
+            user_id: {
+              $toObjectId: '$user_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'user',
@@ -759,7 +959,9 @@ const createSave = async (note_id, user_id, user_email, user_name) => {
 
     return note_saved_conut;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -787,7 +989,9 @@ const getShareToAll = async (note_id) => {
     console.log('getShareAll', result);
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -807,15 +1011,26 @@ const createComment = async (data) => {
     console.log('comment_count: ', comment_count);
 
     const update_result = await noteCollection.findOneAndUpdate(
-      { _id: ObjectId(note_id) },
-      { $set: { comment_count } }
+      {
+        _id: ObjectId(note_id),
+      },
+      {
+        $set: {
+          comment_count,
+        },
+      }
     );
 
     console.log('update_result', update_result);
-    const obj = { comment_id, created_time: data.created_time };
+    const obj = {
+      comment_id,
+      created_time: data.created_time,
+    };
     return obj;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -830,7 +1045,9 @@ const updateComment = async (data) => {
         user_id,
       },
       {
-        $set: { contents: new_content },
+        $set: {
+          contents: new_content,
+        },
       }
     );
 
@@ -841,7 +1058,9 @@ const updateComment = async (data) => {
     // 修改留言成功
     return 1;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -863,8 +1082,14 @@ const deleteComment = async (data) => {
     // console.log('note_id', note_id);
 
     const updateResult = await noteCollection.findOneAndUpdate(
-      { _id: ObjectId(note_id) },
-      { $set: { comment_count } }
+      {
+        _id: ObjectId(note_id),
+      },
+      {
+        $set: {
+          comment_count,
+        },
+      }
     );
 
     console.log('updateResult:', updateResult);
@@ -876,7 +1101,9 @@ const deleteComment = async (data) => {
     // 刪除留言成功
     return 1;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -891,7 +1118,13 @@ const getSocialAuth = async (user_email, note_id) => {
             _id: ObjectId(note_id),
           },
         },
-        { $addFields: { foreign_user_id: { $toObjectId: '$user_id' } } },
+        {
+          $addFields: {
+            foreign_user_id: {
+              $toObjectId: '$user_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'user',
@@ -901,7 +1134,9 @@ const getSocialAuth = async (user_email, note_id) => {
           },
         },
       ])
-      .project({ user_info: 1 })
+      .project({
+        user_info: 1,
+      })
       .toArray();
 
     const note_owner = isOwnNote_result[0].user_info[0].email;
@@ -916,21 +1151,27 @@ const getSocialAuth = async (user_email, note_id) => {
             _id: ObjectId(note_id),
           },
         },
-        { $unwind: '$sharing_user' },
+        {
+          $unwind: '$sharing_user',
+        },
         {
           $match: {
             'sharing_user.user_email': user_email,
           },
         },
       ])
-      .project({ 'sharing_user.permission': 1 })
+      .project({
+        'sharing_user.permission': 1,
+      })
       .toArray();
 
     const url_permission_result = await noteCollection
       .find({
         _id: ObjectId(note_id),
       })
-      .project({ url_permission: 1 })
+      .project({
+        url_permission: 1,
+      })
       .toArray();
 
     // 檢查 url_permission & user_permission
@@ -951,7 +1192,9 @@ const getSocialAuth = async (user_email, note_id) => {
 
     return final_permission;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -970,7 +1213,13 @@ const getNoteAuth = async (user) => {
             _id: ObjectId(user_id),
           },
         },
-        { $addFields: { foreign_user_id: { $toString: '$_id' } } },
+        {
+          $addFields: {
+            foreign_user_id: {
+              $toString: '$_id',
+            },
+          },
+        },
         {
           $lookup: {
             from: 'notes',
@@ -980,7 +1229,9 @@ const getNoteAuth = async (user) => {
           },
         },
       ])
-      .project({ 'note_info._id': 1 })
+      .project({
+        'note_info._id': 1,
+      })
       .toArray();
 
     // console.log('ownNotes: ', ownNotes[0].note_info);
@@ -1000,11 +1251,19 @@ const getNoteAuth = async (user) => {
       .aggregate([
         {
           $match: {
-            sharing_user: { $elemMatch: { user_email } },
+            sharing_user: {
+              $elemMatch: {
+                user_email,
+              },
+            },
           },
         },
       ])
-      .project({ _id: 1, sharing_user: 1, user_id: 1 })
+      .project({
+        _id: 1,
+        sharing_user: 1,
+        user_id: 1,
+      })
       .toArray();
 
     // sharing_user的permission值
@@ -1024,7 +1283,9 @@ const getNoteAuth = async (user) => {
 
     return note_id_permission;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -1054,11 +1315,19 @@ const getAnnotationAuth = async (user_email, note_id, user_id) => {
         {
           $match: {
             _id: ObjectId(note_id),
-            sharing_user: { $elemMatch: { user_email } },
+            sharing_user: {
+              $elemMatch: {
+                user_email,
+              },
+            },
           },
         },
       ])
-      .project({ _id: 1, sharing_user: 1, user_id: 1 })
+      .project({
+        _id: 1,
+        sharing_user: 1,
+        user_id: 1,
+      })
       .toArray();
 
     // 找不到則為沒權限
@@ -1078,7 +1347,9 @@ const getAnnotationAuth = async (user_email, note_id, user_id) => {
 
     return permission;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -1132,10 +1403,14 @@ const updateAnnotation = async (
           annotation_user_name,
         },
       },
-      { upsert: true }
+      {
+        upsert: true,
+      }
     );
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 
@@ -1155,7 +1430,9 @@ const getAnnotation = async (note_id) => {
     // console.log('getAnnotation: ', result);
     return result;
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   }
 };
 

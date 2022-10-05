@@ -6,14 +6,14 @@
     "node": true,
     "jquery": true
   },
-  "extends": [
-    "airbnb-base",
-    "eslint:recommended",
-    "plugin:prettier/recommended"
-  ],
+  "extends": ["airbnb-base"],
   "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": {}
+  "rules": {
+    "object-curly-newline": ["error", "always"],
+    "camelcase": "off",
+    "no-plusplus": "off"
+  }
 }

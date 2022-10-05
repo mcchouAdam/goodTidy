@@ -48,7 +48,9 @@ async function shapeSnapShot() {
     .css('height', `${item_height}px`)
     .css('overflow', 'hidden')
     .css('position', 'absolute')
-    .draggable({ containment: '#note-preview-content' });
+    .draggable({
+      containment: '#note-preview-content',
+    });
 
   item.append(item_img);
   $('#note-preview-content').append(item);
@@ -107,7 +109,7 @@ $('#addfont').click(async () => {
 // 儲存鍵 --------------------------------------
 $('#storeNote').click(async () => {
   Swal.fire({
-    title: '你確定要儲存檔案嗎?',
+    title: '您確定要新增版本嗎?',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',

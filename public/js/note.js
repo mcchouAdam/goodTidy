@@ -279,7 +279,6 @@ async function showNoteList(note_obj, div_append) {
         <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i>
             <span>${classfi}</span>
-          <i class="bi bi-pencil-square" id="modify_${classfi}" onclick="modify_class()" style="margin-left: 80px;"></i>
           <i class="bi bi-chevron-down ms-auto"></i>
         </a>
         ${notes_html}
@@ -448,13 +447,17 @@ async function sharedNoteShow(name, Obj) {
   );
   elements_init($('#update-note-content'), Img_elements, text_elements);
   $('textarea').prop('disabled', true);
-  $('textarea').draggable({ disable: true });
+  $('textarea').draggable({
+    disable: true,
+  });
 }
 
 // 改名筆記 ------------------------------------------------------------
 async function renameNote(note_id) {
   Swal.fire({
-    title: '您的筆記要改什麼名稱?',
+    title: '修改筆記名稱',
+    text: '您的筆記要改什麼名稱?',
+    icon: 'question',
     input: 'text',
     inputAttributes: {
       autocapitalize: 'off',
@@ -580,7 +583,8 @@ async function moveNote(note_id) {
   const note_classes = Object.keys(note_list_obj);
   let class_index;
   await Swal.fire({
-    title: '搬移筆記至不同的分類',
+    title: '搬移此筆記至不同的分類',
+    icon: 'question',
     input: 'select',
     inputOptions: note_classes,
     inputPlaceholder: '選擇一個分類',
@@ -643,38 +647,126 @@ async function moveNote(note_id) {
 }
 
 // 改名分類
-// async function renameclassification(user_id, old_classificationName) {
+async function renameclassification(user_id) {
+  const note_classes = Object.keys(note_list_obj);
+  let class_options_html = '';
+  for (let i = 0; i < note_classes.length; i++) {
+    class_options_html += `<option value="${note_classes[i]}">${note_classes[i]}</option>`;
+  }
 
-// const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
+  let class_index;
+  await Swal.fire({
+    title: '修改筆記分類名稱',
+    text: '您的筆記分類要改什麼名稱?',
+    icon: 'question',
+    html: `<div>
+            <span>原分類名稱</span>
+            <select name="classes" id="modifyClass-select" class="swal2-select">${class_options_html}</select>
+          </div>
+          <div>
+            <span">新分類名稱</span>
+            <input type="text" id="new_classname" class="swal2-input" style="width: 50%;"> 
+          </div>`,
+    showCancelButton: true,
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    focusConfirm: false,
+    preConfirm: () => [
+      $('#modifyClass-select').find(':selected').val(),
+      $('#new_classname').val(),
+    ],
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const old_classificationName = $('#modifyClass-select')
+        .find(':selected')
+        .val();
+      const new_classificationName = $('#new_classname').val();
 
-// if (!new_classificationName) {
-//   Swal.fire('分類名字不能為空');
-//   return;
-// }
+      if (!new_classificationName) {
+        Swal.fire({
+          icon: 'error',
+          title: '新分類名字不得為空',
+          showConfirmButton: false,
+          timer: 1000,
+        });
+        return;
+      }
 
-// data = {
-//   user_id,
-//   old_classificationName,
-//   new_classificationName,
-// };
+      data = {
+        user_id,
+        old_classificationName,
+        new_classificationName,
+      };
 
-// const config = {
-//   method: 'PATCH',
-//   url: '/api/1.0/noteClass',
-//   data,
-// };
+      const config = {
+        method: 'PATCH',
+        url: '/api/1.0/noteClass',
+        data,
+      };
 
-// await axios(config)
-//   .then((response) => {
-//     console.log(response);
-//     Swal.fire('改名分類成功');
-//     location.reload();
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//     Swal.fire('改名分類失敗');
-//   });
-// }
+      await axios(config)
+        .then(async (response) => {
+          console.log(response);
+          // 拿取User所有note的資訊;
+          await getUserNotes();
+          // 畫出NavList資訊
+          await showNoteList(note_list_obj, $('#sidebar-nav'));
+          // 重新點選該筆記
+          await notePreClick();
+          Swal.fire({
+            icon: 'success',
+            title: `已將分類 ${config.data.old_classificationName} 改成 ${config.data.new_classificationName}`,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+
+          // location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+          // Swal.fire('改名分類失敗');
+          Swal.fire({
+            icon: 'error',
+            title: '改名分類成功',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
+    }
+  });
+
+  // ---------------------------------------------------------------------
+
+  // const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
+
+  // if (!new_classificationName) {
+  //   Swal.fire('分類名字不能為空');
+  //   return;
+  // }
+
+  // data = {
+  //   user_id,
+  //   old_classificationName,
+  //   new_classificationName,
+  // };
+
+  // const config = {
+  //   method: 'PATCH',
+  //   url: '/api/1.0/noteClass',
+  //   data,
+  // };
+
+  // await axios(config)
+  //   .then((response) => {
+  //     console.log(response);
+  //     Swal.fire('改名分類成功');
+  //     location.reload();
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     Swal.fire('改名分類失敗');
+  //   });
+}
 
 // 刪除分類
 async function deleteclassification(user_id, classificationName) {
@@ -731,7 +823,9 @@ async function modifyAnnotation(annotation_id) {
   }
   // Swal.fire($('#' + annotation_id).val());
   $(`#textarea-${annotation_id}`).prop('disabled', false);
-  $(`#icon-${annotation_id}`).draggable({ disabled: false });
+  $(`#icon-${annotation_id}`).draggable({
+    disabled: false,
+  });
 }
 
 // 刪除註釋
@@ -988,7 +1082,9 @@ async function showAnnotation(
     '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle.ui-draggable-disabled'
   )
     .css('position', 'absolute')
-    .draggable({ containment: '#update-note-content' });
+    .draggable({
+      containment: '#update-note-content',
+    });
   // console.log(annotation_element);
 }
 

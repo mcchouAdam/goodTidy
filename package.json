@@ -4,6 +4,7 @@
     "@aws-sdk/client-sts": "^3.162.0",
     "@aws-sdk/credential-provider-node": "^3.162.0",
     "@google-cloud/vision": "^2.4.2",
+    "aws-sdk": "^2.1229.0",
     "bcrypt": "^5.0.1",
     "bootstrap": "^5.2.1",
     "connect-mongo": "^4.6.0",
