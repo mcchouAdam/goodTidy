@@ -6,13 +6,17 @@ const { ObjectId } = require('mongodb');
 const { Mongo } = require('./mongocon');
 
 const salt = parseInt(process.env.BCRYPT_SALT);
-const { MONGO_DB } = process.env; // 30 days by seconds
+const { MONGO_DB } = process.env;
 
 const signUp = async (name, email, password, picture) => {
   const userCollection = Mongo.db(MONGO_DB).collection('user');
 
   try {
-    const checkEmail = await userCollection.find({ email }).toArray();
+    const checkEmail = await userCollection
+      .find({
+        email,
+      })
+      .toArray();
     // check user email Exist
     if (checkEmail.length != 0) {
       throw error;
@@ -62,22 +66,32 @@ const nativeSignIn = async (email, password) => {
 
   try {
     // console.log(email);
-    const users = await userCollection.find({ email }).toArray();
+    const users = await userCollection
+      .find({
+        email,
+      })
+      .toArray();
     const user = users[0];
     const user_id = user._id.toString();
     user.id = user_id;
 
     const pw_compare = await bcrypt.compare(password.toString(), user.password);
     if (!pw_compare) {
-      return { error: '您的密碼錯誤！' };
+      return {
+        error: '您的密碼錯誤！',
+      };
     }
 
     const loginAt = new Date();
     user.login_at = loginAt;
 
-    return { user };
+    return {
+      user,
+    };
   } catch (error) {
-    return { error };
+    return {
+      error,
+    };
   } finally {
     // await Mongo.close();
   }
@@ -87,7 +101,11 @@ const getUserDetail = async (email) => {
   // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
   try {
-    const [user] = await userCollection.find({ email }).toArray();
+    const [user] = await userCollection
+      .find({
+        email,
+      })
+      .toArray();
     return user;
   } catch (e) {
     return null;
@@ -100,7 +118,11 @@ const shareToAll = async (data) => {
   // await Mongo.connect();
   const userCollection = Mongo.db(MONGO_DB).collection('user');
   try {
-    const [user] = await userCollection.find({ email }).toArray();
+    const [user] = await userCollection
+      .find({
+        email,
+      })
+      .toArray();
     return user;
   } catch (e) {
     return null;
