@@ -48,7 +48,7 @@ block content
                             i.fa.fa-floppy-o            
 
                         //- 上一步
-                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='上一步', style='font-size:16px', disabled='')
+                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='復原刪除', style='font-size:16px', disabled='')
                             i.fa.fa-rotate-left
 
                         //- 下一步
@@ -479,30 +479,35 @@ block content
         //- });
 
         // 監聽文字框修改事件
-        $(document).on('input', '.addtextarea', function(e){
-            let click_element = e.currentTarget.parentNode;
-            let click_id = e.target.id;
-            let change_val = e.target.value;
-            stepAppend($('#' + click_id), 'input', '', '', change_val);
-        });
+        //- $(document).on('input', '.addtextarea', function(e){
+        //-     let click_element = e.currentTarget.parentNode;
+        //-     let click_id = e.target.id;
+        //-     let change_val = e.target.value;
+        //-     restoreObj = {
+        //-       item: $('#' + click_id),
+        //-       event: 'input',
+        //-       val: change_val,
+        //-     };
+        //-     stepAppend(restoreObj);
+        //- });
 
         
-        // TODO: 目前拿掉，監聽圖形dragable 上一步&下一步
-        $(document).on('mouseup', '.contour-pic', function(e){
-          const element = e.target.parentElement;
-          const top = element.style.top;
-          const left = element.style.left;
-          console.log(element, top, left);
-          //- stepAppend(element, 'drag', top, left, '');
-        });
+        //- // TODO: 目前拿掉，監聽圖形dragable 上一步
+        //- $(document).on('mouseup', '.contour-pic', function(e){
+        //-   const element = e.target.parentElement;
+        //-   const top = element.style.top;
+        //-   const left = element.style.left;
+        //-   console.log(element, top, left);
+        //-   //- stepAppend(element, 'drag', top, left, '');
+        //- });
 
-        // TODO: 目前拿掉，監聽文字dragable 上一步&下一步
-        $(document).on('mouseup', '.div_addtextarea', function(e){
-          const element = e.target.parentElement;
-          const top = element.style.top;
-          const left = element.style.left;
-          //- stepAppend(element, 'drag', top, left, '');
-        });
+        //- // TODO: 目前拿掉，監聽文字dragable 上一步
+        //- $(document).on('mouseup', '.div_addtextarea', function(e){
+        //-   const element = e.target.parentElement;
+        //-   const top = element.style.top;
+        //-   const left = element.style.left;
+        //-   //- stepAppend(element, 'drag', top, left, '');
+        //- });
 
         // 監聽事件: textare叉叉
         $(document).on('focus', '.div_addtextarea', function () {

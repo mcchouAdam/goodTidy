@@ -1089,27 +1089,33 @@ async function deleteNoteElement(type, id) {
   }).then((result) => {
     if (result.isConfirmed) {
       let delete_item;
-      let top, left, val;
+      let restoreObj = {};
+      //上下一步
       switch (type) {
         case 'img':
-          //上下一步
           delete_item = $(`#${id}`)[0];
-          top = delete_item.style.top;
-          left = delete_item.style.left;
-          val = '';
-          stepAppend(delete_item, 'delete', top, left, val);
-          // 刪除物件
+          restoreObj = {
+            item: delete_item,
+            event: 'delete',
+            top: delete_item.style.top,
+            left: delete_item.style.left,
+          };
           break;
         case 'textarea':
-          // 上下一步
           delete_item = $(`#${id}`).parents()[0];
-          top = delete_item.style.top;
-          left = delete_item.style.left;
-          val = $(`#${id}`).val();
-          stepAppend(delete_item, 'delete', top, left, val);
+          restoreObj = {
+            item: delete_item,
+            event: 'delete',
+            top: delete_item.style.top,
+            left: delete_item.style.left,
+            width: delete_item.style.width,
+            height: delete_item.style.height,
+            val: $(`#${id}`).val(),
+          };
           break;
       }
-
+      // 儲存上下一步
+      stepAppend(restoreObj);
       // 刪除物件
       delete_item.remove();
     }
