@@ -14,7 +14,7 @@ const authentication = () =>
       next();
     } else {
       console.log('not authenticated');
-      return res.status(403).render('NotSignIn');
+      return res.status(403).redirect('/notSignIn');
     }
   };
 
@@ -30,8 +30,7 @@ const noteAuthorization = () =>
       return;
     } catch (err) {
       console.log('Forbidden');
-      // res.status(403).send({ error: 'Forbidden' });
-      return res.status(403).render('NoAuth');
+      return res.status(403).redirect('/notAuth');
     }
   };
 
@@ -50,8 +49,7 @@ const commentAuth = () =>
       return;
     } catch (err) {
       console.log('Forbidden');
-      // res.status(403).send({ error: 'Forbidden' });
-      return res.status(403).render('NoAuth');
+      return res.status(403).redirect('/notAuth');
     }
   };
 
@@ -73,19 +71,17 @@ const annotationAuth = () =>
       // 無權限
       if (permission_result === authorizationList.forbidden) {
         console.log('Forbidden');
-        // res.status(403).send({ error: 'Forbidden' });
-        return res.status(403).render('NoAuth');
+        return res.status(403).redirect('/notAuth');
       }
 
-      // 其他權限至少可以看
+      // 其他權限至少可以看p
       req.permission = permission_result;
       next();
 
       return;
     } catch (err) {
       console.log('Forbidden');
-      // res.status(403).send({ error: 'Forbidden' });
-      return res.status(403).render('NoAuth');
+      return res.status(403).redirect('/notAuth');
     }
   };
 

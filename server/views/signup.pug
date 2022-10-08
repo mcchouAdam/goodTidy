@@ -8,11 +8,6 @@ block content
           .container
             .row.justify-content-center
               .col-lg-4.col-md-6.d-flex.flex-column.align-items-center.justify-content-center
-                //- .d-flex.justify-content-center.py-4
-                //-   a.logo.d-flex.align-items-center.w-auto(href='/index')
-                //-     img(src='assets/img/goodTidy_logo.png', alt='')
-                //-     span.d-none.d-lg-block GoodTidy
-                // End Logo
                 .card.mb-3
                   .card-body
                     h5.card-title.text-center.pb-0.fs-4 註冊頁面
@@ -38,13 +33,13 @@ block content
                         img#userPic_preview(src="", alt="Image preview", style="display: none;")
                         br
                         //- .invalid-feedback Please upload your user picture.
-                      //- .col-12
-                      //-   .form-check
-                      //-     input#acceptTerms.form-check-input(name='terms', type='checkbox', value='', required='')
-                      //-     label.form-check-label(for='acceptTerms')
-                      //-       | I agree and accept the 
-                      //-       a(href='#') terms and conditions
-                      //-     .invalid-feedback You must agree before submitting.
+                        //- .col-12
+                        //-   .form-check
+                        //-     input#acceptTerms.form-check-input(name='terms', type='checkbox', value='', required='')
+                        //-     label.form-check-label(for='acceptTerms')
+                        //-       | I agree and accept the 
+                        //-       a(href='#') terms and conditions
+                        //-     .invalid-feedback You must agree before submitting.
 
                       .col-12
                         button#signup-form-btn.btn.btn-primary.w-100 創立帳號
@@ -56,17 +51,56 @@ block content
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
 
-      script(src='/js/user.js')
-      script(src='/js/windowLoad.js')
-      script(src='/js/social.js')
+      script.
+        // 註冊鍵 -------------------------------------
+        $('#signup-form-btn').click(async (e) => {
+          e.preventDefault();
+
+          // Loading圖示
+          $('#signup-form-btn').prop('disabled', true);
+          $('body').css('cursor', 'progress');
+
+          if (!user_email) {
+            const email = $('#signup_useremail').val();
+            const password = $('#signup_password').val();
+            const username = $('#signup_username').val();
+            const picture = $('#user_picture')[0].files[0];
+
+            if (!picture) {
+              // 沒上傳圖片
+              filename = '';
+            } else {
+              filename = picture.name;
+            }
+
+            const signUp_result = await signUp(
+              picture,
+              username,
+              email,
+              password,
+              filename
+            );
+
+            btnLoadingOn('#signup-form-btn');
+
+            // 註冊失敗
+            if (!signUp_result.isSuccess) {
+              alertError(signUp_result.msg);
+              btnLoadingOff('#signup-form-btn');
+              return;
+            }
+
+            // 註冊成功
+            Swal.fire({
+              icon: 'success',
+              title: signUp_result.msg,
+              showConfirmButton: false,
+              timer: 1000,
+            }).then(() => {
+              btnLoadingOff('#signup-form-btn');
+              window.location.assign('/profile');
+            });
+          }
+        });
         
-      //- script(src='/js/note.js')
-      //- script(src='/js/draggable.js')
-      //- script(src='/js/btn.js')
-      //- script(src='/js/restore.js')
-      //- script(src='/js/preview.js')
-      //- script(src='/js/canvas.js')
-      
-      //- script(src='/js/search.js')
-      //- script(src='/js/autoSave.js')
-      //- script(src='/js/annotationBar.js')
+      script(src='/js/social.js')

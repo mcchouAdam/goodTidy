@@ -10,54 +10,9 @@ const ctx = c.getContext('2d');
 const previewBlah = document.getElementById('img-preview');
 previewBlah.onload = () => canvasBackground();
 
-// Draw the upload image to canvas
-function canvasBackground() {
-  // clearContext(c, ctx);
-  ctx.clearRect(0, 0, c.width, c.height);
-  ctx.drawImage(previewBlah, 0, 0);
-  canvas = $('#fontOCRCanvas')[0];
-  context = canvas.getContext('2d');
-}
-
-function clearContext(canvas, context) {
-  context.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-// 去除圖形的重畫
-function canvasPartialRedraw(Rx1, Ry1, Rx2, Ry2) {
-  const Xstart = Math.min(Rx1, Rx2);
-  const Ystart = Math.min(Ry1, Ry2);
-  const redrawWidth = Math.abs(Rx1 - Rx2);
-  const redrawHeight = Math.abs(Ry1 - Ry2);
-  ctx.clearRect(Xstart, Ystart, redrawWidth, redrawHeight);
-  ctx.drawImage(
-    previewBlah,
-    Xstart,
-    Ystart,
-    redrawWidth,
-    redrawHeight,
-    Xstart,
-    Ystart,
-    redrawWidth,
-    redrawHeight
-  );
-  canvas = $('#fontOCRCanvas')[0];
-  context = canvas.getContext('2d');
-}
-
-// 魔術曲線圈選 ---------------------
-function initCanvasListener(canvas) {
-  canvas.addEventListener('mousedown', startPosition);
-  canvas.addEventListener('mouseup', finishedPosition);
-}
-
-function removeCanvasListener(canvas) {
-  canvas.removeEventListener('mousedown', startPosition);
-  canvas.removeEventListener('mouseup', finishedPosition);
-}
-
 // 方形圈選 ------------------------
 function initRectContourListener(canvas) {
+  canvasBackground();
   canvas.addEventListener('mousedown', rectContour_mousedown);
   canvas.addEventListener('mouseup', rectContour_mouseup);
   canvas.addEventListener('mousemove', rectContour_mousemove);
@@ -77,71 +32,13 @@ function initRectListener(canvas) {
 }
 
 function removeRectRemoveListener(canvas) {
+  RemoveContour_params = [];
   canvas.removeEventListener('mousedown', mouseDown);
   canvas.removeEventListener('mouseup', mouseUp);
   canvas.removeEventListener('mousemove', mouseMove);
 }
 
-// Painting --------------------------------------------------------------------------
-// let painting = false;
-let clientX_percent;
-let clientY_percent;
-
-// 魔術曲線使用的高寬
-const Screen_width = 600;
-const Screen_height = 300;
-
-// clip-path的參數
-let X_percent;
-let Y_percent;
-const Screen_percent_arr = [];
-
-// 魔術曲線 ---------------------------------------------------------------------------
-function startPosition(e) {
-  // painting = true;
-
-  // 圈選的座標
-  const bounding = c.getBoundingClientRect();
-  const positionX = e.clientX - bounding.left;
-  const positionY = e.clientY - bounding.top;
-
-  // 畫小方形
-  ctx.fillStyle = 'green';
-  ctx.fillRect(positionX, positionY, 7, 7);
-
-  X_percent = parseInt((positionX / Screen_width) * 100);
-  Y_percent = parseInt((positionY / Screen_height) * 100);
-  Screen_percent_arr.push([`${X_percent}% ${Y_percent}%`]);
-  element_position_arr.push(parseInt(positionX));
-  element_positionY_arr.push(parseInt(positionY));
-
-  console.log(parseInt(positionX), parseInt(positionY));
-}
-
 // 去除文字方塊遮蔽 ----------------------------------------
-// function mouseDown(e) {
-//   rect.startX = e.offsetX;
-//   rect.startY = e.offsetY;
-//   drag = true;
-// }
-
-// function mouseUp() {
-//   drag = false;
-// }
-
-// function mouseMove(e) {
-//   if (drag) {
-//     rect.w = e.offsetX - rect.startX;
-//     rect.h = e.offsetY - rect.startY;
-//     context.fillStyle = 'rgba(0,0,0)';
-//     drawMarker();
-//   }
-// }
-
-// function drawMarker() {
-//   context.fillRect(rect.startX, rect.startY, rect.w, rect.h);
-// }
-
 let Rx1;
 let Rx2;
 let Ry1;
@@ -150,28 +47,30 @@ let Rx;
 let Ry;
 let width;
 let height;
-// let RemoveContour_params = [];
+let RemoveContour_params = [];
 
 function mouseDown(e) {
   drag = true;
-  // RemoveContour_params = [];
   Rx1 = e.offsetX;
   Ry1 = e.offsetY;
-  // RemoveContour_params.push(Rx1, Ry1);
 }
 
 function mouseUp(e) {
   drag = false;
   Rx2 = e.offsetX;
   Ry2 = e.offsetY;
-  // RemoveContour_params.push(Rx2 - Rx1, Ry2 - Ry1);
-  // 防止使用從左下、右下、右上開始拉
-  // RemoveContour_params.push(Rx2, Ry2);
 
   Rx = Math.min(Rx1, Rx2);
   Ry = Math.min(Ry1, Ry2);
   width = Math.abs(Rx2 - Rx1);
   height = Math.abs(Ry2 - Ry1);
+
+  RemoveContour_params.push({
+    Rx,
+    Ry,
+    width,
+    height,
+  });
 
   context.fillStyle = 'black';
   context.fillRect(Rx, Ry, width, height);
@@ -188,10 +87,22 @@ function mouseMove(e) {
 function drawMarker() {
   // context.clearRect(Rx, Ry, width, height);
   canvasPartialRedraw(Rx1, Ry1, Rx2, Ry2);
-
   context.beginPath();
   context.rect(Rx1, Ry1, Rx2 - Rx1, Ry2 - Ry1);
   context.stroke();
+}
+
+function canvasPartialRedraw() {
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.drawImage(previewBlah, 0, 0);
+  for (let i = 0; i < RemoveContour_params.length; i++) {
+    const rectObj = RemoveContour_params[i];
+    console.log('rectObj', rectObj);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(rectObj.Rx, rectObj.Ry, rectObj.width, rectObj.height);
+  }
+  canvas = $('#fontOCRCanvas')[0];
+  context = canvas.getContext('2d');
 }
 
 // 方形圈選 ----------------------------------------
@@ -244,4 +155,66 @@ function redraw_rectContour() {
   context.stroke();
 
   console.log(x1, y1, x2 - x1, y2 - y1);
+}
+
+// Redraw the upload image to canvas
+function canvasBackground() {
+  // clearContext(c, ctx);
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.drawImage(previewBlah, 0, 0);
+  canvas = $('#fontOCRCanvas')[0];
+  context = canvas.getContext('2d');
+}
+
+function clearContext(canvas, context) {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// 方形圈選後擷取
+async function shapeSnapShot() {
+  // removeCanvasListener(canvas);
+  // removeRectContourRemoveListener(canvas);
+  // clearContext(canvas, context);
+  canvasBackground();
+
+  // console.log(rectContour_params);
+  let item_x1 = rectContour_params[0];
+  let item_y1 = rectContour_params[1];
+  const item_width = Math.abs(rectContour_params[2]);
+  const item_height = Math.abs(rectContour_params[3]);
+
+  // 防止使用從左下、右下、右上開始拉
+  const item_x2 = rectContour_params[4];
+  const item_y2 = rectContour_params[5];
+
+  item_x1 = Math.min(item_x1, item_x2);
+  item_y1 = Math.min(item_y1, item_y2);
+
+  // 圖形
+  const item_img = $(`<img src="${previewBlah.src}" />`)
+    .css('width', previewBlah.width)
+    .css('height', previewBlah.height)
+    .css('margin', `${-item_y1}px 0 0 ${-item_x1}px`); // 取圈選的位置
+
+  // 圖形外框
+  const item_id = `${Date.now()}_contour-pic`;
+  const item = $(`<div class="contour-pic" id="${item_id}"></div>`)
+    .css('width', `${item_width}px`)
+    .css('height', `${item_height}px`)
+    .css('overflow', 'hidden')
+    .css('position', 'absolute')
+    .draggable({
+      containment: '#note-preview-content',
+    });
+
+  // 圖形叉叉
+  const imgClose = $(
+    `<label style="display:none" class="imgClose" onclick="javascript:deleteNoteElement('img','${item_id}');">X</label>`
+  );
+
+  item.append(imgClose);
+  item.append(item_img);
+  $('#note-preview-content').append(item);
+
+  upload_preview_element.push(item);
 }

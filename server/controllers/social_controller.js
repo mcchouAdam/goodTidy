@@ -112,13 +112,13 @@ const createComments = async (req, res) => {
 
   if (data.permission < authorizationList.comment) {
     return res.status(403).json({
-      msg: '您無權限留言',
+      data: '您無權限留言',
     });
   }
 
   if (data.contents === '') {
     return res.status(400).json({
-      msg: '留言不可空白',
+      data: '留言不可空白',
     });
   }
 
@@ -136,11 +136,11 @@ const updateComments = async (req, res) => {
 
   if (result === 0) {
     return res.status(403).json({
-      msg: '您無權修改別人留言',
+      data: '您無權修改別人留言',
     });
   }
   return res.status(200).json({
-    msg: '修改留言成功',
+    data: '修改留言成功',
   });
 };
 
@@ -151,11 +151,11 @@ const deleteComments = async (req, res) => {
 
   if (result === 0) {
     return res.status(403).json({
-      msg: '您無權刪除別人留言',
+      data: '您無權刪除別人留言',
     });
   }
   return res.status(200).json({
-    msg: '成功刪除留言',
+    data: '成功刪除留言',
   });
 };
 

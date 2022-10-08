@@ -27,14 +27,6 @@ block content
                   //- button.btn(type='button')
                   //-   i.fa.fa-calendar
                   //- input#daterange(type="text", name="daterange")
-        //- nav
-        //-   ol.breadcrumb
-        //-     li.breadcrumb-item
-        //-       a(href='/') Home
-        //-     li.breadcrumb-item
-        //-       a(href='/note') 筆記編輯
-        //-     li.breadcrumb-item.active#click_note_classification
-        //-     li.breadcrumb-item.active#click_note_name
       // End Page Title
       section.section.dashboard
         .row
@@ -44,24 +36,6 @@ block content
               // Reports
               .col-12
                 .card
-                  //- a.icon(href='#', data-bs-toggle='dropdown', style="padding: 10px;")
-                  //-   i.bi.bi-gear
-                  //- ul#note_menu.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
-                  //-   li.dropdown-header.text-start
-                  //-     .form-check.form-switch
-                  //-       label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
-                  //-       input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
-                  //-   li
-                  //-     button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 讀取版本
-                  //-   li
-                  //-     button#modifyClass.btn.dropdown-item 修改分類名稱
-                  //-   li
-                  //-     button#changeNoteName.btn.dropdown-item 修改筆記名稱
-                  //-   li
-                  //-     button#moveNote.btn.dropdown-item 搬移筆記
-                  //-   li
-                  //-     button#deleteNote.btn.dropdown-item 刪除筆記
-
                   .card-body(style="padding:0px;")
                     ul.list-unstyled.ps-0(width="90%")
 
@@ -74,7 +48,7 @@ block content
                             i.fa.fa-floppy-o            
 
                         //- 上一步
-                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='上一步', style='font-size:16px', disabled='')
+                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='復原刪除', style='font-size:16px', disabled='')
                             i.fa.fa-rotate-left
 
                         //- 下一步
@@ -86,8 +60,8 @@ block content
                             i.fa.fa-font
 
                         //- 刪除鍵
-                        button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:16px', disabled='')
-                            i.fa.fa-solid.fa-trash
+                        //- button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:16px', disabled='')
+                        //-     i.fa.fa-solid.fa-trash
 
                         //- 分享鍵
                         button#share-btn.btn(data-toggle='tooltip', data-placement='bottom', title='分享社群', type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px", disabled='')
@@ -124,7 +98,7 @@ block content
                                                 a.dropdown-item(href='#') 允許觀看
                                             input#addShareOther-input.form-control(type='text', placeholder='欲分享者的email...', aria-label='欲分享者的email', aria-describedby='basic-addon2')
                                             .input-group-append
-                                              button#addShareOther-btn.btn.btn-outline-info(type='button') 加入
+                                              button#addShareOther-btn.btn.btn-primary(type='button') 加入
                                           ul#shareOtherList.list-group
                                 #share-to-all-nav.tab-pane.fade
                                   i.bi.bi-people-fill(style='font-size:25px;')
@@ -181,7 +155,8 @@ block content
                                 button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               .modal-body#modal-sharedNote-main
                               .modal-footer
-                                button#sharedNote-change.btn.btn-primary(type='button') 查看
+                                button#sharedNote-change.btn.btn-primary(type='button', style="margin-right: -10px;") 點選查看筆記
+                                #chatroom-div
 
                         //- 自動儲存/筆記修改選單
                         button.btn(href='#', data-bs-toggle='dropdown' style="float: right;")
@@ -220,17 +195,118 @@ block content
       i.bi.bi-arrow-up-short
 
       script.
+        
+        let online_user;
+        // 拿取目前在線上的名單
+        // 因為只有筆記編輯頁裡的上下線資訊，故放在筆記編輯頁面
+        $(document).ready(async function() {
 
-        // 修改/刪除/搬移筆記
+          // headerTop Icon的點選效果
+          $('#note-page').css('border-bottom', '2px solid');
+
+            // 拿取User的Profile;
+            await profile();
+
+            // 發送socket上線
+            socket.emit('authentication', user_email);
+            // 拿取每個使用者的線上狀態
+            socket.on("users", async (users) => {
+              online_user = users;
+              await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+            });
+
+            // 拿取User所有note的資訊;
+            await getUserNotes();
+
+            // 畫出NavList資訊
+            await showNoteList(note_list_obj, $('#sidebar-nav'));
+
+            // 剛開始讀取使用者最近剛編輯的文章
+            await getlatestNode();
+
+            // 剛開始就點選筆記
+            await notePreClick();
+        });
+
+        // 按鍵 ---------------------------------------------
+        // 上傳筆記鍵
+        $('#noteUpload-btn').click(async function (){
+            window.location.assign('/uploadNote');
+        })
+
+        // 新增文字方塊鍵 ---------------------------------
+        $('#addfont').click(async () => {
+          const $append_div = $('#update-note-content');
+          const textTop = '10px';
+          const textLeft = '10px';
+          const textWidth = 200;
+          const textHeight = 200;
+          const text = '';
+          addDragTextarea($append_div, text, textWidth, textHeight, textTop, textLeft, 'draggable');
+        });
+
+        // 儲存鍵 --------------------------------------
+        $('#storeNote').click(async () => {
+          Swal.fire({
+            title: '您確定要新增版本嗎?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '確定',
+            cancelButtonText: '取消',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+
+              let removeSrc_element = await getImgElement('note');
+              let OCR_elements = await getTextElement();
+              let keywords = await generateKeywords();
+
+              const data = {
+                note_id: current_note_id,
+                created_time: '',
+                version_img: '123_coolthing_ver3.png',
+                version_name: new Date(),
+                elements: removeSrc_element,
+                keywords,
+                text_elements: JSON.stringify(OCR_elements),
+              };
+
+              await axios({
+                method: 'POST',
+                url: '/api/1.0/noteVersion',
+                data,
+              });
+
+              await alertSuccess('存檔成功')
+
+              // 重新抓取使用者資料
+              await getUserNotes();
+              current_version_obj = await getVersionList(
+                version_obj,
+                $('#modal-version-main')
+              );
+            }
+          });
+        });
+
+        // 筆記設定 ----------------------
+        // 修改筆記名稱
         $('#changeNoteName').click(async function (){
           await renameNote(current_note_id);
         })
+
+        // 刪除筆記
         $('#deleteNote').click(async function (){
           await deleteNote(current_note_id);
         })
+
+        // 移動筆記
         $('#moveNote').click(async function (){
           await moveNote(current_note_id);
         })
+
+        // 修改筆記分類
         $('#modifyClass').click(async function (){
           await renameclassification(user_id);
         })
@@ -238,30 +314,58 @@ block content
         // 跳轉註解編輯頁鍵
         $('#annotation-show-btn').click(async function () {
             if(!current_note_id){
-              Swal.fire({
-                icon: 'error',
-                title: '請先選擇筆記',
-                showConfirmButton: false,
-                timer: 1000,
-              });
+              alertError('請先選擇筆記');
               return;
             }
-
             window.location.assign(`/sharedToOtherNote/${current_note_id}`);
         })
 
-        // 上傳筆記鍵
-       $('#noteUpload-btn').click(async function (){
-          window.location.assign('/uploadNote');
-       })
+        // 複製功能
+        $('#copy_shareUrl').click(function() {
+          $('#share_url').select();
+          document.execCommand('copy');
+          alertSuccess('已複製到剪貼簿');
+        });
 
-        // 刪除物件鍵
-        $('#deleteElement').click(function (){
+        // 自動儲存鍵 ---------------------------------------------
+        $('#autoSave-toggle').change(function () {
+          if (this.checked) {
+            AutoSave.start();
+          } else {
+            AutoSave.stop();
+          }
+        });
 
-          if($('.highlight').length == 0){
+        // 版本列表鍵 -------------------------------------------
+        $('#version_list-btn').click(async () => {
+          current_version_obj = await getVersionList(
+            version_obj,
+            $('#modal-version-main')
+          );
+        });
+
+        // 版本回復鍵
+        $('#version-change').click(() => {
+          const version_chosen = $('input[name="version_options"]:checked').val();
+          noteShowFromVer(version_chosen, current_version_obj);
+        });
+
+        // [分享頁面] 分享鍵 ---------------------------------
+        $('#share-btn').click(async () => {
+          await showShareToAll();
+        });
+
+        // 特定人分享清單鍵
+        $('#sharedNote-btn').click(async () => {
+          await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+        });
+
+        // 取消分享鍵 ---------------------------------
+        $('#shareToAll_cancel-btn').click(async () => {
+          if($('#shareToAll-status').text() === '關閉中'){
             Swal.fire({
-              icon: 'error',
-              title: '請先點選需刪除的物件',
+              icon: 'warning',
+              title: '目前此篇筆記已關閉分享',
               showConfirmButton: false,
               timer: 1000,
             });
@@ -269,145 +373,174 @@ block content
           }
 
           Swal.fire({
-              title: '您確定要刪除選取的物件?',
-              icon: 'warning',
+              title: '確定要關閉此篇筆記的分享?',
+              icon: 'question',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
-              confirmButtonText: '刪除',
+              confirmButtonText: '確定',
               cancelButtonText: '取消'
-          }).then((result) => {
+          }).then(async (result) => {
               if (result.isConfirmed) {
-                  //- OCR_ids = OCR_ids.filter(n => !OCR_delete_ids.includes(n)); // 更新OCR_ids剩餘的物件
-                  const delete_items = $('.highlight');
-                  delete_items.map((i, delete_id) => { 
-                    const top = delete_items.get(i).style.top;
-                    const left = delete_items.get(i).style.left;
-                    const val = delete_items.get(i).children[0].value;
-
-                    //- console.log("delete_items.get(i).children[0].value",delete_items.get(i).children[0].value);
-                    const item = delete_items.get(i);
-                    //- console.log("delete-item:", item, top, left, val);
-                    stepAppend(item, 'delete', top, left, val);
-                  })
-
-                  // 刪除所有被標記的物件
-                  $('#update-note-content').find('.highlight').remove();
+                await deleteShareAll();
+                await getShareAll(current_note_id);
+                await showShareToAll();
               }
           })
         });
 
-        // 回復自動儲存最新版鍵 ------------------------------
-        $('#newest-version-btn').click(function (e) {
-          e.preventDefault();
-          AutoSave.restore('AUTOSAVE');
+        // 特定人分享查看鍵
+        $('#sharedNote-change').click(() => {
+          const note_chosen = $('input[name="shareNote_options"]:checked').val();
+          window.open(`/sharedToOtherNote/${shared_note_obj[note_chosen].note_id}`);
         });
 
-        // 複製功能
-        $('#copy_shareUrl').click(function() {
-          const area = $('#share_url');
-          area.select();
-          document.execCommand('copy');
-          Swal.fire({
-              icon: 'success',
-              title: '已複製到剪貼簿',
-              showConfirmButton: false,
-              timer: 1000
-          })
-        })
+
+
+        // 刪除物件鍵
+        //- $('#deleteElement').click(function (){
+
+        //-   if($('.highlight').length == 0){
+        //-     Swal.fire({
+        //-       icon: 'error',
+        //-       title: '請先點選需刪除的物件',
+        //-       showConfirmButton: false,
+        //-       timer: 1000,
+        //-     });
+        //-     return;
+        //-   }
+
+        //-   Swal.fire({
+        //-       title: '您確定要刪除選取的物件?',
+        //-       icon: 'warning',
+        //-       showCancelButton: true,
+        //-       confirmButtonColor: '#3085d6',
+        //-       cancelButtonColor: '#d33',
+        //-       confirmButtonText: '刪除',
+        //-       cancelButtonText: '取消'
+        //-   }).then((result) => {
+        //-       if (result.isConfirmed) {
+        //-           //- OCR_ids = OCR_ids.filter(n => !OCR_delete_ids.includes(n)); // 更新OCR_ids剩餘的物件
+        //-           const delete_items = $('.highlight');
+        //-           delete_items.map((i, delete_id) => { 
+        //-             const top = delete_items.get(i).style.top;
+        //-             const left = delete_items.get(i).style.left;
+        //-             const val = delete_items.get(i).children[0].value;
+
+        //-             //- console.log("delete_items.get(i).children[0].value",delete_items.get(i).children[0].value);
+        //-             const item = delete_items.get(i);
+        //-             //- console.log("delete-item:", item, top, left, val);
+        //-             stepAppend(item, 'delete', top, left, val);
+        //-           })
+
+        //-           // 刪除所有被標記的物件
+        //-           $('#update-note-content').find('.highlight').remove();
+        //-       }
+        //-   })
+        //- });
+
+
 
         // 監聽圖形刪除事件
-        $(document).on('dblclick', '.contour-pic', function(e){
-            // 一次只能選一個
-            let click_element = $('#' + e.currentTarget.id);
-            if (click_element.hasClass('highlight')) {
-              $('.contour-pic').removeClass('highlight');
-              $('.div_addtextarea').removeClass('highlight');
-            } else {
-              $('.contour-pic').removeClass('highlight');
-              $('.div_addtextarea').removeClass('highlight');
-              click_element.addClass('highlight');
-            }
-        });
+        //- $(document).on('dblclick', '.contour-pic', function(e){
+        //-     // 一次只能選一個
+        //-     let click_element = $('#' + e.currentTarget.id);
+        //-     if (click_element.hasClass('highlight')) {
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-     } else {
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-       click_element.addClass('highlight');
+        //-     }
+        //- });
 
         // 監聽文字框刪除事件
-        $(document).on('dblclick', '.addtextarea', function(e){
-            let click_element = e.currentTarget.parentNode;
-            let click_id = e.target.id;
+        //- $(document).on('dblclick', '.addtextarea', function(e){
+        //-     let click_element = e.currentTarget.parentNode;
+        //-     let click_id = e.target.id;
   
 
-            // 取消框選
-            if (click_element.classList.contains('highlight')) {
-              // 一次只能選一個
-              $('.contour-pic').removeClass('highlight');
-              $('.div_addtextarea').removeClass('highlight');
-              if (OCR_delete_ids.indexOf(click_id) !== -1) {
-                OCR_delete_ids.splice(click_id, 1);
-              }
-              // 框選
-            } else {
-              // 一次只能選一個
-              $('.contour-pic').removeClass('highlight');
-              $('.div_addtextarea').removeClass('highlight');
-              click_element.classList.add('highlight');
-              OCR_delete_ids.push(click_id);
+        //-     // 取消框選
+        //-     if (click_element.classList.contains('highlight')) {
+        //-       // 一次只能選一個
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-       if (OCR_delete_ids.indexOf(click_id) !== -1) {
+        //-         OCR_delete_ids.splice(click_id, 1);
+        //-       }
+        //-       // 框選
+        //-     } else {
+        //-       // 一次只能選一個
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-       click_element.classList.add('highlight');
+        //-       OCR_delete_ids.push(click_id);
+        //-     }
+        //- });
+
+        // 監聽文字框修改事件
+        //- $(document).on('input', '.addtextarea', function(e){
+        //-     let click_element = e.currentTarget.parentNode;
+        //-     let click_id = e.target.id;
+        //-     let change_val = e.target.value;
+        //-     restoreObj = {
+        //-       item: $('#' + click_id),
+        //-       event: 'input',
+        //-       val: change_val,
+        //-     };
+        //-     stepAppend(restoreObj);
+        //- });
+
+        
+        //- // TODO: 目前拿掉，監聽圖形dragable 上一步
+        //- $(document).on('mouseup', '.contour-pic', function(e){
+        //-   const element = e.target.parentElement;
+        //-   const top = element.style.top;
+        //-   const left = element.style.left;
+        //-   console.log(element, top, left);
+        //-   //- stepAppend(element, 'drag', top, left, '');
+        //- });
+
+        //- // TODO: 目前拿掉，監聽文字dragable 上一步
+        //- $(document).on('mouseup', '.div_addtextarea', function(e){
+        //-   const element = e.target.parentElement;
+        //-   const top = element.style.top;
+        //-   const left = element.style.left;
+        //-   //- stepAppend(element, 'drag', top, left, '');
+        //- });
+
+        // 監聽事件: textare叉叉
+        $(document).on('focus', '.div_addtextarea', function () {
+            $('.textareaClose').css('display', 'block');
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).is('.div_addtextarea')) {
+                $('.textareaClose').css('display', 'none');
             }
         });
 
-        // 監聽文字框修改事件
-        $(document).on('input', '.addtextarea', function(e){
-            let click_element = e.currentTarget.parentNode;
-            let click_id = e.target.id;
-            let change_val = e.target.value;
-            stepAppend($('#' + click_id), 'input', '', '', change_val);
+        // 監聽事件: 圖形叉叉
+        $(document).on('mouseover', '.contour-pic', function(e){
+            $('.imgClose').css('display','block');
         });
 
-        
-        // TODO: 目前拿掉，監聽圖形dragable 上一步&下一步
-        $(document).on('mouseup', '.contour-pic', function(e){
-          const element = e.target.parentElement;
-          const top = element.style.top;
-          const left = element.style.left;
-          console.log(element, top, left);
-          //- stepAppend(element, 'drag', top, left, '');
+        $(document).on('mouseout', function(e){
+            $('.imgClose').css('display','none');
         });
 
-        // TODO: 目前拿掉，監聽文字dragable 上一步&下一步
-        $(document).on('mouseup', '.div_addtextarea', function(e){
-          const element = e.target.parentElement;
-          const top = element.style.top;
-          const left = element.style.left;
-          //- stepAppend(element, 'drag', top, left, '');
-        });
-
-        let online_user;
-        // 拿取目前在線上的名單
-        // 因為只有筆記編輯頁裡的上下線資訊，故放在筆記編輯頁面
-        $(document).ready(async function() {
-
-          // header Icon的點選效果
-          $('#note-page').css('border-bottom', '2px solid');
-          
-          // 拿取每個使用者的線上狀態
-          socket.on("users", async (users) => {
-            online_user = users;
-            // 重新渲染分享頁面
-            await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
-          });
-        });
-
-
-      script(src='/js/user.js')
-      script(src='/js/windowLoad.js')
       script(src='/js/notePreClick.js')
       script(src='/js/note.js')
       script(src='/js/draggable.js')
-      script(src='/js/btn.js')
       script(src='/js/restore.js')
       script(src='/js/social.js')
       script(src='/js/search.js')
       script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
+      script(src='/js/chatRoom.js')
+      link(href='/css/chatRoom.css', rel='stylesheet')
+      
 
 
 

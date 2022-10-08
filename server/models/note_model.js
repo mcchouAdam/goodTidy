@@ -10,18 +10,6 @@ const {
 } = require('./mongocon');
 const { authorizationList } = require('../../utils/authorization');
 
-// require('dotenv').config();
-
-// const { MONGO_DB } = process.env;
-
-// const authorizationList = {
-//   forbidden: 0,
-//   read: 1,
-//   comment: 2,
-//   update: 4,
-//   delete: 8,
-//   admin: 16,
-// };
 
 // [筆記頁面] 上傳筆記
 const writeNote = async (note) => {
@@ -635,8 +623,6 @@ const getShareNotes = async (
         matchAterLookup = {};
         break;
     }
-
-    // console.log('matchObj', matchObj);
 
     // 計算所有符合條件
     const allCards_count = await noteCollection
@@ -1427,7 +1413,6 @@ const getAnnotation = async (note_id) => {
       ])
       .toArray();
 
-    // console.log('getAnnotation: ', result);
     return result;
   } catch (error) {
     return {

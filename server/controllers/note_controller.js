@@ -151,14 +151,14 @@ const shareToOther = async (req, res) => {
 
   if (user_email === shareUser_email) {
     return res.status(403).json({
-      msg: '您是此篇筆記的使用者',
+      data: '您是此篇筆記的使用者',
     });
   }
 
   const share = await Notes.shareToOther(data);
   if (share === '此用戶不存在') {
     return res.status(403).json({
-      msg: '此用戶不存在',
+      data: '此用戶不存在',
     });
   }
 
@@ -172,7 +172,7 @@ const deleteShareToOther = async (req, res) => {
 
   await Notes.deleteShareToOther(note_id, delete_email, user_name);
   return res.status(200).json({
-    msg: `${delete_email}刪除成功`,
+    data: `${delete_email}刪除成功`,
   });
 };
 
@@ -187,6 +187,7 @@ const getShareToOther = async (req, res) => {
   return res.json(shareList_html);
 };
 
+// 儲存筆記
 const saveNote = async (req, res) => {
   const { note_id } = req.body;
   const user_id = req.session.user.id;
@@ -210,7 +211,7 @@ const updateAnnotation = async (req, res) => {
 
   if (permission < authorizationList.comment) {
     return res.status(403).json({
-      msg: '您無權限新增/修改/刪除/註釋',
+      data: '您無權限新增/修改/刪除/註釋',
     });
   }
 
@@ -227,7 +228,7 @@ const updateAnnotation = async (req, res) => {
   );
 
   return res.status(200).json({
-    msg: '新增註釋成功',
+    data: '新增註釋成功',
   });
 };
 
@@ -236,7 +237,9 @@ const getAnnotation = async (req, res) => {
   const { note_id, annotion_user_id } = req.params;
 
   const getResult = await Notes.getAnnotation(note_id, annotion_user_id);
-  return res.status(200).json(getResult);
+  return res.status(200).json({
+    data: getResult,
+  });
 };
 
 module.exports = {

@@ -37,120 +37,20 @@ body
               span#msg_count.badge.bg-primary.badge-number 0
             // End Notification Icon
             ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications.userMsgNotifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
-              //- li.dropdown-header
-              //-   | You have 4 new notifications
-              //-   a(href='#')
-              //-     span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
-              //- li
-                //- a(href='#')
-                //-   span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
               li
                 hr.dropdown-divider
-              //- li.notification-item
-              //-   i.bi.bi-exclamation-circle.text-warning
-              //-   div
-              //-     h4 Lorem Ipsum
-              //-     p Quae dolorem earum veritatis oditseno
-              //-     p 30 min. ago
-
-              //- li
-              //-   hr.dropdown-divider
-              //- li.notification-item
-              //-   i.bi.bi-x-circle.text-danger
-              //-   div
-              //-     h4 Atque rerum nesciunt
-              //-     p Quae dolorem earum veritatis oditseno
-              //-     p 1 hr. ago
-              //- li
-              //-   hr.dropdown-divider
-              //- li.notification-item
-              //-   i.bi.bi-check-circle.text-success
-              //-   div
-              //-     h4 Sit rerum fuga
-              //-     p Quae dolorem earum veritatis oditseno
-              //-     p 2 hrs. ago
-              //- li
-              //-   hr.dropdown-divider
-              //- li.notification-item
-              //-   i.bi.bi-info-circle.text-primary
-              //-   div
-              //-     h4 Dicta reprehenderit
-              //-     p Quae dolorem earum veritatis oditseno
-              //-     p 4 hrs. ago
-              //- li
-              //-   hr.dropdown-divider
-              //- li.notification-item
-              //-   i.bi.bi-info-circle.text-primary
-              //-   div
-              //-     h4 Dicta reprehenderit
-              //-     p Quae dolorem earum veritatis oditseno
-              //-     p 4 hrs. ago
-              //- li
-              //-   hr.dropdown-divider
-              //- li.dropdown-footer
-              //-   a(href='#') Show all notifications
             // End Notification Dropdown Items
           // End Notification Nav
-          //- li.nav-item.dropdown
-          //-   a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
-          //-     i.bi.bi-chat-left-text
-          //-     span.badge.bg-success.badge-number 3
-          //-   // End Messages Icon
-          //-   ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.messages
-          //-     li.dropdown-header
-          //-       | You have 3 new messages
-          //-       a(href='#')
-          //-         span.badge.rounded-pill.bg-primary.p-2.ms-2 View all
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.message-item
-          //-       a(href='#')
-          //-         img.rounded-circle(src='/assets/img/messages-1.jpg', alt='')
-          //-         div
-          //-           h4 Maria Hudson
-          //-           p
-          //-             | Velit asperiores et ducimus soluta repudiandae labore
-          //-             | officia est ut...
-          //-           p 4 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.message-item
-          //-       a(href='#')
-          //-         img.rounded-circle(src='/assets/img/messages-2.jpg', alt='')
-          //-         div
-          //-           h4 Anna Nelson
-          //-           p
-          //-             | Velit asperiores et ducimus soluta repudiandae labore
-          //-             | officia est ut...
-          //-           p 6 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.message-item
-          //-       a(href='#')
-          //-         img.rounded-circle(src='/assets/img/messages-3.jpg', alt='')
-          //-         div
-          //-           h4 David Muldon
-          //-           p
-          //-             | Velit asperiores et ducimus soluta repudiandae labore
-          //-             | officia est ut...
-          //-           p 8 hrs. ago
-          //-     li
-          //-       hr.dropdown-divider
-          //-     li.dropdown-footer
-          //-       a(href='#') Show all messages
-          //-   // End Messages Dropdown Items
-          //- // End Messages Nav
-            
           li.nav-item.dropdown.pe-3
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
-              if id
-                if name && picture
+              - if (id)
+                - if (name && picture)
                   img.profile-pic(src=picture, alt='Profile')
                   span.d-none.d-md-block.dropdown-toggle.ps-2=name
-                else
+                - else
                   img.profile-pic(src="/assets/img/user.png", alt='Profile')
                   span.d-none.d-md-block.dropdown-toggle.ps-2 登入
-              else
+              - else
                 img.profile-pic(src="/assets/img/user.png", alt='Profile')
             // End Profile Iamge Icon
             ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
@@ -192,11 +92,40 @@ body
     // End Header
 
     script.
-
-      // Socket
+      // Socket ------------------------------------------
       let socket = io();
+      
+      // Socket 被喜歡的推播
+      socket.on('saved_msg', async function(msg){
+        await getUserMsg();
+        await showUserMsg();
+      })
 
-      // 登出鍵
+      //- Socket 有人分享筆記給你
+      socket.on('shareToyou_msg', async function(shareUserEmail){
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      })
+
+      //- Socket 有人刪除他的分享筆記
+      socket.on('delete_shareToyou_msg', async function(delete_user_email){
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      });
+      
+      $(document).ready(async function() {
+
+          // 拿取User的Profile;
+          await profile();
+          // 拿取User所有通知
+          await getUserMsg();
+          await showUserMsg();
+
+      });
+
+      // 登出鍵 ---------------------------------
       $('#logout-btn').click(async function () {
         let data = '';
 
@@ -231,31 +160,6 @@ body
                 window.location.assign('/signin');
             });
           });
-      });
-
-      // Socket ------------------------------------------
-      // Socket 被喜歡的推播
-      socket.on('saved_msg', async function(msg){
-        await getUserMsg();
-        await showUserMsg();
-        //- Swal.fire(msg)
-      })
-
-      //- Socket 有人分享筆記給你
-      socket.on('shareToyou_msg', async function(shareUserEmail){
-        await getUserMsg();
-        await showUserMsg();
-        await getUserNotes();
-        //- Swal.fire(`${shareUserEmail}分享筆記給您`);
-        
-      })
-
-      //- Socket 有人刪除他的分享筆記
-      socket.on('delete_shareToyou_msg', async function(delete_user_email){
-        await getUserMsg();
-        await showUserMsg();
-        await getUserNotes();
-        //- Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
       });
 
 

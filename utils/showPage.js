@@ -13,7 +13,7 @@ const showShareDetail = async function (data) {
   const newest_version_text_elements =
     note_version_info[note_version_info.length - 1].text_elements;
   const { note_name } = data[0];
-  const file_name = `${S3_HOST}/notes/${data[0].file_name}`;
+  const file_name = data[0].file_name;
   const user_name = data[0].user_info[0].name;
   const user_picture = `${S3_HOST}/user_picture/${data[0].user_info[0].picture}`;
   const user_email = data[0].user_info[0].email;
@@ -240,7 +240,7 @@ const showPagination = async function (
     paging + 1
   }&sorting=${sorting}`;
 
-  // 最後一頁
+  // 最後一頁且有很多頁
   if (currentPage === allPages_count && allPages_count !== 1) {
     prevPage_html = `
       <li class="page-item"></li>
@@ -257,7 +257,8 @@ const showPagination = async function (
     `;
     nextPage_html = '';
   }
-  // 第一頁
+
+  // 第一頁且有很多頁
   else if (currentPage === 1 && allPages_count !== 1) {
     prevPage_html = '';
     currentPage_html = `
@@ -275,7 +276,8 @@ const showPagination = async function (
           <span class="sr-only">Next</span>
         </a>`;
   }
-  // 只有一頁且第一頁
+
+  // 第一頁且只有一頁
   else if (currentPage === 1 && allPages_count === 1) {
     prevPage_html = '';
     currentPage_html = `
@@ -287,7 +289,8 @@ const showPagination = async function (
     `;
     nextPage_html = '';
   }
-  // 中間頁
+
+  // 有前中後三頁
   else {
     prevPage_html = `
       <li class="page-item"></li>
@@ -311,21 +314,19 @@ const showPagination = async function (
   }
 
   const paging_html = `
-    <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         ${prevPage_html}
         ${currentPage_html}
         ${nextPage_html}
     </ul>
-    
-    </nav>`;
+    `;
+
+  // const pageObj = { prevPage_html, currentPage_html, nextPage_html };
 
   return paging_html;
 };
 
 const showShareToOtherList = async function (shareList, note_id) {
-  // console.log(shareList[0]);
-
   let shareList_html = '';
   let permission;
   try {
