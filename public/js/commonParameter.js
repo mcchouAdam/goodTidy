@@ -29,7 +29,6 @@ let current_version_obj;
 let shared_note_obj;
 
 // OCR info ----------------------------------------
-// const OCR_ids = [];
 const OCR_delete_ids = [];
 const OCR_elements = [];
 

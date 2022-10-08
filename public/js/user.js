@@ -104,11 +104,6 @@ async function signIn(email, password) {
     });
 }
 
-// [分享頁面] 分享鍵 ---------------------------------
-$('#share-btn').click(async () => {
-  await showShareToAll();
-});
-
 // [分享頁面] 顯示分享頁面資料
 async function showShareToAll() {
   // PreLoad the 特定人士清單
@@ -165,15 +160,6 @@ async function showShareToAll() {
     $('share_url').prop('disabled', true);
   }
 }
-
-// 取消分享鍵 ---------------------------------
-$('#shareToAll_cancel-btn').click(async () => {
-  await deleteShareAll();
-  await getShareAll(current_note_id);
-  await showShareToAll();
-  // await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
-  // $('#share-btn').click();
-});
 
 // 拿取User所有通知 ----------------------------
 async function getUserMsg() {

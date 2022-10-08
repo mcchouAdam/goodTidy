@@ -763,20 +763,10 @@ async function deleteShareToOther(note_id, delete_email) {
         });
     }
   });
-
-  // const isDeleted = confirm(`確定要刪除對${delete_email}的分享?`);
-  // if (!isDeleted) {
-  //   return;
-  // }
 }
 
 // 刪除分享給所有人
 async function deleteShareAll() {
-  const isDeleted = confirm('確定要關閉此篇文章的分享');
-  if (!isDeleted) {
-    return;
-  }
-
   const data = {
     note_id: current_note_id,
   };

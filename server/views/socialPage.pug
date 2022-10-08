@@ -46,6 +46,9 @@ block content
             br
             //- 分頁
             #paging-block
+                //- nav(aria-label='Page navigation')
+                //-     ul.pagination.justify-content-center
+
 
             //- 留言
             script.
@@ -94,28 +97,11 @@ block content
                 paging_html = !{paging_html};
                 sorting = !{JSON.stringify(sorting)};
 
-                // sorting決定變色
-                //- switch(sorting){
-                //-     case 'sharing_time': 
-                //-         $('.fa-clock-o').css('color','blue');
-                //-         break;
-                //-     case 'saved_count': 
-                //-         $('.fa-heart').css('color','red');
-                //-         break;
-                //-     case 'comment_count':
-                //-         $('.fa-comments').css('color','blue');
-                //-         break;
-                //- }
-
                 const elements_html = $.parseHTML(cards_html);
                 $('#sharing-cards').append(elements_html);
+
                 const pagings_html = $.parseHTML(paging_html);
                 $('#paging-block').append(pagings_html);
-
-                // 第一頁與最後一頁的警告
-                function alert_paging(str) {
-                    Swal.fire('已經是' + str);
-                }
 
                 // [func] 輸入分頁跳轉
                 function getInputPage(){
@@ -160,25 +146,9 @@ block content
                     $(this).children("span").text(`${heart_count}`)
                 });
 
-
-
-                
-        script(src='/js/commonParameter.js')
-        script(src='/js/effect.js')
-        script(src='/js/user.js')
         script(src='/js/note.js')
         script(src='/js/draggable.js')
         script(src='/js/social.js')
         script(src='/js/search.js')
         script(src='/js/autoSave.js')
         script(src='/js/annotationBar.js')
-                
-                //- 監聽別人是否有更新收藏
-                socket.on('saved_count_update', function(note_savedStatus){
-                    alert(note_savedStatus);
-                })
-
-
-
-
-

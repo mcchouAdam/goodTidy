@@ -214,10 +214,6 @@ block content
               await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
             });
 
-            // 拿取User所有通知
-            await getUserMsg();
-            await showUserMsg();
-
             // 拿取User所有note的資訊;
             await getUserNotes();
 
@@ -353,10 +349,43 @@ block content
           noteShowFromVer(version_chosen, current_version_obj);
         });
 
-        // --------------------------------------------------------
+        // [分享頁面] 分享鍵 ---------------------------------
+        $('#share-btn').click(async () => {
+          await showShareToAll();
+        });
+
         // 特定人分享清單鍵
         $('#sharedNote-btn').click(async () => {
           await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+        });
+
+        // 取消分享鍵 ---------------------------------
+        $('#shareToAll_cancel-btn').click(async () => {
+          if($('#shareToAll-status').text() === '關閉中'){
+            Swal.fire({
+              icon: 'warning',
+              title: '目前此篇筆記已關閉分享',
+              showConfirmButton: false,
+              timer: 1000,
+            });
+            return;
+          }
+
+          Swal.fire({
+              title: '確定要關閉此篇筆記的分享?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: '確定',
+              cancelButtonText: '取消'
+          }).then(async (result) => {
+              if (result.isConfirmed) {
+                await deleteShareAll();
+                await getShareAll(current_note_id);
+                await showShareToAll();
+              }
+          })
         });
 
         // 特定人分享查看鍵
@@ -495,9 +524,6 @@ block content
             $('.imgClose').css('display','none');
         });
 
-
-      script(src='/js/commonParameter.js')
-      script(src='/js/user.js')
       script(src='/js/notePreClick.js')
       script(src='/js/note.js')
       script(src='/js/draggable.js')
@@ -506,7 +532,6 @@ block content
       script(src='/js/search.js')
       script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
-      script(src='/js/effect.js')
       
 
 

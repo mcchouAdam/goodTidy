@@ -439,24 +439,6 @@ async function noteShowFromVer(name, Obj) {
   });
 }
 
-// 查看特定人分享 -------------------------------------------------------
-async function sharedNoteShow(name, Obj) {
-  $('#update-note-content').html('');
-  console.log('name:', name, 'Obj: ', Obj);
-  note_bg = Obj[name].note_file_name;
-  const { user_permission } = Obj[name];
-  const Img_elements = Img_elements_arr(Obj[name].note_elements);
-  const text_elements = textarea_nondraggable_arr(
-    $('#update-note-content'),
-    Obj[name].note_textElements
-  );
-  elements_init($('#update-note-content'), Img_elements, text_elements);
-  $('textarea').prop('disabled', true);
-  $('textarea').draggable({
-    disable: true,
-  });
-}
-
 // 改名筆記 ------------------------------------------------------------
 async function renameNote(note_id) {
   Swal.fire({

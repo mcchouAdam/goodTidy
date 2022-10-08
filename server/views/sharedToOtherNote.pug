@@ -41,180 +41,101 @@ block content
       
       script.
         $(document).ready(async function(){
+
+          let user_permission = !{JSON.stringify(permission)};
+          let note_id = !{JSON.stringify(note_id)};
+          let ShareUser_name = !{JSON.stringify(ShareUser_name)};
+          let annotion_user_id = !{JSON.stringify(annotion_user_id)};
+          let annotion_user_name = !{JSON.stringify(annotion_user_name)};
+          note_bg = !{JSON.stringify(file_name)};
+
+          // 註釋
           await getAnnotation(note_id);
           await showAnnotation($('#sidebar-comment'), $('#update-note-content'), current_annotation_element, user_permission);
         
-          if(user_permission == 1){
-            // 不能用註釋icon也不能用textarea
+          // 允許觀看
+          if(user_permission === +authorizationList.read){
             $('button').prop('disabled', true);
             $('.form-control').prop('disabled', true);
           }
-          else if(user_permission >= 2){
+          else if(user_permission >= +authorizationList.comment){
+              // 允許留言
+              // 註釋icon
               $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
                   .css('position', 'absolute')
                   .draggable({ containment: '#update-note-content' });
               $('button').prop('disabled', false);
               $('.form-control').prop('disabled', false);
           }
-        })
 
-        text_elements = !{text_elements};
-        elements = !{elements};
+          // 渲染圖形&文字方塊
+          addDragImage($('#update-note-content'), !{elements},  'unDraggable');
+          !{text_elements}.map((s) => {
+              addDragTextarea(
+                  '#update-note-content',
+                  s.text,
+                  s.width,
+                  s.height,
+                  s.textTop,
+                  s.textLeft,
+                  'unDraggable'
+              )
+          });
 
-        let user_permission = !{JSON.stringify(permission)};
-        let note_id = !{JSON.stringify(note_id)};
-        let ShareUser_name = !{JSON.stringify(ShareUser_name)};
-        let file_name = !{JSON.stringify(file_name)};
-        let annotion_user_id = !{JSON.stringify(annotion_user_id)};
-        let annotion_user_name = !{JSON.stringify(annotion_user_name)}
+          // 註解button
+          // 生成可移動註解icon + 導覽列的註解框
+          $('#annotation-btn').click(function (e) {
+            let annotation_count = $('.form-group').length;
+            let current_annotation_num = annotation_count + 1;
+            let annotation_id = `${note_id}_annotation_${current_annotation_num}`;
 
-
-        // 重新渲染物件 (圖片+文字+註解)
-        let text_element = text_elements_arr($('#update-note-content'), text_elements);
-        let img_element = Img_elements_arr(elements);
-
-        elements_init($('#update-note-content'), img_element, text_element);
-
-
-        // 圖片物件渲染(不可動)
-        function Img_elements_arr(note_Imgcontent) {
-            let Img_elements = [];
-            let elements = $.parseHTML(note_Imgcontent);
-            let img_background = file_name;
-
-            elements.map((s) => {
-                $(s).find('img').attr('src', img_background);
-                Img_elements.push(s);
-            });
-
-            return Img_elements;
-        }
-
-        // 文字物件渲染(不可動)
-        function text_elements_arr(append_div, note_textContent) {
-            let text_elements = [];
-            if (!note_textContent) {
-                return [];
-            }
-            note_textContent.map((s) => {
-                const element = Textarea_Notdraggable_html(
-                    append_div,
-                    s.text,
-                    s.width,
-                    s.height,
-                    s.textTop,
-                    s.textLeft
-                );
-                text_elements.push(element);
-            });
-                return text_elements;
-        }
-
-        function elements_init(append_div, Img_elements, text_elements) {
-            let elements = Img_elements.concat(text_elements);
-            elements.map((e) => {
-                append_div.append(e);
-            });
-        }
-
-        function Textarea_Notdraggable_html(
-            div_id,
-            text,
-            width,
-            height,
-            textTop,
-            textLeft
-            ) {
-            textLeft = +textLeft.replaceAll('px', '');
-            textTop = +textTop.replaceAll('px', '');
-            let text_jsInjection = text.replaceAll('<','&lt;').replaceAll('>','&gt;');
-
-            let new_offset = { top: textTop, left: textLeft };
-            let new_width = width;
-            let new_height = height;
-            let timestamp = Date.now();
-            let textarea_id = `${timestamp}_textarea`;
-            let newElement = $(
-                `<div class="div_addtextarea"><textarea id="${textarea_id}" class="addtextarea" disabled>${text_jsInjection}</textarea></div>`
+            // 增加註釋元件
+            const item = $(
+              `<i class="fa fa-solid fa-comments"><span class="badge bg-dark rounded-pill">${current_annotation_num}</span></i>`
             )
-                .width(new_width)
-                .height(new_height)
-                .css({
-                    'position': 'absolute',
-                })
-                .offset(new_offset)
+              .draggable({ containment: '#update-note-content' })
+              .css({ 'color': 'blue', 'position': 'absolute', 'font-size': '24px' })
+              .offset({ top: 0, left: 0 })
 
-            return newElement;
-        }
+            item.attr("id", `icon-${annotation_id}`);
+            $('#update-note-content').append(item);
 
-        // 註解button
-        // 生成可移動註解icon + 導覽列的註解框
-        $('#annotation-btn').click(function (e) {
-          let annotation_count = $('.form-group').length;
-          let current_annotation_num = annotation_count + 1;
-          let annotation_id = `${note_id}_annotation_${current_annotation_num}`;
-
-          // 增加註釋元件
-          const item = $(
-            `<i class="fa fa-solid fa-comments"><span class="badge bg-dark rounded-pill">${current_annotation_num}</span></i>`
-          )
-            .draggable({ containment: '#update-note-content' })
-            .css({ 'color': 'blue', 'position': 'absolute', 'font-size': '24px' })
-            .offset({ top: 0, left: 0 })
-            //- .on('drag', stepDrag);
-
-          item.attr("id", `icon-${annotation_id}`);
-          $('#update-note-content').append(item);
-
-          //--- 同步 ---
-          //- socket.emit('create_annotation_icon', item);
-
-          //- <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">
-          //-   鎖定
-          //- </a>
-          //- <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">
-          //-   修改
-          //- </a>
-
-          // 組合annotation
-          let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
-                <a
-                  class="btn"
-                  id="dropdownMenuLink"
-                  href="#"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i class="bi bi-three-dots" style="margin-top: -0.16rem; "></i>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                  <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
-                    移除
+            // 組合annotation
+            let annotation_menu_html = `<div class="d-flex flex-row align-items-center">
+                  <a
+                    class="btn"
+                    id="dropdownMenuLink"
+                    href="#"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <i class="bi bi-three-dots" style="margin-top: -0.16rem; "></i>
                   </a>
-                </div>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
+                      移除
+                    </a>
+                  </div>
+                </div>`;
+
+            let annotation_html = `
+              <div class="form-group" id="form-group-${annotation_id}">
+                <span class="badge bg-dark rounded-pill">${current_annotation_num}</span>
+                <span style="font-size:15px;"class="badge bg-info rounded-pill">${annotion_user_name}</span>
+                <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..."></textarea>
+                ${annotation_menu_html}
               </div>`;
 
-          let annotation_html = `
-                          <div class="form-group" id="form-group-${annotation_id}">
-                            <span class="badge bg-dark rounded-pill">${current_annotation_num}</span>
-                            <span style="font-size:15px;"class="badge bg-info rounded-pill">${annotion_user_name}</span>
-                            <textarea class="form-control" id="textarea-${annotation_id}" rows="3" placeholder="您想註釋什麼?..."></textarea>
-                            ${annotation_menu_html}
-                          </div>`;
+            $('#sidebar-comment').append(annotation_html);
+          });
 
-          $('#sidebar-comment').append(annotation_html);
-
-      
-        });
-
-        // 存檔鍵按鈕
-        $('#saveAnnotation').click(async function(){
-          await saveAnnotation(annotion_user_id, note_id);
+          // 存檔鍵按鈕
+          $('#saveAnnotation').click(async function(){
+            await saveAnnotation(annotion_user_id, note_id);
+          })
         })
       
-      script(src='/js/commonParameter.js')
-      script(src='/js/user.js')
       script(src='/js/note.js')
       script(src='/js/draggable.js')

@@ -92,11 +92,40 @@ body
     // End Header
 
     script.
-
-      // Socket
+      // Socket ------------------------------------------
       let socket = io();
+      
+      // Socket 被喜歡的推播
+      socket.on('saved_msg', async function(msg){
+        await getUserMsg();
+        await showUserMsg();
+      })
 
-      // 登出鍵
+      //- Socket 有人分享筆記給你
+      socket.on('shareToyou_msg', async function(shareUserEmail){
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      })
+
+      //- Socket 有人刪除他的分享筆記
+      socket.on('delete_shareToyou_msg', async function(delete_user_email){
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      });
+      
+      $(document).ready(async function() {
+
+          // 拿取User的Profile;
+          await profile();
+          // 拿取User所有通知
+          await getUserMsg();
+          await showUserMsg();
+
+      });
+
+      // 登出鍵 ---------------------------------
       $('#logout-btn').click(async function () {
         let data = '';
 
@@ -131,31 +160,6 @@ body
                 window.location.assign('/signin');
             });
           });
-      });
-
-      // Socket ------------------------------------------
-      // Socket 被喜歡的推播
-      socket.on('saved_msg', async function(msg){
-        await getUserMsg();
-        await showUserMsg();
-        //- Swal.fire(msg)
-      })
-
-      //- Socket 有人分享筆記給你
-      socket.on('shareToyou_msg', async function(shareUserEmail){
-        await getUserMsg();
-        await showUserMsg();
-        await getUserNotes();
-        //- Swal.fire(`${shareUserEmail}分享筆記給您`);
-        
-      })
-
-      //- Socket 有人刪除他的分享筆記
-      socket.on('delete_shareToyou_msg', async function(delete_user_email){
-        await getUserMsg();
-        await showUserMsg();
-        await getUserNotes();
-        //- Swal.fire(`${delete_user_email}的一篇筆記取消對你的分享`);
       });
 
 
