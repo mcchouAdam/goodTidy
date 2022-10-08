@@ -42,7 +42,6 @@ async function noteUpload(
         showConfirmButton: false,
         timer: 1000,
       }).then(() => {
-        // localStorage.setItem('PREVPAGE', 'uploadPage');
         localStorage.setItem('UPLOADNOTEID', note_id);
         window.location.assign('/note');
       });
@@ -82,33 +81,40 @@ async function noteShow(note_id) {
   $('#click_note_classification').html(note_classification);
   $('#click_note_name').html(click_notename);
 
-  // 每次更換筆記都要洗掉之前的OCR物件
-  // OCR_ids = [];
-
   $note_div.html('');
   note_bg = note_filename;
 
-  const text_elements = text_elements_arr($note_div, note_textContent);
-  const Img_elements = Img_elements_arr(note_ImgContent);
-  elements_init($note_div, Img_elements, text_elements);
-  $('.contour-pic.ui-draggable.ui-draggable-handle')
-    .draggable({
-      containment: '#update-note-content',
-    })
-    .css('position', 'absolute');
+  addDragImage($note_div, note_ImgContent, 'draggable');
+
+  note_textContent.map((s) => {
+    addDragTextarea(
+      '#update-note-content',
+      s.text,
+      s.width,
+      s.height,
+      s.textTop,
+      s.textLeft,
+      'draggable'
+    );
+  });
+
+  // const Img_elements = Img_elements_arr(note_ImgContent);
+  // elements_init($note_div, Img_elements, text_elements);
+  // $('.contour-pic.ui-draggable.ui-draggable-handle')
+  //   .draggable({
+  //     containment: '#update-note-content',
+  //   })
+  //   .css('position', 'absolute');
 
   // 打開自動儲存
   $('#autoSave-toggle').prop('checked', true);
-  AutoSave.start();
+  await AutoSave.start();
 }
 
 // [function][筆記編輯頁面] 文字點選框選
 
 // 剛進入畫面時拿取User的筆記資訊
 async function getUserNotes() {
-  // $('body').addClass('cover-loading');
-  // $('body').append(loading_html);
-
   const config = {
     method: 'get',
     url: `/api/${API_VERSION}/notes`,
@@ -418,20 +424,19 @@ async function getVersionList(version_obj, div_append) {
 // 回復版本資訊
 async function noteShowFromVer(name, Obj) {
   $('#update-note-content').html('');
-  const Img_elements = Img_elements_arr(Obj[name].elements);
-  const text_elements = text_elements_arr(
-    $('#update-note-content'),
-    Obj[name].text_elements
-  );
-  elements_init($('#update-note-content'), Img_elements, text_elements);
-
-  // 讓圖片可以移動
-  $('.contour-pic.ui-draggable.ui-draggable-handle')
-    .draggable({
-      containment: '#update-note-content',
-    })
-    .css('position', 'absolute');
-  // .on('drag', stepDrag);
+  addDragImage($('#update-note-content'), Obj[name].elements, 'draggable');
+  const text_elements = Obj[name].text_elements;
+  text_elements.map((e) => {
+    addDragTextarea(
+      '#update-note-content',
+      e.text,
+      e.width,
+      e.height,
+      e.textTop,
+      e.textLeft,
+      'draggable'
+    );
+  });
 }
 
 // 查看特定人分享 -------------------------------------------------------
@@ -967,7 +972,7 @@ async function saveAnnotation(annotion_user_id, note_id) {
           console.log(error);
           Swal.fire({
             icon: 'error',
-            title: error.response.data.msg,
+            title: error.response.data.data,
             showConfirmButton: false,
             timer: 1000,
           });
@@ -986,7 +991,8 @@ async function getAnnotation(note_id) {
 
   await axios(config)
     .then((response) => {
-      current_annotation_element = response.data[0];
+      console.log('註釋', response);
+      current_annotation_element = response.data.data[0];
       console.log('拿取註釋成功');
     })
     .catch((error) => {
@@ -1088,6 +1094,92 @@ async function showAnnotation(
   // console.log(annotation_element);
 }
 
-async function modify_class() {
-  alert('aaaa');
+// 刪除筆記物件
+async function deleteNoteElement(type, id) {
+  Swal.fire({
+    title: '您確定要刪除選取的物件?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '刪除',
+    cancelButtonText: '取消',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let delete_item;
+      let top, left, val;
+      switch (type) {
+        case 'img':
+          //上下一步
+          delete_item = $(`#${id}`)[0];
+          top = delete_item.style.top;
+          left = delete_item.style.left;
+          val = '';
+          stepAppend(delete_item, 'delete', top, left, val);
+          // 刪除物件
+          break;
+        case 'textarea':
+          // 上下一步
+          delete_item = $(`#${id}`).parents()[0];
+          top = delete_item.style.top;
+          left = delete_item.style.left;
+          val = $(`#${id}`).val();
+          stepAppend(delete_item, 'delete', top, left, val);
+          break;
+      }
+
+      // 刪除物件
+      delete_item.remove();
+    }
+  });
 }
+
+// [儲存/上傳]筆記物件
+async function getImgElement(page) {
+  const contourImg_count = $('.contour-pic').length;
+  let element_html = '';
+  for (let i = 0; i < contourImg_count; i++) {
+    element_html += $('.contour-pic').get(i).outerHTML;
+  }
+  if (page === 'uploadNote') {
+    return element_html.replaceAll(previewBlah.src, '');
+  } else if (page === 'note') {
+    const file_name = `${S3_HOST}notes/${note_bg}`;
+    return element_html.replaceAll(file_name, '');
+  }
+}
+
+async function getTextElement() {
+  let OCR_elements = [];
+  $('.div_addtextarea').map((i, e) => {
+    let obj = {};
+    const OCR_top = e.style.top;
+    const OCR_left = e.style.left;
+    const OCR_width = e.style.width;
+    const OCR_height = e.style.height;
+    const OCR_text = e.firstChild.nextElementSibling.value;
+    // .replaceAll('<', '&lt;')
+    // .replaceAll('>', '&gt;');
+    obj = {
+      'textTop': OCR_top,
+      'textLeft': OCR_left,
+      'width': OCR_width,
+      'height': OCR_height,
+      'text': OCR_text,
+    };
+    OCR_elements.push(obj);
+  });
+
+  return OCR_elements;
+}
+
+async function generateKeywords() {
+  // 搜尋使用的keywords，將全部的字串串起來
+  const ek = $('.addtextarea')
+    .map((_, el) => el.value)
+    .get();
+  const keywords = ek.join('').replaceAll('\n', '').replace(/\s/g, '');
+  return keywords;
+}
+
+// export { getImgElement, getTextElement };

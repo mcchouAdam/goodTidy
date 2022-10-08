@@ -16,6 +16,8 @@ const {
   showSignIn,
   showSignUp,
   showHome,
+  showNotSignIn,
+  showNotAuth,
 } = require('../controllers/user_controller');
 
 const {
@@ -24,12 +26,20 @@ const {
 } = require('../controllers/social_controller');
 
 const userPictureUpload = userPicUpload.fields([
-  { name: 'user_pic_upload', maxCount: 1 },
+  {
+    name: 'user_pic_upload',
+    maxCount: 1,
+  },
 ]);
 
 // 登入
 router.route(`/api/${API_VERSION}/user/signin`).post(wrapAsync(signIn));
 router.route('/signin').get(wrapAsync(showSignIn));
+
+// 未登入
+router.route('/notSignIn').get(wrapAsync(showNotSignIn));
+// 沒驗證
+router.route('/notAuth').get(wrapAsync(showNotAuth));
 
 // 註冊
 router

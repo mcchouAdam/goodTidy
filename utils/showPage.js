@@ -13,7 +13,7 @@ const showShareDetail = async function (data) {
   const newest_version_text_elements =
     note_version_info[note_version_info.length - 1].text_elements;
   const { note_name } = data[0];
-  const file_name = `${S3_HOST}/notes/${data[0].file_name}`;
+  const file_name = data[0].file_name;
   const user_name = data[0].user_info[0].name;
   const user_picture = `${S3_HOST}/user_picture/${data[0].user_info[0].picture}`;
   const user_email = data[0].user_info[0].email;

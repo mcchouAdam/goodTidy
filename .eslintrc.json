@@ -3,17 +3,12 @@
     "browser": true,
     "commonjs": true,
     "es2021": true,
-    "node": true,
-    "jquery": true
+    "node": true
   },
-  "extends": ["airbnb-base"],
+  "extends": "standard",
   "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest"
   },
-  "rules": {
-    "object-curly-newline": ["error", "always"],
-    "camelcase": "off",
-    "no-plusplus": "off"
-  }
+  "rules": {}
 }

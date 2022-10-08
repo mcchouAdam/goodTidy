@@ -40,14 +40,17 @@ $('#shareToAll_confirm-btn').click(async () => {
   $('body').css('cursor', 'progress');
 
   let tags = $('.tags')
-    .map((i, e) => e.outerText)
+    .map((i, e) => e.outerText.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))
     .get();
-  tags = $.grep(tags, (n) => n == 0 || n);
+  tags = $.grep(tags, (n) => n === 0 || n);
 
-  const share_description = $('#share_description').val();
+  const share_description = $('#share_description')
+    .val()
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
 
   // 檢查簡介不得為空
-  if (share_description == '') {
+  if (share_description === '') {
     Swal.fire({
       icon: 'error',
       title: '分享簡介不能空白',
@@ -113,6 +116,7 @@ $('#shareToAll_confirm-btn').click(async () => {
 
 // 加入分享特定的人按鍵
 $('#addShareOther-btn').click(async () => {
+  $('#addShareOther-btn').prop('disabled', true);
   const permission = $('#shareToOtherMethod-btn').text();
   const addOther = $('#addShareOther-input').val();
 
@@ -123,6 +127,7 @@ $('#addShareOther-btn').click(async () => {
       showConfirmButton: false,
       timer: 1000,
     });
+    $('#addShareOther-btn').prop('disabled', false);
     return;
   }
 
@@ -149,10 +154,12 @@ $('#addShareOther-btn').click(async () => {
       showConfirmButton: false,
       timer: 1000,
     });
+    $('#addShareOther-btn').prop('disabled', false);
     return;
   }
   const user_notExist = await shareToOther(data);
   if (user_notExist) {
+    $('#addShareOther-btn').prop('disabled', false);
     return;
   }
 
@@ -169,6 +176,7 @@ $('#addShareOther-btn').click(async () => {
       </li>`;
 
   $('#shareOtherList').append(list_html);
+  $('#addShareOther-btn').prop('disabled', false);
 
   // 推播給該用戶
   socket.emit('shareToyou', {
@@ -190,8 +198,11 @@ $('#tag_input').on('keyup', (e) => {
 
 // [Tag加入function]
 function add_tag() {
-  let tag_name = $('#tag_input').val();
-  tag_name = tag_name.replaceAll('<', '&lt').replaceAll('>', '&gt');
+  const tag_name = $('#tag_input')
+    .val()
+    .replaceAll('<', '&lt')
+    .replaceAll('>', '&gt');
+
   if (!tag_name) {
     return;
   }
@@ -242,10 +253,10 @@ async function createComments(note_id) {
       addComments(comment);
     })
     .catch((error) => {
-      console.log(error.response.data.msg);
+      console.log(error.response.data.data);
       Swal.fire({
         icon: 'error',
-        title: error.response.data.msg,
+        title: error.response.data.data,
         showConfirmButton: false,
         timer: 1000,
       });
@@ -405,7 +416,7 @@ async function shareToOther(data) {
       user_notExist = true;
       Swal.fire({
         icon: 'error',
-        title: error.response.data.msg,
+        title: error.response.data.data,
         showConfirmButton: false,
         timer: 1000,
       });
@@ -552,7 +563,7 @@ async function updateComment(comment_id, note_id) {
         console.log(error);
         Swal.fire({
           icon: 'error',
-          title: error.response.data.msg,
+          title: error.response.data.data,
           showConfirmButton: false,
           timer: 1000,
         });
@@ -603,7 +614,7 @@ async function deleteComment(comment_id, note_id) {
           console.log(error);
           Swal.fire({
             icon: 'error',
-            title: error.response.data.msg,
+            title: error.response.data.data,
             showConfirmButton: false,
             timer: 1000,
           });
@@ -748,7 +759,7 @@ async function deleteShareToOther(note_id, delete_email) {
         })
         .catch((error) => {
           console.log(error);
-          Swal.fire(error.response.data.msg);
+          Swal.fire(error.response.data.data);
         });
     }
   });
@@ -790,7 +801,7 @@ async function deleteShareAll() {
       console.log(error);
       Swal.fire({
         icon: 'error',
-        title: error.response.data.msg,
+        title: error.response.data.data,
         showConfirmButton: false,
         timer: 1000,
       });

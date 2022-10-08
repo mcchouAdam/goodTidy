@@ -1,4 +1,5 @@
 // axios profile API
+
 async function profile() {
   const config = {
     method: 'get',
@@ -172,74 +173,6 @@ $('#shareToAll_cancel-btn').click(async () => {
   await showShareToAll();
   // await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
   // $('#share-btn').click();
-});
-
-// 註冊鍵 -------------------------------------
-$('#signup-form-btn').click(async (e) => {
-  e.preventDefault();
-
-  // Loading圖示
-  $('#signup-form-btn').prop('disabled', true);
-  $('body').css('cursor', 'progress');
-
-  if (!user_email) {
-    const email = $('#signup_useremail').val();
-    const password = $('#signup_password').val();
-    const username = $('#signup_username').val();
-    const picture = $('#user_picture')[0].files[0];
-
-    if (!picture) {
-      // 沒上傳圖片
-      filename = '';
-    } else {
-      filename = picture.name;
-    }
-
-    const signUp_result = await signUp(
-      picture,
-      username,
-      email,
-      password,
-      filename
-    );
-
-    // 釋放Loading圖示
-    $('#signup-form-btn').prop('disabled', false);
-    $('body').css('cursor', 'default');
-
-    // 註冊失敗
-    if (!signUp_result.isSuccess) {
-      Swal.fire({
-        icon: 'error',
-        title: signUp_result.msg,
-        showConfirmButton: false,
-        timer: 1000,
-      });
-      return;
-    }
-
-    // 註冊成功
-    Swal.fire({
-      icon: 'success',
-      title: signUp_result.msg,
-      showConfirmButton: false,
-      timer: 1000,
-    }).then(() => {
-      window.location.assign('/profile');
-    });
-  }
-});
-
-// 登入鍵 -------------------------------------
-$('#signin-form-btn').click(async (e) => {
-  e.preventDefault();
-
-  if (!user_email) {
-    const email = $('#signin_useremail').val();
-    const password = $('#signin_password').val();
-
-    await signIn(email, password);
-  }
 });
 
 // 拿取User所有通知 ----------------------------

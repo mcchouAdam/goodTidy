@@ -40,16 +40,18 @@ block content
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
 
+    script.
+      // 登入鍵 -------------------------------------
+      $('#signin-form-btn').click(async (e) => {
+        e.preventDefault();
+
+        if (!user_email) {
+          const email = $('#signin_useremail').val();
+          const password = $('#signin_password').val();
+          await signIn(email, password);
+        }
+      });
+
+    script(src='/js/commonParameter.js')
     script(src='/js/user.js')
-    script(src='/js/windowLoad.js')
-    //- script(src='/js/note.js')
-    //- script(src='/js/draggable.js')
-    //- script(src='/js/btn.js')
-    //- script(src='/js/restore.js')
-    //- script(src='/js/preview.js')
-    //- script(src='/js/canvas.js')
-    //- script(src='/js/social.js')
-    //- script(src='/js/search.js')
-    //- script(src='/js/autoSave.js')
-    //- script(src='/js/annotationBar.js')
 

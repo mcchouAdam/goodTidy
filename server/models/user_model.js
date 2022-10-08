@@ -56,8 +56,6 @@ const signUp = async (name, email, password, picture) => {
       error: '此Email已存在',
       status: 403,
     };
-  } finally {
-    // await Mongo.close();
   }
 };
 
@@ -72,6 +70,13 @@ const nativeSignIn = async (email, password) => {
       })
       .toArray();
     const user = users[0];
+    if (!user) {
+      return {
+        error: '沒有您的用戶資訊，請您註冊新帳號！',
+        status: 403,
+      };
+    }
+
     const user_id = user._id.toString();
     user.id = user_id;
 
@@ -79,6 +84,7 @@ const nativeSignIn = async (email, password) => {
     if (!pw_compare) {
       return {
         error: '您的密碼錯誤！',
+        status: 403,
       };
     }
 
@@ -92,8 +98,6 @@ const nativeSignIn = async (email, password) => {
     return {
       error,
     };
-  } finally {
-    // await Mongo.close();
   }
 };
 
@@ -109,8 +113,6 @@ const getUserDetail = async (email) => {
     return user;
   } catch (e) {
     return null;
-  } finally {
-    // await Mongo.close();
   }
 };
 
@@ -126,8 +128,6 @@ const shareToAll = async (data) => {
     return user;
   } catch (e) {
     return null;
-  } finally {
-    // await Mongo.close();
   }
 };
 
@@ -142,8 +142,6 @@ const getMessages = async (data) => {
     return msg_result;
   } catch (e) {
     return null;
-  } finally {
-    // await Mongo.close();
   }
 };
 
@@ -158,8 +156,6 @@ const deleteUserMessage = async (data) => {
     return msg_result;
   } catch (e) {
     return null;
-  } finally {
-    // await Mongo.close();
   }
 };
 

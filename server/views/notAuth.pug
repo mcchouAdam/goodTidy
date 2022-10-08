@@ -1,0 +1,20 @@
+extends layout_errorPage.pug
+block content
+    main
+        .container
+        section.section.error-404.min-vh-100.d-flex.flex-column.align-items-center.justify-content-center
+            h4 抱歉！您無權限觀看此文章
+            a(href='/note') 回到筆記頁面
+            span#redirectMsg
+            img.img-fluid.py-5(src='/assets/img/not-found.svg', alt='No Auth')
+
+    script.
+        let redirectTime = 3;
+        setInterval(() => {
+            console.log(redirectTime + '秒後跳轉頁面');
+            $('#redirectMsg').text(redirectTime + '秒後跳轉頁面');
+            redirectTime--;
+            if(redirectTime === 0){
+                window.location.assign("/note")
+            }
+        }, 1000);

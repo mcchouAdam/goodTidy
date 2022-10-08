@@ -83,7 +83,7 @@ const signUp = async (req, res) => {
   const { user } = signIn_result;
   req.session.user = user;
 
-  res.status(200).send(user);
+  res.status(200).json(user);
 };
 
 // 登入
@@ -92,7 +92,7 @@ const signIn = async (req, res) => {
   const { email, password } = req.body;
 
   if (!validator.isEmail(email)) {
-    return res.status(400).send({
+    return res.status(400).json({
       error: '錯誤的Email格式',
     });
   }
@@ -114,7 +114,7 @@ const signIn = async (req, res) => {
   if (result.error) {
     console.log('result.error: ', result.error);
     const status_code = result.status ? result.status : 403;
-    return res.status(status_code).send({
+    return res.status(status_code).json({
       error: result.error,
     });
   }
@@ -122,12 +122,6 @@ const signIn = async (req, res) => {
   // 紀錄Session登入
   const { user } = result;
   req.session.user = user;
-
-  if (!user) {
-    return res.status(500).send({
-      error: '沒有找到您的用戶資訊，請您重新註冊或登入',
-    });
-  }
 
   res.status(200).json({
     data: {
@@ -238,7 +232,7 @@ const showSignUp = async (req, res) => {
 const logOut = async (req, res) => {
   req.session.destroy();
   return res.status(200).send({
-    msg: '登出成功',
+    data: '登出成功',
   });
 };
 
@@ -260,6 +254,12 @@ const showHome = async (req, res) => {
   });
 };
 
+// 未登入頁面
+const showNotSignIn = async (req, res) => res.status(200).render('notSignIn');
+
+// 未驗證頁面
+const showNotAuth = async (req, res) => res.status(200).render('notAuth');
+
 module.exports = {
   signUp,
   signIn,
@@ -269,4 +269,6 @@ module.exports = {
   showSignIn,
   showSignUp,
   showHome,
+  showNotSignIn,
+  showNotAuth,
 };

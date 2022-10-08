@@ -76,7 +76,13 @@ prev.onclick = function () {
         // 文字需另外處理才能draggable
         const top = +obj.top.replaceAll('px', '');
         const left = +obj.left.replaceAll('px', '');
-        addDragTextarea($('#update-note-content'), obj.val, top, left);
+        addDragTextarea(
+          $('#update-note-content'),
+          obj.val,
+          top,
+          left,
+          'draggable'
+        );
       }
     }
   }
