@@ -361,7 +361,7 @@ async function getSharedNote(sharedNote_obj, div_append) {
     } else {
       user_online_status_html = `<span id="online_${shared_uer_email}" class="badge bg-success rounded-pill">上線</span>`;
     }
-    // <button class="btn"><i class="bi bi-chat-dots"></i></button>
+    // let chatRoom_html = `<button class="btn" onclick="javascript:displayChatRoom('${shared_uer_email}', '${user_name}');"><i class="bi bi-chat-dots"></i></button>`;
     shareNote_html += `
             <div>
               <span class="badge bg-dark rounded-pill" style="color:white;">${num++}</span>

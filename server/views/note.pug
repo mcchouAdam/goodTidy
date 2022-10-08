@@ -155,7 +155,8 @@ block content
                                 button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               .modal-body#modal-sharedNote-main
                               .modal-footer
-                                button#sharedNote-change.btn.btn-primary(type='button') 查看
+                                button#sharedNote-change.btn.btn-primary(type='button', style="margin-right: -10px;") 點選查看筆記
+                                #chatroom-div
 
                         //- 自動儲存/筆記修改選單
                         button.btn(href='#', data-bs-toggle='dropdown' style="float: right;")
@@ -537,6 +538,8 @@ block content
       script(src='/js/search.js')
       script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
+      script(src='/js/chatRoom.js')
+      link(href='/css/chatRoom.css', rel='stylesheet')
       
 
 
