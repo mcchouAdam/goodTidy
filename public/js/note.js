@@ -998,11 +998,12 @@ async function showAnnotation(
   // 註釋icon
   const { annotation_icon_html } = annotation_element;
   const annotation_icon = $.parseHTML(annotation_icon_html);
+  console.log(annotation_icon);
+  // console.log('annotation_icon', annotation_icon);
 
   // 顯示註釋textarea
   const annotation_text = annotation_element.annotation_textarea;
-  const { annotation_user_name } = annotation_element;
-  const { note_id } = annotation_element;
+  const { annotation_user_name, note_id } = annotation_element;
   const annotation_count = annotation_text.length;
   let annotation_id;
   let textarea_html = '';
@@ -1023,7 +1024,7 @@ async function showAnnotation(
     // <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">修改</a>
     // console.log('user_permission: ', user_permission);
 
-    if (user_permission >= 2) {
+    if (user_permission >= authorizationList.comment) {
       textarea_modify_icon_html = `
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
           <a class="dropdown-item" href="javascript:deleteAnnotation('${annotation_id}')">
@@ -1066,14 +1067,18 @@ async function showAnnotation(
   // 文字框與icon加回去
   textarea_div_append.append(textarea_html);
   icon_div_append.append(annotation_icon);
-  $(
-    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle.ui-draggable-disabled'
-  )
-    .css('position', 'absolute')
-    .draggable({
-      containment: '#update-note-content',
-    });
-  // console.log(annotation_element);
+
+  if (user_permission >= authorizationList.comment) {
+    $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
+      .css('position', 'absolute')
+      .css('z-index', 1)
+      .draggable({
+        containment: '#update-note-content',
+      });
+  } else if (user_permission < authorizationList.comment)
+    $('.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle')
+      .css('position', 'absolute')
+      .css('z-index', 1);
 }
 
 // 刪除筆記物件
