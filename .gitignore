@@ -9,3 +9,4 @@ node_modules/
 
 # ignore the test files
 test/*
+public/test*.html
