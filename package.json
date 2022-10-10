@@ -19,6 +19,7 @@
     "favicons": "^7.0.0",
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^8.5.1",
+    "mocha": "^10.0.0",
     "mongodb": "^4.9.1",
     "multer": "^1.4.5-lts.1",
     "multer-s3": "^3.0.1",
@@ -27,6 +28,7 @@
     "pug": "^3.0.2",
     "serve-favicon": "^2.5.0",
     "socket.io": "^4.5.2",
+    "supertest": "^6.3.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {
