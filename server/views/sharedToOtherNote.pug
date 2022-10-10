@@ -5,6 +5,7 @@ block content
       ul#sidebar-comment.sidebar-nav
     main#main.main
       .pagetitle
+        i.bi.bi-list.toggle-sidebar-btn(style="margin-left:20px;cursor:pointer;")
         h1 註釋編輯
         nav(style="--bs-breadcrumb-divider: '|';margin-left: 20px;")
           ol.breadcrumb
@@ -35,10 +36,14 @@ block content
                   //- 畫面位置
                   .col-12#update-note-content(width='600px', height='500px', style="margin:40px 0 0 0 ")
     
+                  #chatroom-div
+
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
 
-      
+    a.float(href='#', onclick=`javascript:displayChatRoom('${user_email}','${user_name}')`)
+      i.fa.fa-commenting-o.my-float
+
       script.
         $(document).ready(async function(){
 
@@ -135,7 +140,11 @@ block content
           $('#saveAnnotation').click(async function(){
             await saveAnnotation(annotion_user_id, note_id);
           })
+          // 取消圖片的hover效果
+          $('.contour-pic').css('pointer-events', 'none');
         })
-      
+
       script(src='/js/note.js')
       script(src='/js/draggable.js')
+      script(src='/js/chatRoom.js')
+      link(href='/css/chatRoom.css', rel='stylesheet')

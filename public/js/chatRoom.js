@@ -1,151 +1,245 @@
+$(document).ready(function () {
+  var preloadbg = document.createElement('img');
+  preloadbg.src =
+    'https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/timeline1.png';
+
+  $('#searchfield').focus(function () {
+    if ($(this).val() == 'Search contacts...') {
+      $(this).val('');
+    }
+  });
+  $('#searchfield').focusout(function () {
+    if ($(this).val() == '') {
+      $(this).val('Search contacts...');
+    }
+  });
+
+  $('#sendmessage input').focus(function () {
+    if ($(this).val() == 'Send message...') {
+      $(this).val('');
+    }
+  });
+  $('#sendmessage input').focusout(function () {
+    if ($(this).val() == '') {
+      $(this).val('Send message...');
+    }
+  });
+
+  $('.friend').each(function () {
+    $(this).click(function () {
+      var childOffset = $(this).offset();
+      var parentOffset = $(this).parent().parent().offset();
+      var childTop = childOffset.top - parentOffset.top;
+      var clone = $(this).find('img').eq(0).clone();
+      var top = childTop + 12 + 'px';
+
+      $(clone).css({ 'top': top }).addClass('floatingImg').appendTo('#chatbox');
+
+      setTimeout(function () {
+        $('#profile p').addClass('animate');
+        $('#profile').addClass('animate');
+      }, 100);
+      setTimeout(function () {
+        $('#chat-messages').addClass('animate');
+        $('.cx, .cy').addClass('s1');
+        setTimeout(function () {
+          $('.cx, .cy').addClass('s2');
+        }, 100);
+        setTimeout(function () {
+          $('.cx, .cy').addClass('s3');
+        }, 200);
+      }, 150);
+
+      $('.floatingImg').animate(
+        {
+          'width': '68px',
+          'left': '108px',
+          'top': '20px',
+        },
+        200
+      );
+
+      var name = $(this).find('p strong').html();
+      var email = $(this).find('p span').html();
+      $('#profile p').html(name);
+      $('#profile span').html(email);
+
+      $('.message').not('.right').find('img').attr('src', $(clone).attr('src'));
+      $('#friendslist').fadeOut();
+      $('#chatview').fadeIn();
+
+      $('#close')
+        .unbind('click')
+        .click(function () {
+          $('#chat-messages, #profile, #profile p').removeClass('animate');
+          $('.cx, .cy').removeClass('s1 s2 s3');
+          $('.floatingImg').animate(
+            {
+              'width': '40px',
+              'top': top,
+              'left': '12px',
+            },
+            200,
+            function () {
+              $('.floatingImg').remove();
+            }
+          );
+
+          setTimeout(function () {
+            $('#chatview').fadeOut();
+            $('#friendslist').fadeIn();
+          }, 50);
+        });
+    });
+  });
+});
+
 async function displayChatRoom(user_email, user_name) {
-  const chatRoomHtml = `<div
-    class="chatRoom-content page-container"
-    id="chatRoom-content"
-    >
-    <div class="row container d-flex justify-content-center">
-        <div class="chatCard chatCard-bordered">
-        <div class="chatCard-header">
-            <h4 class="chatCard-title">
-            <strong>${user_name}</strong>
-            </h4>
+  const chatRoomHtml = `
+    <div id="chatbox">
+      <div id="friendslist">
+        <div id="topmenu">
+          <span class="friends"></span>
+          <span class="chats"></span>
         </div>
-        <div
-            class="ps-container ps-theme-default ps-active-y"
-            id="chat-content"
-            style="overflow-y: scroll !important; height: 400px !important"
-        >
-            <div class="media media-chat">
+        <div id="friends">
+          <div class="friend">
             <img
-                class="avatar"
-                src="https://img.icons8.com/color/36/000000/administrator-male.png"
-                alt="..."
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg"
             />
-            <div class="media-body">
-                <p>Hi</p>
-                <p>How are you ...???</p>
-                <p>
-                What are you doing tomorrow?
-                <br />
-                </p>
-                <p>Can we come up a bar?</p>
-                <p class="meta">
-                <time datetime="2018">23:58</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-meta-day">Today</div>
-            <div class="media media-chat media-chat-reverse">
-            <div class="media-body">
-                <p>Hiii, I&apos;m good.</p>
-                <p>How are you doing?</p>
-                <p>Long time no see! Tomorrow office. will be free on sunday.</p>
-                <p class="meta">
-                <time datetime="2018">00:06</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-chat">
+            <p>
+              <strong>Miro Badev</strong>
+              <span>mirobadev@gmail.com</span>
+            </p>
+            <div class="status available"></div>
+          </div>
+
+          <div class="friend">
             <img
-                class="avatar"
-                src="https://img.icons8.com/color/36/000000/administrator-male.png"
-                alt="..."
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg"
             />
-            <div class="media-body">
-                <p>Okay</p>
-                <p>We will go on sunday?</p>
-                <p class="meta">
-                <time datetime="2018">00:07</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-chat media-chat-reverse">
-            <div class="media-body">
-                <p>That&apos;s awesome!</p>
-                <p>I will meet you Sandon Square sharp at 10 AM</p>
-                <p>Is that okay?</p>
-                <p class="meta">
-                <time datetime="2018">00:09</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-chat">
+            <p>
+              <strong>Martin Joseph</strong>
+              <span>marjoseph@gmail.com</span>
+            </p>
+            <div class="status away"></div>
+          </div>
+
+          <div class="friend">
             <img
-                class="avatar"
-                src="https://img.icons8.com/color/36/000000/administrator-male.png"
-                alt="..."
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/3_copy.jpg"
             />
-            <div class="media-body">
-                <p>Okay i will meet you on Sandon Square</p>
-                <p class="meta">
-                <time datetime="2018">00:10</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-chat media-chat-reverse">
-            <div class="media-body">
-                <p>Do you have pictures of Matley Marriage?</p>
-                <p class="meta">
-                <time datetime="2018">00:10</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-chat">
+            <p>
+              <strong>Tomas Kennedy</strong>
+              <span>tomaskennedy@gmail.com</span>
+            </p>
+            <div class="status inactive"></div>
+          </div>
+
+          <div class="friend">
             <img
-                class="avatar"
-                src="https://img.icons8.com/color/36/000000/administrator-male.png"
-                alt="..."
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/4_copy.jpg"
             />
-            <div class="media-body">
-                <p>Sorry I don&apos;t have. i changed my phone.</p>
-                <p class="meta">
-                <time datetime="2018">00:12</time>
-                </p>
-            </div>
-            </div>
-            <div class="media media-chat media-chat-reverse">
-            <div class="media-body">
-                <p>Okay then see you on sunday!!</p>
-                <p class="meta">
-                <time datetime="2018">00:12</time>
-                </p>
-            </div>
-            </div>
-            <div class="ps-scrollbar-x-rail" style="left: 0px; bottom: 0px">
-            <div
-                class="ps-scrollbar-x"
-                tabindex="0"
-                style="left: 0px; width: 0px"
-            ></div>
-            </div>
-            <div
-            class="ps-scrollbar-y-rail"
-            style="top: 0px; height: 0px; right: 2px"
-            >
-            <div
-                class="ps-scrollbar-y"
-                tabindex="0"
-                style="top: 0px; height: 2px"
-            ></div>
-            </div>
+            <p>
+              <strong>Enrique Sutton</strong>
+              <span>enriquesutton@gmail.com</span>
+            </p>
+            <div class="status inactive"></div>
+          </div>
+
+          <div class="friend">
+            <img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/5_copy.jpg"
+            />
+            <p>
+              <strong> Darnell Strickland</strong>
+              <span>darnellstrickland@gmail.com</span>
+            </p>
+            <div class="status inactive"></div>
+          </div>
+
+          <div id="search">
+            <input type="text" id="searchfield" value="Search contacts..." />
+          </div>
         </div>
-        <div class="publisher bt-1 border-light">
-            <input
-            class="publisher-input"
-            type="text"
-            placeholder="Write something"
+      </div>
+
+      <div id="chatview" class="p1">
+        <div id="profile">
+          <div id="close">
+            <div class="cy"></div>
+            <div class="cx"></div>
+          </div>
+
+          <p>Miro Badev</p>
+          <span>miro@badev@gmail.com</span>
+        </div>
+        <div id="chat-messages">
+          <label>Thursday 02</label>
+
+          <div class="message">
+            <img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg"
             />
-            <span class="publisher-btn file-group"></span>
-            <a class="publisher-btn" href="#" data-abc="true">
-            <i class="fa fa-smile"></i>
-            </a>
-            <a class="publisher-btn text-info" href="#" data-abc="true">
-            <i class="fa fa-paper-plane"></i>
-            </a>
+            <div class="bubble">
+              Really cool stuff!
+              <div class="corner"></div>
+              <span>3 min</span>
+            </div>
+          </div>
+
+          <div class="message right">
+            <img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg"
+            />
+            <div class="bubble">
+              Can you share a link for the tutorial?
+              <div class="corner"></div>
+              <span>1 min</span>
+            </div>
+          </div>
+
+          <div class="message">
+            <img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg"
+            />
+            <div class="bubble">
+              Yeah, hold on
+              <div class="corner"></div>
+              <span>Now</span>
+            </div>
+          </div>
+
+          <div class="message right">
+            <img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/2_copy.jpg"
+            />
+            <div class="bubble">
+              Can you share a link for the tutorial?
+              <div class="corner"></div>
+              <span>1 min</span>
+            </div>
+          </div>
+
+          <div class="message">
+            <img
+              src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/1_copy.jpg"
+            />
+            <div class="bubble">
+              Yeah, hold on
+              <div class="corner"></div>
+              <span>Now</span>
+            </div>
+          </div>
         </div>
+
+        <div id="sendmessage">
+          <input type="text" value="Send message..." />
+          <button id="send"></button>
         </div>
+      </div>
     </div>
-    </div>`;
+    `;
 
   // 聊天室展開按鈕 ----------------
   if ($('#chatroom-div').html() === '') {

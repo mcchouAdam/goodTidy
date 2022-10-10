@@ -15,19 +15,16 @@ body {
   z-index:200;
 }
 #view-code:hover{opacity:1;}
-
 #chatbox{
 	width:290px;
 	background:#fff;
 	border-radius:6px;
-	border: 1px solid #d8dfe3;
-  overflow:hidden;
+	overflow:hidden;
 	height:484px;
-	position:fixed;
-	top:250px;
-	left:80%;
+	position:absolute;
+	top:100px;
+	left:50%;
 	margin-left:-155px;
-  box-sizing: unset;
 }
 
 #friendslist{
@@ -382,25 +379,6 @@ div.message.right .corner{
 			transition: all 100ms ease-out;
 }
 #chatview, #sendmessage { 
-overflow:hidden; 
-border-radius:6px; 
-}
-
-/* ------------------------------------------------------------- */
-.float {
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  bottom: 40px;
-  right: 40px;
-  background-color: #0c9;
-  color: #fff;
-  border-radius: 50px;
-  text-align: center;
-  box-shadow: 2px 2px 3px #999;
-}
-
-.my-float {
-  margin-top: 15px;
-  font-size: 30px;
+	overflow:hidden; 
+	border-radius:6px; 
 }

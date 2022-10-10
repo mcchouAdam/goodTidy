@@ -159,6 +159,18 @@ const deleteUserMessage = async (data) => {
   }
 };
 
+const deleteUserMessages = async (data) => {
+  const { user_email } = data;
+  const MsgCollection = Mongo.db(MONGO_DB).collection('message');
+  try {
+    await MsgCollection.deleteMany({
+      notify_user_email: user_email,
+    }).toArray();
+  } catch (e) {
+    return null;
+  }
+};
+
 module.exports = {
   signUp,
   nativeSignIn,
@@ -166,4 +178,5 @@ module.exports = {
   shareToAll,
   getMessages,
   deleteUserMessage,
+  deleteUserMessages,
 };
