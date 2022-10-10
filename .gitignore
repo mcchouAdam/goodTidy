@@ -8,4 +8,4 @@ node_modules/
 # public/assets/*
 
 # ignore the test files
-test/*
+# test/*
