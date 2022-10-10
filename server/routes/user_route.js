@@ -23,6 +23,7 @@ const {
 const {
   showUserMessage,
   deleteMessage,
+  deleteMessages,
 } = require('../controllers/social_controller');
 
 const userPictureUpload = userPicUpload.fields([
@@ -66,5 +67,9 @@ router
   .route(`/api/${API_VERSION}/message`)
   .get(authentication(), wrapAsync(showUserMessage))
   .delete(authentication(), wrapAsync(deleteMessage));
+
+router
+  .route(`/api/${API_VERSION}/messages`)
+  .delete(authentication(), wrapAsync(deleteMessages));
 
 module.exports = router;

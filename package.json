@@ -8,6 +8,7 @@
     "axios": "^1.1.0",
     "bcrypt": "^5.0.1",
     "bootstrap": "^5.2.1",
+    "chai": "^4.3.6",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
     "cropper": "^4.1.0",

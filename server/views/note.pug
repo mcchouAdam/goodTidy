@@ -4,11 +4,12 @@ block content
     main#main.main
 
       .pagetitle
+        i.bi.bi-list.toggle-sidebar-btn(style="margin-left:20px;cursor:pointer;")
         h1 筆記編輯
           //- 搜尋bar --------------------
           button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='搜尋筆記內容' disabled='')
             i.fa.fa-search
-          
+
           //- 搜尋Modal-------------------
           #searchModal.modal.fade(tabindex='-1', aria-labelledby='searchModalLabel', aria-hidden='true')
             .modal-dialog
@@ -38,7 +39,6 @@ block content
                 .card
                   .card-body(style="padding:0px;")
                     ul.list-unstyled.ps-0(width="90%")
-
                         //- 筆記上傳
                         button#noteUpload-btn.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', type='button', style="font-size:16px", disabled='')
                             i.bi.bi-file-earmark-plus
@@ -156,8 +156,7 @@ block content
                               .modal-body#modal-sharedNote-main
                               .modal-footer
                                 button#sharedNote-change.btn.btn-primary(type='button', style="margin-right: -10px;") 點選查看筆記
-                                #chatroom-div
-
+                                
                         //- 自動儲存/筆記修改選單
                         button.btn(href='#', data-bs-toggle='dropdown' style="float: right;")
                           i.bi.bi-gear
@@ -538,8 +537,6 @@ block content
       script(src='/js/search.js')
       script(src='/js/autoSave.js')
       script(src='/js/annotationBar.js')
-      script(src='/js/chatRoom.js')
-      link(href='/css/chatRoom.css', rel='stylesheet')
       
 
 

@@ -2,7 +2,7 @@ body
     // ======= Header =======
     header#header.header.fixed-top.d-flex.align-items-center
       .d-flex.align-items-center.justify-content-between
-        //- i.bi.bi-list.toggle-sidebar-btn
+        
         a.logo.d-flex.align-items-center(href='/')
           img(src='/assets/img/goodTidy_logo.png', alt='')
           span.d-none.d-lg-block GoodTidy
@@ -16,9 +16,9 @@ body
       // End Search Bar
       nav.header-nav.ms-auto
         ul.d-flex.align-items-center
-          li.nav-item.d-block.d-lg-none
-            a.nav-link.nav-icon.search-bar-toggle(href='#')
-              i.bi.bi-search
+          //- sidebar展開鍵
+          //- li.nav-item
+            i.bi.bi-list.toggle-sidebar-btn
           // End Search Icon
           //- 筆記頁面 Icon
           li.nav-item

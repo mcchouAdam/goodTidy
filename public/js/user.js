@@ -1,5 +1,4 @@
 // axios profile API
-
 async function profile() {
   const config = {
     method: 'get',
@@ -198,6 +197,9 @@ async function showUserMsg() {
   }
 
   $('ul.notifications').html('');
+  $('ul.notifications').append(
+    `<button class="btn" onclick="javascript:deleteAllUserMsg('${user_email}')"><i class="bi bi-x-square" style="color:black;">一鍵清除</i></button><li></li>`
+  );
   current_user_msg.map((m) => {
     let icon_html = '';
     const createdTime = timeConverter(new Date(m.created_time));
@@ -228,6 +230,57 @@ async function showUserMsg() {
         </div>
       </li>`;
     $('ul.notifications').append(item);
+  });
+}
+
+// 一鍵清除使用者所有推播資訊
+async function deleteAllUserMsg(user_email) {
+  Swal.fire({
+    title: '確定要刪除全部通知?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '刪除',
+    cancelButtonText: '取消',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const data = {
+        user_email,
+      };
+
+      const config = {
+        method: 'DELETE',
+        url: `/api/${API_VERSION}/messages`,
+        data,
+      };
+
+      await axios(config)
+        .then((response) => {
+          console.log(response);
+          Swal.fire({
+            icon: 'success',
+            title: '刪除成功',
+            showConfirmButton: false,
+            timer: 1000,
+          });
+
+          // 刪除該list
+          $('.userMsgNotifications').html(
+            '<li class="dropdown-header">您無新訊息</li>'
+          );
+          $('#msg_count').text(0);
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire({
+            icon: 'error',
+            title: error.response.data.error,
+            showConfirmButton: false,
+            timer: 1000,
+          });
+        });
+    }
   });
 }
 
