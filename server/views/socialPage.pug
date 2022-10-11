@@ -46,8 +46,10 @@ block content
             br
             //- 分頁
             #paging-block
-                //- nav(aria-label='Page navigation')
-                //-     ul.pagination.justify-content-center
+                ul.pagination.justify-content-center
+                    li.page-item 
+                    li.page-item.disabled(style="border: white;")
+                        a.page-link(href="#", tabindex="-1", style="border: white;")=pagings_html
 
 
             //- 留言
@@ -100,8 +102,8 @@ block content
                 const elements_html = $.parseHTML(cards_html);
                 $('#sharing-cards').append(elements_html);
 
-                const pagings_html = $.parseHTML(paging_html);
-                $('#paging-block').append(pagings_html);
+                //- const pagings_html = $.parseHTML(paging_html);
+                //- $('#paging-block').append(pagings_html);
 
                 // [func] 輸入分頁跳轉
                 function getInputPage(){

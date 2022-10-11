@@ -221,13 +221,117 @@ const showSocialCards = async function (data, user_id) {
 };
 
 // Draw分頁
+// const showPagination = async function (
+//   paging,
+//   sorting,
+//   allPages_count,
+//   currentPage
+// ) {
+//   // console.log('allPages_count: ', allPages_count);
+//   let prevPage_html = '';
+//   let currentPage_html = '';
+//   let nextPage_html = '';
+
+//   const prevPage_href = `${SERVER_HOST}/socialPage?paging=${
+//     paging - 1
+//   }&sorting=${sorting}`;
+
+//   const nextPage_href = `${SERVER_HOST}/socialPage?paging=${
+//     paging + 1
+//   }&sorting=${sorting}`;
+
+//   // 最後一頁且有很多頁
+//   if (currentPage === allPages_count && allPages_count !== 1) {
+//     prevPage_html = `
+//       <li class="page-item"></li>
+//       <a class="page-link" href="${prevPage_href}" aria-label="Previous">
+//         <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+//       </a>
+//       `;
+//     currentPage_html = `
+//       <li class="page-item"></li>
+//       <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+//       <li class="page-item disabled" style="border: white;">
+//         <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+//       </li>
+//     `;
+//     nextPage_html = '';
+//   }
+
+//   // 第一頁且有很多頁
+//   else if (currentPage === 1 && allPages_count !== 1) {
+//     prevPage_html = '';
+//     currentPage_html = `
+//       <li class="page-item"></li>
+//       <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+//       <li class="page-item disabled" style="border: white;">
+//         <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+//       </li>
+//     `;
+
+//     nextPage_html = `
+//         <li class="page-item"></li>
+//         <a class="page-link" href="${nextPage_href}" aria-label="Next">
+//           <span aria-hidden="true">&raquo;</span>
+//           <span class="sr-only">Next</span>
+//         </a>`;
+//   }
+
+//   // 第一頁且只有一頁
+//   else if (currentPage === 1 && allPages_count === 1) {
+//     prevPage_html = '';
+//     currentPage_html = `
+//       <li class="page-item"></li>
+//       <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+//       <li class="page-item disabled" style="border: white;">
+//         <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+//       </li>
+//     `;
+//     nextPage_html = '';
+//   }
+
+//   // 有前中後三頁
+//   else {
+//     prevPage_html = `
+//       <li class="page-item"></li>
+//       <a class="page-link" href="${prevPage_href}" aria-label="Previous">
+//         <span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+//       </a>
+//       `;
+//     currentPage_html = `
+//       <li class="page-item"></li>
+//       <input id="setPage" style="width:36px;height:36px;border:white;text-align:center;" value="${paging}" onKeyDown="if(event.keyCode==13) getInputPage('${SERVER_HOST}')" />
+//       <li class="page-item disabled" style="border: white;">
+//         <a class="page-link" href="#" tabindex="-1" style="border: white;"> / ${allPages_count}</a>
+//       </li>
+//     `;
+//     nextPage_html = `
+//         <li class="page-item"></li>
+//         <a class="page-link" href="${nextPage_href}" aria-label="Next">
+//           <span aria-hidden="true">&raquo;</span>
+//           <span class="sr-only">Next</span>
+//         </a>`;
+//   }
+
+//   const paging_html = `
+//     <ul class="pagination justify-content-center">
+//         ${prevPage_html}
+//         ${currentPage_html}
+//         ${nextPage_html}
+//     </ul>
+//     `;
+
+//   // const pageObj = { prevPage_html, currentPage_html, nextPage_html };
+
+//   return paging_html;
+// };
+
 const showPagination = async function (
   paging,
   sorting,
   allPages_count,
   currentPage
 ) {
-  // console.log('allPages_count: ', allPages_count);
   let prevPage_html = '';
   let currentPage_html = '';
   let nextPage_html = '';
@@ -323,7 +427,7 @@ const showPagination = async function (
 
   // const pageObj = { prevPage_html, currentPage_html, nextPage_html };
 
-  return paging_html;
+  return allPages_count;
 };
 
 const showShareToOtherList = async function (shareList, note_id) {
