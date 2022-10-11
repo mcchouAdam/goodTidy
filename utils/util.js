@@ -74,7 +74,7 @@ const annotationAuth = () =>
         return res.status(403).redirect('/notAuth');
       }
 
-      // 其他權限至少可以看p
+      // 其他權限至少可以看
       req.permission = permission_result;
       next();
 
