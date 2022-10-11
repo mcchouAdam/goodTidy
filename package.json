@@ -16,6 +16,7 @@
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-session": "^1.17.3",
+    "faker": "^6.6.6",
     "favicons": "^7.0.0",
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^8.5.1",
@@ -27,6 +28,7 @@
     "path": "^0.12.7",
     "pug": "^3.0.2",
     "serve-favicon": "^2.5.0",
+    "should": "^13.2.3",
     "socket.io": "^4.5.2",
     "supertest": "^6.3.0",
     "validator": "^13.7.0"
