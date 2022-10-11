@@ -1,75 +1,73 @@
-// TODO: 加入延遲，不然會被塞爆
-// TODO: 第一步會記不到
+// TODO: 拖曳的上一步
+let step = 1; // 步驟變數
+let last_step = step;
+const initialObject = [];
+const stepObject = []; // 需復原的物件
 
-let step = 0; // 步驟變數
-let stepObject = []; // 需復原的物件
-
-// 復原的object要input的參數
-let stepDrag = function () {
-  stepAppend($(this), 'drag', $(this).css('top'), $(this).css('left'));
-};
-
-let stepInput = function () {
-  stepAppend(
-    $(this),
-    'input',
-    $(this).css('top'),
-    $(this).css('left'),
-    $(this).text()
-  );
-};
-
-function stepAppend(item, event, top, left, val) {
+function stepAppend(restoreObj) {
+  // console.log('stepAppendObject:', restoreObj);
+  stepObject[step] = restoreObj;
+  // console.log('此物件step: ', step);
   step++;
-  let obj;
-  console.log(val);
-  if (event === 'drag') {
-    obj = {
-      'item': item,
-      'event': 'drag',
-      'top': top,
-      'left': left,
-    };
-  } else if (event === 'input') {
-    obj = {
-      'item': item,
-      'event': 'input',
-      'val': val,
-    };
-  }
-  stepObject.push(obj);
+  last_step = step;
+  // console.log('目前step: ', step);
+  // console.log('最後一步step: ', last_step);
 }
 
 // 上一步 -------------------------------------
 prev.onclick = function () {
-  if (step < 2) {
-    alert('沒有上一步');
-  } else {
-    step--;
-    let obj = stepObject[step - 1];
-    let item = obj.item;
-    if (obj.event === 'drag') {
-      item.css({ left: obj.left });
-      item.css({ top: obj.top });
-    } else if (obj.event === 'input') {
-      item.text(obj.val);
-    }
-  }
-};
+  step--;
+  // console.log('上一步step:', step);
+  let obj = stepObject[step];
+  // console.log('上一步obj: ', obj);
 
-// 下一步 -------------------------------------
-next.onclick = function () {
-  if (step >= stepObject.length) {
-    alert('沒有下一步');
-  } else {
-    step++;
-    let obj = stepObject[step - 1];
-    let item = obj.item;
-    if (obj.event === 'drag') {
-      item.css({ left: obj.left });
-      item.css({ top: obj.top });
-    } else if (obj.event === 'input') {
-      item.text(obj.val);
-    }
+  if (step < 0) {
+    AutoSave.restore('INITIALSAVE');
+    step = 0;
+    return;
+  }
+
+  if (!obj) {
+    return;
+  }
+
+  switch (obj.event) {
+    // case 'drag':
+    //   if (step - 1 === 0) {
+    //     AutoSave.restore('INITIALSAVE');
+    //   }
+    //   item = stepObject[step - 1].item;
+    //   obj = stepObject[step - 1];
+
+    //   item.style.top = obj.top;
+    //   item.style.left = obj.left;
+    //   break;
+
+    // case 'input':
+    //   // obj = stepObject[step];
+    //   if (!obj) break;
+    //   obj.item.val(obj.val);
+    //   break;
+
+    case 'delete':
+      const restore_id = obj.item.id;
+      console.log('restore_id', restore_id);
+      if (restore_id.split('_')[1] === 'contour-pic') {
+        $('#update-note-content').append(obj.item);
+        $(`#${restore_id}`).draggable({
+          containment: '#update-note-content',
+        });
+      } else {
+        addDragTextarea(
+          $('#update-note-content'),
+          obj.val,
+          obj.width,
+          obj.height,
+          obj.top,
+          obj.left,
+          'draggable'
+        );
+      }
+      break;
   }
 };

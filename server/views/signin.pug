@@ -1,0 +1,53 @@
+extends layout_noSideBar.pug
+
+block content
+  body
+    main
+      .container
+        section.section.register.min-vh-100.d-flex.flex-column.align-items-center.justify-content-center.py-4
+          .container
+            .row.justify-content-center
+              .col-lg-4.col-md-6.d-flex.flex-column.align-items-center.justify-content-center
+                //- .d-flex.justify-content-center.py-4
+                //-   a.logo.d-flex.align-items-center.w-auto(href='/index')
+                //-     img(src='assets/img/goodTidy_logo.png', alt='')
+                //-     span.d-none.d-lg-block GoodTidy
+                // End Logo
+                .card.mb-3
+                  .card-body
+                    h5.card-title.text-center.pb-0.fs-4 登入頁面
+                    br
+                    //- p.text-center.small 輸入使用者名稱 &amp; 密碼
+                    form.row.g-3.needs-validation(novalidate='')
+                      .col-12
+                        label.form-label(for='signin_useremail') Email
+                        .input-group.has-validation
+                          //- span#inputGroupPrepend.input-group-text @
+                          input#signin_useremail.form-control(type='text', name='username', required='')
+                          .invalid-feedback 請輸入您的使用者名稱！
+                      .col-12
+                        label.form-label(for='signin_password') 密碼
+                        input#signin_password.form-control(type='password', name='password', required='')
+                        .invalid-feedback 請輸入您的密碼！
+                        br
+                      .col-12
+                        button#signin-form-btn.btn.btn-primary.w-100 登入
+                      .col-12
+                        p.small.mb-0
+                          | 您還沒有註冊嗎?
+                          a(href='/signup')  註冊頁面
+    // End #main
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short
+
+    script.
+      // 登入鍵 -------------------------------------
+      $('#signin-form-btn').click(async (e) => {
+        e.preventDefault();
+
+        if (!user_email) {
+          const email = $('#signin_useremail').val();
+          const password = $('#signin_password').val();
+          await signIn(email, password);
+        }
+      });

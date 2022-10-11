@@ -1,0 +1,546 @@
+extends layout_main.pug
+
+block content
+    main#main.main
+
+      .pagetitle
+        i.bi.bi-list.toggle-sidebar-btn(style="margin-left:20px;cursor:pointer;")
+        h1 筆記編輯
+          //- 搜尋bar --------------------
+          button#search_note_list-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#searchModal', style='font-size=16px;', data-toggle='tooltip', data-placement='bottom', title='搜尋筆記內容' disabled='')
+            i.fa.fa-search
+
+          //- 搜尋Modal-------------------
+          #searchModal.modal.fade(tabindex='-1', aria-labelledby='searchModalLabel', aria-hidden='true')
+            .modal-dialog
+              .modal-content
+                .modal-header
+                  h5.modal-title 搜尋
+                  button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position='right')
+                #modal-main.modal-body
+                  //- 筆記名稱
+                .modal-footer
+                  .input-group
+                    input#search_note_list.form-control(type='search', placeholder='search...')
+                    button.btn(type='button')
+                      i.fa.fa-search
+                  //- TODO: 復原時間搜尋功能
+                  //- button.btn(type='button')
+                  //-   i.fa.fa-calendar
+                  //- input#daterange(type="text", name="daterange")
+      // End Page Title
+      section.section.dashboard
+        .row
+          // Left side columns
+          .col-lg-12
+            .row
+              // Reports
+              .col-12
+                .card
+                  .card-body(style="padding:0px;")
+                    ul.list-unstyled.ps-0(width="90%")
+                        //- 筆記上傳
+                        button#noteUpload-btn.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', type='button', style="font-size:16px", disabled='')
+                            i.bi.bi-file-earmark-plus
+
+                        //- 儲存筆記鍵
+                        button#storeNote.btn(data-toggle='tooltip', data-placement='bottom', title='存檔', style='font-size:16px', disabled='')
+                            i.fa.fa-floppy-o            
+
+                        //- 上一步
+                        button#prev.btn(data-toggle='tooltip', data-placement='bottom', title='復原刪除', style='font-size:16px', disabled='')
+                            i.fa.fa-rotate-left
+
+                        //- 下一步
+                        //- button#next.btn(style='font-size:16px')
+                        //-     i.fa.fa-rotate-right
+
+                        //- 新增文字方塊
+                        button#addfont.btn(data-toggle='tooltip', data-placement='bottom', title='新增文字方塊', style='font-size:16px', disabled='')
+                            i.fa.fa-font
+
+                        //- 刪除鍵
+                        //- button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:16px', disabled='')
+                        //-     i.fa.fa-solid.fa-trash
+
+                        //- 分享鍵
+                        button#share-btn.btn(data-toggle='tooltip', data-placement='bottom', title='分享社群', type='button', data-bs-toggle='modal', data-bs-target='#shareToAllModal', style="font-size:16px", disabled='')
+                            i.bi.bi-share-fill
+
+                        #shareToAllModal.modal.fade(tabindex='-1', aria-labelledby='shareModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header(style="padding: 10px 0 0 10px;")
+                                //- h5.modal-title 分享
+                                ul.nav.nav-tabs.nav-tabs-bordered
+                                  li.nav-item
+                                    button.nav-link.active(data-bs-toggle='tab', data-bs-target='#share-to-other-nav') 分享給朋友
+                                  li.nav-item
+                                    button.nav-link(data-bs-toggle='tab', data-bs-target='#share-to-all-nav') 分享社群
+
+                                button#shareToClose.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right" style="margin: 0 5px 0 0;")
+                              #modal-shareToAll-main.modal-body.tab-content.pt-2
+                                #share-to-other-nav.tab-pane.fade.show.active
+                                  i.bi.bi-person-fill(style="font-size:25px;")
+                                  | 分享您的筆記
+                                  #shareToOhterDetail
+                                    br
+                                    .container
+                                      .row.justify-center
+                                        .col-12
+                                          header
+                                          .input-group.mb-3
+                                            button.btn.btn-outline-secondary.dropdown-toggle#shareToOtherMethod-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 允許觀看
+                                            ul#shareToOtherMenu.dropdown-menu.dropdown-menu-end
+                                              li
+                                                a.dropdown-item(href='#') 允許留言
+                                              li
+                                                a.dropdown-item(href='#') 允許觀看
+                                            input#addShareOther-input.form-control(type='text', placeholder='欲分享者的email...', aria-label='欲分享者的email', aria-describedby='basic-addon2')
+                                            .input-group-append
+                                              button#addShareOther-btn.btn.btn-primary(type='button') 加入
+                                          ul#shareOtherList.list-group
+                                #share-to-all-nav.tab-pane.fade
+                                  i.bi.bi-people-fill(style='font-size:25px;')
+                                  label.form-check-label(for='flexSwitchCheckDefault') 分享到社群
+                                  button.btn.btn-primary#shareToAll_confirm-btn(style="float: right;margin: 10px 5px;font-size: 15px;") 分享
+                                  button.btn.btn-secondary#shareToAll_cancel-btn(style="float: right;margin: 10px 5px;font-size: 15px;") 取消
+                                  span#shareToAll-status.badge.bg-secondary(style="margin: -5px 5px;") 關閉中
+                                  #shareToAllDetail
+                                    input#share_url.form-control(type='text', style="width:90%;display:inline;")
+                                    button.btn#copy_shareUrl
+                                      i.fa.fa-clipboard(aria-hidden="true")
+                                    br
+                                    br
+                                    .form-check
+                                      label.form-check-label(for='flexSwitchCheckDefault') 開放留言
+                                      input#allowComment-toggle.form-check-input(type='checkbox')
+                                    br
+                                    .form-floating
+                                      textarea#share_description.form-control(style="height:100px;" placeholder='你會向大家怎麼介紹你的筆記?')
+                                      label(for='floatingTextarea') 你會向大家怎麼介紹你的筆記?
+                                    br
+                                    .mb-3
+                                      label.form-label(for='formFile') 封面照片(非必要)
+                                      input#shareNote_image.form-control(type='file', onchange="previewFile('sharePic_preview')")
+                                      img#sharePic_preview(src="", alt="Image preview", style="display: none;")
+                                    br
+                                    .note_tags
+                                      i.fa.fa-tags(style="color:blue;margin:0 10px 0 0;")
+                                      | 標籤 (最多不能超過5個)
+                                      br
+                                      input#tag_input.form-control(type='text', style="width:90%;display:inline;")
+                                      button.btn#add_note_tag-btn
+                                        i.fa.fa-plus(aria-hidden='true')
+                                        span.small 
+                                      br
+                                      br
+                                    br
+                                
+
+                        //- 留言頁面
+                        button.openbtn#annotation-show-btn.btn(data-toggle='tooltip', data-placement='bottom', title='查看此篇文章註釋', type='button', style="font-size:16px", disabled='')
+                            i.bi.bi-stickies
+
+
+                        //- 特定人分享頁面
+                        button#sharedNote-btn.btn(type='button', data-bs-toggle='modal', data-bs-target='#sharedNoteModal', style="font-size:16px", data-toggle='tooltip', data-placement='bottom', title='其他人分享給您的筆記', disabled='')
+                          i.fa.fa-users
+                          span#sharedNoteCount.badge.bg-primary.badge-number(style='font-size: 5px;margin: -10px 0 0 -2px;')
+                        #sharedNoteModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header
+                                h5.modal-title 其他人分享給您的筆記
+                                button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              .modal-body#modal-sharedNote-main
+                              .modal-footer
+                                button#sharedNote-change.btn.btn-primary(type='button', style="margin-right: -10px;") 點選查看筆記
+                                
+                        //- 自動儲存/筆記修改選單
+                        button.btn(href='#', data-bs-toggle='dropdown' style="float: right;")
+                          i.bi.bi-gear
+                        ul#note_menu.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow
+                          li.dropdown-header.text-start
+                            .form-check.form-switch
+                              label.form-check-label(for='flexSwitchCheckDefault') 自動儲存
+                              input#autoSave-toggle.form-check-input(type='checkbox', role='switch')
+                          li
+                            button#version_list-btn.btn.dropdown-item(data-bs-toggle='modal', data-bs-target='#versionModal') 讀取版本
+                          li
+                            button#modifyClass.btn.dropdown-item 修改分類名稱
+                          li
+                            button#changeNoteName.btn.dropdown-item 修改筆記名稱
+                          li
+                            button#moveNote.btn.dropdown-item 搬移筆記
+                          li
+                            button#deleteNote.btn.dropdown-item 刪除筆記
+
+                        p#auto-save-time.small(style="float: right;margin: 10px 30px 0 0;")
+
+                        #versionModal.modal.fade(tabindex='-1', aria-labelledby='versionModal', aria-hidden='true')
+                          .modal-dialog
+                            .modal-content
+                              .modal-header
+                                h5.modal-title 存檔版本
+                                button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
+                              #modal-version-main.modal-body
+                              .modal-footer
+                                button#version-change.btn.btn-primary(type='button') 回復
+
+                        //- .col-12#update-note-content(width='600px', height='500px')
+                        .col-12#update-note-content(style="height:600px;")
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short
+
+      script.
+        
+        let online_user;
+        // 拿取目前在線上的名單
+        // 因為只有筆記編輯頁裡的上下線資訊，故放在筆記編輯頁面
+        $(document).ready(async function() {
+
+          // headerTop Icon的點選效果
+          $('#note-page').css('border-bottom', '2px solid');
+
+            // 拿取User的Profile;
+            await profile();
+
+            // 發送socket上線
+            socket.emit('authentication', user_email);
+            // 拿取每個使用者的線上狀態
+            socket.on("users", async (users) => {
+              online_user = users;
+              await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+            });
+
+            // 拿取User所有note的資訊;
+            await getUserNotes();
+
+            // 畫出NavList資訊
+            await showNoteList(note_list_obj, $('#sidebar-nav'));
+
+            // 剛開始讀取使用者最近剛編輯的文章
+            await getlatestNode();
+
+            // 剛開始就點選筆記
+            await notePreClick();
+        });
+
+        // 按鍵 ---------------------------------------------
+        // 上傳筆記鍵
+        $('#noteUpload-btn').click(async function (){
+            window.location.assign('/uploadNote');
+        })
+
+        // 新增文字方塊鍵 ---------------------------------
+        $('#addfont').click(async () => {
+          const $append_div = $('#update-note-content');
+          const textTop = '10px';
+          const textLeft = '10px';
+          const textWidth = 200;
+          const textHeight = 200;
+          const text = '';
+          addDragTextarea($append_div, text, textWidth, textHeight, textTop, textLeft, 'draggable');
+        });
+
+        // 儲存鍵 --------------------------------------
+        $('#storeNote').click(async () => {
+          Swal.fire({
+            title: '您確定要新增版本嗎?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: '確定',
+            cancelButtonText: '取消',
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+
+              let removeSrc_element = await getImgElement('note');
+              let OCR_elements = await getTextElement();
+              let keywords = await generateKeywords();
+
+              const data = {
+                note_id: current_note_id,
+                created_time: '',
+                version_img: '123_coolthing_ver3.png',
+                version_name: new Date(),
+                elements: removeSrc_element,
+                keywords,
+                text_elements: JSON.stringify(OCR_elements),
+              };
+
+              await axios({
+                method: 'POST',
+                url: '/api/1.0/noteVersion',
+                data,
+              });
+
+              await alertSuccess('存檔成功')
+
+              // 重新抓取使用者資料
+              await getUserNotes();
+              current_version_obj = await getVersionList(
+                version_obj,
+                $('#modal-version-main')
+              );
+            }
+          });
+        });
+
+        // 筆記設定 ----------------------
+        // 修改筆記名稱
+        $('#changeNoteName').click(async function (){
+          await renameNote(current_note_id);
+        })
+
+        // 刪除筆記
+        $('#deleteNote').click(async function (){
+          await deleteNote(current_note_id);
+        })
+
+        // 移動筆記
+        $('#moveNote').click(async function (){
+          await moveNote(current_note_id);
+        })
+
+        // 修改筆記分類
+        $('#modifyClass').click(async function (){
+          await renameclassification(user_id);
+        })
+
+        // 跳轉註解編輯頁鍵
+        $('#annotation-show-btn').click(async function () {
+            if(!current_note_id){
+              alertError('請先選擇筆記');
+              return;
+            }
+            window.location.assign(`/sharedToOtherNote/${current_note_id}`);
+        })
+
+        // 複製功能
+        $('#copy_shareUrl').click(function() {
+          $('#share_url').select();
+          document.execCommand('copy');
+          alertSuccess('已複製到剪貼簿');
+        });
+
+        // 自動儲存鍵 ---------------------------------------------
+        $('#autoSave-toggle').change(function () {
+          if (this.checked) {
+            AutoSave.start();
+          } else {
+            AutoSave.stop();
+          }
+        });
+
+        // 版本列表鍵 -------------------------------------------
+        $('#version_list-btn').click(async () => {
+          current_version_obj = await getVersionList(
+            version_obj,
+            $('#modal-version-main')
+          );
+        });
+
+        // 版本回復鍵
+        $('#version-change').click(() => {
+          const version_chosen = $('input[name="version_options"]:checked').val();
+          noteShowFromVer(version_chosen, current_version_obj);
+        });
+
+        // [分享頁面] 分享鍵 ---------------------------------
+        $('#share-btn').click(async () => {
+          await showShareToAll();
+        });
+
+        // 特定人分享清單鍵
+        $('#sharedNote-btn').click(async () => {
+          await getSharedNote(shared_note_obj, $('#modal-sharedNote-main'));
+        });
+
+        // 取消分享鍵 ---------------------------------
+        $('#shareToAll_cancel-btn').click(async () => {
+          if($('#shareToAll-status').text() === '關閉中'){
+            Swal.fire({
+              icon: 'warning',
+              title: '目前此篇筆記已關閉分享',
+              showConfirmButton: false,
+              timer: 1000,
+            });
+            return;
+          }
+
+          Swal.fire({
+              title: '確定要關閉此篇筆記的分享?',
+              icon: 'question',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: '確定',
+              cancelButtonText: '取消'
+          }).then(async (result) => {
+              if (result.isConfirmed) {
+                await deleteShareAll();
+                await getShareAll(current_note_id);
+                await showShareToAll();
+              }
+          })
+        });
+
+        // 特定人分享查看鍵
+        $('#sharedNote-change').click(() => {
+          const note_chosen = $('input[name="shareNote_options"]:checked').val();
+          window.open(`/sharedToOtherNote/${shared_note_obj[note_chosen].note_id}`);
+        });
+
+
+
+        // 刪除物件鍵
+        //- $('#deleteElement').click(function (){
+
+        //-   if($('.highlight').length == 0){
+        //-     Swal.fire({
+        //-       icon: 'error',
+        //-       title: '請先點選需刪除的物件',
+        //-       showConfirmButton: false,
+        //-       timer: 1000,
+        //-     });
+        //-     return;
+        //-   }
+
+        //-   Swal.fire({
+        //-       title: '您確定要刪除選取的物件?',
+        //-       icon: 'warning',
+        //-       showCancelButton: true,
+        //-       confirmButtonColor: '#3085d6',
+        //-       cancelButtonColor: '#d33',
+        //-       confirmButtonText: '刪除',
+        //-       cancelButtonText: '取消'
+        //-   }).then((result) => {
+        //-       if (result.isConfirmed) {
+        //-           //- OCR_ids = OCR_ids.filter(n => !OCR_delete_ids.includes(n)); // 更新OCR_ids剩餘的物件
+        //-           const delete_items = $('.highlight');
+        //-           delete_items.map((i, delete_id) => { 
+        //-             const top = delete_items.get(i).style.top;
+        //-             const left = delete_items.get(i).style.left;
+        //-             const val = delete_items.get(i).children[0].value;
+
+        //-             //- console.log("delete_items.get(i).children[0].value",delete_items.get(i).children[0].value);
+        //-             const item = delete_items.get(i);
+        //-             //- console.log("delete-item:", item, top, left, val);
+        //-             stepAppend(item, 'delete', top, left, val);
+        //-           })
+
+        //-           // 刪除所有被標記的物件
+        //-           $('#update-note-content').find('.highlight').remove();
+        //-       }
+        //-   })
+        //- });
+
+
+
+        // 監聽圖形刪除事件
+        //- $(document).on('dblclick', '.contour-pic', function(e){
+        //-     // 一次只能選一個
+        //-     let click_element = $('#' + e.currentTarget.id);
+        //-     if (click_element.hasClass('highlight')) {
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-     } else {
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-       click_element.addClass('highlight');
+        //-     }
+        //- });
+
+        // 監聽文字框刪除事件
+        //- $(document).on('dblclick', '.addtextarea', function(e){
+        //-     let click_element = e.currentTarget.parentNode;
+        //-     let click_id = e.target.id;
+  
+
+        //-     // 取消框選
+        //-     if (click_element.classList.contains('highlight')) {
+        //-       // 一次只能選一個
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-       if (OCR_delete_ids.indexOf(click_id) !== -1) {
+        //-         OCR_delete_ids.splice(click_id, 1);
+        //-       }
+        //-       // 框選
+        //-     } else {
+        //-       // 一次只能選一個
+        //-       $('.contour-pic').removeClass('highlight');
+        //-       $('.div_addtextarea').removeClass('highlight');
+        //-       click_element.classList.add('highlight');
+        //-       OCR_delete_ids.push(click_id);
+        //-     }
+        //- });
+
+        // 監聽文字框修改事件
+        //- $(document).on('input', '.addtextarea', function(e){
+        //-     let click_element = e.currentTarget.parentNode;
+        //-     let click_id = e.target.id;
+        //-     let change_val = e.target.value;
+        //-     restoreObj = {
+        //-       item: $('#' + click_id),
+        //-       event: 'input',
+        //-       val: change_val,
+        //-     };
+        //-     stepAppend(restoreObj);
+        //- });
+
+        
+        //- // TODO: 目前拿掉，監聽圖形dragable 上一步
+        //- $(document).on('mouseup', '.contour-pic', function(e){
+        //-   const element = e.target.parentElement;
+        //-   const top = element.style.top;
+        //-   const left = element.style.left;
+        //-   console.log(element, top, left);
+        //-   //- stepAppend(element, 'drag', top, left, '');
+        //- });
+
+        //- // TODO: 目前拿掉，監聽文字dragable 上一步
+        //- $(document).on('mouseup', '.div_addtextarea', function(e){
+        //-   const element = e.target.parentElement;
+        //-   const top = element.style.top;
+        //-   const left = element.style.left;
+        //-   //- stepAppend(element, 'drag', top, left, '');
+        //- });
+
+        // 監聽事件: textare叉叉
+        $(document).on('focus', '.div_addtextarea', function () {
+            $('.textareaClose').css('display', 'block');
+        });
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).is('.div_addtextarea')) {
+                $('.textareaClose').css('display', 'none');
+            }
+        });
+
+        // 監聽事件: 圖形叉叉
+        $(document).on('mouseover', '.contour-pic', function(e){
+            $('.imgClose').css('display','block');
+        });
+
+        $(document).on('mouseout', function(e){
+            $('.imgClose').css('display','none');
+        });
+
+      script(src='/js/notePreClick.js')
+      script(src='/js/note.js')
+      script(src='/js/draggable.js')
+      script(src='/js/restore.js')
+      script(src='/js/social.js')
+      script(src='/js/search.js')
+      script(src='/js/autoSave.js')
+      script(src='/js/annotationBar.js')
+      
+
+
+
+
+
+

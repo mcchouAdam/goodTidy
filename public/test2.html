@@ -1,55 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <link href="./css/note-upload.css" rel="stylesheet" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CHAMELEONS PRO</title>
+    <!-- <link rel="stylesheet" type="text/css" href="./style/user.css" media="all" /> -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <link
       rel="stylesheet"
       href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
     />
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-    <style></style>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+      crossorigin="anonymous"
+    ></script>
+    <!-- <script src="./src/index.js"></script>
+    <script src="./src/user.js"></script> -->
   </head>
   <body>
-    <canvas
-      id="image"
-      width="800"
-      height="600"
-      style="background-color: orange"
-    ></canvas>
-    <script>
-      var mousedown = false;
-      var x1;
-      var y1;
-      var x2;
-      var y2;
-      var canvas = document.getElementById('image');
-      var context = canvas.getContext('2d');
-      document.getElementById('image').onmousedown = function (e) {
-        mousedown = true;
-        x1 = e.offsetX;
-        y1 = e.offsetY;
-      };
-      document.getElementById('image').onmouseup = function (e) {
-        mousedown = false;
-      };
-      document.getElementById('image').onmousemove = function (e) {
-        if (mousedown) {
-          x2 = e.offsetX;
-          y2 = e.offsetY;
-          redraw();
-        }
-      };
-      function redraw() {
-        context.clearRect(0, 0, 800, 600);
-        context.beginPath();
-        context.rect(x1, y1, x2 - x1, y2 - y1);
-        context.stroke();
-
-        console.log(x1, y1, x2 - x1, y2 - y1);
-      }
-    </script>
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingOne">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseOne"
+            aria-expanded="false"
+            aria-controls="flush-collapseOne"
+          >
+            Accordion Item #1
+          </button>
+        </h2>
+        <div
+          id="flush-collapseOne"
+          class="accordion-collapse collapse"
+          aria-labelledby="flush-headingOne"
+          data-bs-parent="#accordionFlushExample"
+        >
+          <div class="accordion-body">
+            Placeholder content for this accordion, which is intended to
+            demonstrate the <code>.accordion-flush</code> class. This is the
+            first item's accordion body.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingTwo">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseTwo"
+            aria-expanded="false"
+            aria-controls="flush-collapseTwo"
+          >
+            Accordion Item #2
+          </button>
+        </h2>
+        <div
+          id="flush-collapseTwo"
+          class="accordion-collapse collapse"
+          aria-labelledby="flush-headingTwo"
+          data-bs-parent="#accordionFlushExample"
+        >
+          <div class="accordion-body">
+            Placeholder content for this accordion, which is intended to
+            demonstrate the <code>.accordion-flush</code> class. This is the
+            second item's accordion body. Let's imagine this being filled with
+            some actual content.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingThree">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#flush-collapseThree"
+            aria-expanded="false"
+            aria-controls="flush-collapseThree"
+          >
+            Accordion Item #3
+          </button>
+        </h2>
+        <div
+          id="flush-collapseThree"
+          class="accordion-collapse collapse"
+          aria-labelledby="flush-headingThree"
+          data-bs-parent="#accordionFlushExample"
+        >
+          <div class="accordion-body">
+            Placeholder content for this accordion, which is intended to
+            demonstrate the <code>.accordion-flush</code> class. This is the
+            third item's accordion body. Nothing more exciting happening here in
+            terms of content, but just filling up the space to make it look, at
+            least at first glance, a bit more representative of how this would
+            look in a real-world application.
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

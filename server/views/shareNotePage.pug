@@ -1,0 +1,40 @@
+extends layout_noSideBar.pug
+
+block content
+    main
+        .card(style="margin: 100px 30px 0px 30px;")
+            .card-header
+                .d-flex.flex-row.align-items-center
+                    img.profile-pic(src=user_picture)
+                    p.small.mb-0.ms-2=user_name
+                    .row
+                        .col-10(style="margin: 0 0 0 20px")
+                            span.badge.bg-dark.rounded-pill(style="cursor:default") 筆記名稱
+                            span(style="margin: 20px 10px;")=note_name
+                        .col-10(style="margin: 0 0 0 20px")
+                            span.badge.bg-dark.rounded-pill(style="cursor:default") 分享時間
+                            span(style="margin: 20px 10px;")=sharing_time
+            .card-body(style="height:650px;")
+                #showShareDetail(style="padding: 20px 0 0 0; position: absolute;")
+
+
+        script.
+            $(document).ready(async () => {
+                note_bg = !{JSON.stringify(file_name)};
+                addDragImage($('#showShareDetail'), !{elements},  'unDraggable');
+                !{text_elements}.map((s) => {
+                    addDragTextarea(
+                        '#showShareDetail',
+                        s.text,
+                        s.width,
+                        s.height,
+                        s.textTop,
+                        s.textLeft,
+                        'unDraggable'
+                    )
+                });
+                // 取消圖片的hover效果
+                $('.contour-pic').css('pointer-events', 'none');
+            })
+            
+        script(src='/js/draggable.js')

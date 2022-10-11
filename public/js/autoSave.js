@@ -1,47 +1,91 @@
-var AutoSave = (function () {
-  var timer = null;
+// import { getImgElement, getTextElement } from './note.js';
 
-  function getEditor() {
-    var elems = $('#update-note-content').html();
-    if (elems.length <= 0) return null;
+const AutoSave = (function () {
+  let timer = null;
 
-    return elems;
-  }
+  async function save() {
+    const editor = $('#update-note-content').html();
 
-  function save() {
-    var editor = getEditor();
     if (editor) {
-      localStorage.setItem('AUTOSAVE_' + document.location, editor);
-      let now_time = new Date().toISOString();
-      $('#auto-save-time').text(`已於${now_time}建立最新儲存`);
+      // 圖形擷取資訊
+      let removeSrc_element = await getImgElement('note');
+      let OCR_elements = await getTextElement();
+
+      localStorage.setItem(
+        `AUTOSAVEIMAGE_${current_note_id}`,
+        removeSrc_element
+      );
+      localStorage.setItem('CURRENTNOTEID', current_note_id);
+      localStorage.setItem(
+        `AUTOSAVETEXT_${current_note_id}`,
+        JSON.stringify(OCR_elements)
+      );
+
+      // 更新時間
+      const current = new Date();
+      const now_time = current.toLocaleTimeString();
+      // $('#auto-save-time').text(`最新儲存: ${now_time}`);
     }
   }
 
-  function restore() {
-    var saved = localStorage.getItem('AUTOSAVE_' + document.location);
-    console.log(saved);
-    return saved;
-    // var editor = getEditor();
-    // if (saved && editor) {
-    //   editor.value = saved;
-    // }
+  function restore(type) {
+    // 清空原先的東西
+    $('#update-note-content').html('');
+    let saved_img_elements;
+    let saved_text_elements;
+
+    // 給自動儲存回復使用
+    if (type == 'AUTOSAVE') {
+      saved_img_elements = localStorage.getItem(
+        `AUTOSAVEIMAGE_${current_note_id}`
+      );
+      saved_text_elements = localStorage.getItem(
+        `AUTOSAVETEXT_${current_note_id}`
+      );
+      localStorage.setItem(
+        `INITIALSAVEIMAGE_${current_note_id}`,
+        saved_img_elements
+      );
+      localStorage.setItem(
+        `INITIALSAVETEXT_${current_note_id}`,
+        saved_text_elements
+      );
+      // 給上一步的最初始狀態使用
+    } else if (type == 'INITIALSAVE') {
+      saved_img_elements = localStorage.getItem(
+        `INITIALSAVEIMAGE_${current_note_id}`
+      );
+      saved_text_elements = localStorage.getItem(
+        `INITIALSAVETEXT_${current_note_id}`
+      );
+    }
+
+    addDragImage($('#update-note-content'), saved_img_elements, 'draggable');
+    const text_elements = JSON.parse(saved_text_elements);
+    text_elements.map((e) => {
+      addDragTextarea(
+        '#update-note-content',
+        e.text,
+        e.width,
+        e.height,
+        e.textTop,
+        e.textLeft,
+        'draggable'
+      );
+    });
   }
 
   return {
-    start: function () {
-      var editor = getEditor();
-
-      //   if (editor.value.length <= 0) restore();
-
+    start() {
       if (timer != null) {
         clearInterval(timer);
         timer = null;
       }
 
-      timer = setInterval(save, 10000);
+      timer = setInterval(save, 1000);
     },
 
-    stop: function () {
+    stop() {
       if (timer) {
         clearInterval(timer);
         timer = null;
@@ -50,3 +94,26 @@ var AutoSave = (function () {
     restore,
   };
 })();
+
+// 進入note頁面後，抓取使用者最近編輯的筆記
+async function getlatestNode() {
+  current_note_id = localStorage.getItem('CURRENTNOTEID');
+
+  if (!showNote_note_obj[current_note_id]) {
+    return;
+  }
+
+  // 筆記編輯頁面上方連結
+  const { note_name } = showNote_note_obj[current_note_id];
+  note_bg = showNote_note_obj[current_note_id].note_file_name;
+  const { note_classification } = showNote_note_obj[current_note_id];
+  $('#click_note_classification').html(note_classification);
+  $('#click_note_name').html(note_name);
+
+  // 自動Reload
+  AutoSave.restore('AUTOSAVE');
+
+  // 打開自動儲存
+  $('#autoSave-toggle').prop('checked', true);
+  AutoSave.start();
+}

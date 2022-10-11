@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css?family=Playfair+Display:900');
+
+svg {
+  /* background: #ebe7e0; */
+}
+
+text {
+  fill: #012970;
+  /* filter: url('#money'); */
+  font-size: 120px;
+  font-weight: 900;
+}
+
+html {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  min-width: 600px;
+}

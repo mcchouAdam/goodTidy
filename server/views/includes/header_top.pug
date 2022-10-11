@@ -1,0 +1,166 @@
+body
+    // ======= Header =======
+    header#header.header.fixed-top.d-flex.align-items-center
+      .d-flex.align-items-center.justify-content-between
+        
+        a.logo.d-flex.align-items-center(href='/')
+          img(src='/assets/img/goodTidy_logo.png', alt='')
+          span.d-none.d-lg-block GoodTidy
+        
+      // End Logo
+      //- .search-bar
+      //-   form.search-form.d-flex.align-items-center(method='POST', action='#')
+      //-     input(type='text', name='query', placeholder='Search', title='Enter search keyword')
+      //-     button(type='submit', title='Search')
+      //-       i.bi.bi-search
+      // End Search Bar
+      nav.header-nav.ms-auto
+        ul.d-flex.align-items-center
+          //- sidebar展開鍵
+          //- li.nav-item
+            i.bi.bi-list.toggle-sidebar-btn
+          // End Search Icon
+          //- 筆記頁面 Icon
+          li.nav-item
+            a.nav-link.nav-icon#note-page(href='/note')
+                i.bi.bi-book
+
+          //- 社群頁面 Icon
+          li.nav-item
+            a.nav-link.nav-icon#social-page(href='/socialPage?paging=1&sorting=sharing_time')
+                i.bi.bi-people
+
+          //- //- 小鈴鐺 Icon
+          li.nav-item.dropdown
+            a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
+              i.bi.bi-bell
+              span#msg_count.badge.bg-primary.badge-number 0
+            // End Notification Icon
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications.userMsgNotifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
+              li
+                hr.dropdown-divider
+            // End Notification Dropdown Items
+          // End Notification Nav
+          li.nav-item.dropdown.pe-3
+            a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
+              - if (id)
+                - if (name && picture)
+                  img.profile-pic(src=picture, alt='Profile')
+                  span.d-none.d-md-block.dropdown-toggle.ps-2=name
+                - else
+                  img.profile-pic(src="/assets/img/user.png", alt='Profile')
+                  span.d-none.d-md-block.dropdown-toggle.ps-2 登入
+              - else
+                img.profile-pic(src="/assets/img/user.png", alt='Profile')
+            // End Profile Iamge Icon
+            ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
+              if id
+                li.dropdown-header
+                  h6=name
+                  span=email
+                li
+                  hr.dropdown-divider
+                li
+                  a.dropdown-item.d-flex.align-items-center(href='/profile')
+                    i.bi.bi-person
+                    span 個人資訊
+                li
+                  hr.dropdown-divider
+                li
+                  a#logout-btn.dropdown-item.d-flex.align-items-center(style="cursor:pointer")
+                    i.bi.bi-box-arrow-right
+                    span 登出
+              else 
+                li.dropdown-header
+                  h6 請先登入/註冊
+                li
+                  hr.dropdown-divider
+                li
+                  a.dropdown-item.d-flex.align-items-center(href='/signin')
+                    i.bi.bi-box-arrow-in-right
+                    span 登入
+                li
+                  hr.dropdown-divider
+                li
+                  a.dropdown-item.d-flex.align-items-center(href='/signup')
+                    i.bi.bi-journal
+                    span 註冊
+
+            // End Profile Dropdown Items
+          // End Profile Nav
+      // End Icons Navigation
+    // End Header
+
+    script.
+      // Socket ------------------------------------------
+      let socket = io();
+      
+      // Socket 被喜歡的推播
+      socket.on('saved_msg', async function(msg){
+        await getUserMsg();
+        await showUserMsg();
+      })
+
+      //- Socket 有人分享筆記給你
+      socket.on('shareToyou_msg', async function(shareUserEmail){
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      })
+
+      //- Socket 有人刪除他的分享筆記
+      socket.on('delete_shareToyou_msg', async function(delete_user_email){
+        await getUserMsg();
+        await showUserMsg();
+        await getUserNotes();
+      });
+      
+      $(document).ready(async function() {
+
+          // 拿取User的Profile;
+          await profile();
+          // 拿取User所有通知
+          await getUserMsg();
+          await showUserMsg();
+
+      });
+
+      // 登出鍵 ---------------------------------
+      $('#logout-btn').click(async function () {
+        let data = '';
+
+        let config = {
+          method: 'GET',
+          url: `/api/1.0/user/logout`,
+          data: data,
+        };
+
+        await axios(config)
+          .then(function (response) {
+            Swal.fire({
+              icon: 'success',
+              title: '登出成功',
+              showConfirmButton: false,
+              timer: 1000
+            }).then(function() {
+                //TODO: 登出時，如果切換使用者，其他使用者可能會沒有current_note_id
+                current_note_id = undefined;
+                localStorage.removeItem('CURRENTNOTEID');
+                window.location.assign('/signin');
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: '登出失敗',
+              showConfirmButton: false,
+              timer: 1000
+            }).then(function() {
+                window.location.assign('/signin');
+            });
+          });
+      });
+
+
+      

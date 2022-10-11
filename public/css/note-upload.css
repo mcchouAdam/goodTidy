@@ -16,15 +16,19 @@
   height: 670px;
 }
 
+.note-sidebar {
+  flex-basis: 10%;
+  /* width: 200px; */
+  height: 670px;
+  /* border: 1px solid; */
+}
+
 #note-preview-content {
   border: 1px solid;
   width: 600px;
   height: 504px;
 }
 
-.OCR-preview {
-  border: 1px solid;
-}
 
 .update-note-content {
   border: 1px solid;
@@ -32,10 +36,14 @@
   height: 500px;
 }
 
-.OCR_fonts,
-.add_fonts {
+.OCR_fonts {
   width: 50px;
   height: 50px;
+}
+
+.add_fonts {
+  width: 100px;
+  height: 100px;
 }
 
 .highlight {
@@ -88,3 +96,48 @@
   top: 0px;
   left: 0px;
 }
+
+.note-sidebar {
+  /* border: 1px solid; */
+  width: 150px;
+  height: 655px;
+}
+
+.header {
+  height: 25px;
+}
+
+/* .user_page_nav {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 400px;
+  float: right;
+} */
+
+.logo {
+  width: 50px;
+  height: 50px;
+  background-image: url('../icon/goodTidy_icon.png');
+}
+
+/* 新增修改字串 */
+.addtextarea {
+  height: 100%;
+  width: 100%;
+  resize: none;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.addtextarea:focus {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid #00c853 !important;
+  outline-width: 0 !important;
+}
+
+/* div {
+  padding: 0px;
+} */
