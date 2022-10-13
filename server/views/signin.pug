@@ -8,21 +8,15 @@ block content
           .container
             .row.justify-content-center
               .col-lg-4.col-md-6.d-flex.flex-column.align-items-center.justify-content-center
-                //- .d-flex.justify-content-center.py-4
-                //-   a.logo.d-flex.align-items-center.w-auto(href='/index')
-                //-     img(src='assets/img/goodTidy_logo.png', alt='')
-                //-     span.d-none.d-lg-block GoodTidy
                 // End Logo
                 .card.mb-3
                   .card-body
                     h5.card-title.text-center.pb-0.fs-4 登入頁面
                     br
-                    //- p.text-center.small 輸入使用者名稱 &amp; 密碼
                     form.row.g-3.needs-validation(novalidate='')
                       .col-12
                         label.form-label(for='signin_useremail') Email
                         .input-group.has-validation
-                          //- span#inputGroupPrepend.input-group-text @
                           input#signin_useremail.form-control(type='text', name='username', required='')
                           .invalid-feedback 請輸入您的使用者名稱！
                       .col-12

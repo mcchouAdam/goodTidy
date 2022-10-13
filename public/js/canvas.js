@@ -97,7 +97,7 @@ function canvasPartialRedraw() {
   ctx.drawImage(previewBlah, 0, 0);
   for (let i = 0; i < RemoveContour_params.length; i++) {
     const rectObj = RemoveContour_params[i];
-    console.log('rectObj', rectObj);
+    // console.log('rectObj', rectObj);
     ctx.fillStyle = 'black';
     ctx.fillRect(rectObj.Rx, rectObj.Ry, rectObj.width, rectObj.height);
   }
@@ -154,7 +154,7 @@ function redraw_rectContour() {
   context.rect(x1, y1, x2 - x1, y2 - y1);
   context.stroke();
 
-  console.log(x1, y1, x2 - x1, y2 - y1);
+  // console.log(x1, y1, x2 - x1, y2 - y1);
 }
 
 // Redraw the upload image to canvas

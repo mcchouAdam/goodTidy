@@ -12,7 +12,6 @@ block content
                   .card-body
                     h5.card-title.text-center.pb-0.fs-4 註冊頁面
                     br
-                      //- p.text-center.small Enter your personal details to create account
                     form.row.g-3.needs-validation(novalidate='')
                       .col-12
                         label.form-label(for='name') 使用者名稱
@@ -32,15 +31,6 @@ block content
                         input#user_picture.form-control(type='file', onchange="previewFile('userPic_preview')")
                         img#userPic_preview(src="", alt="Image preview", style="display: none;")
                         br
-                        //- .invalid-feedback Please upload your user picture.
-                        //- .col-12
-                        //-   .form-check
-                        //-     input#acceptTerms.form-check-input(name='terms', type='checkbox', value='', required='')
-                        //-     label.form-check-label(for='acceptTerms')
-                        //-       | I agree and accept the 
-                        //-       a(href='#') terms and conditions
-                        //-     .invalid-feedback You must agree before submitting.
-
                       .col-12
                         button#signup-form-btn.btn.btn-primary.w-100 創立帳號
                       .col-12

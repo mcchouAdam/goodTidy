@@ -5,8 +5,6 @@ $('#share_url').val(`${server}/shareNotePage?id=${current_note_id}`);
 
 // 分享給特定人的權限設定的按鈕
 $('#shareToOtherMenu li').on('click', function () {
-  console.log($(this).text());
-  console.log($('#shareToOtherMethod-btn').text());
   $('#shareToOtherMethod-btn').text($(this).text());
 });
 
@@ -244,7 +242,7 @@ async function createComments(note_id) {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       const { comment_id } = response.data.data;
       const { created_time } = response.data.data;
       const comment = config.data;
@@ -253,7 +251,7 @@ async function createComments(note_id) {
       addComments(comment);
     })
     .catch((error) => {
-      console.log(error.response.data.data);
+      // console.log(error.response.data.data);
       Swal.fire({
         icon: 'error',
         title: error.response.data.data,
@@ -353,7 +351,7 @@ async function createSave(note_id) {
       // console.log('note_savedStatus', note_savedStatus);
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire({
         icon: 'error',
         title: error.response.data.error,
@@ -383,7 +381,7 @@ async function shareToAlluser(data) {
       });
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire({
         icon: 'error',
         title: error.response.data.error,
@@ -439,7 +437,7 @@ async function getShareToOther(note_id) {
       $('#shareOtherList').append($.parseHTML(response.data));
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire('拿取特定人士權限失敗');
     });
 }
@@ -461,11 +459,9 @@ async function getShareAll(note_id) {
       sharing_image = response.data[0].sharing_image;
       sharing_url = response.data[0].sharing_url;
       tags = response.data[0].tags;
-      // $('#shareOtherList').html('');
-      // $('#shareOtherList').append($.parseHTML(response.data));
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire('拿取分享資訊失敗');
     });
 }
@@ -551,7 +547,7 @@ async function updateComment(comment_id, note_id) {
 
     await axios(config)
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         const { comment_id } = config.data;
         const { new_content } = config.data;
 
@@ -560,7 +556,7 @@ async function updateComment(comment_id, note_id) {
         );
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         Swal.fire({
           icon: 'error',
           title: error.response.data.data,
@@ -611,7 +607,7 @@ async function deleteComment(comment_id, note_id) {
           // location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           Swal.fire({
             icon: 'error',
             title: error.response.data.data,
@@ -635,8 +631,6 @@ async function deleteComments(comment_id, note_id) {
 // [社群頁面]
 // 搜尋Bar的選項按鈕
 $('#socialPageSearchMenu li').on('click', function () {
-  console.log($(this).text());
-  console.log($('#socialPageSearch-btn').text());
   $('#socialPageSearch-btn').text($(this).text());
 
   // 收藏文章不需要輸入搜尋文字
@@ -702,11 +696,11 @@ async function socialSearch() {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       window.location = search_url;
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire({
         icon: 'error',
         title: error.response.data.error,
@@ -758,7 +752,7 @@ async function deleteShareToOther(note_id, delete_email) {
           });
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           Swal.fire(error.response.data.data);
         });
     }
@@ -779,7 +773,7 @@ async function deleteShareAll() {
 
   await axios(config)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       Swal.fire({
         icon: 'success',
         title: '關閉成功',
@@ -788,7 +782,7 @@ async function deleteShareAll() {
       });
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire({
         icon: 'error',
         title: error.response.data.data,

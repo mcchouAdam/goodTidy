@@ -6,21 +6,14 @@ block content
             .col
                 //- 筆記上傳區塊
                 h1 筆記上傳
-                //- button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                 .OCR-block
                     form#form-preview(action='', method='post', r='')
                         .row(style="margin:10px 0;")
                             .col-sm
                                 input#file-preview.form-control(type='file', name='photo', accept='.jpeg, .jpg, .png', required='', style="margin-left: -10px;")
-                            //- .col-sm
-                            //-     button#form-prview-btn.button-55 預覽
                     br
                     img#img-preview(hidden='')
                     .OCR-nav(style="margin:35px 0 8px 0px;")
-                        //- <button id="pre">上一步</button>
-                        //- <button id="next">下一步</button>
-                        //- button#shapeRemoveBG(disabled='') 圖形去背
-                        //- <button id="magicContour">圖形圈選</button>
                         br
                         //- 圖形擷取
                         button#rectContour.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='框選您想截圖的區域')
@@ -46,8 +39,6 @@ block content
                     .row
                         .col-sm
                             h1 預覽
-                        //- .col-sm(style="margin:0 0 0 400px")
-                        //-     button#submit_note.button-55 上傳
                         .note-preview-block
                             .processed-content-nav
                                 .row.mb-3
@@ -55,19 +46,12 @@ block content
                                         .input-group-prepend
                                             div#inputGroupPrepend.input-group-text(style="display: flex;width: 104px;float: center;padding-left: 10px;justify-content: center;background-color: #f6f9ff;") 筆記名稱
                                         input#note-name.form-control(type='text')
-                                    //- .input-group.mb-3
-                                    //-     button.btn.btn-outline-secondary 筆記名稱
-                                    //-     input#note-name.form-control(type='text')
                                 .row.mb-3
                                     .input-group.mb-3
                                         button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false', style="border-color:#ced4da;color: black;") 新增分類
                                         input#note-classification.form-control(type='text')
                                         ul#classMenu.dropdown-menu.dropdown-menu-end
                                 .row.mb-3
-                                    //- .col-sm-1
-                                    //-     //- 刪除鍵
-                                    //-     button#deleteElement.btn(data-toggle='tooltip', data-placement='bottom', title='雙擊下方元件，框選後點擊刪除', style='font-size:25px; margin-top: 10px;')
-                                    //-         i.fa.fa-solid.fa-trash
                                     .col-sm
                                         button#submit_note.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', style='font-size:25px; margin-top: 10px;')
                                             i.fa.fa-solid.fa-upload
@@ -305,9 +289,9 @@ block content
                                 //-     OCR_delete_ids.push(click_id);
                                 //-     }
                                 //- });
-
                                 //- await displayElementClose();
-                                // 監聽事件: textare叉叉
+
+                                // 監聽事件: textarea刪除鈕
                                 $(document).on('focus', '.div_addtextarea', function () {
                                     $('.textareaClose').css('display', 'block');
                                 });
@@ -318,7 +302,7 @@ block content
                                     }
                                 });
 
-                                // 監聽事件: 圖形叉叉
+                                // 監聽事件: 圖形刪除鈕
                                 $(document).on('mouseover', '.contour-pic', function(e){
                                     $('.imgClose').css('display','block');
                                 });

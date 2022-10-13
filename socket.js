@@ -85,14 +85,4 @@ io.on('connection', async (socket) => {
       delete_user_email
     );
   });
-
-  // 註釋功能同步
-  // socket.on('create_annotation_icon', async (obj) => {
-  // const delete_user_email = obj.user_email;
-  // const deleted_user_email = obj.delete_email;
-  // const deletedShareUser_socket_id = user_online_socketId[deleted_user_email];
-  // console.log('deletedShareUser_socket_id', deletedShareUser_socket_id);
-
-  //   socket.broadcast.emit('create_annotation_icon', obj);
-  // });
 });

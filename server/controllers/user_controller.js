@@ -15,17 +15,11 @@ const signUp = async (req, res) => {
       error: '請填寫使用者名稱、信箱、密碼。',
     });
   }
-
   if (!validator.isEmail(email)) {
     return res.status(400).send({
       error: '錯誤的Email格式',
     });
   }
-
-  // if (!validator.isLength(email, { min: 0, max: 16 })) {
-  //   return res.status(400).send({ error: 'Email字數最多16' });
-  // }
-
   if (
     !validator.isLength(name, {
       min: 0,
@@ -137,7 +131,6 @@ const signIn = async (req, res) => {
   });
 };
 
-// nativeSignIn
 const nativeSignIn = async (email, password) => {
   if (!email || !password) {
     return {

@@ -10,7 +10,6 @@ const {
 } = require('./mongocon');
 const { authorizationList } = require('../../utils/authorization');
 
-
 // [筆記頁面] 上傳筆記
 const writeNote = async (note) => {
   const session = Mongo.startSession();
@@ -1007,7 +1006,7 @@ const createComment = async (data) => {
       }
     );
 
-    console.log('update_result', update_result);
+    // console.log('update_result', update_result);
     const obj = {
       comment_id,
       created_time: data.created_time,
