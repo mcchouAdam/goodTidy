@@ -10,10 +10,8 @@ const server = app.listen(port, () => {
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: '*', //['https://styagram-6edf0.web.app/', 'http://localhost:3000', 'https://localhost:3000'],
+    origin: '*',
     methods: ['GET', 'POST', 'DELETE', 'UPDATE'],
-    // allowedHeaders: ['my-custom-header'],
-    // credentials: true,
   },
 });
 

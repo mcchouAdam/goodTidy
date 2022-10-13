@@ -24,6 +24,8 @@ async function noteUpload(
   data.append('keywords', keywords);
   data.append('text_elements', JSON.stringify(OCR_elements));
 
+  console.log('OCR_elements', OCR_elements);
+
   const config = {
     method: 'post',
     url: '/api/1.0/note',
@@ -1144,13 +1146,15 @@ async function getImgElement(page) {
 
 async function getTextElement() {
   let OCR_elements = [];
+  let textElement = $('textarea.addtextarea');
   $('.div_addtextarea').map((i, e) => {
     let obj = {};
     const OCR_top = e.style.top;
     const OCR_left = e.style.left;
     const OCR_width = e.style.width;
     const OCR_height = e.style.height;
-    const OCR_text = e.firstChild.nextElementSibling.value;
+    // const OCR_text = e.firstChild.nextElementSibling.value;
+    const OCR_text = textElement.get(i).value;
     // .replaceAll('<', '&lt;')
     // .replaceAll('>', '&gt;');
     obj = {

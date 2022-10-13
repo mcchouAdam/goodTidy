@@ -46,9 +46,38 @@ block content
             br
             //- 分頁
             #paging-block
-                //- nav(aria-label='Page navigation')
-                //-     ul.pagination.justify-content-center
+                ul.pagination.justify-content-center
+                    //- 只有一頁
+                    - if (currentPage === 1 && allPagesCount === 1)
+                        li.page-item
+                        input#setPage(style="width:36px;height:36px;border:white;text-align:center;", value=currentPage, onkeydown="if(event.keyCode==13) actionPage('inputPage')")
+                        li.page-item.disabled(style="border:white;")
+                            - let allPage = allPagesCount
+                            a.page-link(href="#", tabindex="-1", style="border: white;")='/ ' + allPage
 
+                    //- 第一頁且有很多頁
+                    - if (currentPage === 1 && allPagesCount !== 1)
+                        li.page-item
+                        input#setPage(style="width:36px;height:36px;border:white;text-align:center;", value=currentPage, onkeydown="if(event.keyCode==13) actionPage('inputPage')")
+                        li.page-item.disabled(style="border:white;")
+                            - let allPage = allPagesCount
+                            a.page-link(href="#", tabindex="-1", style="border: white;")='/ ' + allPage
+                        li.page-item
+                        a.page-link(href="javascript:actionPage('nextPage')",aria-label="Next")
+                            span(aria-hidden='true') &raquo;
+                            span.sr-only Next
+
+                    //- 最後一頁且還有很多頁
+                    - if (currentPage === allPagesCount && allPagesCount !== 1)
+                        li.page-item
+                        a.page-link(href="javascript:actionPage('prevPage')", aria-label="Previous")
+                            span(aria-hidden='true') &laquo;
+                            span.sr-only Previous
+                        li.page-item
+                        input#setPage(style="width:36px;height:36px;border:white;text-align:center;", value=currentPage, onkeydown="if(event.keyCode==13) actionPage('inputPage')")
+                        li.page-item.disabled(style="border:white;")
+                            - let allPage = allPagesCount
+                            a.page-link(href="#", tabindex="-1", style="border:white;")='/ ' + allPage
 
             //- 留言
             script.
@@ -94,25 +123,42 @@ block content
                 });
 
                 cards_html = !{cards_html};
-                paging_html = !{paging_html};
+                //- paging_html = !{paging_html};
                 sorting = !{JSON.stringify(sorting)};
 
                 const elements_html = $.parseHTML(cards_html);
                 $('#sharing-cards').append(elements_html);
 
-                const pagings_html = $.parseHTML(paging_html);
-                $('#paging-block').append(pagings_html);
+                //- const pagings_html = $.parseHTML(paging_html);
+                //- $('#paging-block').append(pagings_html);
+                
 
-                // [func] 輸入分頁跳轉
-                function getInputPage(){
-                    const setPage = $('#setPage').val();
+
+                // 輸入框的頁碼
+                function getCurrentPage(){ 
+                    const queryParams = new URLSearchParams(window.location.search);
+                    const currentPage = queryParams.get('paging');
+                    $('#setPage').val(currentPage);
+                }
+
+                // [func] 分頁跳轉/前後頁
+                function actionPage(type){
+                    const queryParams = new URLSearchParams(window.location.search);
+                    let currentPage = queryParams.get('paging');
                     const protocol = document.location.protocol;
                     const server = document.location.host;
-                    let queryParams = new URLSearchParams(window.location.search);
-                    queryParams.set('paging', setPage);
-                    history.replaceState(null, null, "?" + queryParams.toString());
-                    //- const sorting = new URLSearchParams(document.location.search).get("sorting");
-                    //- window.location.assign(`${protocol}//${server}/socialPage?paging=${setPage}&sorting=${sorting}`);
+                    if(type === 'inputPage'){
+                        currentPage = $('#setPage').val();
+                        queryParams.set('paging', +currentPage);
+                    }
+                    if(type === 'nextPage'){
+                        queryParams.set('paging', +currentPage + 1);
+                    }
+                    else if( type === 'prevPage'){
+                        queryParams.set('paging', +currentPage - 1);
+                    }
+                    const URL = queryParams.toString();
+                    window.location.assign(`${protocol}//${server}/socialPage?${URL}`);
                 }
 
                 // [UI] 點選搜尋畫面
