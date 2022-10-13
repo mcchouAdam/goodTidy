@@ -51,7 +51,7 @@ prev.onclick = function () {
 
     case 'delete':
       const restore_id = obj.item.id;
-      console.log('restore_id', restore_id);
+      // console.log('restore_id', restore_id);
       if (restore_id.split('_')[1] === 'contour-pic') {
         $('#update-note-content').append(obj.item);
         $(`#${restore_id}`).draggable({

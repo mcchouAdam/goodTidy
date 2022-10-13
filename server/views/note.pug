@@ -22,12 +22,8 @@ block content
                 .modal-footer
                   .input-group
                     input#search_note_list.form-control(type='search', placeholder='search...')
-                    button.btn(type='button')
+                    button#search_note-btn.btn(type='button')
                       i.fa.fa-search
-                  //- TODO: 復原時間搜尋功能
-                  //- button.btn(type='button')
-                  //-   i.fa.fa-calendar
-                  //- input#daterange(type="text", name="daterange")
       // End Page Title
       section.section.dashboard
         .row
@@ -188,7 +184,6 @@ block content
                               .modal-footer
                                 button#version-change.btn.btn-primary(type='button') 回復
 
-                        //- .col-12#update-note-content(width='600px', height='500px')
                         .col-12#update-note-content(style="height:600px;")
     a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
       i.bi.bi-arrow-up-short
@@ -492,7 +487,7 @@ block content
         //- });
 
         
-        //- // TODO: 目前拿掉，監聽圖形dragable 上一步
+        //- 目前拿掉，監聽圖形dragable 上一步
         //- $(document).on('mouseup', '.contour-pic', function(e){
         //-   const element = e.target.parentElement;
         //-   const top = element.style.top;
@@ -501,7 +496,7 @@ block content
         //-   //- stepAppend(element, 'drag', top, left, '');
         //- });
 
-        //- // TODO: 目前拿掉，監聽文字dragable 上一步
+        //- 目前拿掉，監聽文字dragable 上一步
         //- $(document).on('mouseup', '.div_addtextarea', function(e){
         //-   const element = e.target.parentElement;
         //-   const top = element.style.top;

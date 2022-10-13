@@ -8,7 +8,7 @@ async function profile() {
 
   await axios(config)
     .then((response) => {
-      console.log('profile:', response);
+      // console.log('profile:', response);
       user_id = response.data.data.id;
       user_picture = response.data.data.picture;
       user_name = response.data.data.name;
@@ -185,7 +185,7 @@ async function getUserMsg() {
 
 // 顯示User所有通知 ----------------------------
 async function showUserMsg() {
-  console.log('current_user_msg', current_user_msg);
+  // console.log('current_user_msg', current_user_msg);
   const msgCount = current_user_msg.length;
   // console.log('msgCount', current_user_msg.length);
   $('#msg_count').text(msgCount);

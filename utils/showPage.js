@@ -40,7 +40,7 @@ const showShareDetail = async function (data) {
 // 分享筆記卡片
 const showSocialCards = async function (data, user_id) {
   // console.log('req.session.user.id', req.session.user.id);
-  console.log('showSocialCards: ', data);
+  // console.log('showSocialCards: ', data);
 
   let sharingNote_cards_html = '';
   let comment_modal_html = '';

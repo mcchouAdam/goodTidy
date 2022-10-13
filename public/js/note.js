@@ -24,7 +24,7 @@ async function noteUpload(
   data.append('keywords', keywords);
   data.append('text_elements', JSON.stringify(OCR_elements));
 
-  console.log('OCR_elements', OCR_elements);
+  // console.log('OCR_elements', OCR_elements);
 
   const config = {
     method: 'post',
@@ -49,7 +49,7 @@ async function noteUpload(
       });
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       Swal.fire({
         icon: 'error',
         title: error.response.data.error,
@@ -226,7 +226,7 @@ async function getUserNotes() {
       // Deep copy the note_obj
       // 筆記列表呈現的內容
       note_list_obj = $.extend(true, [], note_obj);
-      console.log('note_list_obj', note_list_obj);
+      // console.log('note_list_obj', note_list_obj);
 
       // 列表筆記搜尋欄需呈現的內容
       search_note_list_obj = $.extend(true, [], search_list_obj);
@@ -244,9 +244,8 @@ async function getUserNotes() {
       // $('body').removeClass('cover-loading');
     })
     .catch((error) => {
-      // Loading取消
       // $body.removeClass('loading');
-      console.log(error);
+      // console.log(error);
     });
 }
 
@@ -335,7 +334,7 @@ async function showSearchList(note_obj, div_append) {
 
 // [其他人分享給您的筆記] 特定人分享List的內容
 async function getSharedNote(sharedNote_obj, div_append) {
-  console.log('sharedNote_obj', sharedNote_obj);
+  // console.log('sharedNote_obj', sharedNote_obj);
 
   if (!sharedNote_obj) {
     return;
@@ -481,7 +480,7 @@ async function renameNote(note_id) {
 
         await axios(config)
           .then(async (response) => {
-            console.log(response);
+            // console.log(response);
             // 拿取User所有note的資訊;
             await getUserNotes();
             // 畫出NavList資訊
@@ -497,7 +496,7 @@ async function renameNote(note_id) {
             });
           })
           .catch((error) => {
-            console.log(error);
+            // console.log(error);
             Swal.fire({
               icon: 'error',
               title: error.response.data.error,
@@ -534,7 +533,7 @@ async function deleteNote(note_id) {
 
       await axios(config)
         .then(async (response) => {
-          console.log(response);
+          // console.log(response);
           current_note_id = undefined;
           // 拿取User所有note的資訊;
           await getUserNotes();
@@ -554,7 +553,7 @@ async function deleteNote(note_id) {
           localStorage.removeItem('CURRENTNOTEID');
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           Swal.fire({
             icon: 'error',
             title: '刪除筆記失敗',
@@ -607,7 +606,7 @@ async function moveNote(note_id) {
 
       await axios(config)
         .then(async (response) => {
-          console.log(response);
+          // console.log(response);
           Swal.fire({
             icon: 'success',
             title: '搬移筆記成功',
@@ -623,7 +622,7 @@ async function moveNote(note_id) {
           await notePreClick();
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           Swal.fire({
             icon: 'error',
             title: '搬移筆記失敗',
@@ -695,7 +694,7 @@ async function renameclassification(user_id) {
 
       await axios(config)
         .then(async (response) => {
-          console.log(response);
+          // console.log(response);
           // 拿取User所有note的資訊;
           await getUserNotes();
           // 畫出NavList資訊
@@ -712,7 +711,7 @@ async function renameclassification(user_id) {
           // location.reload();
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           // Swal.fire('改名分類失敗');
           Swal.fire({
             icon: 'error',
@@ -723,38 +722,6 @@ async function renameclassification(user_id) {
         });
     }
   });
-
-  // ---------------------------------------------------------------------
-
-  // const new_classificationName = window.prompt('請問您的分類要改什麼名字?');
-
-  // if (!new_classificationName) {
-  //   Swal.fire('分類名字不能為空');
-  //   return;
-  // }
-
-  // data = {
-  //   user_id,
-  //   old_classificationName,
-  //   new_classificationName,
-  // };
-
-  // const config = {
-  //   method: 'PATCH',
-  //   url: '/api/1.0/noteClass',
-  //   data,
-  // };
-
-  // await axios(config)
-  //   .then((response) => {
-  //     console.log(response);
-  //     Swal.fire('改名分類成功');
-  //     location.reload();
-  //   })
-  //   .catch((error) => {
-  //     console.log(error);
-  //     Swal.fire('改名分類失敗');
-  //   });
 }
 
 // 刪除分類
@@ -776,34 +743,18 @@ async function deleteclassification(user_id, classificationName) {
 
     await axios(config)
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         Swal.fire('刪除分類成功');
         location.reload();
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
         Swal.fire('刪除分類失敗');
       });
   }
 }
 
 // 註釋 ------------------------------------------------------
-// 鎖定註釋
-async function lockAnnotation(annotation_id) {
-  let annotation_icon_html = '';
-  const icon_class =
-    '.fa.fa-solid.fa-comments.ui-draggable.ui-draggable-handle';
-  const annotation_icon_count = $(icon_class).length;
-  $(`#textarea-${annotation_id}`).prop('disabled', true);
-  $(`#icon-${annotation_id}`).draggable('disable');
-
-  for (let i = 0; i < annotation_icon_count; i++) {
-    annotation_icon_html += $(icon_class).get(i).outerHTML;
-  }
-
-  console.log(annotation_icon_html);
-}
-
 // 修改註釋
 async function modifyAnnotation(annotation_id) {
   const isModified = window.confirm('確定修改此註釋?');
@@ -859,7 +810,7 @@ async function deleteAnnotation(annotation_id) {
         const formgroup_arr = $('.form-group')[i - 1].id.split('_');
         formgroup_arr[formgroup_arr.length - 1] = i;
         const new_id = formgroup_arr.join('_');
-        console.log('new_id', new_id);
+        // console.log('new_id', new_id);
         $('.form-group')[i - 1].id = new_id;
         $('.form-group span.bg-dark')[i - 1].innerHTML = i;
       }
@@ -942,7 +893,7 @@ async function saveAnnotation(annotion_user_id, note_id) {
 
       await axios(config)
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           Swal.fire({
             icon: 'success',
             title: '儲存註釋成功',
@@ -953,7 +904,7 @@ async function saveAnnotation(annotion_user_id, note_id) {
           });
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
           Swal.fire({
             icon: 'error',
             title: error.response.data.data,
@@ -975,13 +926,13 @@ async function getAnnotation(note_id) {
 
   await axios(config)
     .then((response) => {
-      console.log('註釋', response);
+      // console.log(response);
+      // console.log('拿取註釋成功');
       current_annotation_element = response.data.data[0];
-      console.log('拿取註釋成功');
     })
     .catch((error) => {
-      console.log(error);
-      console.log('拿取註釋失敗');
+      // console.log(error);
+      // console.log('拿取註釋失敗');
     });
 }
 
@@ -1000,7 +951,7 @@ async function showAnnotation(
   // 註釋icon
   const { annotation_icon_html } = annotation_element;
   const annotation_icon = $.parseHTML(annotation_icon_html);
-  console.log(annotation_icon);
+  // console.log(annotation_icon);
   // console.log('annotation_icon', annotation_icon);
 
   // 顯示註釋textarea
@@ -1021,10 +972,6 @@ async function showAnnotation(
 
     // 組合annotation
     let textarea_modify_icon_html = '';
-
-    // <a class="dropdown-item" href="javascript:lockAnnotation('${annotation_id}')">鎖定</a>
-    // <a class="dropdown-item" href="javascript:modifyAnnotation('${annotation_id}')">修改</a>
-    // console.log('user_permission: ', user_permission);
 
     if (user_permission >= authorizationList.comment) {
       textarea_modify_icon_html = `

@@ -1,25 +1,12 @@
 body
-    // ======= Header =======
     header#header.header.fixed-top.d-flex.align-items-center
       .d-flex.align-items-center.justify-content-between
-        
         a.logo.d-flex.align-items-center(href='/')
           img(src='/assets/img/goodTidy_logo.png', alt='')
           span.d-none.d-lg-block GoodTidy
         
-      // End Logo
-      //- .search-bar
-      //-   form.search-form.d-flex.align-items-center(method='POST', action='#')
-      //-     input(type='text', name='query', placeholder='Search', title='Enter search keyword')
-      //-     button(type='submit', title='Search')
-      //-       i.bi.bi-search
-      // End Search Bar
       nav.header-nav.ms-auto
         ul.d-flex.align-items-center
-          //- sidebar展開鍵
-          //- li.nav-item
-            i.bi.bi-list.toggle-sidebar-btn
-          // End Search Icon
           //- 筆記頁面 Icon
           li.nav-item
             a.nav-link.nav-icon#note-page(href='/note')
@@ -35,12 +22,9 @@ body
             a.nav-link.nav-icon(href='#', data-bs-toggle='dropdown')
               i.bi.bi-bell
               span#msg_count.badge.bg-primary.badge-number 0
-            // End Notification Icon
             ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.notifications.userMsgNotifications(style="min-width: 300px;max-height: 350px;overflow-y: auto;")
               li
                 hr.dropdown-divider
-            // End Notification Dropdown Items
-          // End Notification Nav
           li.nav-item.dropdown.pe-3
             a.nav-link.nav-profile.d-flex.align-items-center.pe-0(href='#', data-bs-toggle='dropdown')
               - if (id)
@@ -52,7 +36,6 @@ body
                   span.d-none.d-md-block.dropdown-toggle.ps-2 登入
               - else
                 img.profile-pic(src="/assets/img/user.png", alt='Profile')
-            // End Profile Iamge Icon
             ul.dropdown-menu.dropdown-menu-end.dropdown-menu-arrow.profile
               if id
                 li.dropdown-header
@@ -85,12 +68,6 @@ body
                   a.dropdown-item.d-flex.align-items-center(href='/signup')
                     i.bi.bi-journal
                     span 註冊
-
-            // End Profile Dropdown Items
-          // End Profile Nav
-      // End Icons Navigation
-    // End Header
-
     script.
       // Socket ------------------------------------------
       let socket = io();
@@ -116,13 +93,11 @@ body
       });
       
       $(document).ready(async function() {
-
           // 拿取User的Profile;
           await profile();
           // 拿取User所有通知
           await getUserMsg();
           await showUserMsg();
-
       });
 
       // 登出鍵 ---------------------------------
@@ -143,7 +118,6 @@ body
               showConfirmButton: false,
               timer: 1000
             }).then(function() {
-                //TODO: 登出時，如果切換使用者，其他使用者可能會沒有current_note_id
                 current_note_id = undefined;
                 localStorage.removeItem('CURRENTNOTEID');
                 window.location.assign('/signin');
