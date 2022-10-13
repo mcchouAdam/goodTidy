@@ -184,15 +184,7 @@ const showSignIn = async (req, res) => {
     if (!req.session.user.picture) {
       req.session.user.picture = 'user.png';
     }
-
-    return res.status(200).render('profile', {
-      page: 'signin',
-      id: req.session.user.id,
-      provider: req.session.user.provider,
-      name: req.session.user.name,
-      email: req.session.user.email,
-      picture: `${S3_HOST}/user_picture/${req.session.user.picture}`,
-    });
+    return res.status(200).redirect('profile');
   }
 
   return res.status(200).render('signin', {
@@ -205,15 +197,7 @@ const showSignUp = async (req, res) => {
     if (!req.session.user.picture) {
       req.session.user.picture = 'user.png';
     }
-
-    return res.status(200).render('profile', {
-      page: 'signup',
-      id: req.session.user.id,
-      provider: req.session.user.provider,
-      name: req.session.user.name,
-      email: req.session.user.email,
-      picture: `${S3_HOST}/user_picture/${req.session.user.picture}`,
-    });
+    return res.status(200).redirect('profile');
   }
 
   return res.status(200).render('signup', {
