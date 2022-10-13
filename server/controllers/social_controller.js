@@ -17,45 +17,19 @@ const {
   deleteUserMessages,
 } = require('../models/user_model');
 
-const {
-  showShareDetail,
-  showSocialCards,
-  showPagination,
-} = require('../../utils/showPage');
+const { showShareDetail, showSocialCards } = require('../../utils/showPage');
 
 // [社群頁面] 顯示所有分享的筆記
 const socialPage = async (req, res) => {
   const user_id = req.session.user.id;
   const paging = +req.query.paging;
   const { sorting, search_text, search_method } = req.query;
-  // const startDate = req.query.startDate;
-  // const endDate = req.query.endDate;
 
   // 呈現右上Profile的資訊
   const { id, provider, name, email } = req.session.user;
   const picture = `${S3_HOST}/user_picture/${req.session.user.picture}`;
 
-  const socialcards_result = await getShareNotes(
-    paging,
-    sorting,
-    search_text,
-    search_method,
-    user_id
-  );
-
-  const { allPages_count, currentPage } = socialcards_result;
-  const paging_html = await showPagination(
-    paging,
-    sorting,
-    allPages_count,
-    currentPage
-  );
-
-  if (
-    currentPage > allPages_count ||
-    currentPage < 0 ||
-    Number.isNaN(currentPage)
-  ) {
+  if (paging <= 0 || Number.isNaN(paging)) {
     const card_html = `
         <div id="noMatchResult" style="padding: 0 0 0 30vw;">
           <i class="bi bi-exclamation-circle" style="font-size:100px;color:#ffc107;margin: 0 0 0 15vw;"></i>
@@ -70,7 +44,38 @@ const socialPage = async (req, res) => {
       picture,
       sorting,
       cards_html: JSON.stringify(card_html),
-      paging_html: JSON.stringify(''),
+      currentPage: paging,
+      allPagesCount: '',
+    });
+  }
+
+  const socialcards_result = await getShareNotes(
+    paging,
+    sorting,
+    search_text,
+    search_method,
+    user_id
+  );
+
+  const { allPages_count, currentPage } = socialcards_result;
+
+  if (currentPage > allPages_count) {
+    const card_html = `
+        <div id="noMatchResult" style="padding: 0 0 0 30vw;">
+          <i class="bi bi-exclamation-circle" style="font-size:100px;color:#ffc107;margin: 0 0 0 15vw;"></i>
+          <h1>無相關搜尋內容，請您重新查詢</h1>
+        </div>`;
+
+    return res.render('socialPage', {
+      id,
+      provider,
+      name,
+      email,
+      picture,
+      sorting,
+      cards_html: JSON.stringify(card_html),
+      currentPage,
+      allPagesCount: allPages_count,
     });
   }
 
@@ -84,7 +89,8 @@ const socialPage = async (req, res) => {
     picture,
     sorting,
     cards_html: JSON.stringify(cards_html),
-    paging_html: JSON.stringify(paging_html),
+    currentPage,
+    allPagesCount: allPages_count,
   });
 };
 
