@@ -1,0 +1,96 @@
+extends layout_noSideBar.pug
+
+block content
+  body
+    main
+      .container
+        section.section.register.min-vh-100.d-flex.flex-column.align-items-center.justify-content-center.py-4
+          .container
+            .row.justify-content-center
+              .col-lg-4.col-md-6.d-flex.flex-column.align-items-center.justify-content-center
+                .card.mb-3
+                  .card-body
+                    h5.card-title.text-center.pb-0.fs-4 註冊頁面
+                    br
+                    form.row.g-3.needs-validation(novalidate='')
+                      .col-12
+                        label.form-label(for='name') 使用者名稱
+                        input#signup_username.form-control(type='text', name='name', required='')
+                        .invalid-feedback 請您輸入使用者名稱
+                      .col-12
+                        label.form-label(for='email') 信箱
+                        input#signup_useremail.form-control(type='email', name='email', required='')
+                        .invalid-feedback 請您輸入Email
+                      .col-12
+                        label.form-label(for='password') 密碼
+                        input#signup_password.form-control(type='password', name='password', required='')
+                        .invalid-feedback 請您輸入密碼
+                      .col-12
+                        label.form-label(for='yourPicture') 大頭貼(非必要)
+                        br
+                        input#user_picture.form-control(type='file', onchange="previewFile('userPic_preview')")
+                        img#userPic_preview(src="", alt="Image preview", style="display: none;")
+                        br
+                      .col-12
+                        button#signup-form-btn.btn.btn-primary.w-100 創立帳號
+                      .col-12
+                        p.small.mb-0
+                          | 已經有帳號了嗎？ 
+                          a(href='/signin') 登入頁面
+    // End #main
+    a.back-to-top.d-flex.align-items-center.justify-content-center(href='#')
+      i.bi.bi-arrow-up-short
+
+      script.
+        // 註冊鍵 -------------------------------------
+        $('#signup-form-btn').click(async (e) => {
+          e.preventDefault();
+
+          // Loading圖示
+          $('#signup-form-btn').prop('disabled', true);
+          $('body').css('cursor', 'progress');
+
+          if (!user_email) {
+            const email = $('#signup_useremail').val();
+            const password = $('#signup_password').val();
+            const username = $('#signup_username').val();
+            const picture = $('#user_picture')[0].files[0];
+
+            if (!picture) {
+              // 沒上傳圖片
+              filename = '';
+            } else {
+              filename = picture.name;
+            }
+
+            const signUp_result = await signUp(
+              picture,
+              username,
+              email,
+              password,
+              filename
+            );
+
+            btnLoadingOn('#signup-form-btn');
+
+            // 註冊失敗
+            if (!signUp_result.isSuccess) {
+              alertError(signUp_result.msg);
+              btnLoadingOff('#signup-form-btn');
+              return;
+            }
+
+            // 註冊成功
+            Swal.fire({
+              icon: 'success',
+              title: signUp_result.msg,
+              showConfirmButton: false,
+              timer: 1000,
+            }).then(() => {
+              btnLoadingOff('#signup-form-btn');
+              window.location.assign('/profile');
+            });
+          }
+        });
+        
+      script(src='/js/social.js')

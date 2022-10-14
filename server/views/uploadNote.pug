@@ -1,0 +1,323 @@
+extends layout_noSideBar.pug
+
+block content
+    .container(style="margin: 100px 60px;")
+        .row
+            .col
+                //- 筆記上傳區塊
+                h1 筆記上傳
+                .OCR-block
+                    form#form-preview(action='', method='post', r='')
+                        .row(style="margin:10px 0;")
+                            .col-sm
+                                input#file-preview.form-control(type='file', name='photo', accept='.jpeg, .jpg, .png', required='', style="margin-left: -10px;")
+                    br
+                    img#img-preview(hidden='')
+                    .OCR-nav(style="margin:35px 0 8px 0px;")
+                        br
+                        //- 圖形擷取
+                        button#rectContour.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='框選您想截圖的區域')
+                            i.bi.bi-bounding-box-circles
+                        
+                        //- 去除圖形
+                        button#removeNotWant.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='遮蔽不執行OCR的區域')
+                            i.bi.bi-x-square-fill
+                        
+                        //- 復原
+                        button#reDraw.btn(style='font-size:25px', data-toggle='tooltip', data-placement='bottom', title='復原此版面')
+                            i.fa.fa-rotate-left
+                        
+                        //- OCR
+                        button#OCR.btn(style="float:right;font-size:25px;")
+                            img(src="/assets/img/ocr.png" style="width:25px;height:25px;", data-toggle='tooltip', data-placement='bottom', title='圖形文字辨識')
+
+
+                    .OCR-preview
+                        canvas#fontOCRCanvas(width="600" height="500")
+            .col
+                .OCR-block
+                    .row
+                        .col-sm
+                            h1 預覽
+                        .note-preview-block
+                            .processed-content-nav
+                                .row.mb-3
+                                    .input-group
+                                        .input-group-prepend
+                                            div#inputGroupPrepend.input-group-text(style="display: flex;width: 104px;float: center;padding-left: 10px;justify-content: center;background-color: #f6f9ff;") 筆記名稱
+                                        input#note-name.form-control(type='text')
+                                .row.mb-3
+                                    .input-group.mb-3
+                                        button.btn.btn-outline-secondary.dropdown-toggle#ownNoteClass-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false', style="border-color:#ced4da;color: black;") 新增分類
+                                        input#note-classification.form-control(type='text')
+                                        ul#classMenu.dropdown-menu.dropdown-menu-end
+                                .row.mb-3
+                                    .col-sm
+                                        button#submit_note.btn(data-toggle='tooltip', data-placement='bottom', title='上傳檔案', style='font-size:25px; margin-top: 10px;')
+                                            i.fa.fa-solid.fa-upload
+                            
+                            #note-preview-content.note-edit-block(style="margin-bottom: -10px;")
+
+                            script.
+
+                                let check_note_name = [];
+                                $(document).ready(async function(){
+                                    
+                                    // 拿取使用者資訊
+                                    await profile();
+                                    // 拿取使用者筆記資訊
+                                    await getUserNotes();
+
+                                    // 渲染筆記分類dropdown選項
+                                    note_classes = Object.keys(note_list_obj);
+                                    
+                                    Object.values(note_list_obj).map( note => {
+                                        check_note_name.push(...note.note_name);
+                                    })
+
+                                    let classed_html = '<li><a class="dropdown-item" href="#"><i class="bi bi-plus-circle"></i>新增分類</a></li><hr class="dropdown-divider"></hr>';
+                                    note_classes.map( c => {
+                                        classed_html += `<li><a class="dropdown-item" href="#">${c}</a></li>`;
+                                    })
+                                    $('#classMenu').append(classed_html);
+
+                                    // 選擇筆記分類dropdown選項
+                                    $('#classMenu li a').on('click', function(e){ 
+                                        
+                                        if(e.target.text == '新增分類'){
+                                            $('#ownNoteClass-btn').text('新增分類');
+                                            $('#note-classification').val('');
+                                            $('#note-classification').prop('disabled', false);
+                                        }
+                                        else{
+                                            $('#ownNoteClass-btn').text('筆記分類');
+                                            $('#note-classification').val(e.target.text);
+                                            $('#note-classification').prop('disabled', true);
+                                        }
+                                    })
+                                })
+
+
+                                // 檢查是否有附檔
+                                async function checkFileUpload(){
+                                    const isfile_upload = $('#file-preview').get(0).files.length;
+                                    if (isfile_upload === 0) {
+                                        alertError('請先選擇檔案');
+                                        return false;
+                                    }
+                                    else{
+                                        return true;
+                                    }
+                                } 
+
+                                // 方形圈選 ---------------------------------------
+                                $('#rectContour').click(async (e) => {
+                                    if(!checkFileUpload()) return;
+                                    
+                                    $('#fontOCRCanvas').css('cursor', 'crosshair');
+                                    initRectContourListener(canvas);
+                                    removeRectRemoveListener(canvas);
+                                });
+
+                                // 去除非文字鍵 ------------------------------------
+                                $('#removeNotWant').click(async () => {
+                                    if(!checkFileUpload()) return;
+
+                                    removeRectContourRemoveListener(canvas);
+                                    initRectListener(canvas);
+                                });
+
+                                // 復原鍵 ------------------------------------
+                                $('#reDraw').click(async () => {
+                                    clearContext(canvas, context);
+                                    canvasBackground();
+                                    removeRectRemoveListener(canvas);
+                                    initRectListener(canvas);
+                                });
+
+
+                                // 文字辨識鍵 --------------------------------------
+                                $('#OCR').click(async () => {
+                                    if(!checkFileUpload()) return;
+                                    
+                                    btnLoadingOn('#OCR');
+
+                                    // 擷取OCR圖形
+                                    let image = canvas.toDataURL('image/jpeg', 1);
+                                    const base64Response = await fetch(image);
+                                    const blob = await base64Response.blob();
+
+                                    // OCR API
+                                    let file_name = `OCR_${Date.now()}.jpg`;
+                                    let data = new FormData();
+                                    data.append('OCR_upload', blob, file_name);
+
+                                    let config = {
+                                        method: 'POST',
+                                        url: 'api/1.0/OCR',
+                                        data: data,
+                                    };
+
+                                    await axios(config)
+                                        .then(function (response) {
+
+                                            // Canvas重畫
+                                            clearContext(canvas, context);
+                                            canvasBackground();
+                                            removeRectRemoveListener(canvas);
+
+                                            // 新增draggable textare
+                                            const OCR_result = response.data;
+                                            const text = OCR_result[0].description;
+                                            const textTop = '10px';
+                                            const textLeft = '10px';
+                                            const textWidth = 200;
+                                            const textHeight = 200;
+                                            const $append_div = $('#note-preview-content');
+
+                                            addDragTextarea($append_div, text, textWidth, textHeight, textTop, textLeft, 'draggable');                                           
+                                            alertSuccess('OCR成功');
+                                            btnLoadingOff('#OCR');
+                                        })
+                                        .catch(function (error) {
+                                            //- console.log("error", error);
+                                            alertError(error.response.data.data);
+                                            btnLoadingOff('#OCR');
+                                    });
+                                });
+
+                                // 刪除按鈕
+                                //- $('#deleteElement').click(function (){
+                                //-     Swal.fire({
+                                //-         title: '你確定要刪除選取的物件?',
+                                //-         icon: 'warning',
+                                //-         showCancelButton: true,
+                                //-         confirmButtonColor: '#3085d6',
+                                //-         cancelButtonColor: '#d33',
+                                //-         confirmButtonText: '刪除',
+                                //-         cancelButtonText: '取消'
+                                //-     }).then((result) => {
+                                //-         if (result.isConfirmed) {
+                                //-             $('#note-preview-content').find('.highlight').remove();
+                                //-         }
+                                //-     })
+                                //- });
+
+                                // 上傳檔案鍵 ----------------------------
+                                $('#submit_note').click(async () => {
+                                    btnLoadingOn('#submit_note')
+
+                                    // 賦值
+                                    note_name = $('#note-name').val();
+                                    note_classification = $('#note-classification').val();
+
+                                    if(note_name == '' || note_classification == '' ){
+                                        alertError('筆記名稱或筆記分類不能為空白');
+                                        btnLoadingOff('#submit_note');
+                                        return;
+                                    }
+
+                                    if(check_note_name.indexOf(note_name) != -1){
+                                        alertError('您的筆記名稱有重複');
+                                        btnLoadingOff('#submit_note');
+                                        return;
+                                    }
+
+                                    if(note_name.length > 16){
+                                        alertError('您的筆記名稱字數超過16');
+                                        btnLoadingOff('#submit_note');
+                                        return;
+                                    }
+
+                                    // blob url 轉成檔案
+                                    let blob = await fetch(previewBlah.src).then((r) => r.blob());
+                                    let filetype = $('input[type=file]').val().split('.').pop();
+                                    let timestamp = Date.now();
+                                    let filename = `${user_id}_${timestamp}.${filetype}`;
+
+                                    let removeSrc_element = await getImgElement('uploadNote');
+                                    let OCR_elements = await getTextElement();
+                                    let keywords = await generateKeywords();
+
+                                    await noteUpload(
+                                        blob,
+                                        filename,
+                                        user_id,
+                                        note_name,
+                                        timestamp,
+                                        removeSrc_element,
+                                        note_classification,
+                                        new Date(),
+                                        keywords,
+                                        OCR_elements
+                                    );
+                                });
+
+                                // 監聽圖形刪除事件
+                                //- $(document).on('dblclick', '.contour-pic', function(e){
+                                //-     // 一次只能選一個
+                                //-     let click_element = $('#' + e.currentTarget.id);
+                                //-     if (click_element.hasClass('highlight')) {
+                                //-     $('.contour-pic').removeClass('highlight');
+                                //-     $('.div_addtextarea').removeClass('highlight');
+                                //-     } else {
+                                //-     $('.contour-pic').removeClass('highlight');
+                                //-     $('.div_addtextarea').removeClass('highlight');
+                                //-     click_element.addClass('highlight');
+                                //-     }
+                                //- });
+
+                                //- // 監聽文字框刪除事件
+                                //- $(document).on('dblclick', '.addtextarea', function(e){
+                                //-     let click_element = e.currentTarget.parentNode;
+                                //-     let click_id = e.target.id;
+
+                                //-     // 取消框選
+                                //-     if (click_element.classList.contains('highlight')) {
+                                //-     // 一次只能選一個
+                                //-     $('.contour-pic').removeClass('highlight');
+                                //-     $('.div_addtextarea').removeClass('highlight');
+                                //-     if (OCR_delete_ids.indexOf(click_id) !== -1) {
+                                //-         OCR_delete_ids.splice(click_id, 1);
+                                //-     }
+                                //-     // 框選
+                                //-     } else {
+                                //-     // 一次只能選一個
+                                //-     $('.contour-pic').removeClass('highlight');
+                                //-     $('.div_addtextarea').removeClass('highlight');
+                                //-     click_element.classList.add('highlight');
+                                //-     OCR_delete_ids.push(click_id);
+                                //-     }
+                                //- });
+                                //- await displayElementClose();
+
+                                // 監聽事件: textarea刪除鈕
+                                $(document).on('focus', '.div_addtextarea', function () {
+                                    $('.textareaClose').css('display', 'block');
+                                });
+
+                                $(document).on('click', function (e) {
+                                    if (!$(e.target).is('.div_addtextarea')) {
+                                        $('.textareaClose').css('display', 'none');
+                                    }
+                                });
+
+                                // 監聽事件: 圖形刪除鈕
+                                $(document).on('mouseover', '.contour-pic', function(e){
+                                    $('.imgClose').css('display','block');
+                                });
+
+                                $(document).on('mouseout', function(e){
+                                    $('.imgClose').css('display','none');
+                                });
+
+                            script(src='/js/note.js')
+                            script(src='/js/draggable.js')
+                            script(src='/js/restore.js')
+                            script(src='/js/preview.js')
+                            script(src='/js/canvas.js')
+
+               
+
+                    
+                                     

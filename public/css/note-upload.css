@@ -1,0 +1,143 @@
+.main-block {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: space-between; */
+  /* margin: auto; */
+  width: 1200px;
+  height: 800px;
+  max-width: 1200px;
+}
+
+.OCR-block,
+.update-note-block,
+.note-preview-block {
+  flex-basis: 50%;
+  width: 600px;
+  height: 670px;
+}
+
+.note-sidebar {
+  flex-basis: 10%;
+  /* width: 200px; */
+  height: 670px;
+  /* border: 1px solid; */
+}
+
+#note-preview-content {
+  border: 1px solid;
+  width: 600px;
+  height: 504px;
+}
+
+
+.update-note-content {
+  border: 1px solid;
+  width: 600px;
+  height: 500px;
+}
+
+.OCR_fonts {
+  width: 50px;
+  height: 50px;
+}
+
+.add_fonts {
+  width: 100px;
+  height: 100px;
+}
+
+.highlight {
+  background: #00ff00;
+  padding: 1px;
+  border: #00cc00 dotted 1px;
+}
+
+/* 版本復原的選單 */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  width: 200px;
+  height: 400px;
+  font-size: 13px;
+  min-width: 160px;
+  box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  margin: 0px 0 0 0; /* Make the dropdown-content more under the nav menu.*/
+}
+
+/* Links inside the dropdown */
+/* .dropdown-content a {
+  float: none;
+  color: rgb(0, 0, 0);
+  padding: 0.8em 1.6em;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+} */
+
+/* Add a grey background color to dropdown links on hover */
+/* .dropdown-content a:hover {
+  color: #555;
+} */
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.version-img {
+  width: 150px;
+  height: 100px;
+  background-image: url('https://goodtidy.s3.amazonaws.com/123_1662255937942.png');
+}
+
+.add_fonts {
+  top: 0px;
+  left: 0px;
+}
+
+.note-sidebar {
+  /* border: 1px solid; */
+  width: 150px;
+  height: 655px;
+}
+
+.header {
+  height: 25px;
+}
+
+/* .user_page_nav {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 400px;
+  float: right;
+} */
+
+.logo {
+  width: 50px;
+  height: 50px;
+  background-image: url('../icon/goodTidy_icon.png');
+}
+
+/* 新增修改字串 */
+.addtextarea {
+  height: 100%;
+  width: 100%;
+  resize: none;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.addtextarea:focus {
+  -moz-box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border: 1px solid #00c853 !important;
+  outline-width: 0 !important;
+}
+
+/* div {
+  padding: 0px;
+} */

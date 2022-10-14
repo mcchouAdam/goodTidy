@@ -1,0 +1,194 @@
+extends layout_noSideBar.pug
+
+block content
+    body
+        main
+            .container(style='margin: 75px 0 0 0')
+                .row.justify-center
+                    .col-8(style="margin: 0 auto;")
+                        header
+                        .input-group.mb-3
+                            button.btn.btn-outline-secondary.dropdown-toggle#socialPageSearch-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false') 搜尋
+                            ul#socialPageSearchMenu.dropdown-menu.dropdown-menu-end
+                                li
+                                    a.dropdown-item 作者
+                                li
+                                    a.dropdown-item 時間
+                                li
+                                    a.dropdown-item 標題
+                                li
+                                    a.dropdown-item 簡介
+                                li
+                                    a.dropdown-item 內容
+                                li
+                                    a.dropdown-item 標籤
+                                li
+                                    a.dropdown-item 收藏
+                            input#socialPageSearch-input.form-control(type='text', placeholder='欲搜尋的內容...', aria-label='欲搜尋的內容...', aria-describedby='basic-addon2', onKeyDown="if(event.keyCode==13) javascript:socialSearch();")
+                            button#socialSearchBar.btn
+                                i.fa.fa-search
+                            button.btn#sorting-btn(type='button', data-bs-toggle='dropdown', aria-expanded='false')
+                                i.bi.bi-filter
+                            ul#sortingMenu.dropdown-menu.dropdown-menu-end
+                                li
+                                    a#comments_sorting-btn.dropdown-item 留言數(多→少)
+                                li
+                                    a#heart_sorting-btn.dropdown-item 收藏數(多→少)
+                                li
+                                    a#time_sorting-btn.dropdown-item 分享時間(新→舊)
+                            //- button#sorting-btn.btn
+                            //-     i.bi.bi-filter
+                            input#daterange(type="text", name="daterange", value="", hidden)
+                        span#search_result
+
+            //- 分享筆記卡片
+            #sharing-cards
+            br
+            //- 分頁
+            #paging-block
+                ul.pagination.justify-content-center
+                    //- 只有一頁
+                    - if (currentPage === 1 && allPagesCount === 1)
+                        li.page-item
+                        input#setPage(style="width:36px;height:36px;border:white;text-align:center;", value=currentPage, onkeydown="if(event.keyCode==13) actionPage('inputPage')")
+                        li.page-item.disabled(style="border:white;")
+                            - let allPage = allPagesCount
+                            a.page-link(href="#", tabindex="-1", style="border: white;")='/ ' + allPage
+
+                    //- 第一頁且有很多頁
+                    - if (currentPage === 1 && allPagesCount !== 1)
+                        li.page-item
+                        input#setPage(style="width:36px;height:36px;border:white;text-align:center;", value=currentPage, onkeydown="if(event.keyCode==13) actionPage('inputPage')")
+                        li.page-item.disabled(style="border:white;")
+                            - let allPage = allPagesCount
+                            a.page-link(href="#", tabindex="-1", style="border: white;")='/ ' + allPage
+                        li.page-item
+                        a.page-link(href="javascript:actionPage('nextPage')",aria-label="Next")
+                            span(aria-hidden='true') &raquo;
+                            span.sr-only Next
+
+                    //- 最後一頁且還有很多頁
+                    - if (currentPage === allPagesCount && allPagesCount !== 1)
+                        li.page-item
+                        a.page-link(href="javascript:actionPage('prevPage')", aria-label="Previous")
+                            span(aria-hidden='true') &laquo;
+                            span.sr-only Previous
+                        li.page-item
+                        input#setPage(style="width:36px;height:36px;border:white;text-align:center;", value=currentPage, onkeydown="if(event.keyCode==13) actionPage('inputPage')")
+                        li.page-item.disabled(style="border:white;")
+                            - let allPage = allPagesCount
+                            a.page-link(href="#", tabindex="-1", style="border:white;")='/ ' + allPage
+
+            //- 留言
+            script.
+
+                // 預先選擇內容
+                $(document).ready(async function() {  
+                    // 使用者目前在在哪個頁面
+                    $('#social-page').css('border-bottom', '2px solid')
+                    
+                    // 搜尋Bar預選內容
+                    $(".dropdown-menu li a")[4].click();
+
+                    // 拿取User的Profile;
+                    await profile();
+
+                    // href
+                    const protocol = document.location.protocol;
+                    const server = document.location.host;
+                    let queryParams = new URLSearchParams(window.location.search);
+                    let search_text = queryParams.get('search_text');
+                    let search_method = queryParams.get('search_method');
+                    if(search_text && search_method){
+                        let search_string = `搜尋${search_method} : ${search_text}`;
+                        $('#search_result').text(search_string).show();
+                    }
+                });
+
+                // [套件] 選擇時間區間
+                $(function () {
+                    $('input[name="daterange"]').daterangepicker(
+                    {
+                        opens: 'left',
+                    },
+                    function (start, end, label) {
+                        //- console.log(
+                        //- 'A new date selection was made: ' +
+                        //-     start.format('YYYY-MM-DD') +
+                        //-     ' to ' +
+                        //-     end.format('YYYY-MM-DD')
+                        //- );
+                    }
+                    );
+                });
+
+                cards_html = !{cards_html};
+                sorting = !{JSON.stringify(sorting)};
+
+                const elements_html = $.parseHTML(cards_html);
+                $('#sharing-cards').append(elements_html);
+
+                // 輸入框的頁碼
+                function getCurrentPage(){ 
+                    const queryParams = new URLSearchParams(window.location.search);
+                    const currentPage = queryParams.get('paging');
+                    $('#setPage').val(currentPage);
+                }
+
+                // [func] 分頁跳轉/前後頁
+                function actionPage(type){
+                    const queryParams = new URLSearchParams(window.location.search);
+                    let currentPage = queryParams.get('paging');
+                    const protocol = document.location.protocol;
+                    const server = document.location.host;
+                    if(type === 'inputPage'){
+                        currentPage = $('#setPage').val();
+                        queryParams.set('paging', +currentPage);
+                    }
+                    if(type === 'nextPage'){
+                        queryParams.set('paging', +currentPage + 1);
+                    }
+                    else if( type === 'prevPage'){
+                        queryParams.set('paging', +currentPage - 1);
+                    }
+                    const URL = queryParams.toString();
+                    window.location.assign(`${protocol}//${server}/socialPage?${URL}`);
+                }
+
+                // [UI] 點選搜尋畫面
+                $('.dropdown-item').css("cursor", "pointer")
+
+                // 日曆點選去點dateRanger
+               $('#searchCalendar').click(function(){$('#daterange').click()});
+
+                // 按讚推播 Socket -----
+                $('.btn-heart').click(function(){
+                    const save_note_id = $(this).get(0).id;
+                    const heart_color = $(this).children().get(0).style.color;
+                    let heart_count = +$(this).children().get(1).innerHTML;
+                    if(heart_color == 'grey'){
+                        $(this).children("i").css("color", "red");
+                        heart_count++;
+                        // 按讚socket
+                        socket.emit('save_note', {
+                            "save_note_id": save_note_id,
+                            "heart_count": heart_count,
+                            "user_name": user_name,
+                            "user_email": user_email,
+                            "note_savedStatus": JSON.stringify(note_savedStatus)
+                        });
+                    }else{  
+                        $(this).children("i").css("color", "grey");
+                        heart_count--;
+                    }
+
+                    // 改愛心數
+                    $(this).children("span").text(`${heart_count}`)
+                });
+
+        script(src='/js/note.js')
+        script(src='/js/draggable.js')
+        script(src='/js/social.js')
+        script(src='/js/search.js')
+        script(src='/js/autoSave.js')
+        script(src='/js/annotationBar.js')

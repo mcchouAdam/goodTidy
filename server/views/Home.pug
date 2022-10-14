@@ -1,0 +1,72 @@
+extends layout_noSideBar.pug
+
+
+block content
+    link(rel='stylesheet', href='/assets/css/homepage.css')
+    main#main.main
+    
+    body(style="background:white;margin:0 0 0 100px;")
+        .container
+            .row
+                .col
+                    img(src="/assets/img/GoodTidy_HomePage.gif", style="margin: 0 -60px 0 0;")
+                .col(style="margin: 0 100px 0 0;")
+                    svg(width='600', height='200')
+                        filter#money
+                            femorphology(in='SourceGraphic', operator='dilate', radius='2', result='expand')
+                            feoffset(in='expand', dx='1', dy='1', result='shadow_1')
+                            feoffset(in='expand', dx='2', dy='2', result='shadow_2')
+                            feoffset(in='expand', dx='3', dy='3', result='shadow_3')
+                            feoffset(in='expand', dx='4', dy='4', result='shadow_4')
+                            feoffset(in='expand', dx='5', dy='5', result='shadow_5')
+                            feoffset(in='expand', dx='6', dy='6', result='shadow_6')
+                            feoffset(in='expand', dx='7', dy='7', result='shadow_7')
+                            femerge(result='shadow')
+                                femergenode(in='expand')
+                                femergenode(in='shadow_1')
+                                femergenode(in='shadow_2')
+                                femergenode(in='shadow_3')
+                                femergenode(in='shadow_4')
+                                femergenode(in='shadow_5')
+                                femergenode(in='shadow_6')
+                                femergenode(in='shadow_7')
+                            feflood(flood-color='#ebe7e0')
+                            fecomposite(in2='shadow', operator='in', result='shadow')
+                            femorphology(in='shadow', operator='dilate', radius='1', result='border')
+                            feflood(flood-color='#35322a', result='border_color')
+                            fecomposite(in2='border', operator='in', result='border')
+                            feoffset(in='border', dx='1', dy='1', result='secondShadow_1')
+                            feoffset(in='border', dx='2', dy='2', result='secondShadow_2')
+                            feoffset(in='border', dx='3', dy='3', result='secondShadow_3')
+                            feoffset(in='border', dx='4', dy='4', result='secondShadow_4')
+                            feoffset(in='border', dx='5', dy='5', result='secondShadow_5')
+                            feoffset(in='border', dx='6', dy='6', result='secondShadow_6')
+                            feoffset(in='border', dx='7', dy='7', result='secondShadow_7')
+                            feoffset(in='border', dx='8', dy='8', result='secondShadow_8')
+                            feoffset(in='border', dx='9', dy='9', result='secondShadow_9')
+                            feoffset(in='border', dx='10', dy='10', result='secondShadow_10')
+                            feoffset(in='border', dx='11', dy='11', result='secondShadow_11')
+                            femerge(result='secondShadow')
+                                femergenode(in='border')
+                                femergenode(in='secondShadow_1')
+                                femergenode(in='secondShadow_2')
+                                femergenode(in='secondShadow_3')
+                                femergenode(in='secondShadow_4')
+                                femergenode(in='secondShadow_5')
+                                femergenode(in='secondShadow_6')
+                                femergenode(in='secondShadow_7')
+                                femergenode(in='secondShadow_8')
+                                femergenode(in='secondShadow_9')
+                                femergenode(in='secondShadow_10')
+                                femergenode(in='secondShadow_11')
+                            feimage(x='0', y='0', width='600', height='200', xlink:href='https://s3-us-west-2.amazonaws.com/s.cdpn.io/78779/stripes.svg')
+                            fecomposite(in2='secondShadow', operator='in', result='secondShadow')
+                            femerge
+                                femergenode(in='secondShadow')
+                                femergenode(in='border')
+                                femergenode(in='shadow')
+                                femergenode(in='SourceGraphic')
+                        text(dominant-baseline='middle', text-anchor='middle', x='50%', y='50%')
+                            | GoodTidy
+                    p(style="font-family: Impact; font-size:24px; margin: 0 0 0 30px") Note down, OCR & enjoy taking notes & share your ideas with the world.
+                            
