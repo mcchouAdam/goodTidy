@@ -19,9 +19,9 @@
 2. [Features](#features)
 3. [User flow](#user-flow)
 4. [Techniques](#techniques)
-   - [Brief Architecture](#brief-acheticture)
+   - [Brief Architecture](#brief-architecture)
    - [Draggable and Editable note element](#draggable-and-editable-note-element)
-   - [Note Version Control & Autosave](#note-version-control-&-autosave)
+   - [Note Version Control & Autosave](#note-version-control--autosave)
 5. [Demo](#demo)
    - [OCR from Note Images & Create the Note Classification](#ocr-from-note-images-and-create-the-note-classification)
    - [Draggable and Editable note element](#draggable-and-editable-note-element)
@@ -83,31 +83,38 @@
     <img width="725" alt="Note Version Control Autosave" src="https://user-images.githubusercontent.com/3848886/195919280-eb28804f-2bfb-403e-adc8-f5a6e8d092e1.png">
 </div>
 
+### 🗒️ Authorization of comments/annotations 
+
 --------------
 
 ## Demo
-### 🗒️ OCR from note images and Create the note Classification
+### 🗒️ Upload the note and OCR from note images
+* You can take a screenshot in your uploaded image.
+* You can cover the portions of the note image that you don't want to OCR.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964881-d943636f-1891-4af0-861b-f4da0b4b17c4.gif" alt="Demo OCR" width="600"/>
 </div>
 
 ### 🗒️ Draggable and Editable note element
-* Note: After dragging the element, the textarea will become editable if you wish to change it.
+* Note: The textarea will become editable and show the green frame after dragging it.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195965080-014a24a2-aaf0-4451-91d5-fd2ba7dad051.gif" alt="Demo Draggable and Editable note element" width="600"/>
 </div>
 
 ### 🗒️ Note Version Control
+* You can save & load the note version.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964110-d2c40ea8-8f84-4a1f-835c-5c2c85a0c6b3.gif" alt="Demo Note Version Control" width="600"/>
 </div>
 
 ### 🗒️ Note Autosave
+* The system will keep in lastest editing state if you abruptly exit the editing page without saving the note version.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964381-893e1d05-19c1-4299-a42d-9d62579760cc.gif" alt="Demo Autosave" width="600"/>
 </div>
 
 ### 🗒️ Search the keyword in notes
+* Find all of your uploaded notes by keywords.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963591-9f405a28-0254-43db-bba2-6a168005574f.gif" alt="Demo Search keyword" width="600"/>
 </div>
@@ -117,12 +124,16 @@
     <img src="https://user-images.githubusercontent.com/3848886/195963813-526f43f1-1733-40ef-9a3f-9fa567e55b38.gif" alt="Demo ShareToAll" width="600"/>
 </div>
 
-### 🗒️ Discuss the note with your friends by annotation and System Pushing Real-Time Notification
+### 🗒️ Discuss the note with your friends by annotation
+* Note: You can link to the annotation page your friend shared through system pushing Real-Time Notification.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963390-c80a7b33-f9a9-4b9e-b0c0-4f59af4e058c.gif" alt="Demo Annotation" width="600"/>
 </div>
 
 ### 🗒️ Social Comments, Save Notes and Search notes
+* You can leave comments in other's notes.
+* You can save notes you like.
+* You can find the notes from many topics by filter.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195908678-66dfca4c-be0b-43b9-aed7-81054679909d.gif" alt="Demo Social function" width="600"/>
 </div>
