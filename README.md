@@ -20,17 +20,17 @@
 3. [User flow](#user-flow)
 4. [Techniques](#techniques)
    - [Brief Architecture](#brief-architecture)
-   - [Draggable and Editable note element](#draggable-and-editable-note-element)
-   - [Note Version Control & Autosave](#note-version-control--autosave)
+   - [Draggable and Editable note element](#Draggable-and-editable-note-element)
+   - [Note Version Control and Autosave](#note-version-control-and-autosave)
 5. [Demo](#demo)
-   - [OCR from Note Images & Create the Note Classification](#ocr-from-note-images-and-create-the-note-classification)
+   - [Upload the note and OCR from note images](#upload-the-note-and-ocr-from-note-images)
    - [Draggable and Editable note element](#draggable-and-editable-note-element)
-   - [Note Version Control & Autosave](#-note-version-control)
+   - [Note Version Control](#note-version-control)
    - [Note Autosave](#note-autosave)
    - [Search the keyword in notes](#search-the-keyword-in-notes)
    - [Share your notes to social community](#Share-your-notes-to-social-community)
-   - [Discuss the note with your friends by annotation and System Pushing Real-Time Notification](#discuss-the-note-with-your-friends-by-annotation-and-system)
-   - [Social Comments & Save Notes & Search notes](#social-comments,-save-notes-and-search-notes)
+   - [Discuss the note with your friends by annotation](#discuss-the-note-with-your-friends-by-annotation)
+   - [Social Comments, Save Notes and Search notes](#social-comments,-save-notes-and-search-notes)
 6. [Contact](#contact)
 
 ## External Links and Test Account
@@ -82,8 +82,6 @@
 <div align="center">
     <img width="725" alt="Note Version Control Autosave" src="https://user-images.githubusercontent.com/3848886/195919280-eb28804f-2bfb-403e-adc8-f5a6e8d092e1.png">
 </div>
-
-### 🗒️ Authorization of comments/annotations 
 
 --------------
 
