@@ -87,13 +87,25 @@
 * Note: After dragging the element, the textarea will become editable if you wish to change it.
 
 ### 🗒️ Note Version Control & Autosave
+
 ### 🗒️ Search the keyword in notes
-### 🗒️ Share your notes to friends and social community & System Pushing Real-Time Notification
-### 🗒️ Discuss the note with your friends by annotation 
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/3848886/195963591-9f405a28-0254-43db-bba2-6a168005574f.gif" alt="search_notes" width="600"/>
+</p>
+
+### 🗒️ Share your notes to social community
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/3848886/195963813-526f43f1-1733-40ef-9a3f-9fa567e55b38.gif" alt="annotation" width="600"/>
+</p>
+
+### 🗒️ Discuss the note with your friends by annotation & System Pushing Real-Time Notification
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/3848886/195963390-c80a7b33-f9a9-4b9e-b0c0-4f59af4e058c.gif" alt="annotation" width="600"/>
+</p>
 
 ### 🗒️ Social Comments & Save Notes & Search notes
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/3848886/195908678-66dfca4c-be0b-43b9-aed7-81054679909d.gif" alt="drawing" width="600"/>
+    <img src="https://user-images.githubusercontent.com/3848886/195908678-66dfca4c-be0b-43b9-aed7-81054679909d.gif" alt="social page" width="600"/>
 </p>
 
 --------------
