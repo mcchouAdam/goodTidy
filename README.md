@@ -1,7 +1,7 @@
 # GoodTidy
-<a href="https://goodtidy.site/">
-    <img src="https://user-images.githubusercontent.com/3848886/195867178-68e9825d-d251-42fb-a182-6da1917a804c.png" alt="GoodTidy logo" align="right" height="60" style="background-color:white"/>
-</a>
+<!--- <a href="https://goodtidy.site/">
+     <img src="https://user-images.githubusercontent.com/3848886/195867178-68e9825d-d251-42fb-a182-6da1917a804c.png" alt="GoodTidy logo" align="right" height="60"  style="background-color:white"/>
+</a> -->
 
 <a href="https://goodtidy.site/">GoodTidy</a> is a handwriting note management and social website. It provides an optical character recognition (OCR), draggable and editable interface to make it easy to organize your notes and share your ideas with the world.
 
