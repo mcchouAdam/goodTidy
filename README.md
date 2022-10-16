@@ -87,20 +87,22 @@
 
 ## Demo
 ### 🗒️ Upload the note and OCR from note images
-* You can take a screenshot in your uploaded image.
-* You can cover the portions of the note image that you don't want to OCR.
+* Take a screenshot in your uploaded image.
+* Cover the portions of the note image that you don't want to OCR.
+* Combine the extracted text by OCR and screenshot image to upload your note.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964881-d943636f-1891-4af0-861b-f4da0b4b17c4.gif" alt="Demo OCR" width="600"/>
 </div>
 
 ### 🗒️ Draggable and Editable note element
-* Note: The textarea will become editable and show the green frame after dragging it.
+* Edit your note with draggable images and textarea. 
+     * Note: The textarea will become editable and show the green frame after dragging it.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195965080-014a24a2-aaf0-4451-91d5-fd2ba7dad051.gif" alt="Demo Draggable and Editable note element" width="600"/>
 </div>
 
 ### 🗒️ Note Version Control
-* You can save & load the note version.
+* Save & load the note version.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964110-d2c40ea8-8f84-4a1f-835c-5c2c85a0c6b3.gif" alt="Demo Note Version Control" width="600"/>
 </div>
@@ -118,20 +120,22 @@
 </div>
 
 ### 🗒️ Share your notes to social community
+* Share your notes to social community (you can enable or disable the comment to everyone).
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963813-526f43f1-1733-40ef-9a3f-9fa567e55b38.gif" alt="Demo ShareToAll" width="600"/>
 </div>
 
 ### 🗒️ Discuss the note with your friends by annotation
-* Note: You can link to the annotation page your friend shared through system pushing Real-Time Notification.
+* Use the annotation icon to discuss with your friend in the annotation page.
+* The system will push the real-time Notification when someone share or cancel sharing notes to you.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963390-c80a7b33-f9a9-4b9e-b0c0-4f59af4e058c.gif" alt="Demo Annotation" width="600"/>
 </div>
 
-### 🗒️ Social Comments, Save Notes and Search notes
-* You can leave comments in other's notes.
-* You can save notes you like.
-* You can find the notes from many topics by filter.
+### 🗒️ Social comments, save notes and search notes
+* Leave comments in other's notes.
+* Save notes you like.
+* Find the notes by filter.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195908678-66dfca4c-be0b-43b9-aed7-81054679909d.gif" alt="Demo Social function" width="600"/>
 </div>
