@@ -269,9 +269,14 @@ async function showNoteList(note_obj, div_append) {
     for (let i = 0; i < names.length; i++) {
       note_menu_html = '';
       notes_html += `
-        <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
+        <ul class="nav-content collapse" id="note_${classfi.replace(
+          /\s/g,
+          ''
+        )}" data-bs-parent="#sidebar-nav">
           <li>
-            <a id="noteList_${ids[i]}" href="javascript:noteShow('${ids[i]}', $('#update-note-content'))">
+            <a id="noteList_${ids[i]}" href="javascript:noteShow('${
+        ids[i]
+      }', $('#update-note-content'))">
               <i class="bi bi-circle"></i>
               <span>${names[i]}</span>
               ${note_menu_html}
@@ -283,7 +288,10 @@ async function showNoteList(note_obj, div_append) {
     // 分類的tag html
     classification_html = `
       <li class="nav-item">
-        <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
+        <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi.replace(
+      /\s/g,
+      ''
+    )}" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i>
             <span>${classfi}</span>
           <i class="bi bi-chevron-down ms-auto"></i>
