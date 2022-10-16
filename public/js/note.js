@@ -561,11 +561,11 @@ async function deleteNote(note_id) {
           localStorage.removeItem('CURRENTNOTEID');
         })
         .catch((error) => {
-          // console.log(error);
+          console.log(error);
           Swal.fire({
             icon: 'error',
-            title: '刪除筆記失敗',
-            // title: error.response.data.error,
+            // title: '刪除筆記失敗',
+            title: error.response.data.error,
             showConfirmButton: false,
             timer: 1000,
           });
@@ -607,7 +607,7 @@ async function moveNote(note_id) {
       };
 
       const config = {
-        method: 'PATCH',
+        method: 'POST',
         url: '/api/1.0/noteClass',
         data,
       };

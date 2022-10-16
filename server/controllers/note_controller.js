@@ -72,6 +72,7 @@ const deleteNote = async (req, res) => {
 // 搬移筆記
 const moveNote = async (req, res) => {
   const { note_id, MoveToClass } = req.body;
+  console.log('movenote:', note_id);
   await Notes.moveNote(note_id, MoveToClass);
   return res.status(200).json('move note_classification successfully.');
 };

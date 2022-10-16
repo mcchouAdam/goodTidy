@@ -57,7 +57,7 @@ router
   .route(`/api/${API_VERSION}/noteClass`)
   .patch(authentication(), wrapAsync(renameNoteClass))
   .delete(authentication(), wrapAsync(deleteNoteClass))
-  .patch(authentication(), wrapAsync(moveNote));
+  .post(authentication(), wrapAsync(moveNote));
 
 // [筆記頁面]
 // 編輯筆記頁面
