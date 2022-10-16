@@ -384,7 +384,7 @@ async function shareToAlluser(data) {
       // console.log(error);
       Swal.fire({
         icon: 'error',
-        title: error.response.data.error,
+        title: '上傳圖檔失敗',
         showConfirmButton: false,
         timer: 1000,
       });

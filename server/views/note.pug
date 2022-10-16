@@ -151,7 +151,7 @@ block content
                                 button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close', position="right")
                               .modal-body#modal-sharedNote-main
                               .modal-footer
-                                button#sharedNote-change.btn.btn-primary(type='button', style="margin-right: -10px;") 點選查看筆記
+                                button#sharedNote-change.btn.btn-primary(type='button') 點選查看筆記
                                 
                         //- 自動儲存/筆記修改選單
                         button.btn(href='#', data-bs-toggle='dropdown' style="float: right;")
@@ -377,7 +377,6 @@ block content
           }).then(async (result) => {
               if (result.isConfirmed) {
                 await deleteShareAll();
-                await getShareAll(current_note_id);
                 await showShareToAll();
               }
           })
