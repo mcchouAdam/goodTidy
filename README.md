@@ -38,6 +38,7 @@
 ### Links
 - [Google Cloud Vision API](https://cloud.google.com/vision/docs/ocr)
 - [MongoDB Altas](https://www.mongodb.com/atlas)
+- [Socket.io](https://socket.io/)
 
 ### Test Account
 
