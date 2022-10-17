@@ -5,41 +5,6 @@
 
 <a href="https://goodtidy.site/">GoodTidy</a> is a handwriting note management and social website. It provides an optical character recognition (OCR), draggable and editable interface to make it easy to organize your notes and share your ideas with the world.
 
---------------
-
-### Do you have these problems?
-+ You made a lot of notes on your own, but no idea how to organize them.
-+ You suddenly remembered the keypoint of the teacher teaching, but you are not sure which note it belongs in.
-+ You were curious about how other people write their notes.
-
---------------
-
-### Table of contents
-1. [External Links and Test Account](#external-links-and-test-account)
-2. [Features](#features)
-3. [User flow](#user-flow)
-4. [Techniques](#techniques)
-   - [Brief Architecture](#%EF%B8%8F-brief-architecture)
-   - [Draggable and Editable note element](#%EF%B8%8F-draggable-and-editable-note-element)
-   - [Note Version Control and Autosave](#%EF%B8%8F-note-version-control-and-autosave)
-5. [Demo](#demo)
-   - [Upload the note and OCR from note images](#%EF%B8%8F-upload-the-note-and-ocr-from-note-images)
-   - [Edit your notes](#%EF%B8%8F-edit-your-notes)
-   - [Note Version Control](#%EF%B8%8F-note-version-control)
-   - [Note Autosave](#%EF%B8%8F-note-autosave)
-   - [Search the keyword in notes](#%EF%B8%8F-search-the-keyword-in-notes)
-   - [Share your notes to social community](#%EF%B8%8F-share-your-notes-to-social-community)
-   - [Discuss the note with your friends by annotation](#%EF%B8%8F-discuss-the-note-with-your-friends-by-annotation)
-   - [Social Comments, Save Notes and Search notes](#%EF%B8%8F-social-comments-save-notes-and-search-notes)
-6. [Contact](#contact)
-
-## External Links and Test Account
-
-### Links
-- [Google Cloud Vision API](https://cloud.google.com/vision/docs/ocr)
-- [MongoDB Altas](https://www.mongodb.com/atlas)
-- [Socket.io](https://socket.io/)
-
 ### Test Account
 
 | User      | Email             | password    |
@@ -49,17 +14,45 @@
 
 --------------
 
+### Do you have these problems?
++ Do you make a lot of notes on your own, but have no idea how to organize them?
++ Do you suddenly remember the key point of the teacher's teaching, but you are not sure which note it belongs in?
++ Are you curious about how other people write their notes on the topic you are interested in?
+
+--------------
+
+### Table of contents
+1. [Features](#features)
+2. [User flow](#user-flow)
+3. [Techniques](#techniques)
+   - [Brief Architecture](#%EF%B8%8F-brief-architecture)
+   - [Draggable and Editable note element](#%EF%B8%8F-draggable-and-editable-note-element)
+   - [Note Version Control and Autosave](#%EF%B8%8F-note-version-control-and-autosave)
+4. [Demo](#demo)
+   - [Upload the note and OCR from note images](#%EF%B8%8F-upload-the-note-and-ocr-from-note-images)
+   - [Edit your notes](#%EF%B8%8F-edit-your-notes)
+   - [Note Version Control](#%EF%B8%8F-note-version-control)
+   - [Note Autosave](#%EF%B8%8F-note-autosave)
+   - [Search the keyword in notes](#%EF%B8%8F-search-the-keyword-in-notes)
+   - [Share your notes to social community](#%EF%B8%8F-share-your-notes-to-social-community)
+   - [Discuss the note with your friends by annotation](#%EF%B8%8F-discuss-the-note-with-your-friends-by-annotation)
+   - [Social Comments, Save Notes and Search notes](#%EF%B8%8F-social-comments-save-notes-and-search-notes)
+5. [Refernece](#refernce)
+6. [Contact](#contact)
+
+--------------
+
 ## Features
 
 - Optical Character Recognition (OCR) from note images
 - Draggable and editable note element
-- Note version control & autosave
-- Created the organized note classification
-- Search the keyword in notes
-- Share your notes to your friends and social community
-- Discuss the note with your friends by annotation 
-- Social comments in social community and save the other user's note you liked
-- System pushing real-time notification and displayed shared friend online status
+- Note version control & Autosave
+- Customize your note classification
+- Search the keyword in your notes
+- Share your notes with your friends and social community and displayed your friend's online status
+- Discuss the note with your friends by flexible annotation
+- Leave note comments in the social community and add favorite notes
+- Real-Time Push Notification when someone shares or cancels sharing notes with you
 
 --------------
 
@@ -88,15 +81,15 @@
 
 ## Demo
 ### 🗒️ Upload the note and OCR from note images
-* Take a screenshot in your uploaded image.
+* Extract the text and rectangular snip in your uploaded image.
 * Cover the portions of the note image that you don't want to OCR.
-* Combine the extracted text by OCR and screenshot image to upload your note.
+* Combine the extracted text and snip image to upload your note.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964881-d943636f-1891-4af0-861b-f4da0b4b17c4.gif" alt="Demo OCR" width="600"/>
 </div>
 
 ### 🗒️ Edit your notes
-* Edit your note with draggable images and textarea. 
+* Edit your note with draggable images and textarea.
      * Note: The textarea will become editable and show the green frame after dragging it.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195965080-014a24a2-aaf0-4451-91d5-fd2ba7dad051.gif" alt="Demo Draggable and Editable note element" width="600"/>
@@ -109,41 +102,45 @@
 </div>
 
 ### 🗒️ Note Autosave
-* The system will keep in lastest editing state if you abruptly exit the editing page without saving the note version.
+* The system will keep the note in the latest editing state if you abruptly exit the editing page without saving the note version.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195964381-893e1d05-19c1-4299-a42d-9d62579760cc.gif" alt="Demo Autosave" width="600"/>
 </div>
 
-### 🗒️ Search the keyword in notes
-* Find all of your uploaded notes by keywords.
+### 🗒️ Search the keyword in your notes
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963591-9f405a28-0254-43db-bba2-6a168005574f.gif" alt="Demo Search keyword" width="600"/>
 </div>
 
 ### 🗒️ Share your notes to social community
-* Share your notes to social community (you can enable or disable the comment to everyone).
+* You can enable or disable the comment to everyone.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963813-526f43f1-1733-40ef-9a3f-9fa567e55b38.gif" alt="Demo ShareToAll" width="600"/>
 </div>
 
 ### 🗒️ Discuss the note with your friends by annotation
-* Use the annotation icon to discuss with your friend in the annotation page.
-* The system will push the real-time Notification when someone share or cancel sharing notes to you.
+* Use the flexible annotation icon to discuss with your friend on the annotation page.
+* The system will push a real-time notification when someone shares or cancels sharing notes with you.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195963390-c80a7b33-f9a9-4b9e-b0c0-4f59af4e058c.gif" alt="Demo Annotation" width="600"/>
 </div>
 
 ### 🗒️ Social comments, save notes and search notes
-* Leave comments in other's notes.
-* Save notes you like.
-* Find the notes by filter.
+* Leave comments in social community notes.
+* Add your favorite notes.
+* Filter the notes by searching with the author, shared time, note introduction, note content, tags, and your favorite notes.
 <div align="center">
     <img src="https://user-images.githubusercontent.com/3848886/195908678-66dfca4c-be0b-43b9-aed7-81054679909d.gif" alt="Demo Social function" width="600"/>
 </div>
 
 --------------
+
+## Reference
+- [Google Cloud Vision API](https://cloud.google.com/vision/docs/ocr)
+- [MongoDB Altas](https://www.mongodb.com/atlas)
+- [Socket.io](https://socket.io/)
+
+--------------
+
 ## Contact
 Email: <a href="mcchouadam@gmail.com">mcchouadam@gmail.com</a>
-
-
-
