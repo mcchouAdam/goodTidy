@@ -37,7 +37,7 @@
    - [Share your notes to social community](#%EF%B8%8F-share-your-notes-to-social-community)
    - [Discuss the note with your friends by annotation](#%EF%B8%8F-discuss-the-note-with-your-friends-by-annotation)
    - [Social Comments, Save Notes and Search notes](#%EF%B8%8F-social-comments-save-notes-and-search-notes)
-5. [Refernece](#refernce)
+5. [Refernece](#refernece)
 6. [Contact](#contact)
 
 --------------
@@ -57,7 +57,7 @@
 --------------
 
 ## User flow
-<img width="960" alt="user_flow" src="https://user-images.githubusercontent.com/3848886/195900068-17bb073b-7484-4c5d-8a73-7ad878f4d180.png">
+<img width="960" alt="user_flow" src="https://user-images.githubusercontent.com/3848886/196144639-43d73bba-f7f2-4f72-8492-854be9c04ee9.png">
 
 --------------
 
@@ -69,12 +69,12 @@
 
 ### 🗒️ Draggable and Editable note element
 <div align="center">
-    <img width="725" alt="Draggable and Editable note element" src="https://user-images.githubusercontent.com/3848886/195919264-e66bae67-dcc7-4b4b-9873-15af529804f1.png">
+    <img width="725" alt="Draggable and Editable note element" src="https://user-images.githubusercontent.com/3848886/196147196-c2215442-1e29-41e6-9a09-925f63a4149f.png">
 </div>
 
 ### 🗒️ Note Version Control and Autosave
 <div align="center">
-    <img width="725" alt="Note Version Control Autosave" src="https://user-images.githubusercontent.com/3848886/195919280-eb28804f-2bfb-403e-adc8-f5a6e8d092e1.png">
+    <img width="725" alt="Note Version Control Autosave" src="https://user-images.githubusercontent.com/3848886/196172082-e04a1d6c-275a-41c6-aa61-57d54c6a2f52.png">
 </div>
 
 --------------
