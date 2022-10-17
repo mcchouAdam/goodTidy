@@ -24,7 +24,7 @@
    - [Note Version Control and Autosave](#%EF%B8%8F-note-version-control-and-autosave)
 5. [Demo](#demo)
    - [Upload the note and OCR from note images](#%EF%B8%8F-upload-the-note-and-ocr-from-note-images)
-   - [Draggable and Editable note element](#%EF%B8%8F-draggable-and-editable-note-element)
+   - [Edit your notes](#%EF%B8%8F-edit-your-notes)
    - [Note Version Control](#%EF%B8%8F-note-version-control)
    - [Note Autosave](#%EF%B8%8F-note-autosave)
    - [Search the keyword in notes](#%EF%B8%8F-search-the-keyword-in-notes)
@@ -94,7 +94,7 @@
     <img src="https://user-images.githubusercontent.com/3848886/195964881-d943636f-1891-4af0-861b-f4da0b4b17c4.gif" alt="Demo OCR" width="600"/>
 </div>
 
-### 🗒️ Draggable and Editable note element
+### 🗒️ Edit your notes
 * Edit your note with draggable images and textarea. 
      * Note: The textarea will become editable and show the green frame after dragging it.
 <div align="center">
