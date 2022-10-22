@@ -1,4 +1,3 @@
-// TODO: 拖曳的上一步
 let step = 1; // 步驟變數
 let last_step = step;
 const initialObject = [];
@@ -10,8 +9,6 @@ function stepAppend(restoreObj) {
   // console.log('此物件step: ', step);
   step++;
   last_step = step;
-  // console.log('目前step: ', step);
-  // console.log('最後一步step: ', last_step);
 }
 
 // 上一步 -------------------------------------
@@ -32,23 +29,6 @@ prev.onclick = function () {
   }
 
   switch (obj.event) {
-    // case 'drag':
-    //   if (step - 1 === 0) {
-    //     AutoSave.restore('INITIALSAVE');
-    //   }
-    //   item = stepObject[step - 1].item;
-    //   obj = stepObject[step - 1];
-
-    //   item.style.top = obj.top;
-    //   item.style.left = obj.left;
-    //   break;
-
-    // case 'input':
-    //   // obj = stepObject[step];
-    //   if (!obj) break;
-    //   obj.item.val(obj.val);
-    //   break;
-
     case 'delete':
       const restore_id = obj.item.id;
       // console.log('restore_id', restore_id);

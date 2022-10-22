@@ -1,5 +1,3 @@
-// import { getImgElement, getTextElement } from './note.js';
-
 const AutoSave = (function () {
   let timer = null;
 
@@ -24,7 +22,6 @@ const AutoSave = (function () {
       // 更新時間
       const current = new Date();
       const now_time = current.toLocaleTimeString();
-      // $('#auto-save-time').text(`最新儲存: ${now_time}`);
     }
   }
 

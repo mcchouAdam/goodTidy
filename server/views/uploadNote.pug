@@ -186,23 +186,6 @@ block content
                                     });
                                 });
 
-                                // 刪除按鈕
-                                //- $('#deleteElement').click(function (){
-                                //-     Swal.fire({
-                                //-         title: '你確定要刪除選取的物件?',
-                                //-         icon: 'warning',
-                                //-         showCancelButton: true,
-                                //-         confirmButtonColor: '#3085d6',
-                                //-         cancelButtonColor: '#d33',
-                                //-         confirmButtonText: '刪除',
-                                //-         cancelButtonText: '取消'
-                                //-     }).then((result) => {
-                                //-         if (result.isConfirmed) {
-                                //-             $('#note-preview-content').find('.highlight').remove();
-                                //-         }
-                                //-     })
-                                //- });
-
                                 // 上傳檔案鍵 ----------------------------
                                 $('#submit_note').click(async () => {
                                     btnLoadingOn('#submit_note')
@@ -252,44 +235,6 @@ block content
                                         OCR_elements
                                     );
                                 });
-
-                                // 監聽圖形刪除事件
-                                //- $(document).on('dblclick', '.contour-pic', function(e){
-                                //-     // 一次只能選一個
-                                //-     let click_element = $('#' + e.currentTarget.id);
-                                //-     if (click_element.hasClass('highlight')) {
-                                //-     $('.contour-pic').removeClass('highlight');
-                                //-     $('.div_addtextarea').removeClass('highlight');
-                                //-     } else {
-                                //-     $('.contour-pic').removeClass('highlight');
-                                //-     $('.div_addtextarea').removeClass('highlight');
-                                //-     click_element.addClass('highlight');
-                                //-     }
-                                //- });
-
-                                //- // 監聽文字框刪除事件
-                                //- $(document).on('dblclick', '.addtextarea', function(e){
-                                //-     let click_element = e.currentTarget.parentNode;
-                                //-     let click_id = e.target.id;
-
-                                //-     // 取消框選
-                                //-     if (click_element.classList.contains('highlight')) {
-                                //-     // 一次只能選一個
-                                //-     $('.contour-pic').removeClass('highlight');
-                                //-     $('.div_addtextarea').removeClass('highlight');
-                                //-     if (OCR_delete_ids.indexOf(click_id) !== -1) {
-                                //-         OCR_delete_ids.splice(click_id, 1);
-                                //-     }
-                                //-     // 框選
-                                //-     } else {
-                                //-     // 一次只能選一個
-                                //-     $('.contour-pic').removeClass('highlight');
-                                //-     $('.div_addtextarea').removeClass('highlight');
-                                //-     click_element.classList.add('highlight');
-                                //-     OCR_delete_ids.push(click_id);
-                                //-     }
-                                //- });
-                                //- await displayElementClose();
 
                                 // 監聽事件: textarea刪除鈕
                                 $(document).on('focus', '.div_addtextarea', function () {

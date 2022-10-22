@@ -9,7 +9,7 @@ async function notePreClick() {
     $(`#noteList_${current_note_id}`)[0].click();
     current_note_class = showNote_note_obj[current_note_id].note_classification;
     $(`#noteList_${current_note_id}`).addClass('active');
-    $(`#noteClass_${current_note_class}`)[0].click();
+    $(`a[id='noteClass_${current_note_class}']`)[0].click();
 
     localStorage.removeItem('UPLOADNOTEID');
   } else {
@@ -29,19 +29,15 @@ async function notePreClick() {
         currentNotes[0]
       ) {
         current_note_id = currentNotes[0];
-        console.log('current_note_id', current_note_id);
-        $(`#noteList_${current_note_id}`)[0].click();
+        // console.log('current_note_id', current_note_id);
       }
-
       current_note_class =
         showNote_note_obj[current_note_id].note_classification;
       $(`#noteList_${current_note_id}`).addClass('active');
-      $(`#noteClass_${current_note_class}`)[0].click();
+      $(`#noteList_${current_note_id}`)[0].click();
+      $(`a[id='noteClass_${current_note_class}']`)[0].click();
     }
   }
-
-  // console.log('current_note_id', current_note_id);
-  // console.log('showNote_note_obj', showNote_note_obj);
 
   // 完全沒有筆記
   if (

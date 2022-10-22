@@ -100,14 +100,6 @@ async function noteShow(note_id) {
     );
   });
 
-  // const Img_elements = Img_elements_arr(note_ImgContent);
-  // elements_init($note_div, Img_elements, text_elements);
-  // $('.contour-pic.ui-draggable.ui-draggable-handle')
-  //   .draggable({
-  //     containment: '#update-note-content',
-  //   })
-  //   .css('position', 'absolute');
-
   // 打開自動儲存
   $('#autoSave-toggle').prop('checked', true);
   await AutoSave.start();
@@ -269,9 +261,14 @@ async function showNoteList(note_obj, div_append) {
     for (let i = 0; i < names.length; i++) {
       note_menu_html = '';
       notes_html += `
-        <ul class="nav-content collapse" id="note_${classfi}" data-bs-parent="#sidebar-nav">
+        <ul class="nav-content collapse" id="note_${classfi.replace(
+          /\s/g,
+          ''
+        )}" data-bs-parent="#sidebar-nav">
           <li>
-            <a id="noteList_${ids[i]}" href="javascript:noteShow('${ids[i]}', $('#update-note-content'))">
+            <a id="noteList_${ids[i]}" href="javascript:noteShow('${
+        ids[i]
+      }', $('#update-note-content'))">
               <i class="bi bi-circle"></i>
               <span>${names[i]}</span>
               ${note_menu_html}
@@ -283,7 +280,10 @@ async function showNoteList(note_obj, div_append) {
     // 分類的tag html
     classification_html = `
       <li class="nav-item">
-        <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi}" data-bs-toggle="collapse" href="#">
+        <a id="noteClass_${classfi}" class="nav-link collapsed" data-bs-target="#note_${classfi.replace(
+      /\s/g,
+      ''
+    )}" data-bs-toggle="collapse" href="#">
           <i class="bi bi-menu-button-wide"></i>
             <span>${classfi}</span>
           <i class="bi bi-chevron-down ms-auto"></i>
@@ -362,7 +362,6 @@ async function getSharedNote(sharedNote_obj, div_append) {
     } else {
       user_online_status_html = `<span id="online_${shared_uer_email}" class="badge bg-success rounded-pill">上線</span>`;
     }
-    // let chatRoom_html = `<button class="btn" onclick="javascript:displayChatRoom('${shared_uer_email}', '${user_name}');"><i class="bi bi-chat-dots"></i></button>`;
     shareNote_html += `
             <div>
               <span class="badge bg-dark rounded-pill" style="color:white;">${num++}</span>
@@ -409,10 +408,6 @@ async function getVersionList(version_obj, div_append) {
                 <label class="btn btn-light" for="${v.version_name}">${vName_timeFormat}</label>
                 <br />
               `;
-
-          // <span class="small" style="float:right; margin:8px;">
-          //   ${timeConverter(new Date(v.created_time))}
-          // </span>;
           num++;
         });
         div_append.append(name_html);
@@ -553,11 +548,11 @@ async function deleteNote(note_id) {
           localStorage.removeItem('CURRENTNOTEID');
         })
         .catch((error) => {
-          // console.log(error);
+          console.log(error);
           Swal.fire({
             icon: 'error',
-            title: '刪除筆記失敗',
-            // title: error.response.data.error,
+            // title: '刪除筆記失敗',
+            title: error.response.data.error,
             showConfirmButton: false,
             timer: 1000,
           });
@@ -599,7 +594,7 @@ async function moveNote(note_id) {
       };
 
       const config = {
-        method: 'PATCH',
+        method: 'POST',
         url: '/api/1.0/noteClass',
         data,
       };
@@ -1100,10 +1095,7 @@ async function getTextElement() {
     const OCR_left = e.style.left;
     const OCR_width = e.style.width;
     const OCR_height = e.style.height;
-    // const OCR_text = e.firstChild.nextElementSibling.value;
     const OCR_text = textElement.get(i).value;
-    // .replaceAll('<', '&lt;')
-    // .replaceAll('>', '&gt;');
     obj = {
       'textTop': OCR_top,
       'textLeft': OCR_left,

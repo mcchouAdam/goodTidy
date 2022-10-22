@@ -1,7 +1,6 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { ObjectId } = require('mongodb');
-// TODO: 換argon比較快
 
 const { Mongo } = require('./mongocon');
 

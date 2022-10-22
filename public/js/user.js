@@ -51,6 +51,7 @@ async function signUp(picture, username, email, password, filename) {
       console.log('註冊失敗');
       isSuccess = false;
       msg = error.response.data.error;
+      // console.log(msg);
     });
 
   const result = { isSuccess, msg };
@@ -149,14 +150,18 @@ async function showShareToAll() {
         </span>`);
     });
   } else {
-    // 分享狀態
+    // 關閉狀態
     $('#shareToAll-status').text('關閉中');
     $('#shareToAll-status').removeClass('bg-success');
     $('#shareToAll-status').addClass('bg-secondary');
     $('#share_url').hide();
     $('#copy_shareUrl').hide();
     $('#share_url').val('');
-    $('share_url').prop('disabled', true);
+    $('#share_url').prop('disabled', true);
+    $('#allowComment-toggle').prop('checked', false);
+    $('#share_description').val('');
+    $('#sharePic_preview').hide();
+    $('span.tags').remove();
   }
 }
 

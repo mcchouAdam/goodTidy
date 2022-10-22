@@ -147,13 +147,12 @@ function rectContour_mousemove(e) {
 }
 
 function redraw_rectContour() {
-  // context.clearRect(0, 0, canvas_width, canvas_height);
+
   canvasBackground();
 
   context.beginPath();
   context.rect(x1, y1, x2 - x1, y2 - y1);
   context.stroke();
-
   // console.log(x1, y1, x2 - x1, y2 - y1);
 }
 
@@ -172,9 +171,6 @@ function clearContext(canvas, context) {
 
 // 方形圈選後擷取
 async function shapeSnapShot() {
-  // removeCanvasListener(canvas);
-  // removeRectContourRemoveListener(canvas);
-  // clearContext(canvas, context);
   canvasBackground();
 
   // console.log(rectContour_params);
