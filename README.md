@@ -33,11 +33,11 @@
    - [Edit your notes](#%EF%B8%8F-edit-your-notes)
    - [Note Version Control](#%EF%B8%8F-note-version-control)
    - [Note Autosave](#%EF%B8%8F-note-autosave)
-   - [Search the keyword in notes](#%EF%B8%8F-search-the-keyword-in-notes)
+   - [Search the keyword in your notes](#%EF%B8%8F-search-the-keyword-in-your-notes)
    - [Share your notes to social community](#%EF%B8%8F-share-your-notes-to-social-community)
    - [Discuss the note with your friends by annotation](#%EF%B8%8F-discuss-the-note-with-your-friends-by-annotation)
    - [Social Comments, Save Notes and Search notes](#%EF%B8%8F-social-comments-save-notes-and-search-notes)
-5. [Refernece](#refernece)
+5. [Reference](#reference)
 6. [Contact](#contact)
 
 --------------
@@ -75,6 +75,12 @@
 ### 🗒️ Note Version Control and Autosave
 <div align="center">
     <img width="725" alt="Note Version Control Autosave" src="https://user-images.githubusercontent.com/3848886/196172082-e04a1d6c-275a-41c6-aa61-57d54c6a2f52.png">
+</div>
+
+### 🗒️ Note element coordinate information
+
+<div align="center">
+    <img width="725" alt="Note Version Control Autosave" src="https://user-images.githubusercontent.com/3848886/197326323-24c7a7b2-792e-4fbc-ae17-cad068ce436d.png">
 </div>
 
 --------------
