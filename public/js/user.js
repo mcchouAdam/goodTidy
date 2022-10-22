@@ -51,6 +51,7 @@ async function signUp(picture, username, email, password, filename) {
       console.log('註冊失敗');
       isSuccess = false;
       msg = error.response.data.error;
+      // console.log(msg);
     });
 
   const result = { isSuccess, msg };
