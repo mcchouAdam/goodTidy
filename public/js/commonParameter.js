@@ -1,8 +1,3 @@
-// HOST
-const S3_HOST = 'https://d3it5ttaa2apin.cloudfront.net/';
-const server = 'http://localhost:3001';
-const API_VERSION = '1.0';
-
 // user info --------------------------------------
 let user_id;
 let user_picture;
@@ -70,3 +65,9 @@ let current_annotation_element;
 
 // 筆記preview資訊
 const upload_preview_element = [];
+
+// HOST
+const S3_HOST = 'https://d3it5ttaa2apin.cloudfront.net/';
+const server = 'http://localhost:3001';
+// const server = 'https://goodtidy.site'
+const API_VERSION = '1.0';

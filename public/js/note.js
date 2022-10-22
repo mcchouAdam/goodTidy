@@ -100,14 +100,6 @@ async function noteShow(note_id) {
     );
   });
 
-  // const Img_elements = Img_elements_arr(note_ImgContent);
-  // elements_init($note_div, Img_elements, text_elements);
-  // $('.contour-pic.ui-draggable.ui-draggable-handle')
-  //   .draggable({
-  //     containment: '#update-note-content',
-  //   })
-  //   .css('position', 'absolute');
-
   // 打開自動儲存
   $('#autoSave-toggle').prop('checked', true);
   await AutoSave.start();
@@ -370,7 +362,6 @@ async function getSharedNote(sharedNote_obj, div_append) {
     } else {
       user_online_status_html = `<span id="online_${shared_uer_email}" class="badge bg-success rounded-pill">上線</span>`;
     }
-    // let chatRoom_html = `<button class="btn" onclick="javascript:displayChatRoom('${shared_uer_email}', '${user_name}');"><i class="bi bi-chat-dots"></i></button>`;
     shareNote_html += `
             <div>
               <span class="badge bg-dark rounded-pill" style="color:white;">${num++}</span>
@@ -417,10 +408,6 @@ async function getVersionList(version_obj, div_append) {
                 <label class="btn btn-light" for="${v.version_name}">${vName_timeFormat}</label>
                 <br />
               `;
-
-          // <span class="small" style="float:right; margin:8px;">
-          //   ${timeConverter(new Date(v.created_time))}
-          // </span>;
           num++;
         });
         div_append.append(name_html);
@@ -1108,10 +1095,7 @@ async function getTextElement() {
     const OCR_left = e.style.left;
     const OCR_width = e.style.width;
     const OCR_height = e.style.height;
-    // const OCR_text = e.firstChild.nextElementSibling.value;
     const OCR_text = textElement.get(i).value;
-    // .replaceAll('<', '&lt;')
-    // .replaceAll('>', '&gt;');
     obj = {
       'textTop': OCR_top,
       'textLeft': OCR_left,

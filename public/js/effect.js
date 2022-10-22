@@ -77,24 +77,3 @@ async function redirectPage(page) {
     }
   }, 1000);
 }
-
-// // 圖形/文字 叉叉顯示|消失 --------------------------------------
-// // 監聽事件: textare叉叉
-// $(document).on('focus', '.div_addtextarea', function () {
-//   $('.textareaClose').css('display', 'block');
-// });
-
-// $(document).on('click', function (e) {
-//   if (!$(e.target).is('.div_addtextarea')) {
-//     $('.textareaClose').css('display', 'none');
-//   }
-// });
-
-// // 監聽事件: 圖形叉叉
-// $(document).on('mouseover', '.contour-pic', function () {
-//   $('.imgClose').css('display', 'block');
-// });
-
-// $(document).on('mouseout', function () {
-//   $('.imgClose').css('display', 'none');
-// });
