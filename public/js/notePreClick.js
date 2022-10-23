@@ -34,7 +34,6 @@ async function notePreClick() {
       current_note_class =
         showNote_note_obj[current_note_id].note_classification;
       $(`#noteList_${current_note_id}`).addClass('active');
-      $(`#noteList_${current_note_id}`)[0].click();
       $(`a[id='noteClass_${current_note_class}']`)[0].click();
     }
   }

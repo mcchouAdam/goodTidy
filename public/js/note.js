@@ -534,7 +534,7 @@ async function deleteNote(note_id) {
           await getUserNotes();
           // 畫出NavList資訊
           await showNoteList(note_list_obj, $('#sidebar-nav'));
-          // 剛開始就點選筆記
+          // 重新點選筆記
           await notePreClick();
 
           Swal.fire({
@@ -613,7 +613,7 @@ async function moveNote(note_id) {
           await getUserNotes();
           // 畫出NavList資訊
           await showNoteList(note_list_obj, $('#sidebar-nav'));
-          // 剛開始就點選筆記
+          // 重新點選筆記
           await notePreClick();
         })
         .catch((error) => {
