@@ -536,6 +536,8 @@ async function deleteNote(note_id) {
           await showNoteList(note_list_obj, $('#sidebar-nav'));
           // 重新點選筆記
           await notePreClick();
+          currentNoteId = Object.keys(showNote_note_obj)[0];
+          $(`#noteList_${currentNoteId}`)[0].click();
 
           Swal.fire({
             icon: 'success',
